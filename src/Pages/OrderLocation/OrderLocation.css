@@ -1,0 +1,36 @@
+
+
+.pickup-location {
+ 
+    background: #d65246;
+   
+  
+    height: 70px;
+    width: 300px;
+  
+  }
+  
+  .loc-img {
+    padding-right: 10px;
+  }
+  .dark-mode .pickup-location {
+    background: #2d9cdb;
+  }
+  .check{
+    width:30px;
+    height:30px;
+    border: 1px solid #2D9CDB;
+  
+  }
+  .vertical{
+    height:300px;
+    width:2px;
+    background:black
+  }
+  
+  .dark-mode .content{
+    color:white
+  }
+  .dark-mode .accept{
+    filter: invert(100%);
+  }

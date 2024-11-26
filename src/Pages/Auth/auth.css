@@ -1,0 +1,16 @@
+.login-card {
+    width: 600px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.label-large-bold {
+    font-weight: bold;
+    font-size: 1.2rem; /* Adjust the size as per your preference */
+  }
+
+.register-card{
+    width: 1200px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}

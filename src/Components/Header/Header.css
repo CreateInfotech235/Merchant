@@ -1,0 +1,33 @@
+.profile-menu {
+    position: absolute;
+    top: 100%; /* Position the menu just below the image */
+    right: 0; /* Align the right side of the menu with the image */
+    transform: translateX(20%); /* Shift the menu slightly to the left to center it */
+    background-color: white;
+    border-radius: 5px;
+    width: 150px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .profile-menu ul {
+    padding: 0;
+    margin: 0;
+  }
+  
+  .profile-menu li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .profile-menu li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .profile-icon {
+    cursor: pointer;
+    margin-right: 15px; /* Add space to the right of the profile icon */
+  }
+  

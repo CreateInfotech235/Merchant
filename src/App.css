@@ -1,0 +1,36 @@
+.container-fluid {
+  overflow-x: hidden;
+}
+.dark-mode h1 {
+  color: white;
+}
+.dark-mode .user-p {
+  color: white;
+}
+@media (max-width: 1024px) and (min-width: 375px) {
+  .content {
+    padding: 0px 10px 10px 10px;
+  }
+}
+@media (max-width: 768px) {
+  /* Adjust styles for smaller screens */
+  /* For example: */
+  .container-fluid {
+    overflow-x: hidden;
+  }
+}
+
+.sidebarWrapper {
+  width: 20px;
+}
+.content {
+  overflow-x: hidden;
+}
+.dark-mode td {
+  color: black;
+}
+.search-btn {
+  width: 400px;
+  height: 61px;
+  border: 1px solid #e6e6e6;
+}
