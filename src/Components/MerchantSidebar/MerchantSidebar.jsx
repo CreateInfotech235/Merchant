@@ -3,6 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
 import logo from "../../assets/logo.png";
+import dashboard from '../../assets/dashboard.svg'
 import "./MerchantSidebar.css";
 import transfer_1 from '../../assets/transfer 1.svg'
 
@@ -41,7 +42,7 @@ const MerchantSidebar = () => {
                 onClick={() => setActiveTab(0)}
               >
                 <span className="icon pe-4">
-                  <img src={"/src/assets/dashboard.svg"} alt="dashboard" />
+                  <img src={dashboard} alt="dashboard" />
                 </span>
                 Dashboard
               </Button>
