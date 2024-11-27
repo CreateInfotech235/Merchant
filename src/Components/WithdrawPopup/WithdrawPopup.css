@@ -1,0 +1,27 @@
+.withdraw-pop-up {
+  width: 200px;
+}
+.withdraw-popup-content1 {
+  color: black;
+}
+.withdraw-pop-up {
+  margin: 30px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 370px;
+  padding: 30px 30px;
+  border-radius: 0.5rem;
+  background: #fff;
+  border-radius: 5px;
+}
+.withdraw-popup-content1 {
+  border: 1px dashed black;
+
+  padding: 20px 20px;
+}
+.popup-data2{
+  padding:0
+}

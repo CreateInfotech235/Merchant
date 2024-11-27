@@ -3,7 +3,7 @@ import show from "../../assets/show.png";
 import { Link } from "react-router-dom";
 import tickmark from '../../assets/tickmark.png'
 import crossmark from '../../assets/crossmark.png'
-import WithdrawPopup from "../../../../dashboard/src/Components/WithdrawPopup/WithdrawPopup";
+import WithdrawPopup from "../../Components/WithdrawPopup/WithdrawPopup";
 
 
 const Pending = () => {
