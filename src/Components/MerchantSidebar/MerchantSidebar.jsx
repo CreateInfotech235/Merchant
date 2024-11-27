@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import dashboard from '../../assets/dashboard.svg'
+import subcription from '../../assets/subcription.svg'
 import "./MerchantSidebar.css";
 import transfer_1 from '../../assets/transfer 1.svg'
 
@@ -55,7 +56,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(2)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/subcription.svg"} style={{ width: "25px" }} alt="subscription" />
+                <img src={subcription} style={{ width: "25px" }} alt="subscription" />
               </span>
               Subscription
               <span className={`arrow ${activeTab === 2 ? "rotate" : ""}`}>
