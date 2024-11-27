@@ -4,6 +4,11 @@ import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import dashboard from '../../assets/dashboard.svg'
+import Subscription from '../../assets/subcription.svg'
+import Orders from '../../assets/parcel.svg'
+import Customers from '../../assets/customer.png'
+import DeliveryMan from '../../assets/man.svg'
+import Support from '../../assets/ticket.svg'
 import "./MerchantSidebar.css";
 import transfer_1 from '../../assets/transfer 1.svg'
 
@@ -55,7 +60,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(2)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/subcription.svg"} style={{ width: "25px" }} alt="subscription" />
+                <img src={Subscription} style={{ width: "25px" }} alt="subscription" />
               </span>
               Subscription
               <span className={`arrow ${activeTab === 2 ? "rotate" : ""}`}>
@@ -82,7 +87,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(3)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/parcel.svg"} style={{ width: "25px" }} alt="order" />
+                <img src={Orders} style={{ width: "25px" }} alt="order" />
               </span>
               Orders
               <span className={`arrow ${activeTab === 3 ? "rotate" : ""}`}>
@@ -115,7 +120,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(4)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/customer.png"} style={{ width: "25px" }} alt="order" />
+                <img src={Customers} style={{ width: "25px" }} alt="order" />
               </span>
               Customers
               <span className={`arrow ${activeTab === 4 ? "rotate" : ""}`}>
@@ -145,7 +150,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(5)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/man.svg"} style={{ width: "25px" }} alt="delivery" />
+                <img src={DeliveryMan} style={{ width: "25px" }} alt="delivery" />
               </span>
               Delivery Mans
               <span className={`arrow ${activeTab === 5 ? "rotate" : ""}`}>
@@ -196,7 +201,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(6)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/ticket.svg"} style={{ width: "25px" }} alt="offers" />
+                <img src={Support} style={{ width: "25px" }} alt="offers" />
               </span>
            Support Ticket
               <span className={`arrow ${activeTab === 6 ? "rotate" : ""}`}>
