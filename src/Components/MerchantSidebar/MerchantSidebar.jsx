@@ -8,6 +8,7 @@ import subcription from '../../assets/subcription.svg'
 import man from '../../assets/man.svg'
 import customer from '../../assets/customer.png'
 import order from '../../assets/order-delivery (1).png'
+import support from '../../assets/support.png'
 import "./MerchantSidebar.css";
 import transfer_1 from '../../assets/transfer 1.svg'
 
@@ -200,7 +201,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(6)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/ticket.svg"} style={{ width: "25px" }} alt="offers" />
+                <img src={support} style={{ width: "25px" }} alt="offers" />
               </span>
            Support Ticket
               <span className={`arrow ${activeTab === 6 ? "rotate" : ""}`}>
