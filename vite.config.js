@@ -7,9 +7,6 @@ export default defineConfig(() => {
   return {
     build: {
       outDir: "dist",
-      rollupOptions: {
-        external: "./src",
-      },
     },
     plugins: [react()],
     resolve: {
