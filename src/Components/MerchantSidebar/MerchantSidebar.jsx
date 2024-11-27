@@ -5,7 +5,7 @@ import { FaAngleRight } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import dashboard from '../../assets/dashboard.svg'
 import subscription from '../../assets/subcription.svg'
-import orders from '../../assets/parcel.svg'
+import orders from '../../assets/subcription.svg'
 import customers from '../../assets/customer.png'
 import deliveryMan from '../../assets/man.svg'
 import support from '../../assets/ticket.svg'
