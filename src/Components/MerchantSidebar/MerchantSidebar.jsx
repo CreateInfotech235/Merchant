@@ -6,6 +6,9 @@ import logo from "../../assets/logo.png";
 import dashboard from '../../assets/dashboard.svg'
 import subcription from '../../assets/subcription.svg'
 import man from '../../assets/man.svg'
+import ticket from '../../assets/ticket.svg'
+import order from '../../assets/order-delivery.png'
+import customer from '../../assets/customer.png'
 import "./MerchantSidebar.css";
 import transfer_1 from '../../assets/transfer 1.svg'
 
@@ -84,7 +87,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(3)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/parcel.svg"} style={{ width: "25px" }} alt="order" />
+                <img src={order} style={{ width: "25px" }} alt="order" />
               </span>
               Orders
               <span className={`arrow ${activeTab === 3 ? "rotate" : ""}`}>
@@ -117,7 +120,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(4)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/customer.png"} style={{ width: "25px" }} alt="order" />
+                <img src={customer} style={{ width: "25px" }} alt="order" />
               </span>
               Customers
               <span className={`arrow ${activeTab === 4 ? "rotate" : ""}`}>
@@ -198,7 +201,7 @@ const MerchantSidebar = () => {
               onClick={() => toggleSubmenu(6)}
             >
               <span className="icon pe-4">
-                <img src={"/src/assets/ticket.svg"} style={{ width: "25px" }} alt="offers" />
+                <img src={ticket} style={{ width: "25px" }} alt="offers" />
               </span>
            Support Ticket
               <span className={`arrow ${activeTab === 6 ? "rotate" : ""}`}>
