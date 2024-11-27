@@ -7,7 +7,7 @@ import dashboard from '../../assets/dashboard.svg'
 import subcription from '../../assets/subcription.svg'
 import man from '../../assets/man.svg'
 import ticket from '../../assets/ticket.svg'
-import order from '../../assets/order-delivery.png'
+import order from '../../assets/order-delivery (1).png'
 import customer from '../../assets/customer.png'
 import "./MerchantSidebar.css";
 import transfer_1 from '../../assets/transfer 1.svg'
