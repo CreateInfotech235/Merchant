@@ -122,6 +122,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
+import { Analytics } from "@vercel/analytics/react"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MerchantSidebar from "./Components/MerchantSidebar/MerchantSidebar";
 import Header from "./Components/Header/Header";
@@ -182,6 +183,7 @@ function App() {
             <Login />
           </UnprotectedRoute>
         } />
+       
         <Route path="/login" element={
           <UnprotectedRoute>
             <Login />
@@ -312,6 +314,7 @@ function App() {
         />
       </Routes>
 
+      <Analytics />
     </BrowserRouter>
   );
 }
