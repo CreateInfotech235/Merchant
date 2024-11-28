@@ -32,7 +32,6 @@
 // import UploadDocument from "./Pages/UploadDocument/UploadDocument";
 // import Cerificate from "./Pages/Certificate/Cerificate";
 
-
 // function App() {
 //   const [themeMode, setThemeMode] = useState("light");
 
@@ -114,15 +113,14 @@
 
 // export default App;
 
-
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import 'leaflet/dist/leaflet.css';
-import { Analytics } from "@vercel/analytics/react"
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "leaflet/dist/leaflet.css";
+import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MerchantSidebar from "./Components/MerchantSidebar/MerchantSidebar";
 import Header from "./Components/Header/Header";
@@ -145,7 +143,7 @@ import Customer from "./Pages/Customer/Customer";
 import AddCustomer from "./Pages/Customer/AddCustomer";
 import AddDeliveryMan from "./Pages/DeliveryMan/AddDeliveryMan";
 import Vehicle from "./Pages/Vehicle/Vehicle";
-import AddVehicle from "./Pages/AddVehicle/AddVehicle"
+import AddVehicle from "./Pages/AddVehicle/AddVehicle";
 import ProfilePage from "./Components/Profile/Profile";
 import UpdateProfile from "./Components/Profile/UpdateProfile";
 import SubscriptionPlan from "./Pages/SubscriptionPlan/SubscriptionPlan";
@@ -154,7 +152,7 @@ import SubscriptionActive from "./Pages/SubscriptionPlan/SubscriptionActive";
 import TrashedCustomer from "./Pages/Customer/TrashedCustomer";
 import TrashedDeliveryman from "./Pages/DeliveryMan/TrashedDeliveryman";
 import FreePlan from "./Pages/FreePlan/FreePlan";
-
+import DeliveryManLocation from "./Pages/DeliveryMan/DeliveryManLocation";
 
 function App() {
   const [themeMode, setThemeMode] = useState("light");
@@ -173,129 +171,200 @@ function App() {
 
   return (
     <BrowserRouter>
-    <ToastContainer theme="colored"/>
-
+      <ToastContainer theme="colored" />
 
       <Routes>
         {/* Unprotected Routes */}
-        <Route path="/" element={
-          <UnprotectedRoute>
-            <Login />
-          </UnprotectedRoute>
-        } />
-       
-        <Route path="/login" element={
-          <UnprotectedRoute>
-            <Login />
-          </UnprotectedRoute>
-        } />
-        <Route path="/subscription" element={
-            <FreePlan />
-        } />
+        <Route
+          path="/"
+          element={
+            <UnprotectedRoute>
+              <Login />
+            </UnprotectedRoute>
+          }
+        />
 
-        <Route path="/sign-up" element={
-          <UnprotectedRoute>
-            <Signup />
-          </UnprotectedRoute>
-        } />
+        <Route
+          path="/login"
+          element={
+            <UnprotectedRoute>
+              <Login />
+            </UnprotectedRoute>
+          }
+        />
+        <Route path="/subscription" element={<FreePlan />} />
+
+        <Route
+          path="/sign-up"
+          element={
+            <UnprotectedRoute>
+              <Signup />
+            </UnprotectedRoute>
+          }
+        />
 
         {/* Protected Routes */}
-        <Route path="/Merchant-dashboard" element={
-          <ProtectedRoute>
-            <MerchantDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/create-order" element={
-          <ProtectedRoute>
-            <CreateOrder />
-          </ProtectedRoute>
-        } />
-        <Route path="/all-order" element={
-          <ProtectedRoute>
-            <AllOrder />
-          </ProtectedRoute>
-        } />
-        <Route path="/trashed-order" element={
-          <ProtectedRoute>
-            <TrashedOrder />
-          </ProtectedRoute>
-        } />
-        <Route path="/order-location" element={
-          <ProtectedRoute>
-            <OrderLocation />
-          </ProtectedRoute>
-        } />
-        <Route path="/delivery-man" element={
-          <ProtectedRoute>
-            <DeliveryMan />
-          </ProtectedRoute>
-        } />
-        <Route path="/add-delivery-man" element={
-          <ProtectedRoute>
-            <AddDeliveryMan />
-          </ProtectedRoute>
-        } />
-        <Route path="/delivery-man-trashed" element={
-          <ProtectedRoute>
-            <TrashedDeliveryman />
-          </ProtectedRoute>
-        } />
-        <Route path="/pending" element={
-          <ProtectedRoute>
-            <Pending />
-          </ProtectedRoute>
-        } />
-        <Route path="/approved" element={
-          <ProtectedRoute>
-            <Approved />
-          </ProtectedRoute>
-        } />
-        <Route path="/rejected" element={
-          <ProtectedRoute>
-            <Rejected />
-          </ProtectedRoute>
-        } />
-        <Route path="/account-details" element={
-          <ProtectedRoute>
-            <Setup />
-          </ProtectedRoute>
-        } />
-        <Route path="/all-customer" element={
-          <ProtectedRoute>
-            <Customer />
-          </ProtectedRoute>
-        } />
-        <Route path="/add-customer" element={
-          <ProtectedRoute>
-            <AddCustomer />
-          </ProtectedRoute>
-        } />
-        <Route path="/trashed-customer" element={
-          <ProtectedRoute>
-            <TrashedCustomer />
-          </ProtectedRoute>
-        } />
-        <Route path="/all-vehicle" element={
-          <ProtectedRoute>
-            <Vehicle />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/add-vehicle" element={
-          <ProtectedRoute>
-            <AddVehicle />
-          </ProtectedRoute>
-        } />
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        } />
-        <Route path="/update-profile" element={
-          <ProtectedRoute>
-            <UpdateProfile />
-          </ProtectedRoute>
-        } />
+        <Route
+          path="/Merchant-dashboard"
+          element={
+            <ProtectedRoute>
+              <MerchantDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create-order"
+          element={
+            <ProtectedRoute>
+              <CreateOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/all-order"
+          element={
+            <ProtectedRoute>
+              <AllOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trashed-order"
+          element={
+            <ProtectedRoute>
+              <TrashedOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/order-location"
+          element={
+            <ProtectedRoute>
+              <OrderLocation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/delivery-man"
+          element={
+            <ProtectedRoute>
+              <DeliveryMan />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-delivery-man"
+          element={
+            <ProtectedRoute>
+              <AddDeliveryMan />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/delivery-man-trashed"
+          element={
+            <ProtectedRoute>
+              <TrashedDeliveryman />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/delivery-man-location"
+          element={
+            <ProtectedRoute>
+              <DeliveryManLocation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pending"
+          element={
+            <ProtectedRoute>
+              <Pending />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/approved"
+          element={
+            <ProtectedRoute>
+              <Approved />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rejected"
+          element={
+            <ProtectedRoute>
+              <Rejected />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account-details"
+          element={
+            <ProtectedRoute>
+              <Setup />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/all-customer"
+          element={
+            <ProtectedRoute>
+              <Customer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-customer"
+          element={
+            <ProtectedRoute>
+              <AddCustomer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trashed-customer"
+          element={
+            <ProtectedRoute>
+              <TrashedCustomer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/all-vehicle"
+          element={
+            <ProtectedRoute>
+              <Vehicle />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/add-vehicle"
+          element={
+            <ProtectedRoute>
+              <AddVehicle />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/update-profile"
+          element={
+            <ProtectedRoute>
+              <UpdateProfile />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/subscription-plans"
           element={
