@@ -28,7 +28,7 @@ const Login = () => {
                 "Password must contain at least 8 characters, one uppercase, one lowercase, and one number"
             )
             .required("Password is required"),
-        personType: Yup.string().required("Person type is required")
+        // personType: Yup.string().required("Person type is required")
     });
 
     // Initial form values
@@ -111,7 +111,7 @@ const Login = () => {
                             </div>
 
                             {/* Person Type Field */}
-                            <div className="form-group mb-3">
+                            {/* <div className="form-group mb-3">
                                 <label htmlFor="personType" className="label-large-bold">
                                     Person Type <span className="text-danger">*</span>
                                 </label>
@@ -126,7 +126,7 @@ const Login = () => {
                                     <option value="ADMIN" label="Admin" />
                                 </Field>
                                 <ErrorMessage name="personType" component="div" className="text-danger" />
-                            </div>
+                            </div> */}
 
                             {/* API Error Message */}
                             {errors.apiError && <div className="text-danger mb-3">{errors.apiError}</div>}

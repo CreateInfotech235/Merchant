@@ -40,7 +40,7 @@ const CreateOrder = () => {
     pickupDetails: {
       dateTime: "",
       merchantId : merchant._id || "",
-      address: merchant.address || "",
+      address: `${merchant?.address?.street}` || "",
       // countryCode: merchant.countryCode || "",
       mobileNumber: merchant.contactNumber || "",
       email: merchant.email || "",

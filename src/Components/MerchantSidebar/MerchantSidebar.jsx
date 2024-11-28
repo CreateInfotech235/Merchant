@@ -70,9 +70,9 @@ const MerchantSidebar = () => {
             {activeTab === 2 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
-                  <li className={currentPath === "/subscription-plans" ? "active" : ""}>
+                  {/* <li className={currentPath === "/subscription-plans" ? "active" : ""}>
                     <Link to="/subscription-plans">Subscription Plans</Link>
-                  </li>
+                  </li> */}
                   <li className={currentPath === "/subscription-active" ? "active" : ""}>
                     <Link to="/subscription-active">Subscription Active Plan</Link>
                   </li>

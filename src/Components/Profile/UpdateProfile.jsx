@@ -30,7 +30,14 @@ const UpdateProfile = () => {
     medicalCertificateNumber: Yup.number()
       .required("Medical certificate number is required")
       .typeError("Must be a valid number"),
-    address: Yup.string().required("Address is required"),
+      address: Yup.object({
+        street: Yup.string().required("Street is required"),
+        city: Yup.string().required("City is required"),
+        // state: Yup.string().required("State is required"),
+        postalCode: Yup.string()
+          .required('Postal code is required'),
+        country: Yup.string().required("Country is required"),
+      }).required("Address is required"),
     medicalCertificate: Yup.string().required(
       "Medical Certificate is required"
     ),
@@ -43,7 +50,13 @@ const UpdateProfile = () => {
     email: merchant?.email || "",
     contactNumber: merchant?.contactNumber || "",
     medicalCertificateNumber: merchant?.medicalCertificateNumber || "",
-    address: merchant?.address || "",
+     address: {
+      street:merchant.address.street || "",
+      city:merchant.address.city || "",
+      // state: || "",
+      postalCode:merchant.address.postalCode || "",
+      country:merchant.address.country || "",
+    },
     medicalCertificate: merchant?.medicalCertificate || "",
     image: merchant?.image || "",
   };
@@ -218,7 +231,7 @@ const UpdateProfile = () => {
 
               {/* Address Fields */}
               <div className="row mb-3">
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
                   <label htmlFor="address">Address</label>
                   <Field
                     name="address"
@@ -230,7 +243,61 @@ const UpdateProfile = () => {
                     component="div"
                     className="text-danger"
                   />
+                </div> */}
+
+                
+
+                <div className="form-group col-md-6 mb-3">
+                  <label className="label-large-bold" htmlFor="country">
+                  country <span className="text-danger">*</span>
+                  </label>
+                  <Field
+                    type="text"
+                    name="address.country"
+                    className="form-control"
+                    placeholder="Enter your country"
+                  />
+                  <ErrorMessage name="address.country" component="div" className="text-danger" />
                 </div>
+
+                <div className="form-group col-md-6 mb-3">
+                  <label className="label-large-bold" htmlFor="street">
+                    Street <span className="text-danger">*</span>
+                  </label>
+                  <Field
+                    type="text"
+                    name="address.street"
+                    className="form-control"
+                    placeholder="Enter your street"
+                  />
+                  <ErrorMessage name="address.street" component="div" className="text-danger" />
+                </div>
+                <div className="form-group col-md-6 mb-3">
+                  <label className="label-large-bold" htmlFor="postalCode">
+                  postalCode <span className="text-danger">*</span>
+                  </label>
+                  <Field
+                    type="text"
+                    name="address.postalCode"
+                    className="form-control"
+                    placeholder="Enter your postalCode"
+                  />
+                  <ErrorMessage name="address.postalCode" component="div" className="text-danger" />
+                </div>
+
+                <div className="form-group col-md-6 mb-3">
+                  <label className="label-large-bold" htmlFor="city">
+                    City <span className="text-danger">*</span>
+                  </label>
+                  <Field
+                    type="text"
+                    name="address.city"
+                    className="form-control"
+                    placeholder="Enter your city"
+                  />
+                  <ErrorMessage name="address.city" component="div" className="text-danger" />
+                </div>
+
               </div>
 
 

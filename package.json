@@ -24,6 +24,7 @@
     "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "google-map-react": "^2.2.1",
+    "googleapis": "^144.0.0",
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.5",
@@ -38,6 +39,7 @@
     "react-toastify": "^10.0.6",
     "recharts": "^2.13.3",
     "styled-components": "^6.1.13",
+    "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
   "devDependencies": {
