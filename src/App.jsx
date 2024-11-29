@@ -1,158 +1,53 @@
-// import React, { useEffect, useState } from "react";
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import "./App.css";
-// import MerchantSidebar from "./Components/MerchantSidebar/MerchantSidebar";
-// import { BrowserRouter, Route, Routes } from "react-router-dom";
-// import MerchantDashboard from "./Pages/MerchantDashboard/MerchantDashboard";
-// import Breadcrumb from "../../dashboard/src/Components/Breadcrumb/Breadcrumb";
-// import Header from "./Components/Header/Header";
-// import CreateOrder from "./Pages/CreateOrder/CreateOrder";
-// import AllOrder from "./Pages/AllOrder/AllOrder";
-// import OrderLocation from "./Pages/OrderLocation/OrderLocation";
-// import DeliveryMan from "./Pages/DeliveryMan/DeliveryMan";
-// import Pending from "./Pages/Pending/Pending";
-// import Approved from "./Pages/Approved/Approved";
-// import Rejected from "../../dashboard/src/Pages/Rejected/Rejected";
-// import Setup from "../../dashboard/src/Pages/Setup/Setup";
-// import ParcelType from "./Pages/ParcelType/ParcelType";
-// import Vehicle from "./Pages/Vehicle/Vehicle";
-// import DepositeMerchant from "./Pages/Deposite/Deposite";
-// import WithdrawRequest from "./Pages/WithdrawRequest/WithdrawRequest";
-// import DeliveryManLocation from "./Pages/DeliverymanLocation/DeliveryManLocation";
-// import SupportTicket from "./Pages/SupportTicket/SupportTicket";
-// import RaiseIssue from "./Pages/RaiseIssue/RaiseIssue";
-// import Offer from "./Pages/Offer/offer";
-// import AddVehicle from "./Pages/AddVehicle/AddVehicle";
-// import UpdateVehicle from "./Pages/UpdateVehicle/UpdateVehicle";
-// import RegularCharge from "./Pages/RegularCharges/RegularCharges";
-// import AddParcelType from "./Pages/AddParcelType/AddParcelType";
-// import ExpressCharge from "./Pages/ExpressCharge/ExpressCharge";
-// import RegularPickupRequest from "./Pages/RegularPickupRequest/RegularPickupRequest";
-// import ExpressPickupRequest from "./Pages/ExpressPickupRequest/ExpressPickupRequest";
-// import UploadDocument from "./Pages/UploadDocument/UploadDocument";
-// import Cerificate from "./Pages/Certificate/Cerificate";
-
-// function App() {
-//   const [themeMode, setThemeMode] = useState("light");
-
-//   useEffect(() => {
-//     if (themeMode === "dark") {
-//       document.body.classList.add("dark-mode");
-//     } else {
-//       document.body.classList.remove("dark-mode");
-//     }
-//   }, [themeMode]);
-
-//   const toggleThemeMode = () => {
-//     setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-//   };
-
-//   return (
-//     <BrowserRouter>
-//       <div className={`app ${themeMode}`}>
-//         <div className="container-fluid p-0">
-//           <div className="main row d-xxl-flex flex-row justify-content-xxl-between d-xl-flex justify-content-xl-between">
-//             <div className="sidebarWrapper col-xxl-2 col-xl-2">
-//               <MerchantSidebar />
-//             </div>
-//             <div className="content col-xxl-10 col-xl-10 col-lg-12 col-md-12 p-xxl-5 p-xl-5 p-lg-4 p-md-4 p-4">
-//               <div className="d-flex flex-xxl-row-reverse justify-content-xxl-between flex-xl-row-reverse justify-content-xl-between flex-lg-row-reverse justify-content-lg-between flex-md-row-reverse justify-content-md-between flex-sm-column justify-content-sm-center align-items-sm-center  flex-column justify-content-center align-items-center  ">
-//                 <Header
-//                   toggleThemeMode={toggleThemeMode}
-//                   themeMode={themeMode}
-//                 />
-
-//                 <Breadcrumb />
-//               </div>
-//               <Routes>
-//                 <Route
-//                   path="/Merchant-dashboard"
-//                   element={<MerchantDashboard />}
-//                 />
-//                 <Route path="/create-order" element={<CreateOrder />} />
-//                 <Route path="/all-order" element={<AllOrder />} />
-//                 <Route path="/order-location" element={<OrderLocation />} />
-//                 <Route path="/delivery-man" element={<DeliveryMan />} />
-//                 <Route path="/pending" element={<Pending />} />
-//                 <Route path="/approved" element={<Approved />} />
-//                 <Route path="/rejected" element={<Rejected />} />
-//                 <Route path="/account-details" element={<Setup />} />
-//                 <Route path="/parcel-type" element={<ParcelType />} />
-//                 <Route path="/all-vehicle" element={<Vehicle />} />
-//                 <Route path="/deposite" element={<DepositeMerchant />} />
-//                 <Route path="/withdraw-request" element={<WithdrawRequest />} />
-//                 <Route
-//                   path="/Delivery-man-location"
-//                   element={<DeliveryManLocation />}
-//                 />
-//                 <Route
-//                   path="/Show-list-of-support-ticket"
-//                   element={<SupportTicket />}
-//                 />
-//                 <Route path="/raise-issue" element={<RaiseIssue />} />
-//                 <Route path="/offer" element={<Offer />} />
-//                 <Route path="/add-vehicle" element={<AddVehicle />} />
-//                 <Route path="/update-vehicle" element={<UpdateVehicle />} />
-//                 <Route path="/regular-charges" element={<RegularCharge />} />
-//                 <Route path="/add-parcel-type" element={<AddParcelType />} />
-//                 <Route path="/express-charges" element={<ExpressCharge />} />
-//                 <Route path="/regular-pickup-request" element={<RegularPickupRequest />} />
-//                 <Route path="/express-pickup-request" element={<ExpressPickupRequest />} />
-//                 <Route path="/upload-document" element={<UploadDocument/>} />
-//                 <Route path="/certificate-number" element={<Cerificate/>} />
-//                 <Route path="/subscription-plans" element={<SubscriptionPlan/>} />
-
-//               </Routes>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
-
 import React, { useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+
 import "./App.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
+
+// import "@fortawesome/fontawesome-free/css/all.min.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "leaflet/dist/leaflet.css";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MerchantSidebar from "./Components/MerchantSidebar/MerchantSidebar";
-import Header from "./Components/Header/Header";
+import MerchantSidebar from "./Components_merchant/MerchantSidebar/MerchantSidebar";
+import Header from "./Components_merchant/Header/Header";
 // import Breadcrumb from "../../dashboard/src/Components/Breadcrumb/Breadcrumb";
-import MerchantDashboard from "./Pages/MerchantDashboard/MerchantDashboard";
-import UnprotectedRoute from "./routing/UnProtectedRoute";
-import ProtectedRoute from "./routing/ProtectedRoute";
+import MerchantDashboard from "./Pages_merchant/MerchantDashboard/MerchantDashboard";
+import UnprotectedRoute from "./routing_merchant/UnProtectedRoute";
+import ProtectedRoute from "./routing_merchant/ProtectedRoute";
 // Import all pages
-import CreateOrder from "./Pages/CreateOrder/CreateOrder";
-import AllOrder from "./Pages/AllOrder/AllOrder";
-import OrderLocation from "./Pages/OrderLocation/OrderLocation";
-import DeliveryMan from "./Pages/DeliveryMan/DeliveryMan";
-import Pending from "./Pages/Pending/Pending";
-import Approved from "./Pages/Approved/Approved";
-import Rejected from "./Pages/Rejected/Rejected";
-import Setup from "./Pages/Setup/Setup";
-import Login from "./Pages/Auth/Login";
-import Signup from "./Pages/Auth/SignUpPage";
-import Customer from "./Pages/Customer/Customer";
-import AddCustomer from "./Pages/Customer/AddCustomer";
-import AddDeliveryMan from "./Pages/DeliveryMan/AddDeliveryMan";
-import Vehicle from "./Pages/Vehicle/Vehicle";
-import AddVehicle from "./Pages/AddVehicle/AddVehicle";
-import ProfilePage from "./Components/Profile/Profile";
-import UpdateProfile from "./Components/Profile/UpdateProfile";
-import SubscriptionPlan from "./Pages/SubscriptionPlan/SubscriptionPlan";
-import TrashedOrder from "./Pages/TrashedOrder/TrashedOrder";
-import SubscriptionActive from "./Pages/SubscriptionPlan/SubscriptionActive";
-import TrashedCustomer from "./Pages/Customer/TrashedCustomer";
-import TrashedDeliveryman from "./Pages/DeliveryMan/TrashedDeliveryman";
-import FreePlan from "./Pages/FreePlan/FreePlan";
-import DeliveryManLocation from "./Pages/DeliveryMan/DeliveryManLocation";
+import CreateOrder from "./Pages_merchant/CreateOrder/CreateOrder";
+import AllOrder from "./Pages_merchant/AllOrder/AllOrder";
+import OrderLocation from "./Pages_merchant/OrderLocation/OrderLocation";
+import DeliveryMan from "./Pages_merchant/DeliveryMan/DeliveryMan";
+import Pending from "./Pages_merchant/Pending/Pending";
+import Approved from "./Pages_merchant/Approved/Approved";
+import Rejected from "./Pages_merchant/Rejected/Rejected";
+import Setup from "./Pages_merchant/Setup/Setup";
+import Login from "./Pages_merchant/Auth/Login";
+import Signup from "./Pages_merchant/Auth/SignUpPage";
+import Customer from "./Pages_merchant/Customer/Customer";
+import AddCustomer from "./Pages_merchant/Customer/AddCustomer";
+import AddDeliveryMan from "./Pages_merchant/DeliveryMan/AddDeliveryMan";
+import Vehicle from "./Pages_merchant/Vehicle/Vehicle";
+import AddVehicle from "./Pages_merchant/AddVehicle/AddVehicle";
+import ProfilePage from "./Components_merchant/Profile/Profile";
+import UpdateProfile from "./Components_merchant/Profile/UpdateProfile";
+import SubscriptionPlan from "./Pages_merchant/SubscriptionPlan/SubscriptionPlan";
+import TrashedOrder from "./Pages_merchant/TrashedOrder/TrashedOrder";
+import SubscriptionActive from "./Pages_merchant/SubscriptionPlan/SubscriptionActive";
+import TrashedCustomer from "./Pages_merchant/Customer/TrashedCustomer";
+import TrashedDeliveryman from "./Pages_merchant/DeliveryMan/TrashedDeliveryman";
+import FreePlan from "./Pages_merchant/FreePlan/FreePlan";
+import DeliveryManLocation from "./Pages_merchant/DeliveryMan/DeliveryManLocation";
+import Formate from "./Components_web/Formate/Formate";
+import Mainbody from "./Components_web/WebBody/Mainbody";
+import Pricing from './Pages_web/Pricing/Pricing'
+import Tracking from './Pages_web/Tracking/Tracking'
+import LoginWeb from './Components_web/Login/Login'
+import SignupWeb from './Components_web/SignUp/Signup'
+import SupportTicket from "./Pages_merchant/SupportTicket/SupportTicket";
+import About from "./Pages_web/About/About";
+import Contact from "./Pages_web/Contact/Contact";
 
 function App() {
   const [themeMode, setThemeMode] = useState("light");
@@ -176,7 +71,7 @@ function App() {
       <Routes>
         {/* Unprotected Routes */}
         <Route
-          path="/"
+          path="/merchant"
           element={
             <UnprotectedRoute>
               <Login />
@@ -185,7 +80,7 @@ function App() {
         />
 
         <Route
-          path="/login"
+          path="/merchant/login"
           element={
             <UnprotectedRoute>
               <Login />
@@ -249,6 +144,14 @@ function App() {
           element={
             <ProtectedRoute>
               <DeliveryMan />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Show-list-of-support-ticket"
+          element={
+            <ProtectedRoute>
+              <SupportTicket />
             </ProtectedRoute>
           }
         />
@@ -379,6 +282,52 @@ function App() {
             <ProtectedRoute>
               <SubscriptionActive />
             </ProtectedRoute>
+          }
+        />
+
+        {/* web */}
+
+        <Route
+          path="/"
+          element={
+            <Formate>
+              <Mainbody />
+            </Formate>
+          }
+        />
+
+        <Route
+          path="/pricing"
+          element={
+            <Formate>
+              <Pricing />
+            </Formate>
+          }
+        />
+        <Route path="/login" element={<LoginWeb />} />
+        <Route path="/register" element={<SignupWeb />} />
+        <Route
+          path="/tracking"
+          element={
+            <Formate>
+              <Tracking />
+            </Formate>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <Formate>
+              <About />
+            </Formate>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <Formate>
+              <Contact />
+            </Formate>
           }
         />
       </Routes>
