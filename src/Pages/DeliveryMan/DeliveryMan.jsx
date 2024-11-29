@@ -32,7 +32,10 @@ const DeliveryMan = () => {
     const res = await getDeliveryMan(currentPage, itemsPerPage, searchParam);
 
     if (res.status) {
-      setDeliverymen(res.data);
+      const sortedDeliveryMen = res.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setDeliverymen(sortedDeliveryMen);
     }
   };
 
