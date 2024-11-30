@@ -332,7 +332,7 @@ function App() {
         />
       </Routes>
 
-      {/* <Analytics /> */}
+      <Analytics />
     </BrowserRouter>
   );
 }
