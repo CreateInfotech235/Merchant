@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as Yup from "yup";
 import countryList from "react-select-country-list";
 import "./CreateOrder.css";
@@ -18,7 +18,7 @@ const CreateOrder = () => {
   const [isLoading, setIsLoading] = useState(true);
   const merchant = JSON.parse(localStorage.getItem("userData"));
   console.log("merchant", merchant);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       const deliveryManRes = await getDeliveryMan(1, 10);
@@ -31,6 +31,73 @@ const CreateOrder = () => {
 
     fetchData();
   }, []);
+  const getCurrentLocation = async (setFieldValue) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          const apiKey = "AIzaSyDF9a-HArl8QK5rsaLJIpgr66wJluRMnNU";
+
+          // Fetch the formatted address using reverse geocoding
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await response.json();
+
+          console.log(data);
+
+          const formattedAddress =
+            data.display_name || "Unable to fetch address";
+          console.log(formattedAddress, latitude, longitude);
+
+          setFieldValue("pickupDetails.address", formattedAddress);
+          setFieldValue("pickupDetails.location.latitude", latitude);
+          setFieldValue("pickupDetails.location.longitude", longitude);
+        },
+        (error) => {
+          console.error("Error getting location:", error.message);
+          alert(
+            "Failed to get current location. Please enable location services."
+          );
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
+
+  const getCoordinatesFromAddress = async (address, setFieldValue) => {
+    console.log(address);
+    
+    if (address) {
+      // Fetch the coordinates using geocoding
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          address
+        )}`
+      );
+      const data = await response.json();
+      console.log(data);
+      
+
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0]; // Getting the first result
+        const formattedAddress =
+          data[0]?.display_name || "Unable to fetch address";
+
+        console.log(formattedAddress, lat, lon);
+
+        // Set the address and coordinates to the form
+        setFieldValue("deliveryDetails.address", formattedAddress);
+        setFieldValue("deliveryDetails.location.latitude", parseFloat(lat));
+        setFieldValue("deliveryDetails.location.longitude", parseFloat(lon));
+      } else {
+        alert("Address not found. Please try again.");
+      }
+    } else {
+      alert("Please enter an address.");
+    }
+  };
 
   const initialValues = {
     parcelsCount: 1,
@@ -38,26 +105,34 @@ const CreateOrder = () => {
     dateTime: new Date(),
     deliveryManId: "",
     pickupDetails: {
+      location: {
+        latitude: null, // Initialize with null or undefined
+        longitude: null, // Empty array or [longitude, latitude]
+      },
       dateTime: "",
-      merchantId : merchant._id || "",
+      merchantId: merchant._id || "",
       address: `${merchant?.address?.street}` || "",
       // countryCode: merchant.countryCode || "",
       mobileNumber: merchant.contactNumber || "",
       email: merchant.email || "",
-      name : merchant.name || "",
+      name: merchant.name || "",
       // description: "",
       postCode: merchant.postCode || "",
     },
     deliveryDetails: {
+      location: {
+        latitude: null, // Initialize with null or undefined
+        longitude: null, // Empty array or [longitude, latitude]
+      },
       address: "",
       // countryCode: "",
       mobileNumber: "",
-      name : "",
+      name: "",
       email: "",
       description: "",
       postCode: "",
     },
-    cashOnDelivery:  "false",
+    cashOnDelivery: "false",
   };
 
   const validationSchema = Yup.object().shape({
@@ -103,7 +178,7 @@ const CreateOrder = () => {
   const onSubmit = async (values) => {
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
-  
+
     // Create a copy of values and conditionally include paymentCollectionRupees
     const payload = {
       ...values,
@@ -113,24 +188,19 @@ const CreateOrder = () => {
         dateTime: pictimestamp,
       },
     };
-  
+
     // Remove paymentCollectionRupees if cashOnDelivery is false
     if (values.cashOnDelivery === "false") {
       delete payload.paymentCollectionRupees;
     }
-  
+
     const res = await createOrder(payload);
-  
+
     if (res.status) {
       naviagte("/all-order");
     }
     console.log(payload); // Log final payload for debugging
   };
- 
-
- 
-
-  
 
   return (
     <>
@@ -149,7 +219,7 @@ const CreateOrder = () => {
           validationSchema={validationSchema}
           onSubmit={onSubmit}
         >
-          {(formik) => {
+          {({ setFieldValue, values }) => {
             return (
               <Form className="create-order">
                 {/* Parcel Types */}
@@ -175,7 +245,6 @@ const CreateOrder = () => {
                       className="error text-danger ps-2"
                     />
                   </div>
-               
 
                   <div className="input-error col-12 col-sm-6 mb-3">
                     <Field
@@ -186,7 +255,9 @@ const CreateOrder = () => {
                     >
                       <option value="">Select Delivery Man</option>
                       {deliveryMan.map((data) => {
-                        return <option value={data._id}>{data.firstName}</option>;
+                        return (
+                          <option value={data._id}>{data.firstName}</option>
+                        );
                       })}
                     </Field>
                     <ErrorMessage
@@ -195,7 +266,7 @@ const CreateOrder = () => {
                       className="error text-danger ps-2"
                     />
                   </div>
-                  {formik.values.cashOnDelivery === "true" && (
+                  {values.cashOnDelivery === "true" && (
                     <div
                       key={"paymentCollectionRupees"}
                       className="input-error col-12 col-sm-6 mb-3"
@@ -235,7 +306,6 @@ const CreateOrder = () => {
                             height: "1.2em",
                             width: "1.2em",
                           }}
-                          
                         />
                         Yes
                       </label>
@@ -252,7 +322,6 @@ const CreateOrder = () => {
                             height: "1.2em",
                             width: "1.2em",
                           }}
-                         
                         />
                         No
                       </label>
@@ -273,7 +342,6 @@ const CreateOrder = () => {
                         className="form-control w-25% h-100%"
                         placeholder="Date and Time"
                         style={{ height: "4.5em" }}
-                        
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -282,21 +350,37 @@ const CreateOrder = () => {
                       />
                     </div>
 
-                   
-                    <div className="input-error mb-3">
-                      <Field
-                        type="text"
-                        as="textarea"
-                        name="pickupDetails.address"
-                        className="form-control w-25% h-100%"
-                        placeholder="Address"
-                        style={{ height: "4.5em" }}
-                      />
-                      <ErrorMessage
-                        name="pickupDetails.address"
-                        component="div"
-                        className="error text-danger ps-2"
-                      />
+                    <div className="row">
+                      <div className="input-error mb-3 col-9">
+                        <Field
+                          type="text"
+                          as="textarea"
+                          name="pickupDetails.address"
+                          className="form-control w-25% h-100%"
+                          placeholder="Address"
+                          style={{ height: "4.5em" }}
+                        />
+                        <ErrorMessage
+                          name="pickupDetails.address"
+                          component="div"
+                          className="error text-danger ps-2"
+                        />
+                      </div>
+                      <div className="col-3">
+                        {/* Use Current Location Button */}
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          style={{
+                            height: "4.5em",
+                            width: "w-100",
+                            borderRadius: "0 5px 5px 0",
+                          }}
+                          onClick={() => getCurrentLocation(setFieldValue)}
+                        >
+                          Use Current Location
+                        </button>
+                      </div>
                     </div>
                     <div className="input-error mb-3">
                       <Field
@@ -417,78 +501,77 @@ const CreateOrder = () => {
                     <h3 className="fw-bold">Delivery Information</h3>
                     {/* Delivery Details Fields */}
                     {/* <div className="input-error mb-3"> */}
-                      <Select
-                        className="form-control mb-3 p-0"
-                        styles={{
-                          control: (base) => ({ ...base, padding:'15px' }),
-                        }}
-                        options={customer.map((cust) => ({
-                          value: cust._id,
-                          label: cust.firstName,
-                          label: `${cust.firstName}  -  ${cust.email}  -  ${cust.mobileNumber}`,
-                          ...cust,
-                        }))}
-                        placeholder="Select Customer"
-                        isClearable
-                        filterOption={(option, inputValue) => {
-                          const data = option.data; // Access the original object from options
-                          const searchValue = inputValue.toLowerCase();
-                      
-                          // Match by name, email, or mobileNumber
-                          return (
-                            data.firstName.toLowerCase().includes(searchValue) ||
-                            data.lastName.toLowerCase().includes(searchValue) ||
-                            data.email.toLowerCase().includes(searchValue) ||
-                            data.mobileNumber.toLowerCase().includes(searchValue)
+                    <Select
+                      className="form-control mb-3 p-0"
+                      styles={{
+                        control: (base) => ({ ...base, padding: "15px" }),
+                      }}
+                      options={customer.map((cust) => ({
+                        value: cust._id,
+                        label: cust.firstName,
+                        label: `${cust.firstName}  -  ${cust.email}  -  ${cust.mobileNumber}`,
+                        ...cust,
+                      }))}
+                      placeholder="Select Customer"
+                      isClearable
+                      filterOption={(option, inputValue) => {
+                        const data = option.data; // Access the original object from options
+                        const searchValue = inputValue.toLowerCase();
+
+                        // Match by name, email, or mobileNumber
+                        return (
+                          data.firstName.toLowerCase().includes(searchValue) ||
+                          data.lastName.toLowerCase().includes(searchValue) ||
+                          data.email.toLowerCase().includes(searchValue) ||
+                          data.mobileNumber.toLowerCase().includes(searchValue)
+                        );
+                      }}
+                      onChange={(selectedOption) => {
+                        if (selectedOption) {
+                          setFieldValue(
+                            "deliveryDetails.address",
+                            selectedOption.address
                           );
-                        }}
-                      
-                        onChange={(selectedOption) => {
-                          if (selectedOption) {
-                            formik.setFieldValue(
-                              "deliveryDetails.address",
-                              selectedOption.address
-                            );
-                            // formik.setFieldValue(
-                            //   "deliveryDetails.countryCode",
-                            //   selectedOption.countryCode || ""
-                            // );
-                            formik.setFieldValue(
-                              "deliveryDetails.mobileNumber",
-                              selectedOption.mobileNumber
-                            );
-                            formik.setFieldValue(
-                              "deliveryDetails.email",
-                              selectedOption.email
-                            );
-                            formik.setFieldValue(
-                              "deliveryDetails.description",
-                              selectedOption.description
-                            );
-                            formik.setFieldValue(
-                              "deliveryDetails.postCode",
-                              selectedOption.postCode
-                            );
-                            formik.setFieldValue(
-                              "deliveryDetails.name",
-                              selectedOption.firstName
-                            );
-                          } else {
-                            // Clear delivery details if no customer is selected
-                            formik.setFieldValue("deliveryDetails", {
-                              address: "",
-                              // countryCode: "",
-                              mobileNumber: "",
-                              email: "",
-                              description: "",
-                              postCode: "",
-                              name : ""
-                            });
-                          }
-                        }}
-                      />
+                          // setFieldValue(
+                          //   "deliveryDetails.countryCode",
+                          //   selectedOption.countryCode || ""
+                          // );
+                          setFieldValue(
+                            "deliveryDetails.mobileNumber",
+                            selectedOption.mobileNumber
+                          );
+                          setFieldValue(
+                            "deliveryDetails.email",
+                            selectedOption.email
+                          );
+                          setFieldValue(
+                            "deliveryDetails.description",
+                            selectedOption.description
+                          );
+                          setFieldValue(
+                            "deliveryDetails.postCode",
+                            selectedOption.postCode
+                          );
+                          setFieldValue(
+                            "deliveryDetails.name",
+                            selectedOption.firstName
+                          );
+                        } else {
+                          // Clear delivery details if no customer is selected
+                          setFieldValue("deliveryDetails", {
+                            address: "",
+                            // countryCode: "",
+                            mobileNumber: "",
+                            email: "",
+                            description: "",
+                            postCode: "",
+                            name: "",
+                          });
+                        }
+                      }}
+                    />
                     {/* </div> */}
-                    
+
                     <div className="input-error mb-3">
                       <Field
                         type="text"
@@ -504,6 +587,13 @@ const CreateOrder = () => {
                         className="error text-danger ps-2"
                       />
                     </div>
+                    <button
+                      onClick={() =>
+                        getCoordinatesFromAddress(values.deliveryDetails.address, setFieldValue)
+                      }
+                    >
+                      Get Coordinates
+                    </button>
                     <div className="input-error mb-3">
                       <Field
                         type="number"
