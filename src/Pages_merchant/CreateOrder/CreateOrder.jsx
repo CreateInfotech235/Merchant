@@ -36,21 +36,28 @@ const CreateOrder = () => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
-          const apiKey = "AIzaSyDF9a-HArl8QK5rsaLJIpgr66wJluRMnNU";
+          const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
 
           // Fetch the formatted address using reverse geocoding
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
           );
           const data = await response.json();
 
           console.log(data);
+          if (data.results && data.results.length > 0) {
+            const formattedAddress =
+              data.results[0].formatted_address || "Unable to fetch address";
+              const postalCodeComponent = data.results[0].address_components.find(component =>
+                component.types.includes('postal_code')
+              );
+              const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
+    
+              setFieldValue("pickupDetails.address", formattedAddress);
+              setFieldValue("pickupDetails.postCode", postalCode);
 
-          const formattedAddress =
-            data.display_name || "Unable to fetch address";
-          console.log(formattedAddress, latitude, longitude);
+          }
 
-          setFieldValue("pickupDetails.address", formattedAddress);
           setFieldValue("pickupDetails.location.latitude", latitude);
           setFieldValue("pickupDetails.location.longitude", longitude);
         },
@@ -71,32 +78,36 @@ const CreateOrder = () => {
     
     if (address) {
       // Fetch the coordinates using geocoding
+      const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          address
-        )}`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
       );
       const data = await response.json();
       console.log(data);
+    
+      if (data.results && data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry.location; // Correctly extract latitude and longitude
+        const formattedAddress = data.results[0]?.formatted_address || "Unable to fetch address";
+    
+        console.log(formattedAddress, lat, lng);
+        const postalCodeComponent = data.results[0].address_components.find(component =>
+          component.types.includes('postal_code')
+        );
+        const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
       
-
-      if (data && data.length > 0) {
-        const { lat, lon } = data[0]; // Getting the first result
-        const formattedAddress =
-          data[0]?.display_name || "Unable to fetch address";
-
-        console.log(formattedAddress, lat, lon);
-
+    
         // Set the address and coordinates to the form
         setFieldValue("deliveryDetails.address", formattedAddress);
-        setFieldValue("deliveryDetails.location.latitude", parseFloat(lat));
-        setFieldValue("deliveryDetails.location.longitude", parseFloat(lon));
+        setFieldValue("deliveryDetails.location.latitude", lat);
+        setFieldValue("deliveryDetails.location.longitude", lng);
+        setFieldValue("deliveryDetails.postCode", postalCode);
       } else {
         alert("Address not found. Please try again.");
       }
     } else {
       alert("Please enter an address.");
     }
+    
   };
 
   const initialValues = {
@@ -588,11 +599,12 @@ const CreateOrder = () => {
                       />
                     </div>
                     <button
+                    className="border p-2 bg-[#0D6EFD] text-white rounded mb-2"
                       onClick={() =>
                         getCoordinatesFromAddress(values.deliveryDetails.address, setFieldValue)
                       }
                     >
-                      Get Coordinates
+                      Verify Adress
                     </button>
                     <div className="input-error mb-3">
                       <Field

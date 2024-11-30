@@ -108,18 +108,7 @@ const MerchantDashboard = () => {
 
       <div className="d-xxl-flex justify-content-xxl-end d-xl-flex justify-content-xl-end d-lg-flex justify-content-lg-end d-md-flex justify-content-center align-items-center justify-content-md-between d-sm-flex  flex-sm-column  flex-column  flex-lg-row  flex-md-row   flex-xl-row align-items-center"></div>
       <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between  d-lg-flex justify-content-lg-between  d-md-flex justify-content-md-between d-sm-flex justify-content-sm-center d-flex flex-column  flex-xxl-row   flex-xl-row  flex-lg-row   flex-md-row   flex-sm-column align-items-center nav-bar pb-3">
-        <div className="navbar-options d-flex my-2 col-12 items-center">
-          <input
-            type="search"
-            className="search-btn rounded-start-4 p-3"
-            placeholder="Search your delivery"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-          <button className="search-img rounded-end-4 border-0 flex justify-center items-center">
-            <img src={searchIcon} className="search" alt="search icon" />
-          </button>
-        </div>
+       
         <div></div>
       </div>
 
