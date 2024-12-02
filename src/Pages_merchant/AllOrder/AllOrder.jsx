@@ -13,6 +13,8 @@ import UpdateDeliveryBoyModal from "../DeliveryMan/UpdateDeliveryManModal";
 import UpdateOrderModal from "./UpdateOrderModal";
 import { format } from "date-fns";
 import OrderInfoModal from "./OrderInfoModal";
+import { getDeliveryManLocationByOrder } from "../../Components_merchant/Api/DeliveryMan";
+import MapModal from "./MapModal";
 
 const AllOrder = () => {
   const [showModel, setShowModel] = useState(false);
@@ -26,6 +28,12 @@ const AllOrder = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orderData, setOrderData] = useState([]);
   const [showInfoModal, setShowInfoModal] = useState(false); // State for showing the view modal
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [location, setLocation] = useState(null); // Changed initial value to null
+  const [deliveryLocation, setDeliveryLocation] = useState(null); // Changed initial value to null
+  const [pickupLocation, setPickupLocation] = useState(null); // Changed initial value to null
+  const [status, setStatus] = useState(null); // Changed initial value to null
+
   const fetchData = async () => {
     const MerchantId = await localStorage.getItem("merchnatId");
     const response = await getOrders(MerchantId, currentPage, ordersPerPage);
@@ -114,6 +122,38 @@ const AllOrder = () => {
     ));
   };
 
+  const hadleTrackOrder = async(id, deliveryLocation , pickupLocation , status) => {
+    try {
+      if (status) {
+        setStatus(status)
+      }
+      if (pickupLocation && pickupLocation.latitude && pickupLocation.longitude) {
+        setPickupLocation({
+          lat : pickupLocation.latitude,
+          lng : pickupLocation.longitude
+        })
+      }
+      if(deliveryLocation && deliveryLocation.latitude && deliveryLocation.longitude) {
+        setDeliveryLocation({
+          lat: deliveryLocation.latitude,
+          lng: deliveryLocation.longitude
+        });
+      }
+
+      const response = await getDeliveryManLocationByOrder(id);
+      
+      if (response?.data?.data?.[0]?.location) {
+        const { latitude, longitude } = response.data.data[0].location;
+        if (latitude && longitude) {
+          setLocation({ lat: latitude, lng: longitude });
+          setShowMapModal(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error tracking order:", error);
+    }
+  };
+
   const handleViewClick = (Order) => {
     console.log("delivery", Order);
 
@@ -149,7 +189,6 @@ const AllOrder = () => {
   };
 
   const statusColors = {
-
     CREATED: "gray",
     ASSIGNED: "blue",
     ACCEPTED: "green",
@@ -278,7 +317,10 @@ const AllOrder = () => {
                         </button>
                     </td>
                     <td className="city-data">
-                      <button className="delete-btn">
+                      <button 
+                      className="delete-btn"
+                      onClick={() => hadleTrackOrder(order.deliveryManId, order.deliveryAddress.location ,order.pickupAddress.location , order.status , )}
+                      >
                         <img src={tracking} alt="Tracking" className="mx-auto"/>
                       </button>
                     </td>
@@ -305,10 +347,23 @@ const AllOrder = () => {
         />
       )}
 
-{showInfoModal && (
+      {showInfoModal && (
         <OrderInfoModal
           Order={selectedOrder}
           onHide={closeInfoModal}
+        />
+      )}
+      {showMapModal && location && (
+        <MapModal 
+          location={location} 
+          deliveryLocation={deliveryLocation} 
+          pickupLocation={pickupLocation}
+          status={status}
+          onHide={() => {
+            setShowMapModal(false);
+            setLocation(null);
+            setDeliveryLocation(null);
+          }} 
         />
       )}
     </>

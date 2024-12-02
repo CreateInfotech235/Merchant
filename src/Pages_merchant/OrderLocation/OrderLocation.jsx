@@ -8,6 +8,7 @@ import assigned from "../../assets_mercchant/assigned.svg";
 import arrived from "../../assets_mercchant/arrived.svg";
 import pickedup from "../../assets_mercchant/picked-up.svg";
 import departed from "../../assets_mercchant/departed.svg";
+import MapWithMarker from "./MapWithMarker";
 
 const AnyReactComponent = (
   { lat, lng, text } // Assuming AnyReactComponent is defined elsewhere
@@ -93,7 +94,7 @@ const OrderLocation = () => {
       </div>
       <div className="delivery-man-location">
         <div style={{ height: "672px", width: "100%" }}>
-          <GoogleMapReact
+          {/* <GoogleMapReact
             bootstrapURLKeys={{
               key: "AIzaSyAZsykEn-ZvYj-i1ubEl3Ss4zdaWKCyGCg", // Replace with your actual Google Maps API key
             }}
@@ -108,7 +109,9 @@ const OrderLocation = () => {
                 text="Selected Location"
               />
             )}
-          </GoogleMapReact>
+          </GoogleMapReact> */}
+
+          <MapWithMarker address='dhara arcade mota varachha surat' />
         </div>
       </div>
 

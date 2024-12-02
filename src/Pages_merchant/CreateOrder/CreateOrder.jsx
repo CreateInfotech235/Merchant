@@ -164,6 +164,13 @@ const CreateOrder = () => {
       }
     ),
     pickupDetails: Yup.object().shape({
+      // location: Yup.object().shape({
+      //   latitude: Yup.number()
+      //     .required("Latitude is required"),
+      //   longitude: Yup.number()
+      //     .required("Longitude is required"),
+      // }),
+    
       dateTime: Yup.string().required("Required"),
       address: Yup.string().required("Required"),
       // countryCode: Yup.string().required("Required"),
@@ -174,6 +181,12 @@ const CreateOrder = () => {
       // merchantId: Yup.number().required("Required"),
     }),
     deliveryDetails: Yup.object().shape({
+      // location: Yup.object().shape({
+      //   latitude: Yup.number()
+      //     .required("Latitude is required"),
+      //   longitude: Yup.number()
+      //     .required("Longitude is required"),
+      // }),
       address: Yup.string().required("Required"),
       name: Yup.string().required("Required"),
       // countryCode: Yup.string().required("Required"),
@@ -186,9 +199,96 @@ const CreateOrder = () => {
 
   const options = useMemo(() => countryList().getData(), []);
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values , {setFieldValue}) => {
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
+    var deliverylocation = null
+    
+    var pickuplocation = values.pickupDetails.location.latitude === null ? null : {
+      latitude: values.pickupDetails.location.latitude,
+      longitude: values.pickupDetails.location.longitude
+    }
+    
+    if (!values.pickupDetails.location.latitude && !values.pickupDetails.location.longitude) {
+      console.log('Helo');
+      if (values.pickupDetails.address) {
+        // Fetch the coordinates using geocoding
+        const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.pickupDetails.address)}&key=${apiKey}`
+        );
+        const data = await response.json();
+        console.log(setFieldValue);
+      
+        if (data.results && data.results.length > 0) {
+          const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
+          const formattedAddress = await data.results[0]?.formatted_address || "Unable to fetch address";
+      
+          console.log(formattedAddress, lat, lng);
+          const postalCodeComponent = data.results[0].address_components.find(component =>
+            component.types.includes('postal_code')
+          );
+          const postalCode = await postalCodeComponent ? postalCodeComponent.long_name : "";
+        
+          pickuplocation = {
+            latitude : lat ,
+            longitude : lng
+          }
+      
+          // Set the address and coordinates to the form
+          setFieldValue("pickupDetails.address", formattedAddress);
+          setFieldValue("pickupDetails.location.latitude", lat);
+          setFieldValue("pickupDetails.location.longitude", lng);
+          setFieldValue("pickupDetails.postCode", postalCode);
+        } else {
+          alert("Address not found. Please try again.");
+        }
+      } else {
+        alert("Please enter an address.");
+      }
+      
+    }
+    if (!values.deliveryDetails.location.latitude && !values.deliveryDetails.location.longitude) {
+      console.log('Helo');
+      if (values.pickupDetails.address) {
+        // Fetch the coordinates using geocoding
+        const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.deliveryDetails.address)}&key=${apiKey}`
+        );
+        const data = await response.json();
+        console.log(setFieldValue);
+      
+        if (data.results && data.results.length > 0) {
+          const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
+          const formattedAddress = await data.results[0]?.formatted_address || "Unable to fetch address";
+      
+          console.log(formattedAddress, lat, lng);
+          const postalCodeComponent = data.results[0].address_components.find(component =>
+            component.types.includes('postal_code')
+          );
+          const postalCode = await postalCodeComponent ? postalCodeComponent.long_name : "";
+        
+          deliverylocation = {
+            latitude : lat ,
+            longitude : lng
+          }
+      
+          // Set the address and coordinates to the form
+          setFieldValue("deliveryDetails.address", formattedAddress);
+          setFieldValue("deliveryDetails.location.latitude", lat);
+          setFieldValue("deliveryDetails.location.longitude", lng);
+          setFieldValue("deliveryDetails.postCode", postalCode);
+        } else {
+          alert("Address not found. Please try again.");
+        }
+      } else {
+        alert("Please enter an address.");
+      }
+      
+    }
+
+console.log(values);
 
     // Create a copy of values and conditionally include paymentCollectionRupees
     const payload = {
@@ -197,6 +297,18 @@ const CreateOrder = () => {
       pickupDetails: {
         ...values.pickupDetails,
         dateTime: pictimestamp,
+        location : {
+          latitude : pickuplocation.latitude ,
+          longitude : pickuplocation.longitude
+        }
+      },
+      deliveryDetails: {
+        ...values.deliveryDetails,
+
+        location : {
+          latitude : deliverylocation.latitude ,
+          longitude : deliverylocation.longitude
+        }
       },
     };
 
@@ -598,14 +710,14 @@ const CreateOrder = () => {
                         className="error text-danger ps-2"
                       />
                     </div>
-                    <button
+                    {/* <button
                     className="border p-2 bg-[#0D6EFD] text-white rounded mb-2"
                       onClick={() =>
                         getCoordinatesFromAddress(values.deliveryDetails.address, setFieldValue)
                       }
                     >
                       Verify Adress
-                    </button>
+                    </button> */}
                     <div className="input-error mb-3">
                       <Field
                         type="number"

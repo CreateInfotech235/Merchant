@@ -25,6 +25,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     const fetchData = async () => {
       const deliveryManRes = await getDeliveryMan(1, 10);
       const customerRes = await getAllCustomers();
+      console.log(customerRes.data,"Get all customer");
+      
 
       if (deliveryManRes.status) setDeliveryMen(deliveryManRes.data);
       if (customerRes.status) setCustomer(customerRes.data);
@@ -432,8 +434,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       }}
                       options={customer.map((cust) => ({
                         value: cust._id,
-                        label: cust.name,
-                        label: `${cust.name}  -  ${cust.email}  -  ${cust.mobileNumber}`,
+                        label: cust.firstName,
+                        label: `${cust.firstName}  -  ${cust.email}  -  ${cust.mobileNumber}`,
                         ...cust,
                       }))}
                       placeholder="Select Customer"
@@ -444,7 +446,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
 
                         // Match by name, email, or mobileNumber
                         return (
-                          data.name.toLowerCase().includes(searchValue) ||
+                          data.firstName.toLowerCase().includes(searchValue) ||
+                          data.lastName.toLowerCase().includes(searchValue) ||
                           data.email.toLowerCase().includes(searchValue) ||
                           data.mobileNumber.toLowerCase().includes(searchValue)
                         );
