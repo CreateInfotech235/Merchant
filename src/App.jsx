@@ -48,6 +48,7 @@ import SignupWeb from './Components_web/SignUp/Signup'
 import SupportTicket from "./Pages_merchant/SupportTicket/SupportTicket";
 import About from "./Pages_web/About/About";
 import Contact from "./Pages_web/Contact/Contact";
+import InvoiceFormate from "./Pages_merchant/AllOrder/InvoiceFormate";
 
 function App() {
   const [themeMode, setThemeMode] = useState("light");
@@ -128,6 +129,14 @@ function App() {
           element={
             <ProtectedRoute>
               <TrashedOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invoice-format"
+          element={
+            <ProtectedRoute>
+              <InvoiceFormate />
             </ProtectedRoute>
           }
         />

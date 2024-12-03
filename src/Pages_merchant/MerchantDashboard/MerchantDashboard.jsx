@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import subscribe from "../../assets_mercchant/subscribe.svg";
 import notsubscribe from "../../assets_mercchant/not-subscribe.svg";
-import totalorder from "../../assets_mercchant/total-order.svg";
 import { Modal, Button } from "react-bootstrap";
 import deliveryorder from "../../assets_mercchant/delivery-order.svg";
 import cancelorder from "../../assets_mercchant/cancel-order.svg";
@@ -18,10 +17,23 @@ import SubscriptionPlanModel from "../SubscriptionPlan/SubscriptionPlanModel";
 import Example from "../DashboardChart/Chart";
 import RecentOrder from "../Recent Order/RecentOrder";
 import OrderCountsChart from "../DashboardChart/Chart1";
+// icon
+import totalorder from "../../assets_mercchant/total-order.svg";
+import Totalorders from "../../assets_mercchant/Total orders.png";
+import Acceptedorders from "../../assets_mercchant/Accepted orders.png";
+import Arrivedorders from "../../assets_mercchant/Arrived orders.png";
+import Assignedorders from "../../assets_mercchant/Assigned orders.png";
+import Cancelledorders from "../../assets_mercchant/Cancelled orders.png";
+import Createdorders from "../../assets_mercchant/Created orders.png";
+import Departedorders from "../../assets_mercchant/Departed orders.png";
+import Pickedorders from "../../assets_mercchant/Picked orders.png";
+import DeliveryMan from "../../assets_mercchant/DeliveryMan.png";
+
 
 const MerchantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [counts, setCounts] = useState({});
+
   const [showModal, setShowModal] = useState(false); // State to handle modal visibility
   const [showSubscriptionModel, setShowSubscriptionModel] = useState(false);
   const [Error, setError] = useState(null);
@@ -29,8 +41,13 @@ const MerchantDashboard = () => {
   const fetchCount = async () => {
     const res = await getCounts();
     console.log(res);
+    console.log(res.data);
+
     setCounts(res.data);
   };
+
+
+
 
   // const fetchSubscriptionInfo = async (id) => {
   //   const response = await SubscriptionInfo(id);
@@ -65,7 +82,7 @@ const MerchantDashboard = () => {
     const MerchantId = localStorage.getItem("merchnatId");
     fetchCount();
 
-  //   fetchSubscriptionInfo(MerchantId);
+    //   fetchSubscriptionInfo(MerchantId);
   }, []);
 
   const handleSearchChange = (event) => {
@@ -107,24 +124,21 @@ const MerchantDashboard = () => {
       )}
 
       <div className="d-xxl-flex justify-content-xxl-end d-xl-flex justify-content-xl-end d-lg-flex justify-content-lg-end d-md-flex justify-content-center align-items-center justify-content-md-between d-sm-flex  flex-sm-column  flex-column  flex-lg-row  flex-md-row   flex-xl-row align-items-center"></div>
-      <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between  d-lg-flex justify-content-lg-between  d-md-flex justify-content-md-between d-sm-flex justify-content-sm-center d-flex flex-column  flex-xxl-row   flex-xl-row  flex-lg-row   flex-md-row   flex-sm-column align-items-center nav-bar pb-3">
-       
-        <div></div>
-      </div>
+      
 
       <div className="container-fluid">
         <div
-          class="dashboard row pt-3 h-100 w-120"
+          className="dashboard row pt-3 h-100 w-120"
           style={{ marginLeft: "-10px" }}
         >
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={Totalorders} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-5 pb-2"
+                  className="pe-2 ps-5 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "10px" }}>
@@ -141,12 +155,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={Acceptedorders} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -165,12 +179,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={Arrivedorders} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -189,12 +203,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={Assignedorders} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -213,12 +227,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={Cancelledorders} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -237,12 +251,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={Createdorders} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -261,12 +275,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={totalorder} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -285,12 +299,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={Departedorders} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -309,12 +323,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={Pickedorders} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -333,12 +347,12 @@ const MerchantDashboard = () => {
 
           <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
             <div className="box rounded-2 p-4">
-              <div class="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" />
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <img src={DeliveryMan} alt="Total Order" style={{ width: "55px" }} />
                 {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -362,7 +376,7 @@ const MerchantDashboard = () => {
         </div>
 
         <div className="my-4">
-          <h2>Recent Order</h2>
+          <h2 className="font-bold text-[30px] mb-4 underline">Recent Order</h2>
           <RecentOrder />
         </div>
       </div>

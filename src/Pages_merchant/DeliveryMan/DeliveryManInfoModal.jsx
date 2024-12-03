@@ -32,6 +32,10 @@ const DeliveryBoyInfoModal = ({ deliveryBoy, onHide }) => {
                         <label className="col-6">Address :</label>
                         <span className="col-6 p-2">{deliveryBoy?.address}</span>
                     </div>  
+                    <div className="row mb-2">
+                        <label className="col-6">Post Code :</label>
+                        <span className="col-6 p-2">{deliveryBoy?.postCode}</span>
+                    </div>
                 </div>
             </ModalBody>
         </Modal>

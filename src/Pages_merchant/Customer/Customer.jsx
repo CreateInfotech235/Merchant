@@ -56,6 +56,7 @@ const Customers = () => {
   const filteredCustomers = customers.filter((customer) => {
     const query = searchQuery.toLowerCase();
     return (
+      customer.customerId.toLowerCase().includes(query) ||
       customer.firstName.toLowerCase().includes(query) ||
       customer.lastName.toLowerCase().includes(query) ||
       customer.email.toLowerCase().includes(query)
@@ -159,17 +160,7 @@ const Customers = () => {
                   <td className="p-3">{customer.postCode}</td>
                   <td className="table-head2">
                     <div className="d-flex align-items-center justify-content-center">
-                      <button
-                        className="edit-btn"
-                        onClick={() =>
-                          handleLocationClick([
-                            customer.location?.coordinates[0],
-                            customer.location?.coordinates[1],
-                          ])
-                        }
-                      >
-                        <img src={locationimg} alt="Location" className="mx-auto" />
-                      </button>
+                      
                       <button className="edit-btn ms-1" onClick={() => handleEditClick(customer)}>
                           <img src={edit} alt="Edit" className="mx-auto" />
                         </button>

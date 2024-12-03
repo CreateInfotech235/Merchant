@@ -21,10 +21,13 @@ const CreateOrder = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const deliveryManRes = await getDeliveryMan(1, 10);
+      const deliveryManRes = await getDeliveryMan();
       const customerRes = await getAllCustomers();
-
-      if (deliveryManRes.status) setDeliveryMen(deliveryManRes.data);
+      if (deliveryManRes.data) {
+        const activeDeliveryMen = deliveryManRes.data.filter(man => man.status !== "DISABLE");
+        setDeliveryMen(activeDeliveryMen);
+      }
+      // if (deliveryManRes.status) setDeliveryMen(deliveryManRes.data);
       if (customerRes.status) setCustomer(customerRes.data);
       setIsLoading(false);
     };
@@ -351,6 +354,7 @@ console.log(values);
                     key={"parcelsCount"}
                     className="input-error col-12 col-sm-6 mb-3"
                   >
+                    <label className="fw-thin p-0 pb-1 ">Parcels Count :</label>
                     <Field
                       type="number"
                       name={"parcelsCount"}
@@ -370,11 +374,12 @@ console.log(values);
                   </div>
 
                   <div className="input-error col-12 col-sm-6 mb-3">
+                    <label className="fw-thin p-0 pb-1 ">Select Delivery Man :</label>
                     <Field
                       as="select"
                       name="deliveryManId"
                       className="form-control"
-                      style={{ height: "4.5em" }}
+                      style={{ height: "4.5em" ,border: "1px solid #E6E6E6", }}
                     >
                       <option value="">Select Delivery Man</option>
                       {deliveryMan.map((data) => {
@@ -394,12 +399,13 @@ console.log(values);
                       key={"paymentCollectionRupees"}
                       className="input-error col-12 col-sm-6 mb-3"
                     >
+                      <label className="fw-thin p-0 pb-1 ">Payment Collection : Amount</label>
                       <Field
                         as="input"
                         name="paymentCollectionRupees"
                         type="number"
                         className="form-control mt-3"
-                        style={{ height: "4.5em" }}
+                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6", }}
                         placeholder="Enter Payment Collection pounds  "
                       />
                       <ErrorMessage
@@ -414,7 +420,7 @@ console.log(values);
                     key="cashOnDelivery"
                     className="input-error col-12 col-sm-6 mb-3"
                   >
-                    <label className="fw-bold mb-2">Cash on Delivery</label>
+                    <label className="fw-thin p-0 pb-1 ">Cash on Delivery :</label>
 
                     <div className="d-flex align-items-center">
                       {/* True Option */}
@@ -455,16 +461,17 @@ console.log(values);
                 {/* Pickup Information */}
                 <div className="pick-up mt-5 row">
                   <div className="col-12 col-lg-6">
-                    <h3 className="fw-bold">Pickup Information</h3>
+                    <h3 className="fw-bold text-2xl pb-3">Pickup Information</h3>
 
                     {/* Pickup Details Fields */}
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Pickup Date & Time :</label>
                       <Field
                         type="datetime-local"
                         name="pickupDetails.dateTime"
                         className="form-control w-25% h-100%"
                         placeholder="Date and Time"
-                        style={{ height: "4.5em" }}
+                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6",  }}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -475,13 +482,14 @@ console.log(values);
 
                     <div className="row">
                       <div className="input-error mb-3 col-9">
+                        <label className="fw-thin p-0 pb-1 ">Pickup Address :</label>
                         <Field
                           type="text"
                           as="textarea"
                           name="pickupDetails.address"
                           className="form-control w-25% h-100%"
-                          placeholder="Address"
-                          style={{ height: "4.5em" }}
+                          placeholder="Pickup Address"
+                          style={{ height: "4.5em"  ,border: "1px solid #E6E6E6"}}
                         />
                         <ErrorMessage
                           name="pickupDetails.address"
@@ -491,6 +499,7 @@ console.log(values);
                       </div>
                       <div className="col-3">
                         {/* Use Current Location Button */}
+                        <label htmlFor=""></label>
                         <button
                           type="button"
                           className="btn btn-primary"
@@ -506,12 +515,13 @@ console.log(values);
                       </div>
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Pickup Postcode :</label>
                       <Field
                         type="text"
                         name="pickupDetails.postCode"
                         className="form-control w-25% h-100%"
-                        placeholder="PostCode"
-                        style={{ height: "4.5em" }}
+                        placeholder="Pickup Postcode"
+                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6"}}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -545,11 +555,12 @@ console.log(values);
                     </div> */}
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Pickup Contact Number :</label>
                       <Field
                         type="number"
                         name="pickupDetails.mobileNumber"
                         className="form-control"
-                        placeholder="Pickup contact number"
+                        placeholder="Pickup Contact Number"
                         style={{
                           height: "4.5em",
                           border: "1px solid #E6E6E6",
@@ -564,11 +575,12 @@ console.log(values);
                     </div>
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Pickup Email :</label>
                       <Field
                         type="email"
                         name="pickupDetails.email"
                         className="form-control"
-                        placeholder="Pickup email"
+                        placeholder="Pickup Email"
                         style={{
                           height: "4.5em",
                           border: "1px solid #E6E6E6",
@@ -582,11 +594,12 @@ console.log(values);
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Merchant Name :</label>
                       <Field
                         type="text"
                         name="pickupDetails.name"
                         className="form-control"
-                        placeholder="Merchant name"
+                        placeholder="Merchant Name"
                         style={{
                           height: "4.5em",
                           border: "1px solid #E6E6E6",
@@ -601,11 +614,12 @@ console.log(values);
                     </div>
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Pickup Instraction (Optional) :</label>
                       <Field
                         as="textarea"
                         name="pickupDetails.description"
                         className="form-control"
-                        placeholder="Pickup description"
+                        placeholder="Pickup Instraction"
                         rows="4"
                         style={{
                           border: "1px solid #E6E6E6",
@@ -621,9 +635,10 @@ console.log(values);
                   </div>
 
                   <div className="col-12 col-lg-6">
-                    <h3 className="fw-bold">Delivery Information</h3>
+                    <h3 className="fw-bold text-2xl pb-3">Delivery Information</h3>
                     {/* Delivery Details Fields */}
                     {/* <div className="input-error mb-3"> */}
+                    <label className="fw-thin p-0 pb-1 ">Select Customer :</label>
                     <Select
                       className="form-control mb-3 p-0"
                       styles={{
@@ -696,13 +711,14 @@ console.log(values);
                     {/* </div> */}
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Delivery Address :</label>
                       <Field
                         type="text"
                         as="textarea"
                         name="deliveryDetails.address"
                         className="form-control w-25% h-100%"
-                        placeholder="Address"
-                        style={{ height: "4.5em" }}
+                        placeholder="Delivery Address"
+                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="deliveryDetails.address"
@@ -719,12 +735,13 @@ console.log(values);
                       Verify Adress
                     </button> */}
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Delivery Postcode :</label>
                       <Field
                         type="number"
                         name="deliveryDetails.postCode"
                         className="form-control w-25% h-100%"
-                        placeholder="PostCode"
-                        style={{ height: "4.5em" }}
+                        placeholder="Delivery Postcode"
+                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="deliveryDetails.postCode"
@@ -757,11 +774,12 @@ console.log(values);
                       />
                     </div> */}
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Delivery Contact Number :</label>
                       <Field
                         type="number"
                         name="deliveryDetails.mobileNumber"
                         className="form-control"
-                        placeholder="Delivery contact number"
+                        placeholder="Delivery Contact Number"
                         style={{
                           height: "4.5em",
                           border: "1px solid #E6E6E6",
@@ -775,11 +793,12 @@ console.log(values);
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Delivery Email :</label>
                       <Field
                         type="email"
                         name="deliveryDetails.email"
                         className="form-control"
-                        placeholder="Delivery email"
+                        placeholder="Delivery Email"
                         style={{
                           height: "4.5em",
                           border: "1px solid #E6E6E6",
@@ -793,11 +812,12 @@ console.log(values);
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Delivery Name :</label>
                       <Field
                         type="text"
                         name="deliveryDetails.name"
                         className="form-control"
-                        placeholder="Name"
+                        placeholder="Delivery Name"
                         style={{
                           height: "4.5em",
                           border: "1px solid #E6E6E6",
@@ -811,11 +831,12 @@ console.log(values);
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1 ">Delivery Instraction (Optional) :</label>
                       <Field
                         as="textarea"
                         name="deliveryDetails.description"
                         className="form-control"
-                        placeholder="Delivery description"
+                        placeholder="Delivery Instraction"
                         rows="4"
                         style={{
                           border: "1px solid #E6E6E6",

@@ -169,6 +169,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     key={"parcelsCount"}
                     className="input-error col-12 col-sm-6 mb-3"
                   >
+                    <label className="fw-thin p-0 pb-1">Parcels Count :</label>
                     <Field
                       type="number"
                       name={"parcelsCount"}
@@ -188,6 +189,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                   </div>
 
                   <div className="input-error col-12 col-sm-6 mb-3">
+                    <label className="fw-thin p-0 pb-1">Select Delivery Man :</label>
                     <Field
                       as="select"
                       name="deliveryManId"
@@ -213,6 +215,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       key={"paymentCollectionRupees"}
                       className="input-error col-12 col-sm-6 mb-3"
                     >
+                      <label className="fw-thin p-0 pb-1">Payment Collection (Rupees) :</label>
                       <Field
                         as="input"
                         name="paymentCollectionRupees"
@@ -279,12 +282,13 @@ const UpdateOrderModal = ({ onHide, Order }) => {
 
                     {/* Pickup Details Fields */}
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Pickup Date & Time :</label>
                       <Field
                         type="datetime-local"
                         name="pickupDetails.dateTime"
                         className="form-control w-25% h-100%"
                         placeholder="Date and Time"
-                        style={{ height: "4.5em" }}
+                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -294,13 +298,14 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     </div>
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Pickup Address :</label>
                       <Field
                         type="text"
                         as="textarea"
                         name="pickupDetails.address"
                         className="form-control w-25% h-100%"
                         placeholder="Address"
-                        style={{ height: "4.5em" }}
+                        style={{ height: "4.5em" , border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="pickupDetails.address"
@@ -309,12 +314,13 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Pickup Postcode :</label>
                       <Field
                         type="text"
                         name="pickupDetails.postCode"
                         className="form-control w-25% h-100%"
                         placeholder="PostCode"
-                        style={{ height: "4.5em" }}
+                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -348,6 +354,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     </div> */}
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Pickup Contact Number :</label>
                       <Field
                         type="number"
                         name="pickupDetails.mobileNumber"
@@ -367,6 +374,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     </div>
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Pickup Email :</label>
                       <Field
                         type="email"
                         name="pickupDetails.email"
@@ -385,6 +393,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Merchant Name :</label>
                       <Field
                         type="text"
                         name="pickupDetails.name"
@@ -404,6 +413,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     </div>
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Pickup Description :</label>
                       <Field
                         as="textarea"
                         name="pickupDetails.description"
@@ -427,6 +437,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     <h3 className="fw-bold">Delivery Information</h3>
                     {/* Delivery Details Fields */}
                     {/* <div className="input-error mb-3"> */}
+                    <label className="fw-thin p-0 pb-1">Select Customer :</label>
                     <Select
                       className="form-control mb-3 p-0"
                       styles={{
@@ -499,13 +510,14 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     {/* </div> */}
 
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Delivery Address :</label>
                       <Field
                         type="text"
                         as="textarea"
                         name="deliveryDetails.address"
                         className="form-control w-25% h-100%"
                         placeholder="Address"
-                        style={{ height: "4.5em" }}
+                        style={{ height: "4.5em" , border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="deliveryDetails.address"
@@ -514,12 +526,13 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Delivery Postcode :</label>
                       <Field
                         type="number"
                         name="deliveryDetails.postCode"
                         className="form-control w-25% h-100%"
                         placeholder="PostCode"
-                        style={{ height: "4.5em" }}
+                        style={{ height: "4.5em" , border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="deliveryDetails.postCode"
@@ -552,6 +565,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div> */}
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Delivery Contact Number :</label>
                       <Field
                         type="number"
                         name="deliveryDetails.mobileNumber"
@@ -570,6 +584,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Delivery Email :</label>
                       <Field
                         type="email"
                         name="deliveryDetails.email"
@@ -588,6 +603,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Delivery Name :</label>
                       <Field
                         type="text"
                         name="deliveryDetails.name"
@@ -606,6 +622,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
+                      <label className="fw-thin p-0 pb-1">Delivery Description :</label>
                       <Field
                         as="textarea"
                         name="deliveryDetails.description"
@@ -641,7 +658,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     className="btn btn-primary mt-3"
                     style={{ height: "4.5em" }}
                   >
-                    Create Order
+                    Update Order
                   </button>
                 </div>
               </Form>

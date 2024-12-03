@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./AllOrder.css";
 import add from "../../assets_mercchant/add.png";
 import tracking from "../../assets_mercchant/tracking.png";
@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import OrderInfoModal from "./OrderInfoModal";
 import { getDeliveryManLocationByOrder } from "../../Components_merchant/Api/DeliveryMan";
 import MapModal from "./MapModal";
+import html2pdf from 'html2pdf.js';
 
 const AllOrder = () => {
   const [showModel, setShowModel] = useState(false);
@@ -33,6 +34,7 @@ const AllOrder = () => {
   const [deliveryLocation, setDeliveryLocation] = useState(null); // Changed initial value to null
   const [pickupLocation, setPickupLocation] = useState(null); // Changed initial value to null
   const [status, setStatus] = useState(null); // Changed initial value to null
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     const MerchantId = await localStorage.getItem("merchnatId");
@@ -202,6 +204,44 @@ const AllOrder = () => {
 
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
+  const downloadInvoice = async (order) => {
+    
+    try {
+      // Navigate to invoice format page with order data
+      navigate('/invoice-format', { 
+        state: {
+          orderData: {
+            header: 'Your Company Name\nAddress Line 1\nAddress Line 2\nPhone: XXX-XXX-XXXX\nEmail: example@email.com',
+            footer: 'Thank you for your business!\nFor support, please contact us.',
+            logo: null,
+            logoPreview: 'https://placehold.co/200x100/png',
+            orderDetails: {
+              orderId: order.orderId,
+              date: order.dateTime,
+              customerName: order.customerName,
+              customerAddress: order.deliveryAddress.address,
+              customerPhone: order.deliveryAddress.mobileNumber || '',
+              customerEmail: order.deliveryAddress.email || '',
+              items: [
+                {
+                  description: 'Delivery Service',
+                  quantity: order.parcelsCount,
+                  unitPrice: order.price || 0,
+                  total: order.price || 0
+                }
+              ],
+              subtotal: order.price || 0,
+              tax: (order.price * 0.2) || 0,
+              shippingCost: 0,
+              total: (order.price * 1.2) || 0
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error navigating to invoice:', error);
+    }
+  };
 
   return (
     <>
@@ -289,7 +329,18 @@ const AllOrder = () => {
                     <td className="p-3">{order?.createdDate ?? "-"}</td>
                     <td className="p-3">{order?.pickupDate ?? "-"}</td>
                     <td className="p-3">{order?.deliveryDate ?? "-"}</td>
-                    <td className="p-3 fw-bold">{order?.invoice ?? "-"}</td>
+                    <td className="p-3 fw-bold">
+                      {order.status === "DELIVERED" ? (
+                        <button 
+                          className="btn btn-sm btn-primary"
+                          onClick={() => downloadInvoice(order)}
+                        >
+                          Download Invoice
+                        </button>
+                      ) : (
+                        order?.invoice ?? "-"
+                      )}
+                    </td>
                     <td className="p-3">
                       <button className={`${getColorClass(order.status)} mx-2`}>
                         {order.status}

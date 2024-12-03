@@ -17,6 +17,7 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
     contactNumber: deliveryBoy ? deliveryBoy.contactNumber : "",
     isVerified: deliveryBoy ? deliveryBoy.isVerified : false, // Added "isVerified"
     address: deliveryBoy ? deliveryBoy.address : "",
+    postCode: deliveryBoy ? deliveryBoy.postCode : "",
   };
 
   const validationSchema = Yup.object({
@@ -28,7 +29,8 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
     contactNumber: Yup.string().required("Contact number is required"),
     isVerified: Yup.boolean().required("Verification status is required"), // Validate isVerified field
     address: Yup.string().required("Address is required"),
-  });
+    postCode: Yup.string().required("Post code is required"),
+    });
 
   const onSubmit = async (values) => {
     const res = await updateDeliveryBoy(deliveryBoy._id, values);
@@ -95,9 +97,6 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
                     className="error text-danger"
                   />
                 </div>
-              </div>
-
-              <div className="row input-box">
                 <div className="input-error col-md-6">
                   <label>Contact No</label>
                   <Field
@@ -113,6 +112,26 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
                   />
                 </div>
 
+              </div>
+
+              <div className="row input-box">
+
+                <div className="col-md-6">
+                  <label>Post Code</label>
+                  <Field
+                    type="text"
+                    name="postCode"
+                    className="form-control"
+                    placeholder="Post Code"
+                  />
+                  <ErrorMessage
+                    name="postCode"
+                    component="div"
+                    className="error text-danger"
+                  />
+                </div>
+
+                
                 <div className="input-error col-md-6">
                 <label className="fw-bold mb-2">Verified</label>
                   <div className="d-flex align-items-center">

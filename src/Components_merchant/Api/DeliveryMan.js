@@ -127,8 +127,8 @@ export const addDeliveryBoy = async (data) => {
 
 export const updateDeliveryBoy = async (id, data) => {
   try {
-    const response = await API.put(
-      `/deliveryBoy/auth/updateDeliveryManProfile/${id}`,
+    const response = await API.patch(
+      `/mobile/auth/updateDeliveryManProfile/${id}`,
       data
     );
     console.log("response", response);

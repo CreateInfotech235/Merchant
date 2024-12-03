@@ -109,6 +109,9 @@ const MerchantSidebar = () => {
                   <li className={currentPath === "/trashed-order" ? "active" : ""}>
                     <Link to="/trashed-order">Trashed Order</Link>
                   </li>
+                  <li className={currentPath === "/invoice-format" ? "active" : ""}>
+                    <Link to="/invoice-format">Invoice Format</Link>
+                  </li>
                 </ul>
               </div>
             )}

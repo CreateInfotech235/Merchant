@@ -159,6 +159,7 @@ const DeliveryMan = () => {
                 <th className="p-3 text-light">Contact number</th>
                 <th className="p-3 text-light">Email id</th>
                 <th className="p-3 text-light">Address</th>
+                <th className="p-3 text-light">Post Code</th>
                 <th className="p-3 text-light">Status</th>
                 <th className="p-3 text-light">Verify</th>
                 <th className="p-3 text-light">Action</th>
@@ -185,6 +186,7 @@ const DeliveryMan = () => {
                     </td>
                     <td className="p-3">{deliveryman.email}</td>
                     <td className="p-3">{deliveryman.address}</td>
+                    <td className="p-3">{deliveryman.postCode}</td>
                     <td className="p-3">
                       <button className={getColorClass(deliveryman.status)}>
                         {deliveryman.status === 'ENABLE' ? 'ONLINE' : 'OFFLINE'}

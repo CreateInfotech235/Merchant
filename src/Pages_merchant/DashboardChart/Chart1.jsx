@@ -1,32 +1,57 @@
-// OrderCountsChart.js
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { getCounts } from '../../Components_merchant/Api/Dashboard';
-
+import { getdata } from '../../Components_merchant/Api/Dashboard';
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const OrderCountsChart = () => {
   const [orderCounts, setOrderCounts] = useState(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
-  // Fetch order count data from the API
-  useEffect(() => {
-    const fetchOrderCounts = async () => {
-      try {
-        const res = await getCounts();
-        if (res) {
-          setOrderCounts(res.data); // Assuming data.data contains the counts
-        } else {
-          console.error('Error fetching order counts:', data.message);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+  // Fetch order count data from the API with the selected dates
+  const fetchOrderCounts = async () => {
+    console.log(startDate);
+    console.log(endDate);
+    try {
+      const res = await getdata(startDate, endDate);
+
+      if (res && res.status) {
+        setOrderCounts(res.data); // Assuming data.data contains the counts
+      } else {
+        console.error('Error fetching order counts:', res.message);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchOrderCounts();
-  }, []);
+  }, [startDate, endDate]); // Only call fetch when dates change
+
+  const handleStartDateChange = (e) => {
+    const selectedStartDate = e.target.value;
+    setStartDate(selectedStartDate);
+
+    // If start date is selected, set the end date to the same value (if not already set)
+    if (!endDate) {
+      setEndDate(selectedStartDate);
+    }
+  };
+
+  const handleEndDateChange = (e) => {
+    const selectedEndDate = e.target.value;
+    setEndDate(selectedEndDate);
+  };
+
+  // Ensure that end date is never earlier than start date
+  useEffect(() => {
+    if (endDate && new Date(endDate) < new Date(startDate)) {
+      setEndDate(startDate); // Set end date to start date if it's earlier
+    }
+  }, [startDate, endDate]);
 
   if (!orderCounts) {
     return <p>Loading...</p>; // Show loading state while data is being fetched
@@ -35,7 +60,7 @@ const OrderCountsChart = () => {
   // Chart.js Data Format
   const chartData = {
     labels: [
-      'Total Orders', 'Created', 'Assigned', 'Accepted', 'Arrived', 
+      'Total Orders', 'Created', 'Assigned', 'Accepted', 'Arrived',
       'Picked Up', 'Departed', 'Delivered', 'Cancelled', 'Delivery Men'
     ],
     datasets: [
@@ -92,9 +117,68 @@ const OrderCountsChart = () => {
     }
   };
 
+  // Get today's date and max date for the date picker
+  const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
   return (
     <div>
-      <h2>Order Counts</h2>
+      <div className='flex justify-between'>
+        <h2  className="font-bold text-[30px] mb-4 underline">Order Counts</h2>
+        <div className='flex'>
+         
+
+          <div className='flex items-center ml-2'>
+            <div className='mr-2'>
+              Start date:
+            </div>
+            <input
+              type="date"
+              value={startDate}
+              onChange={handleStartDateChange}
+              placeholder="Start Date"
+              max={today} // Prevent future dates
+            />
+          </div>
+
+          <div className='flex items-center mx-2'>
+            <div className='mr-2'>
+              End date:
+            </div>
+            <input
+              type="date"
+              value={endDate}
+              onChange={handleEndDateChange}
+              placeholder="End Date"
+              min={startDate} // Ensure end date is not before start date
+              max={today} // Prevent future dates
+            />
+          </div>
+          <div className='flex items-center'>
+            <button
+              onClick={() => {
+                setStartDate(today); // Set start date to today
+                setEndDate(today);   // Set end date to today
+              }}
+              className="bg-white text-black border border-black rounded px-4 py-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black"
+            >
+              Today
+            </button>
+          </div>
+          <div className='flex items-center ml-2'>
+            <button
+              onClick={() => {
+                setStartDate(''); // Set start date to today
+                setEndDate('');   // Set end date to today
+              }}
+              className="bg-white text-black border border-black rounded px-4 py-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black"
+            >
+          Clear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Show chart if data is fetched */}
       <Bar data={chartData} options={chartOptions} />
     </div>
   );

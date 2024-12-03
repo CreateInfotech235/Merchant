@@ -12,16 +12,24 @@ const CutomerInfoModal = ({ customer, onHide }) => {
             <ModalBody>
                 <div className="customer-details">
                     <div className="row mb-2">
-                        <label className="col-6">customer Name:</label>
+                        <label className="col-6">customer First Name:</label>
                         <span className="col-6">{customer.firstName}</span>
                     </div>
                     <div className="row mb-2">
+                        <label className="col-6">customer Last Name:</label>
+                        <span className="col-6">{customer.lastName}</span>
+                    </div>
+                    <div className="row mb-2">
                         <label className="col-6">customer ID:</label>
-                        <span className="col-6">{customer._id}</span>
+                        <span className="col-6">{customer.customerId}</span>
                     </div>
                     <div className="row mb-2">
                         <label className="col-6">Email</label>
                         <span className="col-6">{customer.email}</span>
+                    </div>
+                    <div className="row mb-2">
+                        <label className="col-6">Address</label>
+                        <span className="col-6">{customer.address}</span>
                     </div>
                   
 
