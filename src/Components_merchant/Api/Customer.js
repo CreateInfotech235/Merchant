@@ -18,7 +18,16 @@ export const getAllCustomers = async (page, pageLimit) => {
 
 export const addCustomer = async (data) => {
   try {
-    const response = await API.post(`/customer/auth/signUp`, data);
+    // Get merchantId from localStorage
+    const merchantId = localStorage.getItem("merchnatId");
+    console.log(merchantId);
+    // Create a new object with the original data and merchantId
+    const tampdata = { ...data, merchantId };
+    // Log the tampdata to confirm it's correctly constructed
+    console.log("tampdata", tampdata);
+    // Send the tampdata to the API
+    const response = await API.post(`/customer/auth/signUp`, tampdata);
+    // Log the response for debugging
     console.log("response", response);
 
     if (response.status === 200) {
@@ -39,9 +48,15 @@ export const addCustomer = async (data) => {
 };
 export const updateCustomer = async (id, data) => {
   try {
+    const merchantId = localStorage.getItem("merchnatId");
+
+    // Create a new object with the original data and merchantId
+    const tampdata = { ...data, merchantId };
+    // Log the tampdata to confirm it's correctly constructed
+
     const response = await API.patch(
       `/customer/auth/customerUpdate/${id}`,
-      data
+      tampdata
     );
     console.log("response", response);
 

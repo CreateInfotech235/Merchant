@@ -7,28 +7,34 @@ import { SubscriptionInfo } from "../Components_merchant/Api/Subscription";
 import { Button, Modal } from "react-bootstrap";
 import SubscriptionPlanModel from "../Pages_merchant/SubscriptionPlan/SubscriptionPlanModel";
 import "bootstrap/dist/css/bootstrap.min.css";
+
 const ProtectedRoute = ({ children }) => {
   const [showModel, setShowModel] = useState(false);
-  const token = localStorage.getItem("accessToken");
-  const merchantId = localStorage.getItem("merchnatId");
-  const userData = JSON.parse(localStorage.getItem("userData"))
-  const navigate = useNavigate();
-
   const [themeMode, setThemeMode] = useState("light");
   const [expiredPopup, setExpiredPopup] = useState(false);
-  const [isAccessDenied, setIsAccessDenied] = useState(false); // New state to block access
+  const [isAccessDenied, setIsAccessDenied] = useState(false);
   const [subscriptionData, setSubscriptionData] = useState([]);
+
+  const token = localStorage.getItem("accessToken");
+  const merchantId = localStorage.getItem("merchnatId");
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const navigate = useNavigate();
+
+  // Check authentication
   useEffect(() => {
     if (!token || !merchantId) {
       navigate("/login");
     }
   }, [token, merchantId, navigate]);
- 
+
+  // Check free subscription
   useEffect(() => {
     if (userData.freeSubscription === false) {
-      setShowModel(true)
+      setShowModel(true);
     }
-  },[])
+  }, [userData.freeSubscription]);
+
+  // Theme mode effect
   useEffect(() => {
     if (themeMode === "dark") {
       document.body.classList.add("dark-mode");
@@ -37,61 +43,54 @@ const ProtectedRoute = ({ children }) => {
     }
   }, [themeMode]);
 
-  const toggleThemeMode = () => {
-    setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-  };
-
-  if (userData.freeSubscription === true) {
+  // Fetch subscription info
+  useEffect(() => {
     const fetchSubscriptionInfo = async (id) => {
       const response = await SubscriptionInfo(id);
       if (response.message === "Your subcription is expired") {
-        navigate("/subscription-active")
+        navigate("/subscription-active");
       }
-      
-      localStorage.setItem('SubscriptionId' , response.data[0].subcriptionId._id)
-      
+      localStorage.setItem('SubscriptionId', response.data[0].subcriptionId._id);
       setSubscriptionData(response.data);
     };
-  
-    useEffect(() => {
-      if (merchantId) {
-        fetchSubscriptionInfo(merchantId);
-      }
-    }, [merchantId]);
-  }
 
+    if (merchantId && userData.freeSubscription === true) {
+      fetchSubscriptionInfo(merchantId);
+    }
+  }, [merchantId, userData.freeSubscription, navigate]);
 
-  const calculateRemainingDays = (expiryDate) => {
-    const currentDate = new Date();
-    const expirationDate = new Date(expiryDate);
-    const timeDifference = expirationDate - currentDate;
-    const remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24)); // Convert time difference to days
-    return remainingDays;
-  };
-
+  // Check for expired subscription
   useEffect(() => {
-    // Check if any subscription plan is expired
     const hasExpiredPlan = subscriptionData.some((plan) => {
       return calculateRemainingDays(plan.expiry) <= 0;
     });
 
     if (hasExpiredPlan) {
       setExpiredPopup(true);
-      setIsAccessDenied(true); // Block access
+      setIsAccessDenied(true);
     }
   }, [subscriptionData]);
 
+  const calculateRemainingDays = (expiryDate) => {
+    const currentDate = new Date();
+    const expirationDate = new Date(expiryDate);
+    const timeDifference = expirationDate - currentDate;
+    const remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24));
+    return remainingDays;
+  };
+
+  const toggleThemeMode = () => {
+    setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+  };
+
   const handlePopupClose = () => {
-    navigate("/subscription-active"); // Redirect to subscription page
+    navigate("/subscription-active");
     setExpiredPopup(false);
   };
+
   const handleCloseModel = () => {
     setShowModel(false);
   };
-
-//   if (isAccessDenied) {
-//     return null; // Block rendering of the protected content
-//   }
 
   return (
     <div className={`app ${themeMode}`}>
@@ -119,8 +118,7 @@ const ProtectedRoute = ({ children }) => {
                 </Button>
               </Modal.Footer>
             </Modal>
-            {token  ? children : null} 
-            {/* //&& !isAccessDenied? */}
+            {token ? children : null}
           </div>
         </div>
       </div>

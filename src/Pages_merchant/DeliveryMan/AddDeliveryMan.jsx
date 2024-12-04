@@ -73,7 +73,7 @@ const AddDeliveryBoy = () => {
                       name="firstName"
                       className="form-control w-25% h-100%"
                       placeholder="First Name"
-                      style={{ height: "4.5em" }}
+                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="firstName"
@@ -90,7 +90,7 @@ const AddDeliveryBoy = () => {
                       name="lastName"
                       className="form-control w-25% h-100%"
                       placeholder="Last Name"
-                      style={{ height: "4.5em" }}
+                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="lastName"
@@ -108,7 +108,7 @@ const AddDeliveryBoy = () => {
                       name="email"
                       className="form-control w-25% h-100%"
                       placeholder="Email"
-                      style={{ height: "4.5em" }}
+                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="email"
@@ -127,7 +127,7 @@ const AddDeliveryBoy = () => {
                           name="password"
                           className="form-control w-25% h-100%"
                           placeholder="Password"
-                          style={{ height: "4.5em" }}
+                          style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
                         />
                         <span
                           className="password-toggle-icon"
@@ -164,7 +164,7 @@ const AddDeliveryBoy = () => {
                       name="contactNumber"
                       className="form-control w-25% h-100%"
                       placeholder="Contact No"
-                      style={{ height: "4.5em" }}
+                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="contactNumber"
@@ -181,7 +181,7 @@ const AddDeliveryBoy = () => {
                       name="postCode"
                       className="form-control w-25% h-100%"
                       placeholder="Post Code"
-                      style={{ height: "4.5em" }}
+                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="postCode"
@@ -202,7 +202,7 @@ const AddDeliveryBoy = () => {
                       name="address"
                       className="form-control w-25% h-100%"
                       placeholder="Address"
-                      style={{ height: "4.5em" }}
+                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="address"

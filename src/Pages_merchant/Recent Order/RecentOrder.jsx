@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { getRecentOrders } from "../../Components_merchant/Api/Order";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./RecentOrder.css";
-
 import { Button } from "react-bootstrap";
 
 function RecentOrder() {
+  const navigate = useNavigate();
   const [orderData, setOrderData] = useState(null); // Initialize with `null` to differentiate between loading and empty states
   const [loading, setLoading] = useState(true); // Track loading state
   const [error, setError] = useState(null); // Track errors
@@ -34,7 +34,6 @@ function RecentOrder() {
     CANCELLED: "red",
     DELIVERED: "teal",
     UNASSIGNED: "red",
-
     PICKED_UP: "orange",
     DEPARTED: "yellow",
     ARRIVED: "purple",
@@ -42,6 +41,45 @@ function RecentOrder() {
 
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
+
+  const downloadInvoice = async (order) => {
+    try {
+      // Navigate to invoice format page with order data
+      navigate("/invoice-format", {
+        state: {
+          orderData: {
+            orderId: order.orderId,
+            createdAt: order.dateTime,
+            parcelType: order.parcelType,
+            weight: order.weight,
+            parcelsCount: order.parcelsCount,
+            pickupDetails: {
+              name: order.pickupAddress?.name,
+              address: order.pickupAddress?.address,
+              mobileNumber: order.pickupAddress?.mobileNumber,
+              email: order.pickupAddress?.email,
+              postCode: order.pickupAddress?.postCode,
+            },
+            deliveryDetails: {
+              name: order.deliveryAddress?.name,
+              address: order.deliveryAddress?.address,
+              mobileNumber: order.deliveryAddress?.mobileNumber,
+              email: order.deliveryAddress?.email,
+              postCode: order.deliveryAddress?.postCode,
+            },
+            charges: order.charges,
+            totalCharge: order.totalCharge,
+            cashCollection: order.cashCollection,
+            distance: order.distance,
+            duration: order.duration,
+            status: order.status,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Error navigating to invoice:", error);
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>; // Display a loading spinner or message
@@ -90,10 +128,10 @@ function RecentOrder() {
                           {order?.customerName ?? "-"}
                         </td>
                         <td className="p-3">
-                      {`${order?.pickupAddress?.address}(${
-                        order?.pickupAddress?.postCode ?? "-"
-                      })` ?? "-"}
-                    </td>
+                          {`${order?.pickupAddress?.address}(${
+                            order?.pickupAddress?.postCode ?? "-"
+                          })` ?? "-"}
+                        </td>
                         <td className="p-3">
                           {`${order?.deliveryAddress?.address}(${
                             order?.deliveryAddress?.postCode ?? "-"
@@ -103,7 +141,18 @@ function RecentOrder() {
                         <td className="p-3">{order?.createdDate ?? "-"}</td>
                         <td className="p-3">{order?.pickupDate ?? "-"}</td>
                         <td className="p-3">{order?.deliveryDate ?? "-"}</td>
-                        <td className="p-3 fw-bold">{order?.invoice ?? "-"}</td>
+                        <td className="p-3">
+                          {order.status === "DELIVERED" ? (
+                            <button
+                              className="btn btn-sm btn-primary enable-btn"
+                              onClick={() => downloadInvoice(order)}
+                            >
+                              Download
+                            </button>
+                           ) : (
+                             order?.invoice ?? "-"
+                           )}
+                        </td>
                         <td className="p-3">
                           <button className={getColorClass(order.status)}>
                             {order.status}

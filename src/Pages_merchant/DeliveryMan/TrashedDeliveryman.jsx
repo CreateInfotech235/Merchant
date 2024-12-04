@@ -199,15 +199,15 @@ const TrashedDeliveryman = () => {
                     </td>
                     <td className="user-table1">
                       <div className="d-flex justify-content-center align-items-center">
-                        <button className="edit-btn">
+                        {/* <button className="edit-btn">
                           <img src={locationimg} alt="Edit" className="mx-auto" />
-                        </button>
-                        <button
+                        </button> */}
+                        {/* <button
                           className="edit-btn ms-1"
                           onClick={() => handleEditClick(deliveryman)}
                         >
                           <img src={edit} alt="Edit" className="mx-auto" />
-                        </button>
+                        </button> */}
                         <button
                           className="delete-btn ms-1"
                           onClick={() => handleDeleteClick(deliveryman)}
@@ -215,12 +215,12 @@ const TrashedDeliveryman = () => {
                           <img src={deleteimg} alt="Delete" className="mx-auto" />
                         </button>
 
-                        <button
+                        {/* <button
                           className="show-btn ms-1"
                           onClick={() => handleViewClick(deliveryman)}
                         >
                           <img src={show} alt="Show" className="mx-auto" />
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>

@@ -10,7 +10,8 @@ import { sendOtp, signup } from "../../Components_merchant/Api/Auth";
 
 // Validation Schema with Yup
 const validationSchema = Yup.object({
-  name: Yup.string().required("Name is required"),
+  firstName: Yup.string().required("firstName is required"),
+  lastName : Yup.string().required("lastName is required"),
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
@@ -40,7 +41,8 @@ const validationSchema = Yup.object({
 
 // Initial Values for Formik
 const initialValues = {
-  name: "",
+  firstName: "",
+  lastName : "",
   email: "",
   password: "",
   contactNumber: "",
@@ -144,12 +146,23 @@ function Signup() {
                   <div>
                     <Field
                       type="text"
-                      name="name"
-                      placeholder="Name"
+                      name="firstName"
+                      placeholder="First Name"
                       className="w-full border-b border-gray-400 p-3 focus:outline-none focus:border-black"
                     />
-                    {errors.name && touched.name && (
-                      <div className="text-red-500">{errors.name}</div>
+                    {errors.firstName && touched.firstName && (
+                        <div className="text-red-500">{errors.firstName}</div>
+                    )}
+                  </div>
+                  <div>
+                    <Field
+                      type="text"
+                      name="lastName"
+                      placeholder="Last Name"
+                      className="w-full border-b border-gray-400 p-3 focus:outline-none focus:border-black"
+                    />
+                    {errors.lastName && touched.lastName && (
+                      <div className="text-red-500">{errors.lastName}</div>
                     )}
                   </div>
                 </div>

@@ -1,357 +1,251 @@
-import React, { useState } from "react";
-
-import add from "../../assets_mercchant/add.png";
-import edit from "../../assets_mercchant/edit.png";
-import deleteimg from "../../assets_mercchant/deleteimg.png";
-import show from "../../assets_mercchant/show.png";
-import { Link } from "react-router-dom";
-// import DisableUser from "../../../../dashboard/src/Components/DisableUser/DisableUser";
-
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from 'yup';
+import { postSupportTicket, getadmindata, getSupportTicket, DeleteSupportTicket } from "../../Components_merchant/Api/SupportTicket";
 
 const SupportTicket = () => {
-  const [showDeleteModel, setShowDeleteModel] = useState(false);
-  const [showEnableModel, setShowEnableModel] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 10;
+  const [userData, setUserData] = useState({ name: '', userid: '' });
+  const [showpopup, setshowpopup] = useState(false);
+  const [admins, setAdmins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [listofproblem, setlistofproblem] = useState([]);
 
-  const closeDeleteModel = () => setShowDeleteModel(false);
-  const closeEnableModel = () => setShowEnableModel(false);
-
-  // Mock data for users (Replace with actual data fetching logic)
-  const users = [
-    {
-      id: 1,
-      name: "mae strosin",
-      contact: "+91 5632 2157",
-      email: "hagejfhn@gmail.com",
-      service: "pickup",
-      city: "ahmedabad",
-      registerDate: "14May2024 | 03:42 PM",
-      ticketnumber:"45121564"
-    },
-    {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-  ];
-
-  // Calculate the users to display based on the current page
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-
-  // Calculate total pages
-  const totalPages = Math.ceil(users.length / usersPerPage);
-
-  // Pagination controls
-  const handleClick = (event) => {
-    setCurrentPage(Number(event.target.id));
-  };
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(i);
+  // Fetch admin data
+  const getadmindatafromapi = async () => {
+    setLoading(true);
+    try {
+      const response = await getadmindata();
+      setAdmins(response?.data || []);
+    } catch (error) {
+      console.error("Failed to fetch admin data:", error);
     }
-    return pageNumbers.map((number) => (
-      <li
-        key={number}
-        id={number}
-        onClick={handleClick}
-        className={currentPage === number ? "active" : null}
-      >
-        {number}
-      </li>
-    ));
+    setLoading(false);
   };
 
-  // Add empty rows to fill up the table to 10 rows
-  const emptyRows = usersPerPage - currentUsers.length;
+  // Fetch support tickets
+  const getSupportTicketapi = async () => {
+    try {
+      const response = await getSupportTicket();
+      setlistofproblem(response?.data?.data || []);
+    } catch (error) {
+      console.error("Failed to fetch support tickets:", error);
+    }
+  };
+
+  useEffect(() => {
+    const storedUserData = localStorage.getItem('userData');
+    if (storedUserData) {
+      const parsedUserData = JSON.parse(storedUserData);
+      setUserData({
+        name: parsedUserData.name || '',
+        userid: parsedUserData._id || ''
+      });
+    }
+  }, []);
+
+  // Fetch admin data and support tickets on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      await getadmindatafromapi();
+      await getSupportTicketapi();
+    };
+
+    fetchData();
+  }, []);
+
+  // Formik validation schema
+  const validationSchema = Yup.object({
+    subject: Yup.string().required('Subject is required'),
+    problem: Yup.string().required('Problem description is required'),
+    adminId: Yup.string().required('Admin is required'),
+  });
+
+  // Formik configuration
+  const formik = useFormik({
+    initialValues: {
+      name: userData.name,
+      userid: userData.userid,
+      subject: '',
+      problem: '',
+      adminId: '',
+    },
+    enableReinitialize: true,
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        await postSupportTicket(values);
+        console.log("Ticket submitted", values);
+        getSupportTicketapi();  // Refetch the support tickets
+        setshowpopup(false);    // Close the popup after successful submission
+      } catch (error) {
+        console.error("Failed to submit support ticket:", error);
+      }
+    },
+  });
+
+  // Function to format the date
+  const formatDate = (date) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(date).toLocaleDateString('en-US', options);
+  };
+
+  // Handle Delete Button Click
+  const handleDelete = async (ticketId) => {
+    // Optimistically remove the ticket from the UI
+    setlistofproblem((prevList) => prevList.filter(ticket => ticket._id !== ticketId));
+
+    try {
+      await DeleteSupportTicket(ticketId);
+      getSupportTicketapi();  // Ensure data is synced from the server
+    } catch (error) {
+      console.error("Failed to delete ticket:", error);
+      // If deletion fails, re-fetch the ticket list to show the deleted ticket
+      getSupportTicketapi();
+    }
+  };
 
   return (
-    <>
-    Support
-      {/* <div className=" w-100">
-        
+    <div className="w-full p-[20px] bg-white text-black rounded flex items-stretch flex-col">
+      <button
+        type="button"
+        className="self-end py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+        onClick={() => setshowpopup(!showpopup)}
+      >
+        Raise issue
+      </button>
 
-        <div className="table-responsive">
-          <table class="table-borderless w-100 text-center bg-light">
-            <thead class="text-light" style={{ background: "#253A71" }}>
-              <tr>
-                <th class="p-4 "></th>
-                <th class="p-4 ">Name</th>
-                <th class="p-4 ">Contact number</th>
-                <th class="p-4 ">Email id</th>
-                <th class="p-4 ">Service</th>
-                <th class="p-4 ">City</th>
-                <th class="p-4 ">Register date</th>
-                <th class="p-4 ">Status</th>
-                <th class="p-4 ">Verify</th>
-                <th class="p-4 ">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentUsers.map((user) => (
-                <tr key={user.id}>
-                  <td class="p-3">
-                    <input type="checkbox" />
-                  </td>
-                  <td class="p-3">{user.name}</td>
-                  <td class="p-3">{user.contact}</td>
-                  <td class="p-3">{user.email}</td>
-                  <td class="p-3">{user.service}</td>
-                  <td class="p-3">{user.city}</td>
-                  <td class="p-3">{user.registerDate}</td>
-                  <td class="p-3">
-                    <button
-                      className="enable-btn"
-                      onClick={() => setShowEnableModel(true)}
-                    >
-                      Enable
-                    </button>
-                    {showEnableModel && (
-                      <DisableUser closeModel={closeEnableModel} />
-                    )}
-                  </td>
-                  <td class="p-3">
-                    <input type="checkbox" />
-                  </td>
-                  <td class="p-3">
-                    <div class="d-flex align-items-center  justify-content-lg-center">
-                      <Link to="/edit-user">
-                        <button className="edit-btn">
-                          <img src={edit} alt="Edit" />
-                        </button>
-                      </Link>
-                      <button
-                        className="delete-btn"
-                        onClick={() => setShowDeleteModel(true)}
-                      >
-                        <img src={deleteimg} alt="Delete" />
-                      </button>
-                      {showDeleteModel && (
-                        <DeleteUser closeModel={closeDeleteModel} />
-                      )}
-                      <Link to="/view-user">
-                        <button className="show-btn">
-                          <img src={show} alt="Show" />
-                        </button>
-                      </Link>
+      {showpopup && (
+        <div>
+          <div className="text-lg font-semibold mb-4">Support Ticket Form</div>
+          <form onSubmit={formik.handleSubmit}>
+            {/* Admin and Subject Fields - Side by Side */}
+            <div className="mb-4 flex space-x-4">
+              {/* Admin Selector */}
+              <div className="flex-1">
+                <label htmlFor="adminId" className="block text-sm font-medium text-gray-700">
+                  Assign to Admin
+                </label>
+                <select
+                  id="adminId"
+                  name="adminId"
+                  value={formik.values.adminId}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="mt-1 p-2 border border-gray-300 rounded w-full"
+                  disabled={loading}
+                >
+                  <option value="" disabled>Select an Admin</option>
+                  {admins.map((admin) => (
+                    <option key={admin._id} value={admin._id}>
+                      {admin.name}
+                    </option>
+                  ))}
+                </select>
+                {formik.touched.adminId && formik.errors.adminId && (
+                  <div className="text-red-500 text-xs">{formik.errors.adminId}</div>
+                )}
+              </div>
+
+              {/* Subject Field */}
+              <div className="flex-1">
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+                  Subject
+                </label>
+                <input
+                  id="subject"
+                  name="subject"
+                  type="text"
+                  value={formik.values.subject}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="mt-1 p-2 border border-gray-300 rounded w-full"
+                  placeholder="Enter the subject of your issue"
+                  disabled={loading}
+                />
+                {formik.touched.subject && formik.errors.subject && (
+                  <div className="text-red-500 text-xs">{formik.errors.subject}</div>
+                )}
+              </div>
+            </div>
+
+            {/* Problem Field */}
+            <div className="mb-4">
+              <label htmlFor="problem" className="block text-sm font-medium text-gray-700">
+                Problem Description
+              </label>
+              <textarea
+                id="problem"
+                name="problem"
+                value={formik.values.problem}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="mt-1 p-2 border border-gray-300 rounded w-full"
+                disabled={loading}
+              ></textarea>
+              {formik.touched.problem && formik.errors.problem && (
+                <div className="text-red-500 text-xs">{formik.errors.problem}</div>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="bg-blue-500 text-white py-2 px-4 rounded"
+              disabled={loading}
+            >
+              Submit Ticket
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Table to display support tickets */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold mb-4">List of Support Tickets</h2>
+        <table className="min-w-full table-auto border-collapse">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 border">No</th>
+              <th className="px-4 py-2 border">Date</th>
+              <th className="px-4 py-2 border">Subject</th>
+              <th className="px-4 py-2 border">Problem</th>
+              <th className="px-4 py-2 border">Admin Assigned</th>
+              <th className="px-4 py-2 border">Status</th>
+              <th className="px-4 py-2 border">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {listofproblem.map((ticket, index) => (
+              <tr key={ticket._id}>
+                <td className="px-4 py-2 border">{index + 1}</td> {/* Display formatted date */}
+                <td className="px-4 py-2 border">{formatDate(ticket.createdAt)}</td> {/* Display formatted date */}
+                <td className="px-4 py-2 border">{ticket.subject}</td>
+                <td className="px-4 py-2 border">{ticket.problem}</td>
+                <td className="px-4 py-2 border">
+                  {ticket.adminId ? ticket.adminId.name : 'No admin assigned'}
+                </td>
+                <td className="px-4 py-2 border ">
+                  <div className="flex justify-center items-center">
+                    <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: ticket.problemSolved ? "green" : "red" }}> </div>
+                    <div className="ml-[10px]">
+                      {ticket.problemSolved ? 'Solved' : 'Unresolved'}
                     </div>
-                  </td>
-                </tr>
-              ))}
-              {Array.from({ length: emptyRows }).map((_, index) => (
-                <tr key={index + currentUsers.length}>
-                  <td>
-                    <input type="checkbox" />
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="pagination-container d-flex justify-content-end mt-3">
-          <ul className="pagination">{renderPageNumbers()}</ul>
-        </div>
-      </div> */}
-    </>
+                  </div>
+                </td>
+                <td className="px-4 py-2 border">
+                  <button
+                    onClick={() => handleDelete(ticket._id)}
+                    className="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-red-600 rounded-lg hover:bg-red-700 "
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import './TrashedOrder.css'
@@ -24,16 +23,24 @@ const TrashedOrder = () => {
 
 
   const fetchData = async() => {
-    
-    const MerchantId = await localStorage.getItem('merchnatId')
-    const response = await getOrders(MerchantId , 1 , 10)
-    const trashedData = await response.data.filter(data => data.trashed === true)
-   
-    await setOrderData(trashedData)
-    await setFilteredOrders(trashedData)
-    
-    
+    try {
+      const MerchantId = await localStorage.getItem('merchnatId')
+      const response = await getOrders(MerchantId , 1 , 10)
+      if (response?.data) {
+        const trashedData = response.data.filter(data => data.trashed === true)
+        setOrderData(trashedData)
+        setFilteredOrders(trashedData)
+      } else {
+        setOrderData([])
+        setFilteredOrders([])
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error)
+      setOrderData([])
+      setFilteredOrders([])
+    }
   }
+
   useEffect(()=>{
     fetchData()
   },[showModel])
@@ -58,16 +65,12 @@ const TrashedOrder = () => {
       return (
         String(order.orderId).toLowerCase().includes(lowercasedQuery) || // Ensure orderId is a string
         (order.customerName ? order.customerName.toLowerCase() : "").includes(lowercasedQuery) ||
-        (order.pickupAddress.address ? String(order.pickupAddress.address).toLowerCase() : "").includes(lowercasedQuery) || // Convert pickupAddress to string
-        (order.deliveryAddress.address ? String(order.deliveryAddress.address).toLowerCase() : "").includes(lowercasedQuery) || // Convert deliveryAddress to string
+        (order.pickupAddress?.address ? String(order.pickupAddress.address).toLowerCase() : "").includes(lowercasedQuery) || // Convert pickupAddress to string
+        (order.deliveryAddress?.address ? String(order.deliveryAddress.address).toLowerCase() : "").includes(lowercasedQuery) || // Convert deliveryAddress to string
         (order.status ? order.status.toLowerCase() : "").includes(lowercasedQuery)
       );
     });
     
-    
-    console.log(filteredData , "Filter");
-    
-
     setFilteredOrders(filteredData);
   };
 
@@ -101,17 +104,16 @@ const TrashedOrder = () => {
   const hadleDeleteOrder = (id) => {
     setShowModel(true)
     setOrderId(id)
-    console.log(id);
-    
   };
 
   const handleCloseModal = () => {
     setShowModel(false)
     setOrderId(null)
   }
+
   const statusColors = {
     CREATED: "gray",
-    ASSIGNED: "blue",
+    ASSIGNED: "blue", 
     ACCEPTED: "green",
     CANCELLED: "red",
     UNASSIGNED: "red",
@@ -167,13 +169,20 @@ const TrashedOrder = () => {
                 <th className="p-3">Status</th>
                 
                 <th className="p-3">Action</th>
-                <th className="p-3">Order Tracking</th>
+                {/* <th className="p-3">Order Tracking</th> */}
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map((order, index) => (
-                <tr key={index} className="country-row">
-                  <td className="city-data">
+              {filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="12" className="p-3 text-center">
+                    No trashed orders found
+                  </td>
+                </tr>
+              ) : (
+                filteredOrders.map((order, index) => (
+                  <tr key={index} className="country-row">
+                    <td className="city-data">
                       <input type="checkbox" />
                     </td>
                     <td className="p-3 text-primary">{order?.orderId ?? '-'}</td>
@@ -198,21 +207,22 @@ const TrashedOrder = () => {
                     </td>
 
               
-                  <td className="city-data">
-                    <button className="delete-btn me-1" onClick={() => hadleDeleteOrder(order._id)}>
-                      <img src={deleteimg} alt="Delete" className="mx-auto"/>
-                    </button>
-                    <button className="show-btn">
-                      <img src={show} alt="Show" className="mx-auto" />
-                    </button>
-                  </td>
-                  <td className="city-data">
-                    <button className="delete-btn">
-                      <img src={tracking} alt="Tracking" className="mx-auto" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                    <td className="city-data">
+                      <button className="delete-btn me-1" onClick={() => hadleDeleteOrder(order._id)}>
+                        <img src={deleteimg} alt="Delete" className="mx-auto"/>
+                      </button>
+                      {/* <button className="show-btn">
+                        <img src={show} alt="Show" className="mx-auto" />
+                      </button> */}
+                    </td>
+                    {/* <td className="city-data">
+                      <button className="delete-btn">
+                        <img src={tracking} alt="Tracking" className="mx-auto" />
+                      </button>
+                    </td> */}
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -222,8 +232,8 @@ const TrashedOrder = () => {
       </div>
 
       {showModel && <ConformDeleteModel
-      text="Order"
-      Id = {orderId}
+        text="Order"
+        Id={orderId}
         onDelete={() => handleCloseModal()}
         onHide={() => setShowModel(false)}
       />}

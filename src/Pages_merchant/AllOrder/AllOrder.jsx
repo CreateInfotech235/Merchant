@@ -39,10 +39,15 @@ const AllOrder = () => {
   const fetchData = async () => {
     const MerchantId = await localStorage.getItem("merchnatId");
     const response = await getOrders(MerchantId, currentPage, ordersPerPage);
-    await setOrderData(response.data);
-    await setFilteredOrders(response.data);
-    console.log(response.data);
+    if (response?.data) {
+      setOrderData(response.data);
+      setFilteredOrders(response.data);
+    } else {
+      setOrderData([]);
+      setFilteredOrders([]);
+    }
   };
+
   useEffect(() => {
     fetchData();
   }, [showModel, showEditModal]);
@@ -72,11 +77,11 @@ const AllOrder = () => {
         (order.customerName ? order.customerName.toLowerCase() : "").includes(
           lowercasedQuery
         ) ||
-        (order.pickupAddress.address
+        (order.pickupAddress?.address
           ? String(order.pickupAddress.address).toLowerCase()
           : ""
         ).includes(lowercasedQuery) || // Convert pickupAddress to string
-        (order.deliveryAddress.address
+        (order.deliveryAddress?.address
           ? String(order.deliveryAddress.address).toLowerCase()
           : ""
         ).includes(lowercasedQuery) || // Convert deliveryAddress to string
@@ -86,17 +91,11 @@ const AllOrder = () => {
       );
     });
 
-    console.log(filteredData, "Filter");
-
     setFilteredOrders(filteredData);
   };
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders =
-    searchQuery.length > 0
-      ? filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
-      : orderData.slice(indexOfFirstOrder, indexOfLastOrder);
 
   const totalPages = Math.ceil(
     (searchQuery.length > 0 ? filteredOrders.length : orderData.length) /
@@ -208,33 +207,34 @@ const AllOrder = () => {
     
     try {
       // Navigate to invoice format page with order data
-      navigate('/invoice-format', { 
+      navigate('/invoice-format', {
         state: {
           orderData: {
-            header: 'Your Company Name\nAddress Line 1\nAddress Line 2\nPhone: XXX-XXX-XXXX\nEmail: example@email.com',
-            footer: 'Thank you for your business!\nFor support, please contact us.',
-            logo: null,
-            logoPreview: 'https://placehold.co/200x100/png',
-            orderDetails: {
-              orderId: order.orderId,
-              date: order.dateTime,
-              customerName: order.customerName,
-              customerAddress: order.deliveryAddress.address,
-              customerPhone: order.deliveryAddress.mobileNumber || '',
-              customerEmail: order.deliveryAddress.email || '',
-              items: [
-                {
-                  description: 'Delivery Service',
-                  quantity: order.parcelsCount,
-                  unitPrice: order.price || 0,
-                  total: order.price || 0
-                }
-              ],
-              subtotal: order.price || 0,
-              tax: (order.price * 0.2) || 0,
-              shippingCost: 0,
-              total: (order.price * 1.2) || 0
-            }
+            orderId: order.orderId,
+            createdAt: order.dateTime,
+            parcelType: order.parcelType,
+            weight: order.weight,
+            parcelsCount: order.parcelsCount,
+            pickupDetails: {
+              name: order.pickupAddress?.name,
+              address: order.pickupAddress?.address,
+              mobileNumber: order.pickupAddress?.mobileNumber,
+              email: order.pickupAddress?.email,
+              postCode: order.pickupAddress?.postCode
+            },
+            deliveryDetails: {
+              name: order.deliveryAddress?.name,
+              address: order.deliveryAddress?.address, 
+              mobileNumber: order.deliveryAddress?.mobileNumber,
+              email: order.deliveryAddress?.email,
+              postCode: order.deliveryAddress?.postCode
+            },
+            charges: order.charges,
+            totalCharge: order.totalCharge,
+            cashCollection: order.cashCollection,
+            distance: order.distance,
+            duration: order.duration,
+            status: order.status
           }
         }
       });
@@ -303,80 +303,88 @@ const AllOrder = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map((order, index) =>
-                order.trashed === false ? (
-                  <tr key={index} className="country-row">
-                    <td className="city-data">
-                      <input type="checkbox" />
-                    </td>
-                    <td className="p-3 text-primary">
-                      {order?.orderId ?? "-"}
-                    </td>
-                    <td className="p-3 text-dark fw-bold">
-                      {order?.customerName ?? "-"}
-                    </td>
-                    <td className="p-3">
-                      {`${order?.pickupAddress?.address}(${
-                        order?.pickupAddress?.postCode ?? "-"
-                      })` ?? "-"}
-                    </td>
-                    <td className="p-3">
-                      {`${order?.deliveryAddress?.address}(${
-                        order?.deliveryAddress?.postCode ?? "-"
-                      })` ?? "-"}
-                    </td>
-                    <td className="p-3">{order?.deliveryMan ?? "-"}</td>
-                    <td className="p-3">{order?.createdDate ?? "-"}</td>
-                    <td className="p-3">{order?.pickupDate ?? "-"}</td>
-                    <td className="p-3">{order?.deliveryDate ?? "-"}</td>
-                    <td className="p-3 fw-bold">
-                      {order.status === "DELIVERED" ? (
-                        <button 
-                          className="btn btn-sm btn-primary"
-                          onClick={() => downloadInvoice(order)}
-                        >
-                          Download Invoice
+              {(!filteredOrders || filteredOrders.length === 0) ? (
+                <tr>
+                  <td colSpan="13" className="p-3 text-center">
+                    No orders found
+                  </td>
+                </tr>
+              ) : (
+                filteredOrders.map((order, index) =>
+                  order.trashed === false ? (
+                    <tr key={index} className="country-row">
+                      <td className="city-data">
+                        <input type="checkbox" />
+                      </td>
+                      <td className="p-3 text-primary">
+                        {order?.orderId ?? "-"}
+                      </td>
+                      <td className="p-3 text-dark fw-bold">
+                        {order?.customerName ?? "-"}
+                      </td>
+                      <td className="p-3">
+                        {`${order?.pickupAddress?.address}(${
+                          order?.pickupAddress?.postCode ?? "-"
+                        })` ?? "-"}
+                      </td>
+                      <td className="p-3">
+                        {`${order?.deliveryAddress?.address}(${
+                          order?.deliveryAddress?.postCode ?? "-"
+                        })` ?? "-"}
+                      </td>
+                      <td className="p-3">{order?.deliveryMan ?? "-"}</td>
+                      <td className="p-3">{order?.createdDate ?? "-"}</td>
+                      <td className="p-3">{order?.pickupDate ?? "-"}</td>
+                      <td className="p-3">{order?.deliveryDate ?? "-"}</td>
+                      <td className="p-3 fw-bold">
+                        {order.status === "DELIVERED" ? (
+                          <button 
+                            className="btn btn-sm btn-primary enable-btn"
+                            onClick={() => downloadInvoice(order)}
+                          >
+                            Download Invoice
+                          </button>
+                        ) : (
+                          order?.invoice ?? "-"
+                        )}
+                      </td>
+                      <td className="p-3">
+                        <button className={`${getColorClass(order.status)} mx-2`}>
+                          {order.status}
                         </button>
-                      ) : (
-                        order?.invoice ?? "-"
-                      )}
-                    </td>
-                    <td className="p-3">
-                      <button className={`${getColorClass(order.status)} mx-2`}>
-                        {order.status}
-                      </button>
-                    </td>
+                      </td>
 
-                    <td className="city-data">
-                      <button
-                        className="edit-btn ms-1"
-                        onClick={() => handleEditClick(order)}
-                      >
-                        <img src={edit} alt="Edit" className="mx-auto" />
-                      </button>
-                      <button
-                        className="delete-btn me-1"
-                        onClick={() => hadleDeleteOrder(order._id)}
-                      >
-                        <img src={deleteimg} alt="Delete" className="mx-auto"/>
-                      </button>
-                      <button
-                          className="show-btn ms-1"
-                          onClick={() => handleViewClick(order)}
+                      <td className="city-data">
+                        <button
+                          className="edit-btn ms-1"
+                          onClick={() => handleEditClick(order)}
                         >
-                          <img src={show} alt="Show" className="mx-auto"/>
+                          <img src={edit} alt="Edit" className="mx-auto" />
                         </button>
-                    </td>
-                    <td className="city-data">
-                      <button 
-                      className="delete-btn"
-                      onClick={() => hadleTrackOrder(order.deliveryManId, order.deliveryAddress.location ,order.pickupAddress.location , order.status , )}
-                      >
-                        <img src={tracking} alt="Tracking" className="mx-auto"/>
-                      </button>
-                    </td>
-                  </tr>
-                ) : null
+                        <button
+                          className="delete-btn me-1"
+                          onClick={() => hadleDeleteOrder(order._id)}
+                        >
+                          <img src={deleteimg} alt="Delete" className="mx-auto"/>
+                        </button>
+                        <button
+                            className="show-btn ms-1"
+                            onClick={() => handleViewClick(order)}
+                          >
+                            <img src={show} alt="Show" className="mx-auto"/>
+                          </button>
+                      </td>
+                      <td className="city-data">
+                        <button 
+                        className="delete-btn"
+                        onClick={() => hadleTrackOrder(order.deliveryManId, order.deliveryAddress.location ,order.pickupAddress.location , order.status , )}
+                        >
+                          <img src={tracking} alt="Tracking" className="mx-auto"/>
+                        </button>
+                      </td>
+                    </tr>
+                  ) : null
+                )
               )}
             </tbody>
           </table>

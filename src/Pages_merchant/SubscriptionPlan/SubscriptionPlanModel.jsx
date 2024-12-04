@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import select from "../../assets_mercchant/select.png";
 import { freeSubscription } from "../../Components_merchant/Api/Subscription";
 import { useNavigate } from "react-router-dom";
+import { getMerchantProfile } from "../../Components_merchant/Api/Profile";
 
 const SubscriptionPlanModel = ({
   onHide,
@@ -47,11 +48,19 @@ const SubscriptionPlanModel = ({
     const Fvalues = { ...values, userId: marchantId };
     console.log(Fvalues);
 
-    const response = await freeSubscription(Fvalues);
-    if (response.status) {
-      navigate("/Merchant-dashboard");
+    const subscriptionResponse = await freeSubscription(Fvalues);
+    
+    if (subscriptionResponse.status) {
+      const profileResponse = await getMerchantProfile();
+      console.log(profileResponse.data[0], "Profile");
+      
+      if (profileResponse.status) {
+        localStorage.setItem('userData', JSON.stringify(profileResponse.data[0]));
+      }
+      navigate("/subscription-active");
+      onHide();
     }
-    console.log(response, "Data");
+    console.log(subscriptionResponse, "Data");
   };
 
   const handleClose = () => {

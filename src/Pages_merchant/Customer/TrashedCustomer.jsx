@@ -150,12 +150,12 @@ const TrashedCustomer = () => {
                       <button className="delete-btn me-1" onClick={() => hadleDeleteOrder(customer._id)}>
                       <img src={deleteimg} alt="Delete" className="mx-auto"/>
                     </button>
-                      <button
+                      {/* <button
                         className="show-btn m-2"
                         onClick={() => handleShowInfo(customer)}
                       >
                         <img src={show} alt="Show" className="mx-auto"/>
-                      </button>
+                      </button> */}
                     </div>
                   </td>
                 </tr>

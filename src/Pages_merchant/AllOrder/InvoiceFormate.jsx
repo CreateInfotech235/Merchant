@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import html2canvas from 'html2canvas';
@@ -7,161 +7,41 @@ import jsPDF from 'jspdf';
 function InvoiceFormate() {
   const location = useLocation();
   const orderData = location.state?.orderData;
-    console.log(orderData);
-  // Initial state with order details
-  const dummyData = {
-    header: 'ACME Shipping & Logistics\n123 Main Street\nLondon, UK EC1A 1BB\nPhone: +44 20 1234 5678\nEmail: info@acmeshipping.com',
-    footer: 'Thank you for choosing ACME Shipping & Logistics!\nFor support, call us at +44 20 1234 5678 or email support@acmeshipping.com',
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [invoiceSettings, setInvoiceSettings] = useState({
+    header: 'Delivery Service Invoice',
+    footer: 'Thank you for choosing our delivery service!',
     logo: null,
     logoPreview: 'https://placehold.co/200x100/png',
     orderDetails: {
-      orderId: 'ORD-2024-001',
-      date: '2024-01-20',
-      customerName: 'John Smith',
-      customerAddress: '456 Park Avenue\nNew York, NY 10022\nUnited States',
-      customerPhone: '+1 212-555-0123',
-      customerEmail: 'john.smith@email.com',
-      items: [
-        {
-          description: 'Standard Shipping Package',
-          quantity: 2,
-          unitPrice: 50,
-          total: 100
-        },
-        {
-          description: 'Express Delivery Service',
-          quantity: 1,
-          unitPrice: 75,
-          total: 75
-        },
-        {
-          description: 'Package Insurance',
-          quantity: 3,
-          unitPrice: 25,
-          total: 75
-        }
-      ],
-      subtotal: 250,
-      tax: 50,
-      shippingCost: 35,
-      total: 335
+      orderId: orderData?.orderId || '',
+      date: orderData?.createdAt || new Date().toISOString(),
+      parcelType: orderData?.parcelType || '',
+      weight: orderData?.weight || 0,
+      parcelsCount: orderData?.parcelsCount || 0,
+      pickupDetails: {
+        name: orderData?.pickupDetails?.name || '',
+        address: orderData?.pickupDetails?.address || '',
+        mobileNumber: orderData?.pickupDetails?.mobileNumber || '',
+        email: orderData?.pickupDetails?.email || '',
+        postCode: orderData?.pickupDetails?.postCode || ''
+      },
+      deliveryDetails: {
+        name: orderData?.deliveryDetails?.name || '',
+        address: orderData?.deliveryDetails?.address || '',
+        mobileNumber: orderData?.deliveryDetails?.mobileNumber || '',
+        email: orderData?.deliveryDetails?.email || '',
+        postCode: orderData?.deliveryDetails?.postCode || ''
+      },
+      charges: orderData?.charges || [],
+      totalCharge: orderData?.totalCharge || 0,
+      cashCollection: orderData?.cashCollection || 0,
+      distance: orderData?.distance || 0,
+      duration: orderData?.duration || '',
+      status: orderData?.status || ''
     }
-  };
-
-  const [invoiceSettings, setInvoiceSettings] = useState(dummyData);
-  const [isEditing, setIsEditing] = useState(false);
-
-  useEffect(() => {
-    try {
-      const savedSettings = localStorage.getItem('invoiceSettings');
-      if (savedSettings) {
-        const parsed = JSON.parse(savedSettings);
-        // Ensure orderDetails exists with default values if missing
-        const orderDetails = parsed.orderDetails || {
-          orderId: '',
-          date: '',
-          customerName: '',
-          customerAddress: '',
-          customerPhone: '',
-          customerEmail: '',
-          items: [],
-          subtotal: 0,
-          tax: 0,
-          shippingCost: 0,
-          total: 0
-        };
-        setInvoiceSettings({
-          ...parsed,
-          orderDetails
-        });
-      }
-    } catch (error) {
-      console.error('Error loading invoice settings:', error);
-      setInvoiceSettings(dummyData); // Fallback to dummy data if error
-    }
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setInvoiceSettings(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleOrderDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setInvoiceSettings(prev => ({
-      ...prev,
-      orderDetails: {
-        ...prev.orderDetails,
-        [name]: value
-      }
-    }));
-  };
-
-  const handleItemChange = (index, field, value) => {
-    setInvoiceSettings(prev => {
-      const newItems = [...prev.orderDetails.items];
-      newItems[index] = {
-        ...newItems[index],
-        [field]: value,
-        total: field === 'quantity' || field === 'unitPrice' ? 
-          value * (field === 'quantity' ? newItems[index].unitPrice : newItems[index].quantity) :
-          newItems[index].total
-      };
-
-      const subtotal = newItems.reduce((sum, item) => sum + item.total, 0);
-      const tax = subtotal * 0.2; // 20% tax
-      const total = subtotal + tax + prev.orderDetails.shippingCost;
-
-      return {
-        ...prev,
-        orderDetails: {
-          ...prev.orderDetails,
-          items: newItems,
-          subtotal,
-          tax,
-          total
-        }
-      };
-    });
-  };
-
-  const addItem = () => {
-    setInvoiceSettings(prev => ({
-      ...prev,
-      orderDetails: {
-        ...prev.orderDetails,
-        items: [...prev.orderDetails.items, {
-          description: '',
-          quantity: 0,
-          unitPrice: 0,
-          total: 0
-        }]
-      }
-    }));
-  };
-
-  const removeItem = (index) => {
-    setInvoiceSettings(prev => {
-      const newItems = prev.orderDetails.items.filter((_, i) => i !== index);
-      const subtotal = newItems.reduce((sum, item) => sum + item.total, 0);
-      const tax = subtotal * 0.2;
-      const total = subtotal + tax + prev.orderDetails.shippingCost;
-
-      return {
-        ...prev,
-        orderDetails: {
-          ...prev.orderDetails,
-          items: newItems,
-          subtotal,
-          tax,
-          total
-        }
-      };
-    });
-  };
+  });
 
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
@@ -178,21 +58,23 @@ function InvoiceFormate() {
     }
   };
 
-  const handleSave = () => {
-    try {
-      localStorage.setItem('invoiceSettings', JSON.stringify(invoiceSettings));
-      toast.success('Invoice format saved successfully');
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error saving invoice format:', error);
-      toast.error('Error saving invoice format');
-    }
+  const handleInputChange = (field, value) => {
+    setInvoiceSettings(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const downloadInvoicePDF = async () => {
     try {
       const element = document.querySelector('.invoice-content');
-      const canvas = await html2canvas(element);
+      const canvas = await html2canvas(element, {
+        x: -20,
+        y: -20,
+        width: element.offsetWidth + 40,
+        height: element.offsetHeight + 40,
+        backgroundColor: '#ffffff'
+      });
       const imgData = canvas.toDataURL('image/png');
       
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -200,9 +82,9 @@ function InvoiceFormate() {
       const pdfHeight = pdf.internal.pageSize.getHeight();
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const ratio = Math.min((pdfWidth - 20) / imgWidth, (pdfHeight - 20) / imgHeight);
       const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = 30;
+      const imgY = (pdfHeight - imgHeight * ratio) / 2;
 
       pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
       pdf.save(`invoice-${invoiceSettings.orderDetails.orderId}.pdf`);
@@ -214,277 +96,185 @@ function InvoiceFormate() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Invoice Format</h2>
-        <div className="flex gap-2">
+    <div className="max-w-8xl mx-auto p-8 bg-white">
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          {isEditing ? (
+            <input
+              type="text"
+              value={invoiceSettings.header}
+              onChange={(e) => handleInputChange('header', e.target.value)}
+              className="text-4xl font-bold text-gray-800 border-b border-gray-300 focus:outline-none focus:border-blue-500"
+            />
+          ) : (
+            <h1 className="text-4xl font-bold text-gray-800">{invoiceSettings.header}</h1>
+          )}
+          <p className="text-gray-500 mt-1">Invoice #{invoiceSettings.orderDetails.orderId}</p>
+        </div>
+        <div className="flex gap-4">
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className={`px-6 py-2 rounded-lg transition-colors ${
+              isEditing 
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-gray-600 hover:bg-gray-700 text-white'
+            }`}
           >
-            {isEditing ? 'Cancel' : 'Edit'}
+            {isEditing ? 'Save Changes' : 'Edit Invoice'}
           </button>
           <button
             onClick={downloadInvoicePDF}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Download Invoice
+            Download PDF
           </button>
         </div>
       </div>
 
-      <div className="space-y-6 invoice-content">
-        {/* Company Info Section */}
-        <div className="grid grid-cols-2 gap-4">
+      <div className="invoice-content space-y-8">
+        <div className="flex justify-between items-start border-b border-gray-200 pb-8">
           <div>
-            <label className="block mb-2 font-semibold">Company Logo</label>
-            {isEditing ? (
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={handleLogoChange}
-                className="border p-2 rounded w-full"
+            <div className="relative">
+              <img 
+                src={invoiceSettings.logoPreview}
+                alt="Company Logo"
+                className="h-16 object-contain"
               />
-            ) : (
-              invoiceSettings.logoPreview && (
-                <img 
-                  src={invoiceSettings.logoPreview} 
-                  alt="Company Logo" 
-                  className="max-w-[200px]"
-                />
-              )
-            )}
-          </div>
-          <div>
-            <label className="block mb-2 font-semibold">Company Details</label>
-            {isEditing ? (
-              <textarea
-                name="header"
-                value={invoiceSettings.header}
-                onChange={handleInputChange}
-                className="border p-2 rounded w-full h-32"
-                placeholder="Enter company details..."
-              />
-            ) : (
-              <div className="border p-4 rounded bg-gray-50 whitespace-pre-line">
-                {invoiceSettings.header}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Order Details Section */}
-        <div className="border p-4 rounded">
-          <h3 className="text-xl font-bold mb-4">Order Details</h3>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block mb-2">Order ID</label>
-              {isEditing ? (
+              {isEditing && (
                 <input
-                  type="text"
-                  name="orderId"
-                  value={invoiceSettings.orderDetails?.orderId || ''}
-                  onChange={handleOrderDetailsChange}
-                  className="border p-2 rounded w-full"
+                  type="file"
+                  onChange={handleLogoChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  accept="image/*"
                 />
-              ) : (
-                <div className="border p-2 rounded bg-gray-50">
-                  {invoiceSettings.orderDetails?.orderId || ''}
-                </div>
               )}
             </div>
-            <div>
-              <label className="block mb-2">Date</label>
+            <div className="mt-4">
+              <h3 className="font-semibold text-gray-800">From</h3>
               {isEditing ? (
-                <input
-                  type="date"
-                  name="date"
-                  value={invoiceSettings.orderDetails?.date || ''}
-                  onChange={handleOrderDetailsChange}
-                  className="border p-2 rounded w-full"
-                />
-              ) : (
-                <div className="border p-2 rounded bg-gray-50">
-                  {invoiceSettings.orderDetails?.date || ''}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Customer Details */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block mb-2">Customer Name</label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="customerName"
-                  value={invoiceSettings.orderDetails?.customerName || ''}
-                  onChange={handleOrderDetailsChange}
-                  className="border p-2 rounded w-full"
-                />
-              ) : (
-                <div className="border p-2 rounded bg-gray-50">
-                  {invoiceSettings.orderDetails?.customerName || ''}
-                </div>
-              )}
-            </div>
-            <div>
-              <label className="block mb-2">Customer Address</label>
-              {isEditing ? (
-                <textarea
-                  name="customerAddress"
-                  value={invoiceSettings.orderDetails?.customerAddress || ''}
-                  onChange={handleOrderDetailsChange}
-                  className="border p-2 rounded w-full"
-                />
-              ) : (
-                <div className="border p-2 rounded bg-gray-50">
-                  {invoiceSettings.orderDetails?.customerAddress || ''}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Items Table */}
-          <div className="mb-4">
-            <h4 className="font-bold mb-2">Items</h4>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border p-2">Description</th>
-                  <th className="border p-2">Quantity</th>
-                  <th className="border p-2">Unit Price</th>
-                  <th className="border p-2">Total</th>
-                  {isEditing && <th className="border p-2">Actions</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {invoiceSettings.orderDetails?.items?.map((item, index) => (
-                  <tr key={index}>
-                    <td className="border p-2">
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={item.description}
-                          onChange={(e) => handleItemChange(index, 'description', e.target.value)}
-                          className="w-full p-1"
-                        />
-                      ) : (
-                        item.description
-                      )}
-                    </td>
-                    <td className="border p-2">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value))}
-                          className="w-full p-1"
-                        />
-                      ) : (
-                        item.quantity
-                      )}
-                    </td>
-                    <td className="border p-2">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          value={item.unitPrice}
-                          onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value))}
-                          className="w-full p-1"
-                        />
-                      ) : (
-                        `£${item.unitPrice.toFixed(2)}`
-                      )}
-                    </td>
-                    <td className="border p-2">£{item.total.toFixed(2)}</td>
-                    {isEditing && (
-                      <td className="border p-2">
-                        <button
-                          onClick={() => removeItem(index)}
-                          className="bg-red-500 text-white px-2 py-1 rounded"
-                        >
-                          Remove
-                        </button>
-                      </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {isEditing && (
-              <button
-                onClick={addItem}
-                className="bg-green-500 text-white px-4 py-2 rounded mt-2"
-              >
-                Add Item
-              </button>
-            )}
-          </div>
-
-          {/* Totals */}
-          <div className="grid grid-cols-2 gap-4">
-            <div></div>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span>Subtotal:</span>
-                <span>£{invoiceSettings.orderDetails?.subtotal?.toFixed(2) || '0.00'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Tax (20%):</span>
-                <span>£{invoiceSettings.orderDetails?.tax?.toFixed(2) || '0.00'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Shipping:</span>
-                {isEditing ? (
+                <div className="space-y-2">
                   <input
-                    type="number"
-                    name="shippingCost"
-                    value={invoiceSettings.orderDetails?.shippingCost || 0}
-                    onChange={handleOrderDetailsChange}
-                    className="border p-1 w-24 text-right"
+                    type="text"
+                    value="Delivery Service Company"
+                    className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500"
                   />
-                ) : (
-                  <span>£{invoiceSettings.orderDetails?.shippingCost?.toFixed(2) || '0.00'}</span>
-                )}
-              </div>
-              <div className="flex justify-between font-bold">
-                <span>Total:</span>
-                <span>£{invoiceSettings.orderDetails?.total?.toFixed(2) || '0.00'}</span>
-              </div>
+                  <input
+                    type="text"
+                    value="123 Delivery Street"
+                    className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500"
+                  />
+                  <input
+                    type="text"
+                    value="London, UK"
+                    className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              ) : (
+                <>
+                  <p className="text-gray-600">Delivery Service Company</p>
+                  <p className="text-gray-600">123 Delivery Street</p>
+                  <p className="text-gray-600">London, UK</p>
+                </>
+              )}
+            </div>
+          </div>
+          
+          <div className="text-right">
+            <p className="text-gray-600">Date: {new Date(invoiceSettings.orderDetails.date).toLocaleDateString('en-GB')}</p>
+            <p className="text-gray-600">Status: <span className="font-semibold">{invoiceSettings.orderDetails.status}</span></p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-12">
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="font-semibold text-gray-800 mb-4">Pickup Details</h3>
+            <div className="space-y-2 text-gray-600">
+              <p><span className="font-medium">Name:</span> {invoiceSettings.orderDetails.pickupDetails.name}</p>
+              <p><span className="font-medium">Address:</span> {invoiceSettings.orderDetails.pickupDetails.address}</p>
+              <p><span className="font-medium">Phone:</span> {invoiceSettings.orderDetails.pickupDetails.mobileNumber}</p>
+              <p><span className="font-medium">Email:</span> {invoiceSettings.orderDetails.pickupDetails.email}</p>
+              <p><span className="font-medium">Post Code:</span> {invoiceSettings.orderDetails.pickupDetails.postCode}</p>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="font-semibold text-gray-800 mb-4">Delivery Details</h3>
+            <div className="space-y-2 text-gray-600">
+              <p><span className="font-medium">Name:</span> {invoiceSettings.orderDetails.deliveryDetails.name}</p>
+              <p><span className="font-medium">Address:</span> {invoiceSettings.orderDetails.deliveryDetails.address}</p>
+              <p><span className="font-medium">Phone:</span> {invoiceSettings.orderDetails.deliveryDetails.mobileNumber}</p>
+              <p><span className="font-medium">Email:</span> {invoiceSettings.orderDetails.deliveryDetails.email}</p>
+              <p><span className="font-medium">Post Code:</span> {invoiceSettings.orderDetails.deliveryDetails.postCode}</p>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
+        <div className="bg-gray-50 p-6 rounded-lg">
+          <h3 className="font-semibold text-gray-800 mb-4">Parcel Information</h3>
+          <div className="grid grid-cols-3 gap-6 text-gray-600">
+            <div>
+              <p className="font-medium">Parcel Type</p>
+              <p>{invoiceSettings.orderDetails.parcelType}</p>
+            </div>
+            <div>
+              <p className="font-medium">Weight</p>
+              <p>{invoiceSettings.orderDetails.weight} kg</p>
+            </div>
+            <div>
+              <p className="font-medium">Quantity</p>
+              <p>{invoiceSettings.orderDetails.parcelsCount} items</p>
+            </div>
+            <div>
+              <p className="font-medium">Distance</p>
+              <p>{invoiceSettings.orderDetails.distance} km</p>
+            </div>
+            <div>
+              <p className="font-medium">Duration</p>
+              <p>{invoiceSettings.orderDetails.duration}</p>
+            </div>
+          </div>
+        </div>
+
         <div>
-          <label className="block mb-2 font-semibold">Invoice Footer</label>
+          <h3 className="font-semibold text-gray-800 mb-4">Charges Breakdown</h3>
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="py-3 px-4 font-semibold">Description</th>
+                <th className="py-3 px-4 font-semibold text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {invoiceSettings.orderDetails.charges.map((charge, index) => (
+                <tr key={index} className="text-gray-600">
+                  <td className="py-3 px-4">{charge.title}</td>
+                  <td className="py-3 px-4 text-right">£{charge.charge.toFixed(2)}</td>
+                </tr>
+              ))}
+              <tr className="font-semibold text-gray-800">
+                <td className="py-4 px-4">Total Charges</td>
+                <td className="py-4 px-4 text-right">£{invoiceSettings.orderDetails.totalCharge.toFixed(2)}</td>
+              </tr>
+              <tr className="font-semibold text-gray-800">
+                <td className="py-4 px-4">Cash Collection</td>
+                <td className="py-4 px-4 text-right">£{invoiceSettings.orderDetails.cashCollection.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="text-center border-t border-gray-200 pt-8 text-gray-500">
           {isEditing ? (
-            <textarea
-              name="footer"
+            <input
+              type="text"
               value={invoiceSettings.footer}
-              onChange={handleInputChange}
-              className="border p-2 rounded w-full h-32"
-              placeholder="Enter invoice footer text..."
+              onChange={(e) => handleInputChange('footer', e.target.value)}
+              className="w-full text-center border-b border-gray-300 focus:outline-none focus:border-blue-500"
             />
           ) : (
-            <div className="border p-4 rounded bg-gray-50 whitespace-pre-line">
-              {invoiceSettings.footer}
-            </div>
+            <p>{invoiceSettings.footer}</p>
           )}
         </div>
-
-        {isEditing && (
-          <div className="flex justify-end">
-            <button
-              onClick={handleSave}
-              className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
-            >
-              Save Changes
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
