@@ -7,7 +7,7 @@ function Formate({children}) {
   return (
   <>
     <NavBar />
-    <div className='mt-[113px] '>
+    <div className=''>
       {children}
     </div>
     <Footer />

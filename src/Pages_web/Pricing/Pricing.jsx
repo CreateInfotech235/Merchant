@@ -1,9 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate for navigation
 import bgimg from "../../assets_web/Pricingbgimg.jpg";
 import tracking from "../../assets_web/Group (4).png";
 import courierman from "../../assets_web/courier man.jpg";
 import van from "../../assets_web/van.jpg";
+import ExpressDelivery from "../../assets_web/Express Delivery.webp";
+import StandardDelivery from "../../assets_web/Standard Delivery.webp";
+import BulkTransport from "../../assets_web/Bulk Transport.jpg";
+import SpecialCare from "../../assets_web/Special Care.jpg";
 import Gotop from "./../../Components_web/Gotop/Gotop"
 import { PiTruckDuotone } from "react-icons/pi";
 import { BsBoxSeam } from "react-icons/bs";
@@ -24,7 +28,9 @@ import { Title } from 'chart.js';
 
 function Pricing() {
   const navigate = useNavigate(); // Initialize navigate function
-
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
   // Function to handle button click
   const handleClick = () => {
     navigate('/about'); // Navigate to /about page
@@ -51,24 +57,24 @@ function Pricing() {
 
   const sliderdata = [
     {
-      img: van,
-      title: "a1",
-      dtale: "assa"
+      img: ExpressDelivery,
+      title: "Express Delivery",
+      dtale: "Same-day delivery service within London for urgent packages and documents. Our fastest delivery option with real-time tracking."
     },
     {
-      img: van,
-      title: "a1",
-      dtale: "assa"
+      img: StandardDelivery,
+      title: "Standard Delivery",
+      dtale: "Reliable next-day delivery service perfect for regular shipments. Cost-effective solution with professional handling."
     },
     {
-      img: van,
-      title: "a1",
-      dtale: "assa"
+      img: BulkTransport,
+      title: "Bulk Transport",
+      dtale: "Specialized service for large volumes and heavy cargo. Ideal for business shipments with competitive rates."
     },
     {
-      img: van,
-      title: "a1",
-      dtale: "assa"
+      img: SpecialCare,
+      title: "Special Care",
+      dtale: "Dedicated handling for fragile and valuable items. Extra protection and insurance for your precious cargo."
     }
   ]
   return (
@@ -119,23 +125,23 @@ function Pricing() {
             </div>
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-[30px]'>
-            <div className='w-full'>
-              <div className='mx-auto relative w-[100%] lg:w-[80%]'>
-                <img src={van} alt="Courier Van" className='w-full' />
-                <img src={courierman} alt="Courier Delivery" className='w-[50%] absolute right-[-15px] bottom-[-15px] border-[15px] border-white rounded-[10px]' />
-              </div>
-            </div>
-            <div className='w-full flex items-center'>
+            <div className='w-full order-2 md:order-1 flex items-center'>
               <div className='w-full'>
                 <div className='w-full text-center font-bold text-[25px]  lg:text-[40px] '>
                   Fast & Reliable London Service
                 </div>
-                <div className='mt-3 text-[19] lg:text-[22px] leading-7'>
+                <div className='mt-3 text-[19] lg:text-[20px] leading-7'>
                   Our courier service in London ensures fast, efficient, and reliable delivery across the city. Whether you're sending packages, important documents, or gifts, our team guarantees prompt delivery with professional care.
                 </div>
-                <div className='mt-3 text-[22px] leading-7'>
-                  We pride ourselves on our local knowledge, which allows us to navigate London’s bustling streets and deliver to even the most remote areas. Our couriers are equipped with the latest tracking technology, so you can always know where your package is.
+                <div className='mt-3 text-[20px] leading-7'>
+                  We pride ourselves on our local knowledge, which allows us to navigate London's bustling streets and deliver to even the most remote areas. Our couriers are equipped with the latest tracking technology, so you can always know where your package is.
                 </div>
+              </div>
+            </div>
+            <div className='w-full order-1 md:order-2'>
+              <div className='mx-auto relative w-[100%] lg:w-[80%]'>
+                <img src={van} alt="Courier Van" className='w-full' />
+                <img src={courierman} alt="Courier Delivery" className='w-[50%] absolute right-[-15px] bottom-[-15px] border-[15px] border-white rounded-[10px]' />
               </div>
             </div>
           </div>
@@ -318,35 +324,48 @@ function Pricing() {
           <Swiper
             slidesPerView={3}
             spaceBetween={30}
-            navigation={false} // Disable default navigation
-            modules={[Navigation, Autoplay]} // Enable Autoplay and Navigation modules
-            className="mySwiper mt-6"
-            loop={true} // Enable looping
-            autoplay={{ delay: 2500, disableOnInteraction: false }} // Enable autoplay with a delay of 2.5 seconds
-            ref={swiperRef} // Attach the Swiper ref
+            navigation={false}
+            modules={[Navigation, Autoplay]}
+            className="mySwiper my-6 h-[600px]"
+            loop={true}
+            autoplay={{ delay: 2500, disableOnInteraction: false }}
+            ref={swiperRef}
+            breakpoints={{
+              320: {
+                slidesPerView: 1,
+                spaceBetween: 20
+              },
+              768: {
+                slidesPerView: 2,
+                spaceBetween: 30
+              },
+              1024: {
+                slidesPerView: 3,
+                spaceBetween: 30
+              }
+            }}
           >
             {
               sliderdata.map((item) => (
                 <>
-                  <SwiperSlide>
-                    <div className='w-full shadow pb-4 mb-10'>
-                      <div className='w-full h-[300px] ' style={{ background: `url(${item.img})`, backgroundSize: "cover", backgroundPosition: "center" }} >
+                  <SwiperSlide className='h-[600px] flex items-center justify-center'>
+                    <div className='w-[90%]  shadow pb-4 mb-10 h-[98%] rounded overflow-hidden'>
+                      <div className='w-full h-[300px]' style={{ background: `url(${item.img})`, backgroundSize: "cover", backgroundPosition: "center" }} >
                       </div>
-                      <div className='w-full bg-[#221F92] text-[#fff] py-2 px-3 font-extrabold text-[22px]'>
+                      <div className='w-full bg-[#221F92] text-[#fff] py-2 px-3 font-extrabold text-[20px]'>
                         {item.title}
                       </div>
-                      <div className='mt-2 p-4 text-[20px]'>
+                      <div className='mt-2 p-4 text-[20px] min-h-[120px]'>
                         {item.dtale}
                       </div>
                       <div className='flex justify-center items-center'>
-                        <button className=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center inline-flex items-center ml-5">About more</button>
+                        <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center inline-flex items-center ml-5">About more</button>
                       </div>
                     </div>
                   </SwiperSlide>
                 </>
               ))
             }
-
           </Swiper>
 
           {/* Custom navigation buttons */}

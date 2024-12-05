@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import tracking from "../../assets_web/Group (4).png";
 import service from "../../assets_web/service icon.png";
 import service1 from "../../assets_web/service icon (1).png";
@@ -68,6 +68,9 @@ const stats = [
   { name: "Paid time off", value: "Unlimited" },
 ];
 function Mainbody() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
   return (
     <>
       <div>
@@ -101,28 +104,28 @@ function Mainbody() {
               className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
             />
           </div>
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className=" max-w-2xl lg:mx-0">
-              <h3 className="text-3xl font-semibold tracking-tight text-white sm:text-5xl sm:leading-[1.4] capitalize">
-                Fast and reliable parcel delivery services in London, designed for your convenience and speed.
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl lg:mx-0">
+              <h3 className="text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight text-white leading-[1.2] md:leading-[1.4] capitalize">
+                Revolutionizing London's Delivery Experience with Speed and Reliability
               </h3>
-              <p className="mt-8 text-pretty text-lg font-medium text-gray-300 sm:text-xl/8">
-                Get your packages delivered quickly and safely with Delibox. Easily track and locate your items for complete peace of mind.
+              <p className="mt-4 md:mt-8 text-base md:text-lg lg:text-xl text-gray-300 font-medium">
+                Experience seamless delivery solutions with Delibox. Our advanced tracking system ensures your parcels are delivered safely and on time, every time.
               </p>
             </div>
-            <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
-              <div className="grid grid-cols-1 gap-x-8 gap-y-6 text-base/7 font-semibold text-white sm:grid-cols-2 md:flex lg:gap-x-10">
+            <div className="mx-auto mt-6 md:mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-4 md:gap-6 lg:gap-10 text-sm md:text-base font-semibold text-white">
                 {links.map((link) => (
-                  <a key={link.name} href={link.href}>
+                  <a key={link.name} href={link.href} className="hover:text-blue-400 transition-colors">
                     {link.name} <span aria-hidden="true">&rarr;</span>
                   </a>
                 ))}
               </div>
-              <dl className="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
+              <dl className="mt-8 md:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                 {stats.map((stat) => (
-                  <div key={stat.name} className="flex flex-col-reverse gap-1">
-                    <dt className="text-base/7 text-gray-300">{stat.name}</dt>
-                    <dd className="text-4xl font-semibold tracking-tight text-white">
+                  <div key={stat.name} className="flex flex-col-reverse gap-1 bg-black/20 p-4 rounded-lg">
+                    <dt className="text-sm md:text-base text-gray-300">{stat.name}</dt>
+                    <dd className="text-2xl md:text-4xl font-bold text-white">
                       {stat.value}
                     </dd>
                   </div>
