@@ -60,6 +60,10 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     dateTime: Order.dateTime || new Date(),
     deliveryManId: deliveryManId || "",
     pickupDetails: {
+      location: {
+        latitude: Order.pickupAddress.location.latitude || null, // Initialize with null or undefined
+        longitude: Order.pickupAddress.location.longitude || null, // Empty array or [longitude, latitude]
+      },
       dateTime: formatDateTime(Order.pickupAddress.dateTime) || "",
       address: Order.pickupAddress.address || "",
       // countryCode: Order.pickupAddress.countryCode || "",
@@ -71,6 +75,10 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       postCode: Order.pickupAddress.postCode || "",
     },
     deliveryDetails: {
+      location: {
+        latitude: Order.deliveryAddress.location.latitude || null, // Initialize with null or undefined
+        longitude: Order.deliveryAddress.location.longitude || null, // Empty array or [longitude, latitude]
+      },
       address: Order.deliveryAddress.address || "",
       // countryCode: Order.deliveryAddress.countryCode || "",
       mobileNumber: Order.deliveryAddress.mobileNumber || "",
@@ -199,7 +207,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       <option value="">Select Delivery Man</option>
                       {deliveryMan.map((data) => (
                         <option key={data._id} value={data._id}>
-                          {data.name}
+                          {`${data.firstName} ${data.lastName}`}
                         </option>
                       ))}
                     </Field>

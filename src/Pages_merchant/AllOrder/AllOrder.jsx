@@ -124,6 +124,9 @@ const AllOrder = () => {
   };
 
   const hadleTrackOrder = async(id, deliveryLocation , pickupLocation , status) => {
+    console.log("deliveryLocation", deliveryLocation);
+    console.log("pickupLocation", pickupLocation);
+    console.log("status", status);
     try {
       if (status) {
         setStatus(status)

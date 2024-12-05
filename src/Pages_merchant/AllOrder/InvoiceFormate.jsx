@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+  import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { createInvoiceSettings, getInvoiceSettings, updateInvoiceSettings } from '../../Components_merchant/Api/Invoice';
 
 function InvoiceFormate() {
   const location = useLocation();
   const orderData = location.state?.orderData;
-  
+  const [invoiceSettingsData, setInvoiceSettingsData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [invoiceSettings, setInvoiceSettings] = useState({
     header: 'Delivery Service Invoice',
     footer: 'Thank you for choosing our delivery service!',
     logo: null,
     logoPreview: 'https://placehold.co/200x100/png',
+    fromCompanyName: 'Delivery Service Company',
+    fromCompanyAddress: '123 Delivery Street',
+    fromCompanyCity: 'London, UK',
     orderDetails: {
       orderId: orderData?.orderId || '',
       date: orderData?.createdAt || new Date().toISOString(),
@@ -21,18 +25,18 @@ function InvoiceFormate() {
       weight: orderData?.weight || 0,
       parcelsCount: orderData?.parcelsCount || 0,
       pickupDetails: {
-        name: orderData?.pickupDetails?.name || '',
-        address: orderData?.pickupDetails?.address || '',
-        mobileNumber: orderData?.pickupDetails?.mobileNumber || '',
-        email: orderData?.pickupDetails?.email || '',
-        postCode: orderData?.pickupDetails?.postCode || ''
+        name: orderData?.pickupAddress?.name || '',
+        address: orderData?.pickupAddress?.address || '',
+        mobileNumber: orderData?.pickupAddress?.mobileNumber || '',
+        email: orderData?.pickupAddress?.email || '',
+        postCode: orderData?.pickupAddress?.postCode || ''
       },
       deliveryDetails: {
-        name: orderData?.deliveryDetails?.name || '',
-        address: orderData?.deliveryDetails?.address || '',
-        mobileNumber: orderData?.deliveryDetails?.mobileNumber || '',
-        email: orderData?.deliveryDetails?.email || '',
-        postCode: orderData?.deliveryDetails?.postCode || ''
+        name: orderData?.deliveryAddress?.name || '',
+        address: orderData?.deliveryAddress?.address || '',
+        mobileNumber: orderData?.deliveryAddress?.mobileNumber || '',
+        email: orderData?.deliveryAddress?.email || '',
+        postCode: orderData?.deliveryAddress?.postCode || ''
       },
       charges: orderData?.charges || [],
       totalCharge: orderData?.totalCharge || 0,
@@ -43,15 +47,37 @@ function InvoiceFormate() {
     }
   });
 
+  useEffect(() => {
+    const fetchInvoiceSettings = async () => {
+      const response = await getInvoiceSettings();
+      if (response.status) {
+        const data = response.data;
+        setInvoiceSettingsData(data);
+        setInvoiceSettings(prev => ({
+          ...prev,
+          header: data.header || prev.header,
+          footer: data.footer || prev.footer,
+          logo: data.logo || prev.logo,
+          logoPreview: data.logo || prev.logoPreview,
+          fromCompanyName: data.companyName || prev.fromCompanyName,
+          fromCompanyAddress: data.address || prev.fromCompanyAddress,
+          fromCompanyCity: data.city || prev.fromCompanyCity
+        }));
+      }
+    };
+    fetchInvoiceSettings();
+  }, []);
+
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setInvoiceSettings(prev => ({
+        const base64String = reader.result;
+        setInvoiceSettings((prev) => ({
           ...prev,
-          logo: file,
-          logoPreview: reader.result
+          logo: base64String,
+          logoPreview: reader.result,
         }));
       };
       reader.readAsDataURL(file);
@@ -65,18 +91,54 @@ function InvoiceFormate() {
     }));
   };
 
+  const handleSaveChanges = async () => {
+    try {
+      const value = {
+        companyName: invoiceSettings.fromCompanyName,
+        address: invoiceSettings.fromCompanyAddress,
+        city: invoiceSettings.fromCompanyCity,
+        header: invoiceSettings.header,
+        logo: invoiceSettings.logo,
+        footer: invoiceSettings.footer,
+      }
+
+      let response;
+      
+      if (!invoiceSettingsData) {
+        // If no existing settings, create new
+        response = await createInvoiceSettings(value);
+      } else {
+        // If settings exist, update them
+        response = await updateInvoiceSettings(value);
+        console.log("response2", response);
+      }
+
+      if (response.status) {
+        setIsEditing(false);
+      } else {
+        throw new Error(response.message || 'Failed to save invoice settings');
+      }
+    } catch (error) {
+      console.error('Error saving invoice:', error);
+      toast.error(error.message || 'Error saving invoice settings');
+    }
+  };
+
   const downloadInvoicePDF = async () => {
     try {
       const element = document.querySelector('.invoice-content');
+      if (!element) {
+        throw new Error('Invoice content element not found');
+      }
+
       const canvas = await html2canvas(element, {
-        x: -20,
-        y: -20,
-        width: element.offsetWidth + 40,
-        height: element.offsetHeight + 40,
+        scale: 2,
+        useCORS: true,
+        logging: false,
         backgroundColor: '#ffffff'
       });
-      const imgData = canvas.toDataURL('image/png');
       
+      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -84,14 +146,14 @@ function InvoiceFormate() {
       const imgHeight = canvas.height;
       const ratio = Math.min((pdfWidth - 20) / imgWidth, (pdfHeight - 20) / imgHeight);
       const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = (pdfHeight - imgHeight * ratio) / 2;
+      const imgY = 20;
 
       pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-      pdf.save(`invoice-${invoiceSettings.orderDetails.orderId}.pdf`);
+      pdf.save(`invoice-${invoiceSettings.orderDetails.orderId || 'download'}.pdf`);
       toast.success('Invoice downloaded successfully!');
     } catch (error) {
       console.error('Error generating PDF:', error);
-      toast.error('Error downloading invoice');
+      toast.error(error.message || 'Error downloading invoice');
     }
   };
 
@@ -113,7 +175,7 @@ function InvoiceFormate() {
         </div>
         <div className="flex gap-4">
           <button
-            onClick={() => setIsEditing(!isEditing)}
+            onClick={isEditing ? handleSaveChanges : () => setIsEditing(true)}
             className={`px-6 py-2 rounded-lg transition-colors ${
               isEditing 
                 ? 'bg-green-600 hover:bg-green-700 text-white'
@@ -155,25 +217,34 @@ function InvoiceFormate() {
                 <div className="space-y-2">
                   <input
                     type="text"
-                    value="Delivery Service Company"
+                    value={invoiceSettings.fromCompanyName || "Delivery Service Company"}
+                    placeholder="Company Name"
+                    name="fromCompanyName"
                     className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500"
+                    onChange={(e) => handleInputChange('fromCompanyName', e.target.value)}
                   />
                   <input
                     type="text"
-                    value="123 Delivery Street"
+                    value={invoiceSettings.fromCompanyAddress || "123 Delivery Street"}
+                    placeholder="Company Address"
+                    name="fromCompanyAddress"
                     className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500"
+                    onChange={(e) => handleInputChange('fromCompanyAddress', e.target.value)}
                   />
                   <input
                     type="text"
-                    value="London, UK"
+                    value={invoiceSettings.fromCompanyCity || "London, UK"}
+                    placeholder="Company City"
+                    name="fromCompanyCity"
                     className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500"
+                    onChange={(e) => handleInputChange('fromCompanyCity', e.target.value)}
                   />
                 </div>
               ) : (
                 <>
-                  <p className="text-gray-600">Delivery Service Company</p>
-                  <p className="text-gray-600">123 Delivery Street</p>
-                  <p className="text-gray-600">London, UK</p>
+                  <p className="text-gray-600">{invoiceSettings.fromCompanyName || "Delivery Service Company"}</p>
+                  <p className="text-gray-600">{invoiceSettings.fromCompanyAddress || "123 Delivery Street"}</p>
+                  <p className="text-gray-600">{invoiceSettings.fromCompanyCity || "London, UK"}</p>
                 </>
               )}
             </div>
