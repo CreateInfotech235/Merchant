@@ -52,7 +52,7 @@ function About() {
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-[30px]'>
             <div className='w-full'>
-              <div className='mx-auto w-[100%] lg:w-[80%]'>
+              <div className='mx-auto w-[100%] lg:w-[80%] rounded overflow-hidden shadow'>
                 <img src={oficina} alt="Support Office" className='w-full' />
               </div>
             </div>
@@ -70,23 +70,24 @@ function About() {
               </div>
             </div>
           </div>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 my-[50px]'>
-            <div className='w-full order-2 md:order-1'>
+
+          <div className='my-[50px] flex flex-col-reverse md:flex-row items-center justify-between gap-8 md:gap-4'>
+            <div className='w-full md:w-[48%]'>
               <div className='w-full'>
-                <div className='w-full text-center font-bold text-[25px] lg:text-[40px]'>
+                <div className='w-full text-center font-bold text-[22px] sm:text-[25px] lg:text-[40px]'>
                   24/7 Courier Tracking
                 </div>
-                <div className='mt-3 text-[19px] lg:text-[20px] leading-7'>
+                <div className='mt-3 text-[16px] sm:text-[19px] lg:text-[20px] leading-7'>
                   Our web platform provides real-time courier management and tracking capabilities. Monitor your deliveries 24/7 with live location updates, estimated arrival times, and detailed delivery status information.
                 </div>
-                <div className='mt-3 text-[19px] lg:text-[20px] leading-7'>
+                <div className='mt-3 text-[16px] sm:text-[19px] lg:text-[20px] leading-7'>
                   Track multiple couriers simultaneously, access delivery history, and generate detailed reports. Our platform helps you stay in control with features like instant notifications, proof of delivery, and route optimization to ensure efficient operations.
                 </div>
               </div>
             </div>
-            <div className='w-full order-1 md:order-2'>
-              <div className='mx-auto w-[100%] lg:w-[80%]'>
-                <img src={oficina} alt="Courier Tracking Dashboard" className='w-full' />
+            <div className='w-full md:w-[48%]'>
+              <div className='mx-auto w-[100%] md:w-[90%] lg:w-[80%] rounded overflow-hidden shadow'>
+                <img src={"https://insights.workwave.com/wp-content/uploads/2024/09/pp-blog-gps.jpg"} alt="Courier Tracking Dashboard" className='w-full' />
               </div>
             </div>
           </div>

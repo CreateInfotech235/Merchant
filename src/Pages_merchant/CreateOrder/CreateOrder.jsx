@@ -281,7 +281,7 @@ const CreateOrder = () => {
           setFieldValue("deliveryDetails.address", formattedAddress);
           setFieldValue("deliveryDetails.location.latitude", lat);
           setFieldValue("deliveryDetails.location.longitude", lng);
-          setFieldValue("deliveryDetails.postCode", postalCode);
+          // setFieldValue("deliveryDetails.postCode", postalCode);
         } else {
           alert("Address not found. Please try again.");
         }
@@ -384,7 +384,7 @@ console.log(values);
                       <option value="">Select Delivery Man</option>
                       {deliveryMan.map((data) => {
                         return (
-                          <option value={data._id}>{data.firstName}</option>
+                          <option value={data._id}>{`${data.firstName} ${data.lastName}`}</option>
                         );
                       })}
                     </Field>

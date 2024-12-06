@@ -1,141 +1,134 @@
 import React, { useState } from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import Image from "../../assets_web/illustration-dashboard.webp";
 import Logo from "../../assets_web/tracking.png";
-import GoogleSvg from "../../assets_web/tracking.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../Components_merchant/Api/Auth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const initialValues = {
     email: "demo@gmail.com",
-        password: "demoDEMO@1121",
-        personType: "CUSTOMER",
+    password: "demoDEMO@1121",
+    personType: "CUSTOMER"
   };
 
   const validationSchema = Yup.object({
     email: Yup.string()
-            .email("Invalid email format")
-            .required("Email is required"),
-        password: Yup.string()
-            .matches(
-                /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-                "Password must contain at least 8 characters, one uppercase, one lowercase, and one number"
-            )
-            .required("Password is required"),
+      .email("Invalid email format")
+      .required("Email is required"),
+    password: Yup.string()
+      .matches(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+        "Password must contain at least 8 characters, one uppercase, one lowercase, and one number"
+      )
+      .required("Password is required"),
   });
 
   const onSubmit = async (values, { setSubmitting, setErrors }) => {
     setSubmitting(true);
-
     const response = await login(values);
 
     if (response.status) {
-        localStorage.setItem('merchnatId',response.data.userData._id)
-        localStorage.setItem("accessToken", response.data.userAuthData.accessToken);
-        localStorage.setItem('userData', JSON.stringify(response.data.userData))
-        navigate("/Merchant-dashboard");
-        console.log(accessToken);
+      localStorage.setItem('merchnatId', response.data.userData._id);
+      localStorage.setItem("accessToken", response.data.userAuthData.accessToken);
+      localStorage.setItem('userData', JSON.stringify(response.data.userData));
+      navigate("/Merchant-dashboard");
     } else {
-        // Handle API error
-        setErrors({ apiError: response.message });
+      setErrors({ apiError: response.message });
     }
-
     setSubmitting(false);
-};
+  };
 
   return (
-    <div className="flex h-screen">
-      {/* Left Side */}
-      <div className="hidden md:flex flex-1 bg-gray-100 justify-center items-center">
-        <img src={Image} alt="Illustration" className="w-100" />
-      </div>
+    <div className="min-h-screen flex">
+      {/* Left Side - Image */}
+      
 
-      {/* Right Side */}
-      <div className="flex flex-1 justify-center items-center">
-        <div className="w-4/5 max-w-md">
-          {/* Logo */}
-          <div className="text-center mb-6">
-            <img src={Logo} alt="Logo" className="w-12 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold">Welcome back!</h2>
-            <p className="text-gray-600">Please enter your details</p>
+      {/* Right Side - Form */}
+      <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 bg-[#fff]">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <img src={Logo} alt="Logo" className="mx-auto h-16 w-auto mb-4" />
+            <h2 className="text-4xl font-extrabold text-[#221F92] mb-2">Sign In</h2>
+            <p className="text-gray-600">Please enter your credentials</p>
           </div>
 
-          {/* Form */}
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={onSubmit}
           >
-            {({ isSubmitting, setFieldValue, errors }) => (
-              <Form>
-                <div className="mb-4">
-                  <Field
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    className="w-full border-b border-gray-400 p-3 focus:outline-none focus:border-black"
-                  />
-                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
-                </div>
-                <div className="relative mb-4">
-                  <Field
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="Password"
-                    className="w-full border-b border-gray-400 p-3 focus:outline-none focus:border-black"
-                  />
-                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
-                  <div
-                    className="absolute right-3 top-3 cursor-pointer text-gray-500"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+            {({ errors, touched, isSubmitting }) => (
+              <Form className="mt-8 space-y-6">
+                <div className="rounded-md shadow-sm space-y-4">
+                  <div>
+                    <Field
+                      type="email"
+                      name="email"
+                      placeholder="Email Address"
+                      className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#221F92] focus:border-[#221F92]"
+                    />
+                    {errors.email && touched.email && (
+                      <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <Field
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      placeholder="Password"
+                      className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#221F92] focus:border-[#221F92]"
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <FaEyeSlash className="text-gray-400" /> : <FaEye className="text-gray-400" />}
+                    </button>
+                    {errors.password && touched.password && (
+                      <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center mb-6">
-                  <label className="flex items-center text-sm text-gray-600">
-                    <Field type="checkbox" name="rememberMe" className="mr-2" />
-                    Remember for 30 days
-                  </label>
-                  <a href="#" className="text-sm text-blue-600 hover:underline">
-                    Forgot password?
-                  </a>
-                </div>
-
-                <div className="space-y-4">
+                <div>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800"
+                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-[#fff] bg-[#221F92] hover:bg-[#1a1873] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#221F92]"
                   >
-                       {isSubmitting ? "Logging in..." : "Login"}
+                    {isSubmitting ? "Signing in..." : "Sign In"}
                   </button>
-                  <button
-                    type="button"
-                    className="w-full bg-gray-100 py-3 rounded-lg flex justify-center items-center hover:bg-gray-200"
-                  >
-                    <img src={GoogleSvg} alt="Google" className="w-6 h-6 mr-3" />
-                    Log In with Google
-                  </button>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">
+                    Don&apos;t have an account?{" "}
+                    <Link to="/register" className="font-medium text-[#221F92] hover:text-[#1a1873]">
+                      Sign up
+                    </Link>
+                  </p>
                 </div>
               </Form>
             )}
           </Formik>
+        </div>
+      </div>
 
-          {/* Bottom Text */}
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-blue-600 font-semibold hover:underline">
-              Sign Up
-            </Link>
-          </p>
+      <div className="hidden lg:flex lg:w-1/2 bg-[#221F92] justify-center items-center">
+        <div className="max-w-2xl">
+          <img src={Image} alt="Illustration" className="object-cover w-full h-full rounded-lg shadow-2xl" />
+          <div className="text-[#fff] text-center mt-8">
+            <h2 className="text-4xl font-bold mb-4">Welcome Back!</h2>
+            <p className="text-lg">Login to access your account</p>
+          </div>
         </div>
       </div>
     </div>

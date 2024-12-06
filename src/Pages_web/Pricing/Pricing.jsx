@@ -139,9 +139,11 @@ function Pricing() {
               </div>
             </div>
             <div className='w-full order-1 md:order-2'>
-              <div className='mx-auto relative w-[100%] lg:w-[80%]'>
-                <img src={van} alt="Courier Van" className='w-full' />
-                <img src={courierman} alt="Courier Delivery" className='w-[50%] absolute right-[-15px] bottom-[-15px] border-[15px] border-white rounded-[10px]' />
+              <div className='mx-auto relative w-[100%] lg:w-[80%] overflow-hidden rounded'>
+                  <img src={van} alt="Courier Van" className='w-full' />
+                  <div className='w-[50%] absolute right-[-15px] bottom-[-15px] p-[15px]  bg-[#fff]  rounded overflow-hidden'>
+                    <img src={courierman} alt="Courier Delivery" className='w-full rounded' />
+                  </div>
               </div>
             </div>
           </div>

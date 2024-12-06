@@ -286,7 +286,7 @@ function App() {
           }
         />
         <Route
-          path="/subscription-active"
+          path="/subscription-active/*"
           element={
             <ProtectedRoute>
               <SubscriptionActive />
