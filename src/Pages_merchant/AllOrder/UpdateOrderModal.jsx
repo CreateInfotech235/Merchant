@@ -13,14 +13,22 @@ import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import { updateOrder } from "../../Components_merchant/Api/Order";
 
 const UpdateOrderModal = ({ onHide, Order }) => {
-  console.log("Order", Order);
   const naviagte = useNavigate();
   const merchant = JSON.parse(localStorage.getItem("userData"));
   const navigate = useNavigate();
   const [deliveryMan, setDeliveryMen] = useState([]);
-  const [deliveryManId, setDeliveryMenId] = useState(null);
+  const [deliveryManId, setDeliveryMenId] = useState(Order?.deliveryManId || null);
   const [customer, setCustomer] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [customerId, setCustomerId] = useState(null);
+  useEffect(() => {
+    const selectedCustomer = customer.find((c) => c.email === Order.cutomerEmail)
+    // console.log("selectedCustomer", selectedCustomer);
+    if (selectedCustomer?._id) {
+      setCustomerId(selectedCustomer?._id);
+    }
+  }, [customer]);
+
   useEffect(() => {
     const fetchData = async () => {
       const deliveryManRes = await getDeliveryMan(1, 10);
@@ -167,8 +175,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={onSubmit}
+          enableReinitialize={true}
         >
-          {(formik) => {
+          {(formik , form) => {
             return (
               <Form className="create-order">
                 {/* Parcel Types */}
@@ -203,11 +212,16 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       name="deliveryManId"
                       className="form-control"
                       style={{ height: "4.5em" }}
+                      value={formik.values.deliveryManId}
+                      onChange={(e) => {
+                        formik.setFieldValue("deliveryManId", e.target.value);
+                        setDeliveryMenId(e.target.value);
+                      }}
                     >
                       <option value="">Select Delivery Man</option>
                       {deliveryMan.map((data) => (
                         <option key={data._id} value={data._id}>
-                          {`${data.firstName} ${data.lastName}`}
+                          {data.firstName}
                         </option>
                       ))}
                     </Field>
@@ -446,75 +460,60 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     {/* Delivery Details Fields */}
                     {/* <div className="input-error mb-3"> */}
                     <label className="fw-thin p-0 pb-1">Select Customer :</label>
-                    <Select
-                      className="form-control mb-3 p-0"
-                      styles={{
-                        control: (base) => ({ ...base, padding: "15px" }),
-                      }}
-                      options={customer.map((cust) => ({
-                        value: cust._id,
-                        label: cust.firstName,
-                        label: `${cust.firstName}  -  ${cust.email}  -  ${cust.mobileNumber}`,
-                        ...cust,
-                      }))}
-                      placeholder="Select Customer"
-                      isClearable
-                      filterOption={(option, inputValue) => {
-                        const data = option.data; // Access the original object from options
-                        const searchValue = inputValue.toLowerCase();
-
-                        // Match by name, email, or mobileNumber
-                        return (
-                          data.firstName.toLowerCase().includes(searchValue) ||
-                          data.lastName.toLowerCase().includes(searchValue) ||
-                          data.email.toLowerCase().includes(searchValue) ||
-                          data.mobileNumber.toLowerCase().includes(searchValue)
-                        );
-                      }}
-                      onChange={(selectedOption) => {
-                        if (selectedOption) {
-                          formik.setFieldValue(
-                            "deliveryDetails.address",
-                            selectedOption.address
-                          );
-                          // formik.setFieldValue(
-                          //   "deliveryDetails.countryCode",
-                          //   selectedOption.countryCode || ""
-                          // );
-                          formik.setFieldValue(
-                            "deliveryDetails.mobileNumber",
-                            selectedOption.mobileNumber
-                          );
-                          formik.setFieldValue(
-                            "deliveryDetails.email",
-                            selectedOption.email
-                          );
-                          formik.setFieldValue(
-                            "deliveryDetails.description",
-                            selectedOption.description
-                          );
-                          formik.setFieldValue(
-                            "deliveryDetails.postCode",
-                            selectedOption.postCode
-                          );
-                          formik.setFieldValue(
-                            "deliveryDetails.name",
-                            selectedOption.name
-                          );
-                        } else {
-                          // Clear delivery details if no customer is selected
-                          formik.setFieldValue("deliveryDetails", {
-                            address: "",
-                            // countryCode: "",
-                            mobileNumber: "",
-                            email: "",
-                            description: "",
-                            postCode: "",
-                            name: "",
-                          });
-                        }
-                      }}
-                    />
+                    <Field name="customer">
+                        {({ field, form }) => (
+                          <div>
+                            <select
+                              className="form-control"
+                              style={{
+                                height: "4.5em",
+                                border: "1px solid #E6E6E6",
+                                borderRadius: "5px"
+                              }}
+                              value={customerId || ""}
+                              onChange={(e) => {
+                                const selectedCustomer = customer.find(
+                                  (c) => c._id === e.target.value
+                                );
+                                setCustomerId(e.target.value);
+                                if (selectedCustomer) {
+                                  form.setFieldValue(
+                                    "deliveryDetails.address",
+                                    selectedCustomer.address
+                                  );
+                                  form.setFieldValue(
+                                    "deliveryDetails.mobileNumber",
+                                    selectedCustomer.mobileNumber
+                                  );
+                                  form.setFieldValue(
+                                    "deliveryDetails.email",
+                                    selectedCustomer.email
+                                  );
+                                  form.setFieldValue(
+                                    "deliveryDetails.description",
+                                    selectedCustomer.description
+                                  );
+                                  form.setFieldValue(
+                                    "deliveryDetails.postCode",
+                                    selectedCustomer.postCode
+                                  );
+                                  form.setFieldValue(
+                                    "deliveryDetails.name",
+                                    selectedCustomer.firstName
+                                  );
+                                }
+                              }}
+                            >
+                              <option value="" disabled selected>Select Customer</option>
+                              {customer.map((cust) => (
+                                <option key={cust._id} value={cust._id}>
+                                  {`${cust.firstName} - ${cust.email} - ${cust.mobileNumber}`}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                      </Field>
                     {/* </div> */}
 
                     <div className="input-error mb-3">

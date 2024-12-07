@@ -812,7 +812,7 @@ console.log(values);
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Delivery Name :</label>
+                      <label className="fw-thin p-0 pb-1 ">Customer Name :</label>
                       <Field
                         type="text"
                         name="deliveryDetails.name"

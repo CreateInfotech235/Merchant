@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import Image from "../../assets_web/illustration-dashboard.webp";
-import Logo from "../../assets_web/tracking.png";
+import Logo from "../../assets_web/logoCreateBlack.png";
 import GoogleSvg from "../../assets_web/tracking.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
@@ -135,7 +135,7 @@ function Signup() {
       <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <img src={Logo} alt="Logo" className="mx-auto h-16 w-auto mb-4" />
+            <img src={Logo} alt="Logo" className="mx-auto h-24 w-auto mb-4" />
             <h2 className="text-4xl font-extrabold text-gray-900 mb-2">Create Account</h2>
             <p className="text-gray-600">Please fill in your details to get started</p>
           </div>
