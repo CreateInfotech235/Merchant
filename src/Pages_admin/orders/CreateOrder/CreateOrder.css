@@ -1,0 +1,17 @@
+.location {
+  position: relative;
+}
+
+.imgs {
+  position: absolute;
+  right: 15px; /* Position it to the left */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.location-img {
+  width: 25px; /* Adjust the size as needed */
+}

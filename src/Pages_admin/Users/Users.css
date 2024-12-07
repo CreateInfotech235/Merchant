@@ -1,0 +1,195 @@
+.add,
+.delete {
+  background: #d65246;
+  color: white;
+  border-radius: 5px;
+}
+.dark-mode .add,
+.delete {
+  background: #2d9cdb;
+}
+.add {
+  width: 120px;
+  height: 41px;
+}
+.delete {
+  width: 103px;
+  height: 41px;
+}
+.add-delete-btn {
+  display: flex;
+  justify-content: space-between;
+  width: 73.59vw;
+}
+.table-head {
+  background: #253a71;
+  color: white;
+}
+.add,
+.delete,
+.delete-btn,
+.show-btn,
+.edit-btn,
+.enable-btn {
+  outline: none;
+  border: none;
+}
+
+.delete-btn,
+.show-btn,
+.edit-btn {
+  border: 1px solid #e6e6e6;
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  margin: 5px;
+}
+.user-table {
+  font-size: 12px;
+  width: 73.59vw;
+  height: 100vh;
+}
+
+.user-table1 {
+  padding: 10px 0px 10px 35px;
+}
+.table-head {
+  height: 78px;
+}
+/* .user-table1 {
+  padding: 25px 0px 25px 30px;
+  background: white;
+} */
+.enable-btn {
+  background: #976cdd;
+  color: white;
+  width: 48px;
+  height: 16px;
+  font-size: 8px;
+  border-radius: 2px;
+}
+.add-delete-btn {
+  margin-bottom: 30px;
+}
+.pagination {
+  display: flex;
+  list-style: none;
+  justify-content: flex-end;
+
+  padding: 0;
+  margin-top: 20px;
+}
+
+.pagination li.active {
+  background-color: #d65246;
+  color: white;
+  border: 1px solid #d65246;
+}
+
+.pagination li:hover:not(.active) {
+  background-color: #e2e6ea;
+}
+
+.pagination li:focus {
+  outline: none;
+}
+.country-add {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  width: 73.59vw
+}
+
+@media (min-width: 1024px) and (max-width: 1024px) {
+  .user-table {
+    font-size: 10px;
+    width: 94.59vw;
+  }
+  .add-delete-btn {
+    width: 94.59vw;
+  }
+}
+@media (min-width: 1440px) and (max-width: 1440px) {
+  .user-table {
+    font-size: 10px;
+    width: 75.59vw;
+  }
+  .add-delete-btn {
+    width: 73.59vw;
+  }
+}
+@media (min-width: 768px) and (max-width: 768px) {
+  .user-table1 {
+    padding: 0px 0px 16px 15px;
+    background: white;
+    font-size: 10px;
+  }
+  .delete-btn,
+  .show-btn,
+  .edit-btn {
+    width: 20px;
+    height: 20px;
+  }
+  .user-table {
+    width: 93.59vw;
+    font-size: 10px;
+  }
+  .add-delete-btn {
+    /* display: flex; */
+    /* justify-content: space-between; */
+    width: 91.59vw;
+  }
+ 
+  .search-btn {
+   
+    height: 45px;
+  }
+  .search-img {
+    background: #d65246;
+    width: 80px;
+    height: 44px;
+    border-radius: 0px 20px 20px 0px; 
+    padding: 9px 43px 21px 21px;
+  }
+}
+@media(max-width:425px) and (min-width:425px){
+  .add-delete-btn {
+    display: flex;
+    justify-content: space-between;
+    width: 186.59vw;
+}
+.user-table1 {
+  padding: 0px 0px 0px 30px;
+  font-size:12px
+}
+.country-add {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  width: 167.59vw;
+}
+.country-data {
+  padding-left: 25px;
+  font-size:12px
+}
+}
+@media(max-width:375px) and (min-width:375px){
+  .add-delete-btn {
+    display: flex;
+    justify-content: space-between;
+    width: 211.59vw;
+}
+.country-add {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  width: 190.59vw;
+}
+}
+@media(max-width:1024px) and (min-width:375px){
+  .content {
+    background: #f1f1f9;
+    padding: 0px 10px 10px 10px;
+}
+}
+

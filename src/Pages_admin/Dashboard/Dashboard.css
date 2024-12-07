@@ -1,0 +1,43 @@
+.box {
+  background: rgba(255, 255, 255, 0.56);
+  width: 22rem;
+  height: 10.5rem;
+}
+.dashboard {
+  background: linear-gradient(to right, #b08797, #a088ed, #d46690);
+}
+
+.box-order {
+  background: rgba(255, 255, 255, 0.56);
+  /* width: 12.76vw;
+  height: 180px; */
+}
+.recent-order {
+  background: linear-gradient(to right, #b08797, #a088ed, #d46690);
+
+  background-repeat: no-repeat;
+}
+
+.recent-img {
+  width: 37px;
+  height: 37px;
+}
+
+.created {
+  background: rgba(151, 108, 221, 1);
+}
+
+.border-box {
+  height: 200px;
+  background: rgba(255, 255, 255, 0.56);
+}
+
+
+
+.dark-mode .view-all {
+  background: #232323;
+}
+
+.bar-chart {
+  margin: 30px 30px 0px 30px;
+}

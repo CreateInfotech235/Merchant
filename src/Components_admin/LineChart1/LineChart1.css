@@ -1,0 +1,23 @@
+.chart {
+    width: 79vw;
+  height: 307px;
+
+  background: #fff;
+  padding: 30px;
+}
+
+@media (min-width:1024px) and (max-width:1024) {
+  .chart {
+    width: 64.82vw;
+  }
+}
+@media (min-width:768px) and (max-width:768px) {
+  .chart {
+    width: 61.82vw;
+  }
+}
+@media (min-width:375px) and (max-width:425px) {
+.chart {
+  width: 173.82vw;
+  height: 365px;
+}}

@@ -1,0 +1,18 @@
+.color {
+  height: 4.3rem;
+  border: 1px solid #e6e6e6;
+  background: white;
+  opacity: 100%;
+
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+
+  border-radius: 4px;
+}
+.ReactFlagsSelect-module_selectBtn__19wW7 {
+  border: 0px;
+}

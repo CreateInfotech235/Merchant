@@ -1,0 +1,55 @@
+/* input[type="file"] {
+  display: none;
+  background: white;
+}
+
+.select-file-img {
+  position: relative;
+  left: 30px;
+  left: -137px;
+  top: -60px;
+  width: 57px;
+  height: 57px;
+}
+.img-files {
+  padding: 108px 0px 10px 50px;
+  border-radius: 5px;
+  width: 204px;
+  height: 147px;
+  background: white;
+}
+.img-file {
+  border-radius: 5px;
+  width: 204px;
+  height: 147px;
+
+  background: white;
+}
+.input-img {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+.input-imgs {
+  display: flex;
+  flex-direction: column;
+}
+.img-file {
+  padding: 62px;
+}
+.app-name,
+.description1 {
+  border: 1px solid #e6e6e6;
+  width: 1395px;
+  border-radius: 5px;
+}
+.app-name {
+  height: 75px;
+}
+.description1 {
+  height: 156px;
+}
+.save1 {
+  display: flex;
+  justify-content: flex-end;
+} */

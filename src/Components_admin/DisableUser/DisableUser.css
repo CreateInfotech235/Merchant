@@ -1,0 +1,45 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+.model-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: transparent;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 463px;
+  height: 427px;
+  padding: 50px 60px;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.model-btn {
+  background-color: #d65246;
+  width: 137px;
+  height: 52px;
+}
+.models-btn {
+  width: 137px;
+  height: 52px;
+}
+.disable-heading {
+  font-size: 28px;
+}
+
+.disable-img {
+  width: 130px;
+  height: 130px;
+}

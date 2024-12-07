@@ -1,0 +1,4 @@
+.input-boxs {
+  display: flex;
+  flex-direction: column;
+}

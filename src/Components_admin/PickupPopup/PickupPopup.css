@@ -1,0 +1,25 @@
+.popup-data1 {
+  line-height: 50px;
+  font-size: 22px;
+  color: rgba(153, 150, 150, 1);
+  padding-right: 403px;
+  text-align: left;
+}
+.popup-content {
+  display: flex;
+}
+.popup-data2 {
+  line-height: 50px;
+  font-size: 22px;
+  font-weight: bold;
+  padding-left: 385px;
+  text-align: right;
+}
+
+.popup-content1 {
+  border: 1px dashed black;
+  border-radius: 5px;
+}
+.vehicle-imgs {
+  width: 270px;
+}

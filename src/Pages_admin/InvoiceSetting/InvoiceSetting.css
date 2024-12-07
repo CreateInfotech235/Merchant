@@ -1,0 +1,10 @@
+
+input[type="file"]{
+  display:none;
+}
+label,td,th,thead, .error {
+  text-transform: capitalize;
+}
+.form-labels{
+  display:inline-block
+}

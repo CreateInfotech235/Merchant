@@ -1,0 +1,17 @@
+.bar-chart {
+  width: 25.4375rem;
+  height: 740px;
+
+}
+canvas {
+  background: white;
+}
+
+/* @media (min-width: 768px) and (max-width: 768px) {
+  .bar-chart {
+    margin: 30px 15px 0px 15px;
+    width: 239px;
+    height: 630px;
+  }
+
+} */

@@ -1,0 +1,28 @@
+.delivery-document {
+  background: #fff;
+  width: 1412px;
+  height: 320px;
+  padding: 50px;
+  margin-bottom: 50px;
+}
+.title {
+  color: #999696;
+  line-height: 50px;
+  padding-right: 950px;
+}
+.document-button {
+  display: flex;
+  justify-content: flex-end;
+}
+.document {
+  outline: none;
+  border: none;
+  background: #d65246;
+  color: white;
+  width: 176px;
+  height: 40px;
+  margin: 30px;
+}
+.dark-mode .document {
+  background: #2d9cdb;
+}

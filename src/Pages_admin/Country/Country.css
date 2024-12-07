@@ -1,0 +1,76 @@
+/* .country-add {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.add {
+  font-size: 15px;
+}
+.add img {
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+}
+.user-table {
+  background: #fff;
+}
+.country-heading {
+  padding-left: 60px;
+}
+.country-data {
+  padding-left: 60px;
+}
+.counrty-data {
+  margin-left: 60px;
+}
+
+.user-table {
+  height: 750px;
+}
+.country-p {
+  font-size: 24px;
+  font-weight: bold;
+}
+.delete-btn,
+.show-btn,
+.edit-btn {
+  border: 1px solid #e6e6e6;
+  width: 35px;
+  height: 35px;
+  border-radius: 3px;
+  margin: 5px;
+  background: white;
+}
+.dark-mode .add {
+  background: #2d9cdb;
+}
+td,
+th {
+  text-align: left;
+} */
+/* @media (max-width:768px) and (min-width:768px) {
+  .country-data {
+    padding-left: 20px;
+} */
+/* .delete-btn, .show-btn, .edit-btn { */
+  /* border: 1px solid #e6e6e6; */
+  /* width: 23px;
+  height: 23px;
+} */
+/* .search { */
+  /* background: #d65246; */
+  /* width: 20px;
+  height: 20px;
+}
+} */
+/* @media (min-width:768px) and (max-width:768px) {
+  .country-add {
+   
+    width: 93.59vw;
+  }
+}
+@media (min-width:1024px) and (max-width:1024px) {
+  .country-add {
+    width: 94.59vw;
+  }
+} */

@@ -1,0 +1,29 @@
+.payment-count-graph {
+  width: 52.24vw;
+  height: 409px;
+  background: #fff;
+  padding: 30px;
+  margin: 30px 0px 30px 0px;
+}
+/* @media (min-width:1024px) and (max-width:1024px) {
+  .payment-count-graph {
+    width: 65.24vw;
+
+  }
+
+  .chart {
+    width: 64.82vw;
+  }
+}
+@media(min-width:768px) and (max-width:768px){
+  .payment-count-graph {
+    width: 61.24vw;
+    height: 300px;
+  }
+
+}
+@media(min-width:375px) and (max-width:425px){
+  .payment-count-graph {
+    width: 174.24vw;
+  }
+} */

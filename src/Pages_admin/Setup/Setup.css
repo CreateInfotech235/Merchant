@@ -1,0 +1,23 @@
+.setup-btns {
+  border: 1px solid #d65246;
+}
+
+.setup-btns:hover {
+  background: #d65246;
+  color: white;
+}
+
+.setup-back-btn {
+  background: #d65246;
+  width: 150px;
+  height: 41px;
+}
+
+
+.setup-input {
+  border: 1px solid #e6e6e6;
+  
+  height: 75px;
+}
+
+

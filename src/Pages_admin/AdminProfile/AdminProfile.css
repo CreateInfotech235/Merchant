@@ -1,0 +1,127 @@
+/* AdminProfile.css */
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.profile-page h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="file"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+input[type="file"] {
+  padding: 0;
+}
+
+.profile-image-container {
+  text-align: center;
+}
+
+.profile-image-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.profile-image-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #007bff;
+}
+
+.save-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 15px;
+  }
+
+  .profile-page h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-group {
+    gap: 6px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="file"] {
+    font-size: 0.875rem;
+  }
+
+  .save-button {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 10px;
+  }
+
+  .profile-page h1 {
+    font-size: 1.25rem;
+  }
+
+  .form-group {
+    gap: 4px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="file"] {
+    font-size: 0.75rem;
+  }
+
+  .save-button {
+    font-size: 0.75rem;
+    padding: 8px 16px;
+  }
+}
