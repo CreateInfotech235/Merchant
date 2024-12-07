@@ -817,7 +817,7 @@ console.log(values);
                         type="text"
                         name="deliveryDetails.name"
                         className="form-control"
-                        placeholder="Delivery Name"
+                        placeholder="Customer Name"
                         style={{
                           height: "4.5em",
                           border: "1px solid #E6E6E6",
