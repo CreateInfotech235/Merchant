@@ -7,7 +7,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../Components_merchant/Api/Auth";
 
-const Login = () => {
+const Login = ({ Login, setLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -37,7 +37,14 @@ const Login = () => {
       localStorage.setItem('merchnatId', response.data.userData._id);
       localStorage.setItem("accessToken", response.data.userAuthData.accessToken);
       localStorage.setItem('userData', JSON.stringify(response.data.userData));
-      navigate("/Merchant-dashboard");
+      const trackingNumber = localStorage.getItem("trackingNumber")
+      if (trackingNumber) {
+        navigate("/tracking")
+      } else {
+        navigate("/");
+      }
+      setLogin(true)
+
     } else {
       setErrors({ apiError: response.message });
     }
@@ -47,7 +54,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Image */}
-      
+
 
       {/* Right Side - Form */}
       <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 bg-[#fff]">

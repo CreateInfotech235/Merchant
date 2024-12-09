@@ -214,7 +214,8 @@ const Users = () => {
   const filteredUsers = users.filter((user) => {
     const query = searchQuery.toLowerCase();
     return (
-      user.userName.toLowerCase().includes(query) ||
+      user.firstName?.toLowerCase().includes(query) ||
+      user.lastName?.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query)
     );
   });
@@ -248,7 +249,7 @@ const Users = () => {
         </div>
         <div>
           <Link to="/add-user">
-            <button className="btn text-white" style={{ background: "#D65246" }}>
+            <button className="btn text-white flex items-center" style={{ background: "#D65246" }}>
               <img src={add} className="pe-2" alt="Add" />
               Add User
             </button>
@@ -261,7 +262,8 @@ const Users = () => {
           <thead className="text-light" style={{ background: "#253A71" }}>
             <tr>
               <th className="p-3">User ID</th>
-              <th className="p-3">Name</th>
+              <th className="p-3">First Name</th>
+              <th className="p-3">Last Name</th>
               <th className="p-3">Contact</th>
               <th className="p-3">Email</th>
               <th className="p-3">Country</th>
@@ -273,16 +275,17 @@ const Users = () => {
           <tbody>
             {filteredUsers.map((user, index) => (
               <tr key={index}>
-                <td className="p-3">{user._id}</td>
-                <td className="p-3">{user.userName}</td>
-                <td className="p-3">{user.contactNumber}</td>
-                <td className="p-3">{user.email}</td>
-                <td className="p-3">{user.countryCode}</td>
-                <td className="p-3">{user.city || "N/A"}</td>
+                <td className="p-3">{user?._id || '-'}</td>
+                <td className="p-3">{user?.firstName || '-'}</td>
+                <td className="p-3">{user?.lastName || '-'}</td>
+                <td className="p-3">{user?.contactNumber || '-'}</td>
+                <td className="p-3">{user?.email || '-'}</td>
+                <td className="p-3">{user?.countryCode || '-'}</td>
+                <td className="p-3">{user?.city || "N/A"}</td>
                 <td className="p-3">{new Date(user.registerDate).toLocaleString()}</td>
                 <td className="table-head2">
                   <button className="show-btn m-2" onClick={() => handleShowInfo(user)}>
-                    <img src={show} alt="Show" />
+                    <img src={show} alt="Show" className="mx-auto"/>
                   </button>
                 </td>
               </tr>

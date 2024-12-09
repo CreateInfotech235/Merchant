@@ -63,7 +63,7 @@
 .enable-btn {
   background: #976cdd;
   color: white;
-  width: 48px;
+  width: 60px;
   height: 16px;
   font-size: 8px;
   border-radius: 2px;
@@ -97,7 +97,7 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
-  width: 73.59vw
+  width: 73.59vw;
 }
 
 @media (min-width: 1024px) and (max-width: 1024px) {
@@ -139,57 +139,55 @@
     /* justify-content: space-between; */
     width: 91.59vw;
   }
- 
+
   .search-btn {
-   
     height: 45px;
   }
   .search-img {
     background: #d65246;
     width: 80px;
     height: 44px;
-    border-radius: 0px 20px 20px 0px; 
+    border-radius: 0px 20px 20px 0px;
     padding: 9px 43px 21px 21px;
   }
 }
-@media(max-width:425px) and (min-width:425px){
+@media (max-width: 425px) and (min-width: 425px) {
   .add-delete-btn {
     display: flex;
     justify-content: space-between;
     width: 186.59vw;
+  }
+  .user-table1 {
+    padding: 0px 0px 0px 30px;
+    font-size: 12px;
+  }
+  .country-add {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    width: 167.59vw;
+  }
+  .country-data {
+    padding-left: 25px;
+    font-size: 12px;
+  }
 }
-.user-table1 {
-  padding: 0px 0px 0px 30px;
-  font-size:12px
-}
-.country-add {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 30px;
-  width: 167.59vw;
-}
-.country-data {
-  padding-left: 25px;
-  font-size:12px
-}
-}
-@media(max-width:375px) and (min-width:375px){
+@media (max-width: 375px) and (min-width: 375px) {
   .add-delete-btn {
     display: flex;
     justify-content: space-between;
     width: 211.59vw;
+  }
+  .country-add {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    width: 190.59vw;
+  }
 }
-.country-add {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 30px;
-  width: 190.59vw;
-}
-}
-@media(max-width:1024px) and (min-width:375px){
+@media (max-width: 1024px) and (min-width: 375px) {
   .content {
     background: #f1f1f9;
     padding: 0px 10px 10px 10px;
+  }
 }
-}
-

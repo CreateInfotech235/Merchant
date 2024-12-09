@@ -5,7 +5,7 @@ import countryList from "react-select-country-list";
 import "./CreateOrder.css";
 import { useNavigate } from "react-router-dom";
 import { createOrder } from "../../Components_merchant/Api/Order";
-import { getDeliveryMan } from "../../Components_merchant/Api/DeliveryMan";
+import { getDeliveryMan, getAllDeliveryMans } from "../../Components_merchant/Api/DeliveryMan";
 import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import { Spinner } from "react-bootstrap";
 import Select from "react-select";
@@ -14,26 +14,56 @@ const CreateOrder = () => {
 
   const [deliveryMan, setDeliveryMen] = useState([]);
   const [customer, setCustomer] = useState([]);
-
+  const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const merchant = JSON.parse(localStorage.getItem("userData"));
   console.log("merchant", merchant);
 
   useEffect(() => {
     const fetchData = async () => {
-      const deliveryManRes = await getDeliveryMan();
       const customerRes = await getAllCustomers();
-      if (deliveryManRes.data) {
-        const activeDeliveryMen = deliveryManRes.data.filter(man => man.status !== "DISABLE");
-        setDeliveryMen(activeDeliveryMen);
+      
+      const deliveryMans = await getAllDeliveryMans();
+      const deliveryManRes = await getDeliveryMan();
+      if (deliveryManRes.data || deliveryMans.data) {
+        // Filter active delivery men from first source
+        const activeDeliveryMen = deliveryManRes.data?.filter(man => man.status !== "DISABLE") || [];
+        const formattedAdminDeliveryMen = deliveryMans.data?.map(man => ({
+          ...man,
+          firstName: man.firstName || man.name?.split(' ')[0] || undefined,
+          lastName: man.lastName || (man.name?.split(' ').slice(1).join(' ')) || undefined,
+          _id: man._id,
+          email: man.email,
+          contactNumber: man.contactNumber,
+          status: man.status || 'ENABLE'
+        })) || [];
+        console.log("formattedAdminDeliveryMen", formattedAdminDeliveryMen);
+
+        // Combine both arrays and remove duplicates by _id and email
+        setLengthofdeliverymen(activeDeliveryMen.length)
+        const mergedDeliveryMen = [...activeDeliveryMen, ...formattedAdminDeliveryMen]
+
+          .reduce((acc, current) => {
+            const isDuplicate = acc.find(item =>
+              item._id === current._id ||
+              item.email === current.email
+            );
+            if (!isDuplicate && current.status !== "DISABLE") {
+              return acc.concat([current]);
+            }
+            return acc;
+          }, []);
+
+        console.log("mergedDeliveryMen", mergedDeliveryMen);
+        setDeliveryMen(mergedDeliveryMen);
       }
-      // if (deliveryManRes.status) setDeliveryMen(deliveryManRes.data);
       if (customerRes.status) setCustomer(customerRes.data);
       setIsLoading(false);
     };
 
     fetchData();
   }, []);
+
   const getCurrentLocation = async (setFieldValue) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -51,13 +81,13 @@ const CreateOrder = () => {
           if (data.results && data.results.length > 0) {
             const formattedAddress =
               data.results[0].formatted_address || "Unable to fetch address";
-              const postalCodeComponent = data.results[0].address_components.find(component =>
-                component.types.includes('postal_code')
-              );
-              const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
-    
-              setFieldValue("pickupDetails.address", formattedAddress);
-              setFieldValue("pickupDetails.postCode", postalCode);
+            const postalCodeComponent = data.results[0].address_components.find(component =>
+              component.types.includes('postal_code')
+            );
+            const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
+
+            setFieldValue("pickupDetails.address", formattedAddress);
+            setFieldValue("pickupDetails.postCode", postalCode);
 
           }
 
@@ -78,7 +108,7 @@ const CreateOrder = () => {
 
   const getCoordinatesFromAddress = async (address, setFieldValue) => {
     console.log(address);
-    
+
     if (address) {
       // Fetch the coordinates using geocoding
       const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
@@ -87,18 +117,18 @@ const CreateOrder = () => {
       );
       const data = await response.json();
       console.log(data);
-    
+
       if (data.results && data.results.length > 0) {
         const { lat, lng } = data.results[0].geometry.location; // Correctly extract latitude and longitude
         const formattedAddress = data.results[0]?.formatted_address || "Unable to fetch address";
-    
+
         console.log(formattedAddress, lat, lng);
         const postalCodeComponent = data.results[0].address_components.find(component =>
           component.types.includes('postal_code')
         );
         const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
-      
-    
+
+
         // Set the address and coordinates to the form
         setFieldValue("deliveryDetails.address", formattedAddress);
         setFieldValue("deliveryDetails.location.latitude", lat);
@@ -110,7 +140,7 @@ const CreateOrder = () => {
     } else {
       alert("Please enter an address.");
     }
-    
+
   };
 
   const initialValues = {
@@ -173,7 +203,7 @@ const CreateOrder = () => {
       //   longitude: Yup.number()
       //     .required("Longitude is required"),
       // }),
-    
+
       dateTime: Yup.string().required("Required"),
       address: Yup.string().required("Required"),
       // countryCode: Yup.string().required("Required"),
@@ -202,16 +232,16 @@ const CreateOrder = () => {
 
   const options = useMemo(() => countryList().getData(), []);
 
-  const onSubmit = async (values , {setFieldValue}) => {
+  const onSubmit = async (values, { setFieldValue }) => {
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
     var deliverylocation = null
-    
+
     var pickuplocation = values.pickupDetails.location.latitude === null ? null : {
       latitude: values.pickupDetails.location.latitude,
       longitude: values.pickupDetails.location.longitude
     }
-    
+
     if (!values.pickupDetails.location.latitude && !values.pickupDetails.location.longitude) {
       console.log('Helo');
       if (values.pickupDetails.address) {
@@ -222,22 +252,22 @@ const CreateOrder = () => {
         );
         const data = await response.json();
         console.log(setFieldValue);
-      
+
         if (data.results && data.results.length > 0) {
           const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
           const formattedAddress = await data.results[0]?.formatted_address || "Unable to fetch address";
-      
+
           console.log(formattedAddress, lat, lng);
           const postalCodeComponent = data.results[0].address_components.find(component =>
             component.types.includes('postal_code')
           );
           const postalCode = await postalCodeComponent ? postalCodeComponent.long_name : "";
-        
+
           pickuplocation = {
-            latitude : lat ,
-            longitude : lng
+            latitude: lat,
+            longitude: lng
           }
-      
+
           // Set the address and coordinates to the form
           setFieldValue("pickupDetails.address", formattedAddress);
           setFieldValue("pickupDetails.location.latitude", lat);
@@ -249,7 +279,7 @@ const CreateOrder = () => {
       } else {
         alert("Please enter an address.");
       }
-      
+
     }
     if (!values.deliveryDetails.location.latitude && !values.deliveryDetails.location.longitude) {
       console.log('Helo');
@@ -261,22 +291,22 @@ const CreateOrder = () => {
         );
         const data = await response.json();
         console.log(setFieldValue);
-      
+
         if (data.results && data.results.length > 0) {
           const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
           const formattedAddress = await data.results[0]?.formatted_address || "Unable to fetch address";
-      
+
           console.log(formattedAddress, lat, lng);
           const postalCodeComponent = data.results[0].address_components.find(component =>
             component.types.includes('postal_code')
           );
           const postalCode = await postalCodeComponent ? postalCodeComponent.long_name : "";
-        
+
           deliverylocation = {
-            latitude : lat ,
-            longitude : lng
+            latitude: lat,
+            longitude: lng
           }
-      
+
           // Set the address and coordinates to the form
           setFieldValue("deliveryDetails.address", formattedAddress);
           setFieldValue("deliveryDetails.location.latitude", lat);
@@ -288,10 +318,10 @@ const CreateOrder = () => {
       } else {
         alert("Please enter an address.");
       }
-      
+
     }
 
-console.log(values);
+    console.log(values);
 
     // Create a copy of values and conditionally include paymentCollectionRupees
     const payload = {
@@ -300,17 +330,17 @@ console.log(values);
       pickupDetails: {
         ...values.pickupDetails,
         dateTime: pictimestamp,
-        location : {
-          latitude : pickuplocation.latitude ,
-          longitude : pickuplocation.longitude
+        location: {
+          latitude: pickuplocation.latitude,
+          longitude: pickuplocation.longitude
         }
       },
       deliveryDetails: {
         ...values.deliveryDetails,
 
-        location : {
-          latitude : deliverylocation.latitude ,
-          longitude : deliverylocation.longitude
+        location: {
+          latitude: deliverylocation.latitude,
+          longitude: deliverylocation.longitude
         }
       },
     };
@@ -378,13 +408,37 @@ console.log(values);
                     <Field
                       as="select"
                       name="deliveryManId"
-                      className="form-control"
-                      style={{ height: "4.5em" ,border: "1px solid #E6E6E6", }}
+                      className="w-full h-[4.5em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="">Select Delivery Man</option>
-                      {deliveryMan.map((data) => {
+                      <option value="" className="text-gray-500">Select Delivery Man</option>
+                      {deliveryMan.map((data, index) => {
+                        if (lengthofdeliverymen === index) {
+                          return (<>
+                            <option
+                              key={index}
+                              value={"admin"} 
+                              className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
+                              disabled
+                            >
+                              Admin - Delivery Man
+                            </option>
+                            <option
+                              key={`${index}-data`}
+                              value={data._id}
+                              className="py-1.5 px-3 hover:bg-gray-100"
+                            >
+                              {`${data.firstName} ${data.lastName}`}
+                            </option>
+                          </>);
+                        }
                         return (
-                          <option value={data._id}>{`${data.firstName} ${data.lastName}`}</option>
+                          <option
+                            key={index}
+                            value={data._id}
+                            className="py-1.5 px-3 hover:bg-gray-100"
+                          >
+                            {`${data.firstName} ${data.lastName}`}
+                          </option>
                         );
                       })}
                     </Field>
@@ -405,7 +459,7 @@ console.log(values);
                         name="paymentCollectionRupees"
                         type="number"
                         className="form-control mt-3"
-                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6", }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6", }}
                         placeholder="Enter Payment Collection pounds  "
                       />
                       <ErrorMessage
@@ -471,7 +525,7 @@ console.log(values);
                         name="pickupDetails.dateTime"
                         className="form-control w-25% h-100%"
                         placeholder="Date and Time"
-                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6",  }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6", }}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -489,7 +543,7 @@ console.log(values);
                           name="pickupDetails.address"
                           className="form-control w-25% h-100%"
                           placeholder="Pickup Address"
-                          style={{ height: "4.5em"  ,border: "1px solid #E6E6E6"}}
+                          style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                         />
                         <ErrorMessage
                           name="pickupDetails.address"
@@ -521,7 +575,7 @@ console.log(values);
                         name="pickupDetails.postCode"
                         className="form-control w-25% h-100%"
                         placeholder="Pickup Postcode"
-                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6"}}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -718,7 +772,7 @@ console.log(values);
                         name="deliveryDetails.address"
                         className="form-control w-25% h-100%"
                         placeholder="Delivery Address"
-                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6" }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="deliveryDetails.address"
@@ -741,7 +795,7 @@ console.log(values);
                         name="deliveryDetails.postCode"
                         className="form-control w-25% h-100%"
                         placeholder="Delivery Postcode"
-                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6" }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="deliveryDetails.postCode"

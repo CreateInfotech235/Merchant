@@ -1,53 +1,53 @@
-
-  .pagination li.active {
-    background-color: #d65246;
-    color: white;
-    border: 1px solid #d65246;
-    width: 25px;
-    height: 26px;
-    padding: 7px 7px 21px 7px;
-    border-radius: 5px;
-    font-size: 11px;
-  }
-  .pagination li {
-    color: black;
-    border: 1px solid #e6e6e6;
-    width: 25px;
-    height: 26px;
-    padding: 7px 7px 21px 7px;
-    border-radius: 5px;
-    font-size: 11px;
-    margin: 5px;
-    text-align: center;
-  } 
-  .dark-mode .pagination li{
-    color:white
-  }
-  .enable-btn {
-    outline: none;
-    border: none;
-    border-radius: 2px;
-    color: white;
-    background: rgba(151, 108, 221, 1);
-    width: 48px;
-    font-size: 8px;
-    height: 20px;
-    line-height: normal;
-  }
-  .edit-btn,
-  .delete-btn, .show-btn {
-    background: white;
-    height: 25px;
-    width: 25px;
-    border-radius: 3px;
-    border: 1px solid #e6e6e6;
-  }
+.pagination li.active {
+  background-color: #d65246;
+  color: white;
+  border: 1px solid #d65246;
+  width: 25px;
+  height: 26px;
+  padding: 7px 7px 21px 7px;
+  border-radius: 5px;
+  font-size: 11px;
+}
+.pagination li {
+  color: black;
+  border: 1px solid #e6e6e6;
+  width: 25px;
+  height: 26px;
+  padding: 7px 7px 21px 7px;
+  border-radius: 5px;
+  font-size: 11px;
+  margin: 5px;
+  text-align: center;
+}
+.dark-mode .pagination li {
+  color: white;
+}
+.enable-btn {
+  outline: none;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  /* background: rgba(151, 108, 221, 1); */
+  width: 60px;
+  font-size: 8px;
+  height: 20px;
+  line-height: normal;
+}
+.edit-btn,
+.delete-btn,
+.show-btn {
+  background: white;
+  height: 25px;
+  width: 25px;
+  border-radius: 3px;
+  border: 1px solid #e6e6e6;
+}
 
 .delete {
-  border:none;
-  background:#D65246;
-  color:white;
+  border: none;
+  background: #d65246;
+  color: white;
   border-radius: 6px;
-  padding:5px 5px 5px 5px;
-  width:100px
+  padding: 5px 5px 5px 5px;
+  width: 100px;
 }

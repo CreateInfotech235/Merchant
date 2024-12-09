@@ -101,7 +101,7 @@ const CreateOrder = () => {
     values.paymentCollection = values.cashOnDelivery === "true" ? "CASH" : values.paymentCollection
     const res = await createOrder({ ...values, dateTime: timestamp });
     if (res.status) {
-      naviagte('/all-order');
+      naviagte('/all-order-admin');
     }
   };
 
@@ -554,7 +554,7 @@ const CreateOrder = () => {
               <button
                 type="submit"
                 className="btn btn-secondary mt-3 me-4"
-                onClick={() => naviagte('/all-order')}
+                onClick={() => naviagte('/all-order-admin')}
                 style={{ height: "4.5em" }}
               >
                 Cancel

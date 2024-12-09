@@ -11,10 +11,12 @@ import Pagination from "../../Components_admin/Pagination/Pagination";
 import DeliveryManInfoModal from "./DeliveryManInfoModal";
 import DeleteModal from "../../Components_admin/DeleteModal";
 import { getAllDeliveryMan, deleteDeliveryBoy } from "../../Components_admin/Api/DeliveryMan";
+import "./DeliveryMan.css";
+
 const DeliveryMan = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // State for delete modal
+  const itemsPerPage = 10; // Changed to 5 items per page
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [deliverymen, setDeliverymen] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -24,42 +26,28 @@ const DeliveryMan = () => {
 
   const closeDeleteModal = () => setShowDeleteModal(false);
 
-    const fetchDeliveryMen = async () => {
-      const searchParam = searchTerm ? `&searchValue=${searchTerm}` : '';
-      const res = await getAllDeliveryMan(currentPage, itemsPerPage, searchParam);
-      if (res.status) {
-        setDeliverymen(res.data.data);
-        setTotalPages(Math.ceil(res.data.totalDataCount / itemsPerPage));
-      }
-    };
+  const fetchDeliveryMen = async () => {
+    const searchParam = searchTerm ? `&searchValue=${searchTerm}` : '';
+    const res = await getAllDeliveryMan(currentPage, itemsPerPage, searchParam);
+    console.log(res);
+    if (res.status) {
+      setDeliverymen(res.data.data);
+      setTotalPages(Math.ceil(res.data.totalDataCount / itemsPerPage));
+    }
+  };
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm]); // Fetch when page or search changes
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   const handleClick = (event) => {
     setCurrentPage(Number(event.target.id));
   };
-
-  const filteredDeliverymen = deliverymen.filter((deliveryman) => {
-    const query = searchTerm.toLowerCase();
-    return (
-      (deliveryman.name && deliveryman.name.toLowerCase().includes(query)) ||
-      (deliveryman.email && deliveryman.email.toLowerCase().includes(query)) ||
-      (deliveryman.contactNumber && deliveryman.contactNumber.toString().includes(query)) || 
-      (deliveryman.country && deliveryman.country.toLowerCase().includes(query)) ||
-      (deliveryman.city && deliveryman.city.toLowerCase().includes(query))
-    );
-  });
-
-  const indexOfLastDeliveryMan = currentPage * itemsPerPage;
-  const indexOfFirstDeliveryMan = indexOfLastDeliveryMan - itemsPerPage;
-  const currentDeliveryMen = filteredDeliverymen.slice(indexOfFirstDeliveryMan, indexOfLastDeliveryMan);
 
   const handleEditClick = (deliveryMan) => {
     setSelectedDeliveryMan(deliveryMan);
@@ -75,37 +63,55 @@ const DeliveryMan = () => {
     setSelectedDeliveryMan(deliveryMan);
     setShowInfoModal(true);
   };
+  const filteredDeliverymen = deliverymen.filter((deliveryman) => {
+    const query = searchTerm.toLowerCase();
+    return (
+      (deliveryman.firstName && deliveryman.firstName.toLowerCase().includes(query)) ||
+      (deliveryman.lastName && deliveryman.lastName.toLowerCase().includes(query)) ||
+      (deliveryman.email && deliveryman.email.toLowerCase().includes(query)) ||
+      (deliveryman.contactNumber && deliveryman.contactNumber.toString().includes(query)) || 
+      (deliveryman.country && deliveryman.country.toLowerCase().includes(query)) ||
+      (deliveryman.city && deliveryman.city.toLowerCase().includes(query))
+    );
+  });
+
+  const indexOfLastDeliveryMan = currentPage * itemsPerPage;
+  const indexOfFirstDeliveryMan = indexOfLastDeliveryMan - itemsPerPage;
+  const currentDeliveryMen = filteredDeliverymen.slice(indexOfFirstDeliveryMan, indexOfLastDeliveryMan);
 
   const closeInfoModal = () => {
     setShowInfoModal(false);
     setSelectedDeliveryMan(null);
   };
 
-  // Function to show delete modal and set selected delivery man
   const handleDeleteClick = (deliveryMan) => {
     setSelectedDeliveryMan(deliveryMan);
-    setShowDeleteModal(true); // Show delete confirmation modal
+    setShowDeleteModal(true);
   };
 
-  // Function to confirm deletion
   const confirmDelete = async () => {
     if (selectedDeliveryMan) {
       const response = await deleteDeliveryBoy(selectedDeliveryMan._id);
       if (response.status) {
-        fetchDeliveryMen(); // Refresh the list after deletion
+        fetchDeliveryMen();
       }
-      closeDeleteModal(); // Close the delete modal after deleting
+      closeDeleteModal();
     }
   };
-
+  const statusColors = {
+    ENABLE: "purple",
+    DISABLE: "red",
+  };
+  const getColorClass = (status) =>
+    `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
   return (
     <>
       <div className="w-100">
         <div className="d-flex justify-content-between py-3">
           <button className="delete">Delete</button>
           <Link to="/add-delivery-man">
-            <button type="button" className="btn text-light" style={{ background: "#D65246" }}>
-              <img src={add} alt="Add" />
+            <button type="button" className="btn text-light flex items-center" style={{ background: "#D65246" }}>
+              <img src={add} alt="Add" className="me-2" />
               Add Delivery Man
             </button>
           </Link>
@@ -131,7 +137,8 @@ const DeliveryMan = () => {
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
                 <th className="p-3 text-light"></th>
-                <th className="p-3 text-light">Name</th>
+                <th className="p-3 text-light">First Name</th>
+                <th className="p-3 text-light">Last Name</th>
                 <th className="p-3 text-light">Contact number</th>
                 <th className="p-3 text-light">Email id</th>
                 <th className="p-3 text-light">CountryCode</th>
@@ -141,26 +148,27 @@ const DeliveryMan = () => {
               </tr>
             </thead>
             <tbody>
-              {currentDeliveryMen.length === 0 ? (
+              {filteredDeliverymen.length === 0 ? (
                 <tr>
                   <td colSpan="10" className="text-center p-3">
                     No data found
                   </td>
                 </tr>
               ) : (
-                currentDeliveryMen.map((deliveryman) => (
+                filteredDeliverymen.map((deliveryman) => (
                   <tr key={deliveryman._id}>
                     <td className="user-table1">
                       <input type="checkbox" />
                     </td>
-                    <td className="p-3">{deliveryman.name}</td>
-                    <td className="p-3">{deliveryman.countryCode} {deliveryman.contactNumber}</td>
-                    <td className="p-3">{deliveryman.email}</td>
-                    <td className="p-3">{deliveryman.countryCode || '-'}</td>
+                    <td className="p-3">{deliveryman?.firstName || '-'}</td>
+                    <td className="p-3">{deliveryman?.lastName || '-'}</td>
+                    <td className="p-3">{deliveryman?.countryCode || '-'} {deliveryman.contactNumber}</td>
+                    <td className="p-3">{deliveryman?.email || '-'}</td>
+                    <td className="p-3">{deliveryman?.countryCode || '-'}</td>
                     <td className="p-3">
-                      <button className="enable-btn" onClick={() => setShowDeleteModal(true)}>
-                        {deliveryman.status}
-                      </button>
+                    <button className={getColorClass(deliveryman.status)}>
+                        {deliveryman.status === 'ENABLE' ? 'ONLINE' : 'OFFLINE'}
+                      </button> 
                     </td>
                     <td className="user-table1">
                       <input type="checkbox" checked={deliveryman.isVerified} />
@@ -168,16 +176,13 @@ const DeliveryMan = () => {
                     <td className="user-table1">
                       <div className="d-flex justify-content-center align-items-center">
                         <button className="edit-btn">
-                          <img src={locationimg} alt="Edit" />
+                          <img src={locationimg} alt="Edit" className="mx-auto" />
                         </button>
-                        {/* <button className="edit-btn ms-1" onClick={() => handleEditClick(deliveryman)}>
-                          <img src={edit} alt="Edit" />
-                        </button> */}
                         <button className="delete-btn ms-1" onClick={() => handleDeleteClick(deliveryman)}>
-                          <img src={deleteimg} alt="Delete" />
+                          <img src={deleteimg} alt="Delete" className="mx-auto" />
                         </button>
                         <button className="show-btn ms-1" onClick={() => handleViewClick(deliveryman)}>
-                          <img src={show} alt="Show" />
+                          <img src={show} alt="Show" className="mx-auto" />
                         </button>
                       </div>
                     </td>
@@ -191,15 +196,6 @@ const DeliveryMan = () => {
         <Pagination currentPage={currentPage} totalPages={totalPages} handleClick={handleClick} />
       </div>
 
-      {/* Conditionally render the UpdateDeliveryBoyModal */}
-      {/* {showEditModal && (
-        <UpdateDeliveryBoyModal
-          deliveryBoy={selectedDeliveryMan}
-          onHide={closeEditModal}
-        />
-      )} */}
-
-      {/* Conditionally render the DeliveryManInfoModal */}
       {showInfoModal && (
         <DeliveryManInfoModal
           deliveryBoy={selectedDeliveryMan}
@@ -207,11 +203,10 @@ const DeliveryMan = () => {
         />
       )}
 
-      {/* Conditionally render Delete confirmation modal */}
       {showDeleteModal && (
         <DeleteModal
-          onDelete={confirmDelete} // Pass confirmDelete to handle confirmation
-          onHide={closeDeleteModal} // Close modal if canceled
+          onDelete={confirmDelete}
+          onHide={closeDeleteModal}
           text='Delivery Man'
         />
       )}

@@ -48,7 +48,7 @@ const AddUser = () => {
         console.log(values);
         const res = await addCustomer(values);
         if (res.status) {
-          navigate('/all-customer')
+          navigate('/all-customer-admin')
         }
       };
 
@@ -205,7 +205,7 @@ const AddUser = () => {
                         <button type="submit" className="btn rounded-2 m-3 p-2 fw-bold" style={{ width: "150px", background: "#d65246", color: "white" }}>
                             Save
                         </button>
-                        <button type="button" className="btn rounded-2 m-3 p-2 fw-bold" style={{ width: "150px", background: "#FFF", color: "#000" }} onClick={() => navigate('/all-customer')}>
+                        <button type="button" className="btn rounded-2 m-3 p-2 fw-bold" style={{ width: "150px", background: "#FFF", color: "#000" }} onClick={() => navigate('/all-customer-admin')}>
                             Cancel
                         </button>
                     </div>

@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaBox, FaShippingFast, FaCheckCircle, FaTruck, FaSearch, FaMapMarkerAlt, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { BsChatDots } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
 
-function Tracking() {
+function Tracking({ Login, setLogin  }) {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [trackingStatus, setTrackingStatus] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (Login === true) {
+      const storedTrackingNumber = localStorage.getItem("trackingNumber");
+      if (storedTrackingNumber) {
+        setTrackingNumber(storedTrackingNumber);
+        handleTrackingSearch();
+      }
+    }
+  }, [Login]);
+
+  const handleTrackingSearch = () => {
     // Mock tracking status - replace with actual API call
     setTrackingStatus({
       status: 'in_transit',
@@ -23,12 +34,26 @@ function Tracking() {
           time: '10:30 AM'
         },
         {
-          sender: 'System',
-          message: 'Package arrived at Mumbai sorting facility', 
+          sender: 'System', 
+          message: 'Package arrived at Mumbai sorting facility',
           time: '2:45 PM'
         }
       ]
     });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (Login === true) {
+      localStorage.removeItem("trackingNumber");
+      handleTrackingSearch();
+    } else {
+      localStorage.setItem("trackingNumber", trackingNumber);
+      const confirm = window.confirm("You need to login first. Do you want to proceed to login page?");
+      if (confirm) {
+        navigate("/login");
+      }
+    }
   };
 
   const steps = [
@@ -97,9 +122,9 @@ function Tracking() {
                 {steps.map((step, index) => (
                   <div key={index} className="flex flex-col items-center relative z-10">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center
-                      ${index < trackingStatus.currentStep ? 'bg-green-500 text-white' : 
-                        index === trackingStatus.currentStep ? 'bg-[#221F92] text-white' : 
-                        'bg-gray-200 text-gray-400'}`}>
+                      ${index < trackingStatus.currentStep ? 'bg-green-500 text-white' :
+                        index === trackingStatus.currentStep ? 'bg-[#221F92] text-white' :
+                          'bg-gray-200 text-gray-400'}`}>
                       {step.icon}
                     </div>
                     <div className="text-center mt-2">
@@ -111,9 +136,9 @@ function Tracking() {
                   </div>
                 ))}
                 <div className="absolute top-6 left-0 w-full h-1 bg-gray-200 -z-10">
-                  <div 
+                  <div
                     className="absolute top-0 left-0 h-full bg-green-500 transition-all duration-500"
-                    style={{width: `${(trackingStatus.currentStep - 1) * 33.33}%`}}
+                    style={{ width: `${(trackingStatus.currentStep - 1) * 33.33}%` }}
                   />
                 </div>
               </div>
@@ -157,7 +182,7 @@ function Tracking() {
               <div className="border rounded-md p-4">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-medium text-gray-800">Delivery Updates</h3>
-                  <button 
+                  <button
                     onClick={() => setShowChat(!showChat)}
                     className="flex items-center gap-1 text-[#221F92] hover:text-[#1a1873]"
                   >

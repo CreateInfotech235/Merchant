@@ -36,7 +36,7 @@ export const getScbscriptionUsers = async (page, pageLimit) => {
 export const getUnScbscriptionUsers = async (page, pageLimit) => {
     try {
         const response = await API.get(`/users?isSubscribed=false&pageCount=${page}&pageLimit=${pageLimit}`);
-        console.log('res',response)
+        console.log('ress',response)
         if (response.status === 200) {
             return { status: true, data: response.data.data }
         } else {

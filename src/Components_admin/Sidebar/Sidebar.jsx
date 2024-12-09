@@ -109,17 +109,17 @@ const Sidebar = () => {
             {activeTab === 4 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
-                  <li className={isActive("/create-order") ? "active" : ""}>
-                    <Link to="/create-order">Create Order</Link>
+                  <li className={isActive("/create-order-admin") ? "active" : ""}>
+                    <Link to="/create-order-admin">Create Order</Link>
                   </li>
                   {/* <li className={isActive("/schedule-order") ? "active" : ""}>
                     <Link to="/schedule-order">Schedule Order</Link>
                   </li> */}
-                  <li className={isActive("/all-order") ? "active" : ""}>
-                    <Link to="/all-order">All Orders</Link>
+                  <li className={isActive("/all-order-admin") ? "active" : ""}>
+                    <Link to="/all-order-admin">All Orders</Link>
                   </li>
-                  <li className={isActive("/order-location") ? "active" : ""}>
-                    <Link to="/order-location">Orders Location</Link>
+                  <li className={isActive("/order-location-admin") ? "active" : ""}>
+                    <Link to="/order-location-admin">Orders Location</Link>
                   </li>
                 </ul>
               </div>
@@ -156,8 +156,11 @@ const Sidebar = () => {
             {activeTab === 6 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
-                  <li className={isActive("/delivery-man") ? "active" : ""}>
-                    <Link to="/delivery-man">Delivery Man</Link>
+                  <li className={isActive("/delivery-man-admin") ? "active" : ""}>
+                    <Link to="/delivery-man-admin">Admin Delivery Man</Link>
+                  </li>
+                  <li className={isActive("/delivery-man-merchant") ? "active" : ""}>
+                    <Link to="/delivery-man-merchant">Merchant Delivery Man</Link>
                   </li>
                   <li className={isActive("/pending-delivery-man") ? "active" : ""}>
                     <Link to="/pending-delivery-man">Pending Delivery Man</Link>
@@ -188,9 +191,9 @@ const Sidebar = () => {
           </li>
 
           <li>
-            <Link to="/all-customer" className="link">
+            <Link to="/all-customer-admin" className="link">
               <Button
-                className={`w-100 ${isActive("/all-customer") ? "active" : ""}`}
+                className={`w-100 ${isActive("/all-customer-admin") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
@@ -264,14 +267,14 @@ const Sidebar = () => {
             {activeTab === 8 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
-                  <li className={isActive("/pending") ? "active" : ""}>
-                    <Link to="/pending">Pending</Link>
+                  <li className={isActive("/pending-admin") ? "active" : ""}>
+                    <Link to="/pending-admin">Pending</Link>
                   </li>
-                  <li className={isActive("/approved") ? "active" : ""}>
-                    <Link to="/approved">Approved</Link>
+                  <li className={isActive("/approved-admin") ? "active" : ""}>
+                    <Link to="/approved-admin">Approved</Link>
                   </li>
-                  <li className={isActive("/rejected") ? "active" : ""}>
-                    <Link to="/rejected">Rejected</Link>
+                  <li className={isActive("/rejected-admin") ? "active" : ""}>
+                    <Link to="/rejected-admin">Rejected</Link>
                   </li>
                 </ul>
               </div>

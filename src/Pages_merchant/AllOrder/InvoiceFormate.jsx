@@ -8,6 +8,7 @@ import { createInvoiceSettings, getInvoiceSettings, updateInvoiceSettings } from
 function InvoiceFormate() {
   const location = useLocation();
   const orderData = location.state?.orderData;
+  console.log("orderData", orderData);
   const [invoiceSettingsData, setInvoiceSettingsData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [invoiceSettings, setInvoiceSettings] = useState({
@@ -25,18 +26,18 @@ function InvoiceFormate() {
       weight: orderData?.weight || 0,
       parcelsCount: orderData?.parcelsCount || 0,
       pickupDetails: {
-        name: orderData?.pickupAddress?.name || '',
-        address: orderData?.pickupAddress?.address || '',
-        mobileNumber: orderData?.pickupAddress?.mobileNumber || '',
-        email: orderData?.pickupAddress?.email || '',
-        postCode: orderData?.pickupAddress?.postCode || ''
+        name: orderData?.pickupDetails?.name || '',
+        address: orderData?.pickupDetails?.address || '',
+        mobileNumber: orderData?.pickupDetails?.mobileNumber || '',
+        email: orderData?.pickupDetails?.email || '',
+        postCode: orderData?.pickupDetails?.postCode || ''
       },
       deliveryDetails: {
-        name: orderData?.deliveryAddress?.name || '',
-        address: orderData?.deliveryAddress?.address || '',
-        mobileNumber: orderData?.deliveryAddress?.mobileNumber || '',
-        email: orderData?.deliveryAddress?.email || '',
-        postCode: orderData?.deliveryAddress?.postCode || ''
+        name: orderData?.deliveryDetails?.name || '',
+        address: orderData?.deliveryDetails?.address || '',
+        mobileNumber: orderData?.deliveryDetails?.mobileNumber || '',
+        email: orderData?.deliveryDetails?.email || '',
+        postCode: orderData?.deliveryDetails?.postCode || ''
       },
       charges: orderData?.charges || [],
       totalCharge: orderData?.totalCharge || 0,
@@ -107,6 +108,7 @@ function InvoiceFormate() {
       if (!invoiceSettingsData) {
         // If no existing settings, create new
         response = await createInvoiceSettings(value);
+        console.log("response1", response);
       } else {
         // If settings exist, update them
         response = await updateInvoiceSettings(value);
@@ -201,14 +203,17 @@ function InvoiceFormate() {
                 src={invoiceSettings.logoPreview}
                 alt="Company Logo"
                 className="h-16 object-contain"
+                style={{ pointerEvents: isEditing ? 'none' : 'auto' }}
               />
               {isEditing && (
-                <input
-                  type="file"
-                  onChange={handleLogoChange}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                  accept="image/*"
-                />
+                <label className="absolute inset-0 cursor-pointer">
+                  <input
+                    type="file"
+                    onChange={handleLogoChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                </label>
               )}
             </div>
             <div className="mt-4">

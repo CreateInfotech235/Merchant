@@ -49,7 +49,8 @@ const DeliveryMan = () => {
   const filteredDeliverymen = deliverymen.filter((deliveryman) => {
     const query = searchTerm.toLowerCase();
     return (
-      (deliveryman.name && deliveryman.name.toLowerCase().includes(query)) ||
+      (deliveryman.firstName && deliveryman.firstName.toLowerCase().includes(query)) ||
+      (deliveryman.lastName && deliveryman.lastName.toLowerCase().includes(query)) ||
       (deliveryman.email && deliveryman.email.toLowerCase().includes(query)) ||
       (deliveryman.contactNumber && deliveryman.contactNumber.toString().includes(query)) || 
       (deliveryman.country && deliveryman.country.toLowerCase().includes(query)) ||
@@ -104,8 +105,8 @@ const DeliveryMan = () => {
         <div className="d-flex justify-content-between py-3">
           <button className="delete">Delete</button>
           <Link to="/add-delivery-man">
-            <button type="button" className="btn text-light" style={{ background: "#D65246" }}>
-              <img src={add} alt="Add" />
+            <button type="button" className="btn text-light flex items-center" style={{ background: "#D65246" }}>
+              <img src={add} alt="Add" className="me-2" />
               Add Delivery Man
             </button>
           </Link>
@@ -131,7 +132,8 @@ const DeliveryMan = () => {
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
                 <th className="p-3 text-light"></th>
-                <th className="p-3 text-light">Name</th>
+                <th className="p-3 text-light">First Name</th>
+                <th className="p-3 text-light">Last Name</th>
                 <th className="p-3 text-light">Contact number</th>
                 <th className="p-3 text-light">Email id</th>
                 <th className="p-3 text-light">CountryCode</th>
@@ -153,10 +155,11 @@ const DeliveryMan = () => {
                     <td className="user-table1">
                       <input type="checkbox" />
                     </td>
-                    <td className="p-3">{deliveryman.name}</td>
-                    <td className="p-3">{deliveryman.countryCode} {deliveryman.contactNumber}</td>
-                    <td className="p-3">{deliveryman.email}</td>
-                    <td className="p-3">{deliveryman.countryCode || '-'}</td>
+                    <td className="p-3">{deliveryman?.firstName || '-'}</td>
+                    <td className="p-3">{deliveryman?.lastName || '-'}</td>
+                    <td className="p-3">{deliveryman?.countryCode || '-'} {deliveryman?.contactNumber || '-'}</td>
+                    <td className="p-3">{deliveryman?.email || '-'}</td>
+                    <td className="p-3">{deliveryman?.country || '-'}</td>
                     <td className="p-3">
                       <button className="enable-btn" onClick={() => setShowDeleteModal(true)}>
                         {deliveryman.status}
@@ -168,16 +171,16 @@ const DeliveryMan = () => {
                     <td className="user-table1">
                       <div className="d-flex justify-content-center align-items-center">
                         <button className="edit-btn">
-                          <img src={locationimg} alt="Edit" />
+                          <img src={locationimg} alt="Edit" className="mx-auto"/>
                         </button>
                         {/* <button className="edit-btn ms-1" onClick={() => handleEditClick(deliveryman)}>
                           <img src={edit} alt="Edit" />
                         </button> */}
                         <button className="delete-btn ms-1" onClick={() => handleDeleteClick(deliveryman)}>
-                          <img src={deleteimg} alt="Delete" />
+                          <img src={deleteimg} alt="Delete" className="mx-auto"/>
                         </button>
                         <button className="show-btn ms-1" onClick={() => handleViewClick(deliveryman)}>
-                          <img src={show} alt="Show" />
+                          <img src={show} alt="Show" className="mx-auto"/>
                         </button>
                       </div>
                     </td>

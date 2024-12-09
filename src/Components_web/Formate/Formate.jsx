@@ -2,11 +2,11 @@ import React from 'react'
 import NavBar from '../Navbar/Navbar'
 import Footer from '../Footer/Footer'
 import './Formate.css'
-function Formate({children}) {
+function Formate({children,Login,useData}) {
     
   return (
   <>
-    <NavBar />
+    <NavBar Login={Login} useData={useData}/>
     <div className=''>
       {children}
     </div>

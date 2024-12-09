@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import {
+  getAllDeliveryMans,
   getDeliveryMan,
   updateDeliveryBoy,
 } from "../../Components_merchant/Api/DeliveryMan";
@@ -21,6 +22,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
   const [customer, setCustomer] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [customerId, setCustomerId] = useState(null);
+  const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
+
   useEffect(() => {
     const selectedCustomer = customer.find((c) => c.email === Order.cutomerEmail)
     // console.log("selectedCustomer", selectedCustomer);
@@ -31,19 +34,44 @@ const UpdateOrderModal = ({ onHide, Order }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const deliveryManRes = await getDeliveryMan(1, 10);
       const customerRes = await getAllCustomers();
-      console.log(customerRes.data,"Get all customer");
-      
 
-      if (deliveryManRes.status) setDeliveryMen(deliveryManRes.data);
+      const deliveryMans = await getAllDeliveryMans();
+      const deliveryManRes = await getDeliveryMan();
+      if (deliveryManRes.data || deliveryMans.data) {
+        // Filter active delivery men from first source
+        const activeDeliveryMen = deliveryManRes.data?.filter(man => man.status !== "DISABLE") || [];
+        const formattedAdminDeliveryMen = deliveryMans.data?.map(man => ({
+          ...man,
+          firstName: man.firstName || man.name?.split(' ')[0] || undefined,
+          lastName: man.lastName || (man.name?.split(' ').slice(1).join(' ')) || undefined,
+          _id: man._id,
+          email: man.email,
+          contactNumber: man.contactNumber,
+          status: man.status || 'ENABLE'
+        })) || [];
+        console.log("formattedAdminDeliveryMen", formattedAdminDeliveryMen);
+
+        // Combine both arrays and remove duplicates by _id and email
+        setLengthofdeliverymen(activeDeliveryMen.length)
+        const mergedDeliveryMen = [...activeDeliveryMen, ...formattedAdminDeliveryMen]
+
+          .reduce((acc, current) => {
+            const isDuplicate = acc.find(item =>
+              item._id === current._id ||
+              item.email === current.email
+            );
+            if (!isDuplicate && current.status !== "DISABLE") {
+              return acc.concat([current]);
+            }
+            return acc;
+          }, []);
+
+        console.log("mergedDeliveryMen", mergedDeliveryMen);
+        setDeliveryMen(mergedDeliveryMen);
+      }
       if (customerRes.status) setCustomer(customerRes.data);
       setIsLoading(false);
-      const selectedDeliveryMan = await deliveryMan.find(man => man.name == "John Doe" );
-      if (selectedDeliveryMan) {
-        setDeliveryMenId(selectedDeliveryMan._id)
-      }
-      
     };
 
     fetchData();
@@ -59,9 +87,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  
 
-  
+
+
   const initialValues = {
     parcelsCount: Order.parcelsCount || 1,
     paymentCollectionRupees: Order.paymentCollectionRupees || "",
@@ -155,9 +183,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       delete payload.paymentCollectionRupees;
     }
 
-    const res = await updateOrder( Order._id, payload);
+    const res = await updateOrder(Order._id, payload);
 
-    
+
     if (res.status) {
       onHide()
       naviagte("/all-order");
@@ -177,7 +205,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
           onSubmit={onSubmit}
           enableReinitialize={true}
         >
-          {(formik , form) => {
+          {(formik, form) => {
             return (
               <Form className="create-order">
                 {/* Parcel Types */}
@@ -210,20 +238,39 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     <Field
                       as="select"
                       name="deliveryManId"
-                      className="form-control"
-                      style={{ height: "4.5em" }}
-                      value={formik.values.deliveryManId}
-                      onChange={(e) => {
-                        formik.setFieldValue("deliveryManId", e.target.value);
-                        setDeliveryMenId(e.target.value);
-                      }}
+                      className="w-full h-[4.5em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="">Select Delivery Man</option>
-                      {deliveryMan.map((data) => (
-                        <option key={data._id} value={data._id}>
-                          {data.firstName}
-                        </option>
-                      ))}
+                      <option value="" className="text-gray-500">Select Delivery Man</option>
+                      {deliveryMan.map((data, index) => {
+                        if (lengthofdeliverymen === index) {
+                          return (<>
+                            <option
+                              key={index}
+                              value={"admin"}
+                              className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
+                              disabled
+                            >
+                              Admin
+                            </option>
+                            <option
+                              key={`${index}-data`}
+                              value={data._id}
+                              className="py-1.5 px-3 hover:bg-gray-100"
+                            >
+                              {`${data.firstName} ${data.lastName}`}
+                            </option>
+                          </>);
+                        }
+                        return (
+                          <option
+                            key={index}
+                            value={data._id}
+                            className="py-1.5 px-3 hover:bg-gray-100"
+                          >
+                            {`${data.firstName} ${data.lastName}`}
+                          </option>
+                        );
+                      })}
                     </Field>
                     <ErrorMessage
                       name="deliveryManId"
@@ -310,7 +357,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         name="pickupDetails.dateTime"
                         className="form-control w-25% h-100%"
                         placeholder="Date and Time"
-                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6" }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -327,7 +374,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         name="pickupDetails.address"
                         className="form-control w-25% h-100%"
                         placeholder="Address"
-                        style={{ height: "4.5em" , border: "1px solid #E6E6E6" }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="pickupDetails.address"
@@ -342,7 +389,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         name="pickupDetails.postCode"
                         className="form-control w-25% h-100%"
                         placeholder="PostCode"
-                        style={{ height: "4.5em" ,border: "1px solid #E6E6E6" }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -461,59 +508,59 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     {/* <div className="input-error mb-3"> */}
                     <label className="fw-thin p-0 pb-1">Select Customer :</label>
                     <Field name="customer">
-                        {({ field, form }) => (
-                          <div>
-                            <select
-                              className="form-control"
-                              style={{
-                                height: "4.5em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px"
-                              }}
-                              value={customerId || ""}
-                              onChange={(e) => {
-                                const selectedCustomer = customer.find(
-                                  (c) => c._id === e.target.value
+                      {({ field, form }) => (
+                        <div>
+                          <select
+                            className="form-control"
+                            style={{
+                              height: "4.5em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px"
+                            }}
+                            value={customerId || ""}
+                            onChange={(e) => {
+                              const selectedCustomer = customer.find(
+                                (c) => c._id === e.target.value
+                              );
+                              setCustomerId(e.target.value);
+                              if (selectedCustomer) {
+                                form.setFieldValue(
+                                  "deliveryDetails.address",
+                                  selectedCustomer.address
                                 );
-                                setCustomerId(e.target.value);
-                                if (selectedCustomer) {
-                                  form.setFieldValue(
-                                    "deliveryDetails.address",
-                                    selectedCustomer.address
-                                  );
-                                  form.setFieldValue(
-                                    "deliveryDetails.mobileNumber",
-                                    selectedCustomer.mobileNumber
-                                  );
-                                  form.setFieldValue(
-                                    "deliveryDetails.email",
-                                    selectedCustomer.email
-                                  );
-                                  form.setFieldValue(
-                                    "deliveryDetails.description",
-                                    selectedCustomer.description
-                                  );
-                                  form.setFieldValue(
-                                    "deliveryDetails.postCode",
-                                    selectedCustomer.postCode
-                                  );
-                                  form.setFieldValue(
-                                    "deliveryDetails.name",
-                                    selectedCustomer.firstName
-                                  );
-                                }
-                              }}
-                            >
-                              <option value="" disabled selected>Select Customer</option>
-                              {customer.map((cust) => (
-                                <option key={cust._id} value={cust._id}>
-                                  {`${cust.firstName} - ${cust.email} - ${cust.mobileNumber}`}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-                      </Field>
+                                form.setFieldValue(
+                                  "deliveryDetails.mobileNumber",
+                                  selectedCustomer.mobileNumber
+                                );
+                                form.setFieldValue(
+                                  "deliveryDetails.email",
+                                  selectedCustomer.email
+                                );
+                                form.setFieldValue(
+                                  "deliveryDetails.description",
+                                  selectedCustomer.description
+                                );
+                                form.setFieldValue(
+                                  "deliveryDetails.postCode",
+                                  selectedCustomer.postCode
+                                );
+                                form.setFieldValue(
+                                  "deliveryDetails.name",
+                                  selectedCustomer.firstName
+                                );
+                              }
+                            }}
+                          >
+                            <option value="" disabled selected>Select Customer</option>
+                            {customer.map((cust) => (
+                              <option key={cust._id} value={cust._id}>
+                                {`${cust.firstName} - ${cust.email} - ${cust.mobileNumber}`}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </Field>
                     {/* </div> */}
 
                     <div className="input-error mb-3">
@@ -524,7 +571,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         name="deliveryDetails.address"
                         className="form-control w-25% h-100%"
                         placeholder="Address"
-                        style={{ height: "4.5em" , border: "1px solid #E6E6E6" }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="deliveryDetails.address"
@@ -539,7 +586,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         name="deliveryDetails.postCode"
                         className="form-control w-25% h-100%"
                         placeholder="PostCode"
-                        style={{ height: "4.5em" , border: "1px solid #E6E6E6" }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="deliveryDetails.postCode"

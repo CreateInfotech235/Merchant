@@ -207,7 +207,7 @@ const AllOrder = () => {
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
   const downloadInvoice = async (order) => {
-    
+    console.log("order", order);
     try {
       // Navigate to invoice format page with order data
       navigate('/invoice-format', {
@@ -345,7 +345,7 @@ const AllOrder = () => {
                             className="btn btn-sm btn-primary enable-btn"
                             onClick={() => downloadInvoice(order)}
                           >
-                            Download Invoice
+                            Download
                           </button>
                         ) : (
                           order?.invoice ?? "-"

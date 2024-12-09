@@ -48,8 +48,7 @@ const Login = () => {
             localStorage.setItem('merchnatId',response.data.userData._id)
             localStorage.setItem("accessToken", response.data.userAuthData.accessToken);
             localStorage.setItem('userData', JSON.stringify(response.data.userData))
-            navigate("/Merchant-dashboard");
-            console.log(accessToken);
+            navigate("/");
         } else {
             // Handle API error
             setErrors({ apiError: response.message });

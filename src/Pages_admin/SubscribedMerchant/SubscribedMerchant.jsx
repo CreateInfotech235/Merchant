@@ -54,9 +54,10 @@ const SubscribedMerchnat = () => {
   const filteredUsers = users.filter((user) => {
     const query = searchQuery.toLowerCase();
     return (
-      user.userName.toLowerCase().includes(query) ||
+      user.firstName.toLowerCase().includes(query) ||
+      user.lastName.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
-      user.country.toLowerCase().includes(query) ||
+      user.countryCode.toLowerCase().includes(query) ||
       user.city.toLowerCase().includes(query)
     );
   });
@@ -114,7 +115,7 @@ const SubscribedMerchnat = () => {
         </div>
         <div>
           <Link to="/add-user">
-            <button className="btn text-white" style={{ background: "#D65246" }}>
+            <button className="btn text-white d-flex align-items-center" style={{ background: "#D65246" }}>
               <img src={add} className="pe-2" alt="Add" />
               Add User
             </button>
@@ -127,8 +128,9 @@ const SubscribedMerchnat = () => {
           <thead className="text-light" style={{ background: "#253A71" }}>
             <tr>
               <th className="p-3">User ID</th>
-              <th className="p-3">Name</th>
-              <th className="p-3">Contact</th>
+              <th className="p-3">First Name</th>
+              <th className="p-3">Last Name</th>
+              <th className="p-3">Contact Number</th>
               <th className="p-3">Email</th>
               <th className="p-3">Country</th>
               <th className="p-3">City</th>
@@ -148,7 +150,8 @@ const SubscribedMerchnat = () => {
               currentUsers.map((user, index) => (
                 <tr key={index}>
                   <td className="p-3">{user.userId}</td>
-                  <td className="p-3">{user.userName}</td>
+                  <td className="p-3">{user.firstName}</td>
+                  <td className="p-3">{user.lastName}</td>
                   <td className="p-3">{user.contactNumber}</td>
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">{user.countryCode}</td>
@@ -166,7 +169,7 @@ const SubscribedMerchnat = () => {
                         <img src={deleteimg} alt="Delete" />
                       </button> */}
                       <button className="show-btn m-2" onClick={() => handleShowInfo(user)}>
-                        <img src={show} alt="Show" />
+                        <img src={show} alt="Show" className="mx-auto" />
                       </button>
                     </div>
                   </td>

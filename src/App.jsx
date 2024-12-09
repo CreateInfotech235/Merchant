@@ -139,10 +139,12 @@ import AddUser from "./Pages_admin/Users/AddUser";
 import AddDeliveryManAdmin from "./Pages_admin/DeliveryMan/AddDeliveryMan";
 import SubscriptionPlanAdmin from "./Pages_admin/SubscriptionPlan/SubscriptionPlan";
 import Order from "./Pages_admin/Order/Order";
+import MerchantDeliveryMan from "./Pages_admin/DeliveryMan/MerchantDeliveryMan";
 
 
 function App() {
   const [themeMode, setThemeMode] = useState("light");
+  const [islogin, setIslogin] = useState(false);
 
   useEffect(() => {
     if (themeMode === "dark") {
@@ -156,6 +158,32 @@ function App() {
     setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
 
+  var accessToken = localStorage.getItem("accessToken");
+  var merchnatId = localStorage.getItem("merchnatId");
+  var userData = JSON.parse(localStorage.getItem("userData"));
+  useEffect(() => {
+    accessToken = localStorage.getItem("accessToken");
+    merchnatId = localStorage.getItem("merchnatId");
+    userData = JSON.parse(localStorage.getItem("userData"))
+  }, [islogin]);
+
+  const setalogin = () => {
+    if (accessToken && merchnatId && userData) {
+      return true;
+    }
+    return false;
+  }
+
+  useEffect(() => {
+    setIslogin(setalogin());
+  }, []);
+
+
+  useEffect(() => {
+    setIslogin(setalogin());
+  }, [accessToken, merchnatId, userData]);
+
+  console.log("USER islogin", islogin);
   return (
     <BrowserRouter>
       <ToastContainer theme="colored" />
@@ -163,7 +191,7 @@ function App() {
       <Routes>
         {/* Unprotected Routes */}
         <Route
-          path="/merchant"
+          path="/merchant/login"
           element={
             <UnprotectedRoute>
               <Login />
@@ -390,7 +418,7 @@ function App() {
         <Route
           path="/"
           element={
-            <Formate>
+            <Formate Login={islogin} useData={userData}>
               <Mainbody />
             </Formate>
           }
@@ -399,25 +427,25 @@ function App() {
         <Route
           path="/pricing"
           element={
-            <Formate>
+            <Formate Login={islogin} useData={userData}>
               <Pricing />
             </Formate>
           }
         />
-        <Route path="/login" element={<LoginWeb />} />
+        <Route path="/login" element={<LoginWeb Login={islogin} setLogin={setIslogin}/>} />
         <Route path="/register" element={<SignupWeb />} />
         <Route
           path="/tracking"
           element={
-            <Formate>
-              <Tracking />
+            <Formate Login={islogin} useData={userData}>
+              <Tracking Login={islogin} setLogin={setIslogin}/>
             </Formate>
           }
         />
         <Route
           path="/about"
           element={
-            <Formate>
+            <Formate Login={islogin} useData={userData}>
               <About />
             </Formate>
           }
@@ -425,7 +453,7 @@ function App() {
         <Route
           path="/contact"
           element={
-            <Formate>
+            <Formate Login={islogin} useData={userData}>
               <Contact />
             </Formate>
           }
@@ -500,7 +528,7 @@ function App() {
           }
         />
         <Route
-          path="/merchantt"
+          path="/merchant"
           element={
             <ProtectedRouteAdmin>
               <Users />
@@ -524,7 +552,7 @@ function App() {
           }
         />
         <Route
-          path="/create-order"
+          path="/create-order-admin"
           element={
             <ProtectedRouteAdmin>
               <CreateOrderAdmin />
@@ -540,7 +568,7 @@ function App() {
           }
         />
         <Route
-          path="/all-order"
+          path="/all-order-admin"
             element={
             <ProtectedRouteAdmin>
               <AllOrderAdmin />
@@ -548,10 +576,18 @@ function App() {
           }
         />
         <Route
-          path="/delivery-man"
+          path="/delivery-man-admin"
           element={
             <ProtectedRouteAdmin>
               <DeliveryManAdmin />
+            </ProtectedRouteAdmin>
+          }
+        />
+        <Route
+          path="/delivery-man-merchant"
+          element={
+            <ProtectedRouteAdmin>
+              <MerchantDeliveryMan />
             </ProtectedRouteAdmin>
           }
         />
@@ -756,7 +792,7 @@ function App() {
           }
         />
         <Route
-          path="/order-location"
+          path="/order-location-admin"
           element={
             <ProtectedRouteAdmin>
               <OrderLocationAdmin />
@@ -893,7 +929,7 @@ function App() {
           }
         />
         <Route
-          path="/approved"
+          path="/approved-admin"
           element={
             <ProtectedRouteAdmin>
               <ApprovedAdmin />
@@ -901,7 +937,7 @@ function App() {
           }
         />
         <Route
-          path="/rejected"
+          path="/rejected-admin"
           element={
             <ProtectedRouteAdmin>
               <RejectedAdmin />
@@ -909,7 +945,7 @@ function App() {
           }
         />
         <Route
-          path="/pending"
+          path="/pending-admin"
           element={
             <ProtectedRouteAdmin>
               <PendingAdmin />
@@ -1045,7 +1081,7 @@ function App() {
           }
         />
         <Route
-          path="/all-customer"
+          path="/all-customer-admin"
           element={
             <ProtectedRouteAdmin>
               <CustomerAdmin />

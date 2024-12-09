@@ -125,7 +125,7 @@ const AllOrder = () => {
             style={{ background: "#D65246" }}
           >
             <Link
-              to="/create-order"
+              to="/create-order-admin"
               style={{ textDecoration: "none", color: "white" }}
             >
               <img src={add} alt="Add" />

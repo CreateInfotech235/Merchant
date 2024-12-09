@@ -6,7 +6,7 @@ import Breadcrumb from "../Components_merchant/Breadcrumb/Breadcrumb";
 import { SubscriptionInfo } from "../Components_merchant/Api/Subscription";
 import { Button, Modal } from "react-bootstrap";
 import SubscriptionPlanModel from "../Pages_merchant/SubscriptionPlan/SubscriptionPlanModel";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 
 const ProtectedRoute = ({ children }) => {
   const [showModel, setShowModel] = useState(false);

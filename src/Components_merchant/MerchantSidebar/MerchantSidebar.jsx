@@ -36,7 +36,7 @@ const MerchantSidebar = () => {
         <div className="col-xs-3 mt-5 mb-3 ms-3 me-3">
           <Link to="/merchant" className="d-flex items-center justify-content-center align-items-center text-white">
           {/* <div className="d-flex items-center justify-content-center blur"></div> */}
-            <img src={logo} width={'200px'} className="logo" alt="logo" />
+            <img src={logo} width={'200px'} className="" alt="logo" />
           </Link>
         </div>
         <ul>
@@ -46,7 +46,7 @@ const MerchantSidebar = () => {
                 className={`w-100 ${currentPath === "/Merchant-dashboard" ? "active" : ""}`}
                 onClick={() => setActiveTab(0)}
               >
-                <span className="icon pe-4">
+                <span className=" pe-4">
                   <img src={dashboard} alt="dashboard" />
                 </span>
                 Dashboard
@@ -59,7 +59,7 @@ const MerchantSidebar = () => {
               className={`w-100 ${activeTab === 2 ? "active" : ""}`}
               onClick={() => toggleSubmenu(2)}
             >
-              <span className="icon pe-4">
+              <span className=" pe-4">
                 <img src={subcription} style={{ width: "25px" }} alt="subscription" />
               </span>
               Subscription
@@ -86,7 +86,7 @@ const MerchantSidebar = () => {
               className={`w-100 ${activeTab === 3 ? "active" : ""}`}
               onClick={() => toggleSubmenu(3)}
             >
-              <span className="icon pe-4">
+              <span className=" pe-4">
                 <img src={order} style={{ width: "25px" }} alt="order" />
               </span>
               Orders
@@ -122,7 +122,7 @@ const MerchantSidebar = () => {
               className={`w-100 ${activeTab === 4 ? "active" : ""}`}
               onClick={() => toggleSubmenu(4)}
             >
-              <span className="icon pe-4">
+              <span className=" pe-4">
                 <img src={customer} style={{ width: "25px" }} alt="order" />
               </span>
               Customers
@@ -152,7 +152,7 @@ const MerchantSidebar = () => {
               className={`w-100 ${activeTab === 5 ? "active" : ""}`}
               onClick={() => toggleSubmenu(5)}
             >
-              <span className="icon pe-4">
+              <span className=" pe-4">
                 <img src={man} style={{ width: "25px" }} alt="delivery" />
               </span>
               Delivery Mans
@@ -203,7 +203,7 @@ const MerchantSidebar = () => {
               className={`w-100 ${activeTab === 6 ? "active" : ""}`}
               onClick={() => toggleSubmenu(6)}
             >
-              <span className="icon pe-4">
+              <span className=" pe-4">
                 <img src={support} style={{ width: "25px" }} alt="offers" />
               </span>
            Support Ticket
@@ -232,7 +232,7 @@ const MerchantSidebar = () => {
                 className={`w-100 ${currentPath === "/offer" ? "active" : ""}`}
                 onClick={() => setActiveTab(7)}
               >
-                <span className="icon pe-4">
+                <span className=" pe-4">
                   <img src={"/src/assets/tag.svg"} style={{ width: "25px" }} alt="vehicle" />
                 </span>
      Offers
@@ -245,7 +245,7 @@ const MerchantSidebar = () => {
               className={`w-100 ${activeTab === 8 ? "active" : ""}`}
               onClick={() => toggleSubmenu(8)}
             >
-              <span className="icon pe-4">
+              <span className=" pe-4">
                 <img src={"/src/assets/truck.svg"} style={{ width: "25px" }} alt="pickup request" />
               </span>
               Pickup Request
@@ -272,7 +272,7 @@ const MerchantSidebar = () => {
               className={`w-100 ${activeTab === 9 ? "active" : ""}`}
               onClick={() => toggleSubmenu(9)}
             >
-              <span className="icon pe-4">
+              <span className=" pe-4">
                 <img src={"/src/assets/delivery-bike.svg"} style={{ width: "25px" }} alt="extra charge" />
               </span>
               
@@ -300,7 +300,7 @@ const MerchantSidebar = () => {
               className={`w-100 ${activeTab === 10 ? "active" : ""}`}
               onClick={() => toggleSubmenu(10)}
             >
-              <span className="icon pe-4">
+              <span className=" pe-4">
                 <img src={"/src/assets/moneym.svg"} style={{ width: "25px" }} alt="extra charge" />
               </span>
               Extra Charge
@@ -329,7 +329,7 @@ const MerchantSidebar = () => {
                 className={`w-100 ${currentPath === "/parcel-type" ? "active" : ""}`}
                 onClick={() => setActiveTab(11)}
               >
-                <span className="icon pe-4">
+                <span className=" pe-4">
                   <img src={"/src/assets/approve.svg"} style={{ width: "25px" }} alt="vehicle" />
                 </span>
     Parcel Type
@@ -343,7 +343,7 @@ const MerchantSidebar = () => {
                 className={`w-100 ${currentPath === "/withdraw-request" ? "active" : ""}`}
                 onClick={() => setActiveTab(12)}
               >
-                <span className="icon pe-4">
+                <span className=" pe-4">
                   <img src={"/src/assets/credit.svg"} style={{ width: "25px" }} alt="account details" />
                 </span>
                 Account Details
@@ -356,7 +356,7 @@ const MerchantSidebar = () => {
               className={`gap-4 w-100 ${activeTab === 13 ? "active" : ""}`}
               onClick={() => toggleSubmenu(13)}
             >
-              <span className="icon">
+              <span className="">
                 <img src={"/src/assets/transfer 1.svg"} alt="withdraw" />
               </span>
               Withdraw Request
