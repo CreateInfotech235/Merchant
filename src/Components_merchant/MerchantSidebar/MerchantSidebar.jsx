@@ -34,7 +34,7 @@ const MerchantSidebar = () => {
       </button>
       <div className={`col-xxl-2 col-xl-2 p-3 overflow-y-scroll position-fixed h-100 ${isSidebarVisible ? "sidebar visible" : "sidebar"}`}>
         <div className="col-xs-3 mt-5 mb-3 ms-3 me-3">
-          <Link to="/merchant" className="d-flex items-center justify-content-center align-items-center text-white">
+          <Link to="/Merchant-dashboard" className="d-flex items-center justify-content-center align-items-center text-white">
           {/* <div className="d-flex items-center justify-content-center blur"></div> */}
             <img src={logo} width={'200px'} className="" alt="logo" />
           </Link>

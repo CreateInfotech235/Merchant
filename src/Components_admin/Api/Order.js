@@ -1,8 +1,8 @@
 import API from "./Api";
 import { toast } from "react-toastify";
-export const getAllOrder = async (page, pageLimit) => {
+export const getAllOrder = async (exists = false, page, pageLimit) => {
   try {
-    const response = await API.get(`/orders/getAllOrders`);
+    const response = await API.get(`/orders/getAllOrders?exists=${exists}`);
     console.log(response);
 
     if (response.status === 200) {

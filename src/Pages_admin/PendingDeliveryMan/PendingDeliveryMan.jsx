@@ -98,6 +98,14 @@ const DeliveryMan = () => {
       closeDeleteModal(); // Close the delete modal after deleting
     }
   };
+  const statusColors = {
+    ENABLE: "purple",
+    DISABLE: "red",
+  };
+
+  const getColorClass = (status) =>
+    `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
+
 
   return (
     <>
@@ -161,9 +169,9 @@ const DeliveryMan = () => {
                     <td className="p-3">{deliveryman?.email || '-'}</td>
                     <td className="p-3">{deliveryman?.country || '-'}</td>
                     <td className="p-3">
-                      <button className="enable-btn" onClick={() => setShowDeleteModal(true)}>
-                        {deliveryman.status}
-                      </button>
+                    <button className={getColorClass(deliveryman.status)}>
+                        {deliveryman.status === 'ENABLE' ? 'ONLINE' : 'OFFLINE'}
+                      </button> 
                     </td>
                     <td className="user-table1">
                       <input type="checkbox" checked={deliveryman.isVerified} />

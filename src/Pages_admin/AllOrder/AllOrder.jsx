@@ -37,7 +37,7 @@ const AllOrder = () => {
   const onHideDeleteModal = () => setShowDelModal(false);
 
   const fetchOrders = async () => {
-    const response = await getAllOrder(currentPage, ordersPerPage);
+    const response = await getAllOrder(false , currentPage, ordersPerPage);
     console.log(response.data , "Data");
     
     if (response.status) {
@@ -45,7 +45,30 @@ const AllOrder = () => {
       setFilteredOrders(response.data);
     }
   };
+  const handleAdminOrder = async () => {
+    console.log("Admin Order");
+    const response = await getAllOrder(false, currentPage, ordersPerPage);
+    console.log(response , "response");
+    if(response.status){
+      setOrders(response.data);
+      setFilteredOrders(response.data);
+    }
+    
+    // setFilteredOrders(orders);
+  };
 
+  const handleMerchantOrder = async () => {
+    console.log("Merchant Order");
+    const response = await getAllOrder(true, currentPage, ordersPerPage);
+    console.log(response , "response");
+    if(response.status){
+      setOrders(response.data);
+      setFilteredOrders(response.data);
+    }
+    
+
+    // setFilteredOrders(orders);
+  };
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
     filterOrders(event.target.value);
@@ -97,6 +120,8 @@ const AllOrder = () => {
     setFilteredOrders(orders);
   };
 
+  
+
   return (
     <>
       <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between d-lg-flex justify-content-lg-between d-md-flex justify-content-md-between d-sm-flex justify-content-sm-center d-flex flex-column flex-xxl-row flex-xl-row flex-lg-row flex-md-row flex-sm-column align-items-center nav-bar pb-3">
@@ -118,17 +143,20 @@ const AllOrder = () => {
 
       <div className="w-100">
         <div className="d-flex justify-content-between py-3">
-          <h4 className="fw-bold">All Orders</h4>
+          <div className="d-flex gap-3">
+            <button className="btn btn-primary" onClick={() => handleAdminOrder()}>Admin Orders</button>
+            <button className="btn btn-secondary" onClick={() => handleMerchantOrder()}>Merchant Orders</button>
+          </div>
           <button
             type="button"
-            className="btn border-0"
+            className="btn border-0 flex items-center"
             style={{ background: "#D65246" }}
           >
             <Link
               to="/create-order-admin"
-              style={{ textDecoration: "none", color: "white" }}
+              style={{ textDecoration: "none", color: "white" , display: "flex", alignItems: "center" }}
             >
-              <img src={add} alt="Add" />
+              <img src={add} alt="Add" className="me-2" />
               Add Order
             </Link>
           </button>
@@ -180,15 +208,15 @@ const AllOrder = () => {
                       <td className="city-data">Assign</td>
                       <td className="city-data">
                         <button className="delete-btn me-1" onClick={() => setShowDelModal(true)}>
-                          <img src={deleteimg} alt="Delete" />
+                          <img src={deleteimg} alt="Delete" className="mx-auto"   />
                         </button>
                         <button className="show-btn" onClick={() => handleShowModal(order)}>
-                          <img src={show} alt="Show" />
+                          <img src={show} alt="Show" className="mx-auto" />
                         </button>
                       </td>
                       <td className="city-data">
                         <button className="delete-btn">
-                          <img src={tracking} alt="Tracking" />
+                          <img src={tracking} className="mx-auto" alt="Tracking" />
                         </button>
                       </td>
                     </tr>
