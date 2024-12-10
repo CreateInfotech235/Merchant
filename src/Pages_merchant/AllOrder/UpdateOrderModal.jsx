@@ -14,9 +14,8 @@ import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import { updateOrder } from "../../Components_merchant/Api/Order";
 
 const UpdateOrderModal = ({ onHide, Order }) => {
-  const naviagte = useNavigate();
+  const navigate = useNavigate(); // Fixed duplicate navigate declaration
   const merchant = JSON.parse(localStorage.getItem("userData"));
-  const navigate = useNavigate();
   const [deliveryMan, setDeliveryMen] = useState([]);
   const [deliveryManId, setDeliveryMenId] = useState(Order?.deliveryManId || null);
   const [customer, setCustomer] = useState([]);
@@ -26,7 +25,6 @@ const UpdateOrderModal = ({ onHide, Order }) => {
 
   useEffect(() => {
     const selectedCustomer = customer.find((c) => c.email === Order.cutomerEmail)
-    // console.log("selectedCustomer", selectedCustomer);
     if (selectedCustomer?._id) {
       setCustomerId(selectedCustomer?._id);
     }
@@ -50,12 +48,10 @@ const UpdateOrderModal = ({ onHide, Order }) => {
           contactNumber: man.contactNumber,
           status: man.status || 'ENABLE'
         })) || [];
-        console.log("formattedAdminDeliveryMen", formattedAdminDeliveryMen);
 
         // Combine both arrays and remove duplicates by _id and email
         setLengthofdeliverymen(activeDeliveryMen.length)
         const mergedDeliveryMen = [...activeDeliveryMen, ...formattedAdminDeliveryMen]
-
           .reduce((acc, current) => {
             const isDuplicate = acc.find(item =>
               item._id === current._id ||
@@ -67,7 +63,6 @@ const UpdateOrderModal = ({ onHide, Order }) => {
             return acc;
           }, []);
 
-        console.log("mergedDeliveryMen", mergedDeliveryMen);
         setDeliveryMen(mergedDeliveryMen);
       }
       if (customerRes.status) setCustomer(customerRes.data);
@@ -76,8 +71,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
 
     fetchData();
   }, []);
+
   const formatDateTime = (isoString) => {
-    if (!isoString) return ""; // Handle empty or undefined values
+    if (!isoString) return "";
     const date = new Date(isoString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -87,9 +83,6 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-
-
-
   const initialValues = {
     parcelsCount: Order.parcelsCount || 1,
     paymentCollectionRupees: Order.paymentCollectionRupees || "",
@@ -97,26 +90,24 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     deliveryManId: deliveryManId || "",
     pickupDetails: {
       location: {
-        latitude: Order.pickupAddress.location.latitude || null, // Initialize with null or undefined
-        longitude: Order.pickupAddress.location.longitude || null, // Empty array or [longitude, latitude]
+        latitude: Order.pickupAddress.location.latitude || null,
+        longitude: Order.pickupAddress.location.longitude || null,
       },
       dateTime: formatDateTime(Order.pickupAddress.dateTime) || "",
       address: Order.pickupAddress.address || "",
-      // countryCode: Order.pickupAddress.countryCode || "",
       merchantId: merchant._id || "",
       mobileNumber: merchant.contactNumber || "",
       email: merchant.email || "",
       name: merchant.name || "",
-      //   description: "",
+      description: Order.pickupAddress.description || "",
       postCode: Order.pickupAddress.postCode || "",
     },
     deliveryDetails: {
       location: {
-        latitude: Order.deliveryAddress.location.latitude || null, // Initialize with null or undefined
-        longitude: Order.deliveryAddress.location.longitude || null, // Empty array or [longitude, latitude]
+        latitude: Order.deliveryAddress.location.latitude || null,
+        longitude: Order.deliveryAddress.location.longitude || null,
       },
       address: Order.deliveryAddress.address || "",
-      // countryCode: Order.deliveryAddress.countryCode || "",
       mobileNumber: Order.deliveryAddress.mobileNumber || "",
       name: Order.deliveryAddress.name || "",
       email: Order.deliveryAddress.email || "",
@@ -148,7 +139,6 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     pickupDetails: Yup.object().shape({
       dateTime: Yup.string().required("Required"),
       address: Yup.string().required("Required"),
-      // countryCode: Yup.string().required("Required"),
       mobileNumber: Yup.number().required("Required"),
       email: Yup.string().email("Invalid email").required("Required"),
       description: Yup.string(),
@@ -157,40 +147,116 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     deliveryDetails: Yup.object().shape({
       address: Yup.string().required("Required"),
       name: Yup.string().required("Required"),
-      // countryCode: Yup.string().required("Required"),
-      mobileNumber: Yup.number().required("Required"),
+      mobileNumber: Yup.number().required("Required"), 
       email: Yup.string().email("Invalid email").required("Required"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
     }),
   });
-  const onSubmit = async (values) => {
+
+  const onSubmit = async (values, { setFieldValue }) => {
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
+    let deliverylocation = null;
+    let pickuplocation = null;
 
-    // Create a copy of values and conditionally include paymentCollectionRupees
+    // Handle pickup location
+    if (!values.pickupDetails.location.latitude && !values.pickupDetails.location.longitude) {
+      if (values.pickupDetails.address) {
+        try {
+          const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.pickupDetails.address)}&key=${apiKey}`
+          );
+          const data = await response.json();
+
+          if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry.location;
+            const formattedAddress = data.results[0]?.formatted_address;
+            const postalCodeComponent = data.results[0].address_components.find(component =>
+              component.types.includes('postal_code')
+            );
+            const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
+
+            pickuplocation = { latitude: lat, longitude: lng };
+            setFieldValue("pickupDetails.address", formattedAddress);
+            setFieldValue("pickupDetails.location.latitude", lat);
+            setFieldValue("pickupDetails.location.longitude", lng);
+            setFieldValue("pickupDetails.postCode", postalCode);
+          } else {
+            alert("Pickup address not found. Please try again.");
+            return;
+          }
+        } catch (error) {
+          console.error("Error fetching pickup coordinates:", error);
+          alert("Error processing pickup address");
+          return;
+        }
+      }
+    } else {
+      pickuplocation = values.pickupDetails.location;
+    }
+
+    // Handle delivery location
+    if (!values.deliveryDetails.location.latitude && !values.deliveryDetails.location.longitude) {
+      if (values.deliveryDetails.address) {
+        try {
+          const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.deliveryDetails.address)}&key=${apiKey}`
+          );
+          const data = await response.json();
+
+          if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry.location;
+            const formattedAddress = data.results[0]?.formatted_address;
+
+            deliverylocation = { latitude: lat, longitude: lng };
+            setFieldValue("deliveryDetails.address", formattedAddress);
+            setFieldValue("deliveryDetails.location.latitude", lat);
+            setFieldValue("deliveryDetails.location.longitude", lng);
+          } else {
+            alert("Delivery address not found. Please try again.");
+            return;
+          }
+        } catch (error) {
+          console.error("Error fetching delivery coordinates:", error);
+          alert("Error processing delivery address");
+          return;
+        }
+      }
+    } else {
+      deliverylocation = values.deliveryDetails.location;
+    }
+
     const payload = {
       ...values,
       dateTime: timestamp,
       pickupDetails: {
         ...values.pickupDetails,
         dateTime: pictimestamp,
+        location: pickuplocation
+      },
+      deliveryDetails: {
+        ...values.deliveryDetails,
+        location: deliverylocation
       },
     };
 
-    // Remove paymentCollectionRupees if cashOnDelivery is false
-    if (values.cashOnDelivery === false) {
+    if (!values.cashOnDelivery) {
       delete payload.paymentCollectionRupees;
     }
 
-    const res = await updateOrder(Order._id, payload);
-
-
-    if (res.status) {
-      onHide()
-      naviagte("/all-order");
+    try {
+      const res = await updateOrder(Order._id, payload);
+      if (res.status) {
+        onHide();
+        navigate("/all-order");
+      }
+    } catch (error) {
+      console.error("Error updating order:", error);
+      alert("Failed to update order");
     }
-    console.log(payload); // Log final payload for debugging
   };
 
   return (

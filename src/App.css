@@ -58,3 +58,6 @@
   background-color: #221f92; /* Purple color for the scrollbar thumb */
   border-radius: 10px; /* Optional: Rounded corners for the thumb */
 }
+canvas {
+  background: transparent !important;
+}

@@ -30,7 +30,6 @@ export const SubscriptionInfo = async (data) => {
     const response = await API.get(
       `/mobile/subscription/getApproveSubscription/${data}`
     );
-    console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);

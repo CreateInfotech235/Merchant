@@ -34,33 +34,33 @@ const Sidebar = () => {
         }`}
       >
         <div className="col-xs-3 mt-5 mb-3 ms-3 me-3">
-          <Link to={"/"} className="d-flex align-items-center text-white">
+          <Link to={"/dashboard"} className="d-flex align-items-center text-white">
             <img src={logo} className="logo" alt="logo" />
             <span className="ml-2 fs-4 ps-3">Create Courier</span>
           </Link>
         </div>
         <ul>
-          <li>
+          <li className="my-2">
             <Link to="/dashboard" className="link">
               <Button
                 className={`w-100 ${isActive("/dashboard") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/dashboard.svg"} alt="dashboard" />
+                  <img src={"/src/assets_admin/dashboard.svg"} alt="dashboard" />
                 </span>
                 Dashboard
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 1 ? "active" : ""}`}
               onClick={() => toggleSubmenu(1)}
             >
               <span className="icon">
-                <img src={"/src/assets/subcription.svg"} alt="subscription" />
+                <img src={"/src/assets_admin/subcription.svg"} alt="subscription" />
               </span>
               Subscription
               <span className={`arrow ${activeTab === 1 ? "rotate" : ""}`}>
@@ -93,13 +93,13 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 4 ? "active" : ""}`}
               onClick={() => toggleSubmenu(4)}
             >
               <span className="icon">
-                <img src={"/src/assets/order.svg"} alt="order" />
+                <img src={"/src/assets_admin/order.svg"} alt="order" />
               </span>
               Order
               <span className={`arrow ${activeTab === 4 ? "rotate" : ""}`}>
@@ -126,27 +126,27 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
+          <li className="my-2">
             <Link to="/merchant" className="link">
               <Button
                 className={`w-100 ${isActive("/merchant") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/merchent.svg"} alt="merchant" />
+                  <img src={"/src/assets_admin/merchent.svg"} alt="merchant" />
                 </span>
                 Merchants
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 6 ? "active" : ""}`}
               onClick={() => toggleSubmenu(6)}
             >
               <span className="icon">
-                <img src={"/src/assets/delivery.svg"} alt="delivery" />
+                <img src={"/src/assets_admin/delivery.svg"} alt="delivery" />
               </span>
               Delivery Man
               <span className={`arrow ${activeTab === 6 ? "rotate" : ""}`}>
@@ -162,9 +162,9 @@ const Sidebar = () => {
                   <li className={isActive("/delivery-man-merchant") ? "active" : ""}>
                     <Link to="/delivery-man-merchant">Merchant Delivery Man</Link>
                   </li>
-                  <li className={isActive("/pending-delivery-man") ? "active" : ""}>
+                  {/* <li className={isActive("/pending-delivery-man") ? "active" : ""}>
                     <Link to="/pending-delivery-man">Pending Delivery Man</Link>
-                  </li>
+                  </li> */}
                   <li className={isActive("/document") ? "active" : ""}>
                     <Link to="/document">Documents Required</Link>
                   </li>
@@ -176,55 +176,55 @@ const Sidebar = () => {
             )}
           </li>
           
-          <li>
+          <li className="my-2">
             <Link to="/country" className="link">
               <Button
                 className={`w-100 ${isActive("/country") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/country.svg"} alt="country" />
+                  <img src={"/src/assets_admin/country.svg"} alt="country" />
                 </span>
                 Country
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Link to="/all-customer-admin" className="link">
               <Button
                 className={`w-100 ${isActive("/all-customer-admin") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/country.svg"} alt="country" />
+                  <img src={"/src/assets_admin/country.svg"} alt="country" />
                 </span>
                 Customer
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Link to="/city" className="link">
               <Button
                 className={`w-100 ${isActive("/city") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/city.svg"} alt="city" />
+                  <img src={"/src/assets_admin/city.svg"} alt="city" />
                 </span>
                 City
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 7 ? "active" : ""}`}
               onClick={() => toggleSubmenu(7)}
             >
               <span className="icon">
-                <img src={"/src/assets/setting.svg"} alt="settings" />
+                <img src={"/src/assets_admin/setting.svg"} alt="settings" />
               </span>
               Settings
               <span className={`arrow ${activeTab === 7 ? "rotate" : ""}`}>
@@ -251,13 +251,13 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 8 ? "active" : ""}`}
               onClick={() => toggleSubmenu(8)}
             >
               <span className="icon">
-                <img src={"/src/assets/withdraw.svg"} alt="withdraw" />
+                <img src={"/src/assets_admin/withdraw.svg"} alt="withdraw" />
               </span>
               Withdraw Request
               <span className={`arrow ${activeTab === 8 ? "rotate" : ""}`}>
@@ -281,13 +281,13 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 9 ? "active" : ""}`}
               onClick={() => toggleSubmenu(9)}
             >
               <span className="icon">
-                <img src={"/src/assets/deposite.svg"} alt="deposit" />
+                <img src={"/src/assets_admin/deposite.svg"} alt="deposit" />
               </span>
               Deposit
               <span className={`arrow ${activeTab === 9 ? "rotate" : ""}`}>
@@ -308,27 +308,27 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
+          <li className="my-2">
             <Link to="/invoice-setting" className="link">
               <Button
                 className={`w-100 ${isActive("/invoice-setting") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/invoice1.svg"} alt="invoice setting" />
+                  <img src={"/src/assets_admin/invoice1.svg"} alt="invoice setting" />
                 </span>
                 Invoice Setting
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 11 ? "active" : ""}`}
               onClick={() => toggleSubmenu(11)}
             >
               <span className="icon">
-                <img src={"/src/assets/setting.svg"} alt="app setting" />
+                <img src={"/src/assets_admin/setting.svg"} alt="app setting" />
               </span>
               App Setting
               <span className={`arrow ${activeTab === 11 ? "rotate" : ""}`}>
@@ -352,13 +352,13 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 12 ? "active" : ""}`}
               onClick={() => toggleSubmenu(12)}
             >
               <span className="icon">
-                <img src={"/src/assets/website.svg"} alt="website section" />
+                <img src={"/src/assets_admin/website.svg"} alt="website section" />
               </span>
               Website Section
               <span className={`arrow ${activeTab === 12 ? "rotate" : ""}`}>
@@ -403,13 +403,13 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 13 ? "active" : ""}`}
               onClick={() => toggleSubmenu(13)}
             >
               <span className="icon">
-                <img src={"/src/assets/pickup-request.svg"} alt="pickup request" />
+                <img src={"/src/assets_admin/pickup-request.svg"} alt="pickup request" />
               </span>
               Pickup Request
               <span className={`arrow ${activeTab === 13 ? "rotate" : ""}`}>
@@ -430,56 +430,56 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li>
+          <li className="my-2">
             <Link to="/support-ticket" className="link">
               <Button
                 className={`w-100 ${isActive("/support-ticket") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/support-ticket.svg"} alt="support ticket" />
+                  <img src={"/src/assets_admin/support-ticket.svg"} alt="support ticket" />
                 </span>
                 Support Ticket
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Link to="/auto-mail" className="link">
               <Button
                 className={`w-100 ${isActive("/auto-mail") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/mail.svg"} alt="auto mail" />
+                  <img src={"/src/assets_admin/mail.svg"} alt="auto mail" />
                 </span>
                 Auto Mail
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Link to="/offer" className="link">
               <Button
                 className={`w-100 ${isActive("/offer") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/offer1.svg"} alt="offer" />
+                  <img src={"/src/assets_admin/offer1.svg"} alt="offer" />
                 </span>
                 Offer
               </Button>
             </Link>
           </li>
 
-          <li>
+          <li className="my-2">
             <Link to="/notification" className="link">
               <Button
                 className={`w-100 ${isActive("/notification") ? "active" : ""}`}
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets/notification-bell.svg"} alt="notification" />
+                  <img src={"/src/assets_admin/notification-bell.svg"} alt="notification" />
                 </span>
                 Notification
               </Button>

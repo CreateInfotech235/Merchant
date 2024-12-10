@@ -6,7 +6,7 @@ import edit from "../../assets_admin/edit.png";
 import deleteimg from "../../assets_admin/deleteimg.png";
 import locationimg from "../../assets_admin/locationimg.png";
 import show from "../../assets_admin/show.png";
-import { getAllCustomers } from "../../Components_admin/Api/Customer";
+import { getAllCustomers } from "../../Components_admin/Api/Admincustomer";
 import CutomerInfoModal from "./CustomerInfoModal";
 
 
@@ -31,12 +31,15 @@ const Customers = () => {
         setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
     };
 
-    const fetchCustomers = async () => {
-        const response = await getAllCustomers();
+    
+    const fetchCustomers = async (createdBy) => {
+        console.log('🚀 ~ fetchCustomers ~ createdBy:', createdBy);
+        const response = await getAllCustomers(createdBy);
         if (response.status) {
             setCustomers(response.data);
         }
     };
+
 
     useEffect(() => {
         fetchCustomers();
@@ -45,10 +48,12 @@ const Customers = () => {
     const filteredCustomers = customers.filter((customer) => {
         const query = searchQuery.toLowerCase();
         return (
-            customer.name.toLowerCase().includes(query) ||
-            customer.email.toLowerCase().includes(query) ||
-            customer.country.toLowerCase().includes(query) ||
-            customer.city.toLowerCase().includes(query)
+            customer?.customerId?.toLowerCase().includes(query) ||
+            customer?.name?.toLowerCase().includes(query) ||
+            customer?.email?.toLowerCase().includes(query) ||
+            customer?.postCode?.toLowerCase().includes(query) ||
+
+            false
         );
     });
 
@@ -72,11 +77,11 @@ const Customers = () => {
 
     return (
         <>
-            <div className="d-flex justify-content-end align-items-center">
+            {/* <div className="d-flex justify-content-end align-items-center">
                 <button onClick={toggleThemeMode} className="btn btn-dark">
                     Toggle {themeMode === "light" ? "Dark" : "Light"} Mode
                 </button>
-            </div>
+            </div> */}
             <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
                 <div className="navbar">
                     <div className="navbar-options d-flex">
@@ -93,12 +98,32 @@ const Customers = () => {
                     </div>
                 </div>
                 <div>
-                    <Link to="/add-customer">
-                        <button className="btn text-white" style={{ background: "#D65246" }}>
+                    <Link to="/add-customer-admin">
+                        <button className="btn text-white flex items-center" style={{ background: "#D65246" }}>
                             <img src={add} className="pe-2" alt="Add" />
                             Add Customer
                         </button>
                     </Link>
+                </div>
+            </div>
+            <div className="d-flex align-items-center gap-3 mb-3">
+                <div className="d-flex align-items-center">
+                    <button 
+                        className="btn text-white px-4" 
+                        style={{background: "#253A71"}}
+                        onClick={() => fetchCustomers(true)}
+                    >
+                        Admin Customer
+                    </button>
+                </div>
+                <div className="d-flex align-items-center">
+                    <button 
+                        className="btn text-white px-4"
+                        style={{background: "#253A71"}} 
+                        onClick={() => fetchCustomers(false)}
+                    >
+                        Merchant Customer
+                    </button>
                 </div>
             </div>
 
@@ -115,7 +140,7 @@ const Customers = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredCustomers.length === 0 ? (
+                        {!filteredCustomers || filteredCustomers.length === 0 ? (
                             <tr>
                                 <td colSpan="9" className="text-center p-3">
                                     No data found

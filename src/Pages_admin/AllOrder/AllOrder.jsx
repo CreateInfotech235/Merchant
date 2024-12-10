@@ -37,7 +37,7 @@ const AllOrder = () => {
   const onHideDeleteModal = () => setShowDelModal(false);
 
   const fetchOrders = async () => {
-    const response = await getAllOrder(false , currentPage, ordersPerPage);
+    const response = await getAllOrder(null , currentPage, ordersPerPage);
     console.log(response.data , "Data");
     
     if (response.status) {

@@ -1089,7 +1089,7 @@ function App() {
           }
         />
         <Route
-          path="/add-customer"
+          path="/add-customer-admin"
           element={
             <ProtectedRouteAdmin>
               <AddCustomer />

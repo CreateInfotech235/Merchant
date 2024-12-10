@@ -8,10 +8,11 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
     height: '400px',
   };
 
-  const apiKey = 'AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo';
+  const apiKey = 'AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ';
   const mapRef = useRef(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);  
   const [center, setCenter] = useState({ lat: 40.7128, lng: -74.0060 });
+  const [distance, setDistance] = useState(null);
 
   const deliveryBoyMarkerRef = useRef(null);
   const destinationMarkerRef = useRef(null);
@@ -23,6 +24,23 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
       setCenter(location);
     }
   }, [location]);
+
+  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lng2 - lng1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const d = R * c; // Distance in km
+    return d.toFixed(2);
+  }
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI/180);
+  }
 
   // Async effect to load markers, handle click events and draw the route
   useEffect(() => {
@@ -45,6 +63,15 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
         console.log('Failed to load map after maximum retries');
         return;
       }
+
+      // Calculate and set distance
+      const distanceInKm = calculateDistance(
+        location.lat,
+        location.lng,
+        locationToShow.lat,
+        locationToShow.lng
+      );
+      setDistance(distanceInKm);
 
       // Clear previous markers and route
       if (deliveryBoyMarkerRef.current) {
@@ -69,7 +96,7 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
       deliveryBoyMarkerRef.current = deliveryBoyMarker;
 
       deliveryBoyMarker.addListener('click', () => {
-        alert('Delivery Boy Location');
+        alert(`Delivery Boy Location (${distanceInKm} km away)`);
       });
 
       // Add destination marker based on status
@@ -84,12 +111,13 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
       destinationMarkerRef.current = destinationMarker;
 
       destinationMarker.addListener('click', () => {
-        alert(showPickupMarker ? 'Pickup Location' : 'Delivery Location');
+        alert(`${showPickupMarker ? 'Pickup' : 'Delivery'} Location (${distanceInKm} km away)`);
       });
 
       // Draw the route from delivery boy to destination
       const directionsService = new window.google.maps.DirectionsService();
       const directionsRenderer = new window.google.maps.DirectionsRenderer();
+
       directionsRenderer.setMap(map);
       directionsRendererRef.current = directionsRenderer;
 
@@ -131,11 +159,21 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
   return (
     <Modal className='modal-xl' show={true} onHide={handleClose} centered>
       <ModalHeader closeButton>
-        <h5>Delivery Tracking</h5>
+        <h5>Delivery Tracking {distance && `(${distance} km)`}</h5>
       </ModalHeader>
       <ModalBody>
         <div style={{ height: '400px', width: '100%' }}>
-          <LoadScript googleMapsApiKey={apiKey}>
+        {window.google ? (
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          center={center}
+          zoom={10}
+          onLoad={(map) => (mapRef.current = map)}
+        >
+          {/* Markers will be added via useEffect */}
+        </GoogleMap>
+      ) : (
+          <LoadScript googleMapsApiKey={apiKey} libraries={['places']}>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
               center={center}
@@ -147,6 +185,7 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
               {/* Markers and route will be added via useEffect */}
             </GoogleMap>
           </LoadScript>
+        )}
         </div>
       </ModalBody>
     </Modal>

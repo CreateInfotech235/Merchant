@@ -22,18 +22,18 @@ const AllOrder = () => {
   const [orderId, setOrderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showEditModal, setShowEditModal] = useState(false);
-  const ordersPerPage = 10;
+  const [ordersPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const [themeMode, setThemeMode] = useState("light"); // Define themeMode state
+  const [themeMode, setThemeMode] = useState("light");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orderData, setOrderData] = useState([]);
-  const [showInfoModal, setShowInfoModal] = useState(false); // State for showing the view modal
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
-  const [location, setLocation] = useState(null); // Changed initial value to null
-  const [deliveryLocation, setDeliveryLocation] = useState(null); // Changed initial value to null
-  const [pickupLocation, setPickupLocation] = useState(null); // Changed initial value to null
-  const [status, setStatus] = useState(null); // Changed initial value to null
+  const [location, setLocation] = useState(null);
+  const [deliveryLocation, setDeliveryLocation] = useState(null);
+  const [pickupLocation, setPickupLocation] = useState(null);
+  const [status, setStatus] = useState(null);
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -50,7 +50,7 @@ const AllOrder = () => {
 
   useEffect(() => {
     fetchData();
-  }, [showModel, showEditModal]);
+  }, [showModel, showEditModal, currentPage, ordersPerPage]);
 
   const closeEditModal = () => {
     setShowEditModal(false);
@@ -61,6 +61,7 @@ const AllOrder = () => {
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
+    setCurrentPage(1); // Reset to first page when searching
     filterOrders(event.target.value);
   };
 
@@ -73,18 +74,18 @@ const AllOrder = () => {
     const lowercasedQuery = query.toLowerCase();
     const filteredData = orderData.filter((order) => {
       return (
-        String(order.orderId).toLowerCase().includes(lowercasedQuery) || // Ensure orderId is a string
+        String(order.orderId).toLowerCase().includes(lowercasedQuery) ||
         (order.customerName ? order.customerName.toLowerCase() : "").includes(
           lowercasedQuery
         ) ||
         (order.pickupAddress?.address
           ? String(order.pickupAddress.address).toLowerCase()
           : ""
-        ).includes(lowercasedQuery) || // Convert pickupAddress to string
+        ).includes(lowercasedQuery) ||
         (order.deliveryAddress?.address
           ? String(order.deliveryAddress.address).toLowerCase()
           : ""
-        ).includes(lowercasedQuery) || // Convert deliveryAddress to string
+        ).includes(lowercasedQuery) ||
         (order.status ? order.status.toLowerCase() : "").includes(
           lowercasedQuery
         )
@@ -94,31 +95,32 @@ const AllOrder = () => {
     setFilteredOrders(filteredData);
   };
 
+  // Get current orders for pagination
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
 
-  const totalPages = Math.ceil(
-    (searchQuery.length > 0 ? filteredOrders.length : orderData.length) /
-      ordersPerPage
-  );
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
-  const handleClick = (event) => {
-    setCurrentPage(Number(event.target.id));
-  };
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Generate page numbers
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(i);
-    }
-    return pageNumbers.map((number) => (
-      <li
-        key={number}
-        id={number}
-        onClick={handleClick}
-        className={currentPage === number ? "active" : null}
-      >
-        {number}
+    return pageNumbers.map(number => (
+      <li key={number} className={currentPage === number ? 'active' : ''}>
+        <button 
+          onClick={() => paginate(number)}
+          className={`pagination-btn ${currentPage === number ? 'active' : ''}`}
+        >
+          {number}
+        </button>
       </li>
     ));
   };
@@ -161,13 +163,13 @@ const AllOrder = () => {
   const handleViewClick = (Order) => {
     console.log("delivery", Order);
 
-    setShowInfoModal(true); // Show the info modal
+    setShowInfoModal(true);
     setSelectedOrder(Order);
   };
 
   const closeInfoModal = () => {
     setShowInfoModal(false);
-    setSelectedOrder(null); // Clear the selected delivery man after closing
+    setSelectedOrder(null);
   };
 
   const hadleDeleteOrder = (id) => {
@@ -194,7 +196,7 @@ const AllOrder = () => {
 
   const statusColors = {
     CREATED: "gray",
-    ASSIGNED: "blue",
+    ASSIGNED: "blue", 
     ACCEPTED: "green",
     CANCELLED: "red",
     UNASSIGNED: "red",
@@ -206,10 +208,10 @@ const AllOrder = () => {
 
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
+
   const downloadInvoice = async (order) => {
     console.log("order", order);
     try {
-      // Navigate to invoice format page with order data
       navigate('/invoice-format', {
         state: {
           orderData: {
@@ -227,7 +229,7 @@ const AllOrder = () => {
             },
             deliveryDetails: {
               name: order.deliveryAddress?.name,
-              address: order.deliveryAddress?.address, 
+              address: order.deliveryAddress?.address,
               mobileNumber: order.deliveryAddress?.mobileNumber,
               email: order.deliveryAddress?.email,
               postCode: order.deliveryAddress?.postCode
@@ -247,7 +249,7 @@ const AllOrder = () => {
   };
 
   return (
-    <>
+    <div className="h-screen">
       <div className="d-flex justify-content-between align-items-center pb-3 nav-bar">
         <div className="add-order-button">
           <button
@@ -300,20 +302,19 @@ const AllOrder = () => {
                 <th className="p-3">Delivery Date</th>
                 <th className="p-3">Invoice</th>
                 <th className="p-3">Status</th>
-
                 <th className="p-3">Action</th>
                 <th className="p-3">Order Tracking</th>
               </tr>
             </thead>
             <tbody>
-              {(!filteredOrders || filteredOrders.length === 0) ? (
+              {(!currentOrders || currentOrders.length === 0) ? (
                 <tr>
                   <td colSpan="13" className="p-3 text-center">
                     No orders found
                   </td>
                 </tr>
               ) : (
-                filteredOrders.map((order, index) =>
+                currentOrders.map((order, index) =>
                   order.trashed === false ? (
                     <tr key={index} className="country-row">
                       <td className="city-data">
@@ -380,7 +381,7 @@ const AllOrder = () => {
                       <td className="city-data">
                         <button 
                         className="delete-btn"
-                        onClick={() => hadleTrackOrder(order.deliveryManId, order.deliveryAddress.location ,order.pickupAddress.location , order.status , )}
+                        onClick={() => hadleTrackOrder(order.deliveryManId, order.deliveryAddress.location ,order.pickupAddress.location , order.status)}
                         >
                           <img src={tracking} alt="Tracking" className="mx-auto"/>
                         </button>
@@ -393,7 +394,11 @@ const AllOrder = () => {
           </table>
         </div>
         <div className="pagination-container d-flex justify-content-end mt-3">
-          <ul className="pagination">{renderPageNumbers()}</ul>
+          <ul className="pagination">
+           
+            {renderPageNumbers()}
+          
+          </ul>
         </div>
       </div>
       {showEditModal && (
@@ -428,7 +433,7 @@ const AllOrder = () => {
           }} 
         />
       )}
-    </>
+    </div>
   );
 };
 

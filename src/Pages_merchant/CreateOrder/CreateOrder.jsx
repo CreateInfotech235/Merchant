@@ -9,17 +9,33 @@ import { getDeliveryMan, getAllDeliveryMans } from "../../Components_merchant/Ap
 import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import { Spinner } from "react-bootstrap";
 import Select from "react-select";
-const CreateOrder = () => {
+const CreateOrder = () => { 
   const naviagte = useNavigate();
 
   const [deliveryMan, setDeliveryMen] = useState([]);
   const [customer, setCustomer] = useState([]);
   const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentLocation, setCurrentLocation] = useState(null);
   const merchant = JSON.parse(localStorage.getItem("userData"));
   console.log("merchant", merchant);
 
   useEffect(() => {
+    // Get current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    }
+
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
       
@@ -63,6 +79,23 @@ const CreateOrder = () => {
 
     fetchData();
   }, []);
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const d = R * c; // Distance in km
+    return d.toFixed(2);
+  }
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI/180);
+  }
 
   const getCurrentLocation = async (setFieldValue) => {
     if (navigator.geolocation) {
@@ -160,7 +193,7 @@ const CreateOrder = () => {
       mobileNumber: merchant.contactNumber || "",
       email: merchant.email || "",
       name: `${merchant.firstName} ${merchant.lastName}` || "",
-      // description: "",
+      description: "",
       postCode: merchant.postCode || "",
     },
     deliveryDetails: {
@@ -407,11 +440,22 @@ const CreateOrder = () => {
                     <label className="fw-thin p-0 pb-1 ">Select Delivery Man :</label>
                     <Field
                       as="select"
+                      
                       name="deliveryManId"
                       className="w-full h-[4.5em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="" className="text-gray-500">Select Delivery Man</option>
                       {deliveryMan.map((data, index) => {
+                        let distance = '';
+                        if (currentLocation && data.location) {
+                          distance = calculateDistance(
+                            currentLocation.latitude,
+                            currentLocation.longitude,
+                            data.location?.coordinates?.[1],
+                            data.location?.coordinates?.[0]
+                          );
+                        }
+
                         if (lengthofdeliverymen === index) {
                           return (<>
                             <option
@@ -420,14 +464,15 @@ const CreateOrder = () => {
                               className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
                               disabled
                             >
-                              Admin - Delivery Man
+                              Admin
                             </option>
                             <option
                               key={`${index}-data`}
                               value={data._id}
-                              className="py-1.5 px-3 hover:bg-gray-100"
+                              className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between mx-auto"
                             >
-                              {`${data.firstName} ${data.lastName}`}
+                              <span style={{float: 'left'}}>{`${data.firstName} ${data.lastName}`}</span>
+                              <span style={{float: 'right'}}>{distance ? `${distance} km away` : ''}</span>
                             </option>
                           </>);
                         }
@@ -435,16 +480,18 @@ const CreateOrder = () => {
                           <option
                             key={index}
                             value={data._id}
-                            className="py-1.5 px-3 hover:bg-gray-100"
+                            className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between"
                           >
-                            {`${data.firstName} ${data.lastName}`}
+                            <span style={{float: 'left', width: '65%'}}>{`${data.firstName} ${data.lastName}`}</span>
+                            <span style={{ display: 'inline-block', width: '100px' }}></span> 
+                            <span style={{float: 'right', width: '30%', marginLeft: '5%'}}>{distance ? `- (${distance} km away)` : ''}</span>
                           </option>
                         );
                       })}
                     </Field>
                     <ErrorMessage
                       name={"deliveryManId"}
-                      component="div"
+                      component="div" 
                       className="error text-danger ps-2"
                     />
                   </div>
@@ -791,7 +838,7 @@ const CreateOrder = () => {
                     <div className="input-error mb-3">
                       <label className="fw-thin p-0 pb-1 ">Delivery Postcode :</label>
                       <Field
-                        type="number"
+                        type="text"
                         name="deliveryDetails.postCode"
                         className="form-control w-25% h-100%"
                         placeholder="Delivery Postcode"

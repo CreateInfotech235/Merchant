@@ -6,7 +6,7 @@ import Breadcrumb from "../Components_merchant/Breadcrumb/Breadcrumb";
 import { SubscriptionInfo } from "../Components_merchant/Api/Subscription";
 import { Button, Modal } from "react-bootstrap";
 import SubscriptionPlanModel from "../Pages_merchant/SubscriptionPlan/SubscriptionPlanModel";
-// import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const ProtectedRoute = ({ children }) => {
   const [showModel, setShowModel] = useState(false);
@@ -48,7 +48,9 @@ const ProtectedRoute = ({ children }) => {
     const fetchSubscriptionInfo = async (id) => {
       const response = await SubscriptionInfo(id);
       if (response.message === "Your subcription is expired") {
-        navigate("/subscription-active");
+        if (!window.location.pathname.includes("/subscription-active")) {
+          navigate("/subscription-active");
+        }
       }
       localStorage.setItem('SubscriptionId', response.data[0].subcriptionId._id);
       setSubscriptionData(response.data);
