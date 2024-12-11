@@ -305,12 +305,13 @@ function Signup() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="medicalCertificate">
                       Medical Certificate
                     </label>
                     <input
                       type="file"
                       accept="image/*"
+                      id="medicalCertificate"
                       onChange={(event) => {
                         const file = event.currentTarget.files[0];
                         if (file) {
