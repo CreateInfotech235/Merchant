@@ -12,28 +12,34 @@ function MapWithMarker() {
   const [orders, setOrders] = useState([]);
   const [center, setCenter] = useState({
     lat: 40.7128,
-    lng: -74.006,
+    lng: -74.0060,
   });
 
   const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
   const mapRef = useRef(null);
 
+  // Fetch orders data from the API
   const fetchOrders = async () => {
     try {
       const merchnatId = localStorage.getItem("merchnatId");
       const response = await getOrders(merchnatId);
       console.log("response", response.data);
 
-      if (response) {
-        setOrders(response.data);
+      if (response?.data) {
+        setOrders(response.data || []);
 
-        const firstOrder = response.data[0];
-        if (firstOrder?.deliveryAddress?.location) {
+        const firstOrder = response.data?.[0];
+        if (
+          firstOrder?.deliveryAddress?.location?.latitude &&
+          firstOrder?.deliveryAddress?.location?.longitude
+        ) {
           setCenter({
             lat: parseFloat(firstOrder.deliveryAddress.location.latitude),
             lng: parseFloat(firstOrder.deliveryAddress.location.longitude),
           });
         }
+      } else {
+        setOrders([]);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -44,6 +50,7 @@ function MapWithMarker() {
     fetchOrders();
   }, []);
 
+  // Add markers to the map when orders data is updated
   useEffect(() => {
     let retryCount = 0;
     const maxRetries = 5;
@@ -66,8 +73,8 @@ function MapWithMarker() {
       orders.forEach((order) => {
         if (order.deliveryAddress?.location) {
           const position = {
-            lat: parseFloat(order.deliveryAddress.location?.latitude),
-            lng: parseFloat(order.deliveryAddress.location?.longitude),
+            lat: parseFloat(order.deliveryAddress.location.latitude),
+            lng: parseFloat(order.deliveryAddress.location.longitude),
           };
 
           if (!isNaN(position.lat) && !isNaN(position.lng)) {
@@ -79,12 +86,12 @@ function MapWithMarker() {
 
             const infoWindow = new window.google.maps.InfoWindow({
               content: `
-                                <div>
-                                    <p>Order ID: ${order._id}</p>
-                                    <p>Status: ${order.status}</p>
-                                    <p>Delivery Address: ${order.deliveryAddress.address}</p>
-                                </div>
-                            `,
+                <div>
+                  <p>Order ID: ${order._id}</p>
+                  <p>Status: ${order.status}</p>
+                  <p>Delivery Address: ${order.deliveryAddress.address}</p>
+                </div>
+              `,
             });
 
             marker.addListener("click", () => {
@@ -100,29 +107,23 @@ function MapWithMarker() {
     }
   }, [orders]);
 
+  // Handler when the map is loaded
+  const onMapLoad = (map) => {
+    mapRef.current = map;
+  };
+
   return (
     <div>
-      {window.google ? (
+      <LoadScript googleMapsApiKey={apiKey}>
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
           center={center}
           zoom={10}
-          onLoad={(map) => (mapRef.current = map)}
+          onLoad={onMapLoad}
         >
           {/* Markers will be added via useEffect */}
         </GoogleMap>
-      ) : (
-        <LoadScript googleMapsApiKey={apiKey}>
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            center={center}
-            zoom={10}
-            onLoad={(map) => (mapRef.current = map)}
-          >
-            {/* Markers will be added via useEffect */}
-          </GoogleMap>
-        </LoadScript>
-      )}
+      </LoadScript>
     </div>
   );
 }

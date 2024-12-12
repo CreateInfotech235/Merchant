@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Header.css";
 import ReactFlagsSelect from "react-flags-select";
-import notificationIcon from "../../assets_mercchant/notification.png";
+import notificationIcon from "../../assets_mercchant/bell.png";
 import profileIcon from "../../assets_mercchant/profile.png";
 import logoutIcon from "../../assets_mercchant/logo1.png";
 import { useNavigate } from "react-router-dom";
@@ -120,7 +120,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
     <div className="d-flex justify-content-between align-items-center nav-bar pb-xxl-3 pb-xl-3 pb-lg-3 pb-md-3 pb-sm-3 pb-0">
       <div className="profile">
         <div className="navbar-options my-3 d-flex align-items-center">
-          <div className="navbar-option p-2me-2 position-relative" onClick={handleShow}>
+          <div className="navbar-option p-2me-2 position-relative cursor-pointer" onClick={handleShow}>
             <img src={notificationIcon} className="accept" alt="Notification Bell" />
             {unreadCount > 0 && (
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">

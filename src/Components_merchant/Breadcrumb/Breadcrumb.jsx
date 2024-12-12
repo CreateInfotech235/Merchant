@@ -4,16 +4,16 @@ import { Link, useLocation } from "react-router-dom";
 
 const Breadcrumb = () => {
   const location = useLocation();
-  const pathnames = location.pathname.split("/merchant").filter((x) => x);
+  const pathnames = location.pathname.split("/Merchant-dashboard").filter((x) => x);
 
   return (<>
     <nav aria-label="breadcrumb">
       <ol className="breadcrumb">
         <li className="breadcrumb-item">
-          <Link to="/merchant">Dashboard</Link>
+          <Link to="/Merchant-dashboard">Dashboard</Link>
         </li>
         {pathnames.map((name, index) => {
-          const routeTo = `/${pathnames.slice(0, index + 1).join("/merchant")}`;
+          const routeTo = `/${pathnames.slice(0, index + 1).join("/Merchant-dashboard")}`;
           const isLast = index === pathnames.length - 1;
           return (
             <li key={name} className={`breadcrumb-item ${isLast ? 'active' : ''}`} aria-current={isLast ? 'page' : undefined}>

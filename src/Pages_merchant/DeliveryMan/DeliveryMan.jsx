@@ -41,7 +41,7 @@ const DeliveryMan = () => {
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [currentPage,showModal, searchTerm]); // Fetch data when page or search term changes
+  }, [currentPage,showModal, showEditModal, searchTerm]); // Fetch data when page or search term changes
 
   // Handle search input change
   const handleSearchChange = (event) => {

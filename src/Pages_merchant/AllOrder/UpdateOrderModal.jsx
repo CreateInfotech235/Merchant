@@ -30,6 +30,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     }
   }, [customer]);
 
+  console.log(Order);
   useEffect(() => {
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
@@ -95,10 +96,10 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       },
       dateTime: formatDateTime(Order.pickupAddress.dateTime) || "",
       address: Order.pickupAddress.address || "",
-      merchantId: merchant._id || "",
-      mobileNumber: merchant.contactNumber || "",
-      email: merchant.email || "",
-      name: merchant.name || "",
+      merchantId: Order.pickupAddress.merchantId || "",
+      mobileNumber: Order.pickupAddress.mobileNumber || "",
+      email: Order.pickupAddress.email || "",
+      name: Order.pickupAddress.name || "",
       description: Order.pickupAddress.description || "",
       postCode: Order.pickupAddress.postCode || "",
     },
@@ -723,12 +724,12 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Delivery Name :</label>
+                      <label className="fw-thin p-0 pb-1">Customer Name :</label>
                       <Field
                         type="text"
                         name="deliveryDetails.name"
                         className="form-control"
-                        placeholder="Delivery email"
+                        placeholder="Customer name"
                         style={{
                           height: "4.5em",
                           border: "1px solid #E6E6E6",

@@ -44,14 +44,16 @@ const Customers = () => {
 
   const fetchCustomers = async () => {
     const response = await getAllCustomers();
-    if (response.status) {
+    if (response?.status && response?.data) {
       setCustomers(response.data);
+    } else {
+      setCustomers([]);
     }
   };
 
   useEffect(() => {
     fetchCustomers();
-  }, [showModel]);
+  }, [showModel , showEditModal]);
 
   const filteredCustomers = customers.filter((customer) => {
     const query = searchQuery.toLowerCase();

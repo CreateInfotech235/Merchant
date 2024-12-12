@@ -73,7 +73,7 @@ const CreateOrder = () => {
         console.log("mergedDeliveryMen", mergedDeliveryMen);
         setDeliveryMen(mergedDeliveryMen);
       }
-      if (customerRes.status) setCustomer(customerRes.data);
+      if (customerRes?.status) setCustomer(customerRes?.data || []);
       setIsLoading(false);
     };
 

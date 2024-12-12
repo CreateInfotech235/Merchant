@@ -69,7 +69,7 @@ const ConformDeleteModel = ({ onHide, onDelete, Id, text }) => {
             className="model-btn btn btn-primary text-white border-0 rounded-2 m-3"
             onClick={() => handleRemoveOrder(onDelete, text, Id, "Undo")}
           >
-            Undo Order
+            {`Undo ${text}`}
           </button>
           <button
             className="models-btn btn btn-danger text-white   botder-black border-1 rounded-2 m-3"

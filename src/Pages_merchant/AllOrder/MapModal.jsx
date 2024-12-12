@@ -1,70 +1,50 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { Modal, ModalBody, ModalHeader } from 'react-bootstrap';
+import { loadGoogleMapsApi } from './loadGoogleMapsApi';
 
 const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }) => {
-  const mapContainerStyle = {
-    width: '100%',
-    height: '400px',
-  };
-
-  const apiKey = 'AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ';
+  const mapContainerStyle = { width: '100%', height: '400px' };
+  const apiKey = 'AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ'; // Replace with your actual API key
   const mapRef = useRef(null);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);  
   const [center, setCenter] = useState({ lat: 40.7128, lng: -74.0060 });
   const [distance, setDistance] = useState(null);
+  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
 
-  const deliveryBoyMarkerRef = useRef(null);
-  const destinationMarkerRef = useRef(null);
-  const directionsRendererRef = useRef(null);
-
-  // Set the center when location changes
   useEffect(() => {
-    if (location) {
-      setCenter(location);
-    }
+    if (location) setCenter(location);
   }, [location]);
 
+  useEffect(() => {
+    if (status === 'DELIVERED') {
+      onHide();
+      return;
+    }
+
+    loadGoogleMapsApi(apiKey, ['places', 'geometry', 'directions'])
+      .then(() => setIsGoogleLoaded(true))
+      .catch((error) => console.error('Error loading Google Maps API:', error));
+  }, [apiKey, status, onHide]);
+
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
-    const R = 6371; // Radius of the earth in km
+    const R = 6371; // Radius of the Earth in km
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lng2 - lng1);
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2); 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    const d = R * c; // Distance in km
-    return d.toFixed(2);
-  }
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(2); // Return distance in km
+  };
 
-  const deg2rad = (deg) => {
-    return deg * (Math.PI/180);
-  }
+  const deg2rad = (deg) => deg * (Math.PI / 180);
 
-  // Async effect to load markers, handle click events and draw the route
-  useEffect(() => {
-    let retryCount = 0;
-    const maxRetries = 5;
-    const retryInterval = 1000; // 1 second
+  const handleMapLoad = (map) => {
+    mapRef.current = map;
 
-    const addMarkersAndRoute = async () => {
-      const map = mapRef.current;
-
+    if (location && deliveryLocation) {
       const showPickupMarker = ['CREATED', 'ASSIGNED', 'ACCEPTED'].includes(status);
       const locationToShow = showPickupMarker ? pickupLocation : deliveryLocation;
 
-      if (!location || !locationToShow || !map || !window.google) {
-        if (retryCount < maxRetries) {
-          retryCount++;
-          setTimeout(addMarkersAndRoute, retryInterval);
-          return;
-        }
-        console.log('Failed to load map after maximum retries');
-        return;
-      }
-
-      // Calculate and set distance
       const distanceInKm = calculateDistance(
         location.lat,
         location.lng,
@@ -73,53 +53,23 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
       );
       setDistance(distanceInKm);
 
-      // Clear previous markers and route
-      if (deliveryBoyMarkerRef.current) {
-        deliveryBoyMarkerRef.current.setMap(null);
-      }
-      if (destinationMarkerRef.current) {
-        destinationMarkerRef.current.setMap(null);
-      }
-      if (directionsRendererRef.current) {
-        directionsRendererRef.current.setMap(null);
-      }
-
-      // Add delivery boy marker
-      const deliveryBoyMarker = new window.google.maps.Marker({
+      new window.google.maps.Marker({
         position: location,
         map: map,
         title: 'Delivery Boy Location',
-        icon: {
-          url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-        },
-      });
-      deliveryBoyMarkerRef.current = deliveryBoyMarker;
-
-      deliveryBoyMarker.addListener('click', () => {
-        alert(`Delivery Boy Location (${distanceInKm} km away)`);
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
       });
 
-      // Add destination marker based on status
-      const destinationMarker = new window.google.maps.Marker({
+      new window.google.maps.Marker({
         position: locationToShow,
         map: map,
         title: showPickupMarker ? 'Pickup Location' : 'Delivery Location',
-        icon: {
-          url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
-        },
-      });
-      destinationMarkerRef.current = destinationMarker;
-
-      destinationMarker.addListener('click', () => {
-        alert(`${showPickupMarker ? 'Pickup' : 'Delivery'} Location (${distanceInKm} km away)`);
+        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
       });
 
-      // Draw the route from delivery boy to destination
       const directionsService = new window.google.maps.DirectionsService();
       const directionsRenderer = new window.google.maps.DirectionsRenderer();
-
       directionsRenderer.setMap(map);
-      directionsRendererRef.current = directionsRenderer;
 
       const request = {
         origin: location,
@@ -131,62 +81,43 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
         if (status === window.google.maps.DirectionsStatus.OK) {
           directionsRenderer.setDirections(result);
         } else {
-          console.error('Directions request failed due to ' + status);
+          console.error('Directions request failed:', status);
         }
       });
-    };
-
-    if (!isMapLoaded) {
-      addMarkersAndRoute();
-      setIsMapLoaded(true);
     }
-  }, [location, deliveryLocation, pickupLocation, status, isMapLoaded]);
+  };
 
-  // Clean up markers and route when modal is closed
   const handleClose = () => {
-    if (deliveryBoyMarkerRef.current) {
-      deliveryBoyMarkerRef.current.setMap(null);
-    }
-    if (destinationMarkerRef.current) {
-      destinationMarkerRef.current.setMap(null);
-    }
-    if (directionsRendererRef.current) {
-      directionsRendererRef.current.setMap(null);
-    }
     onHide();
   };
 
+  if (status === 'DELIVERED') {
+    return null;
+  }
+
   return (
-    <Modal className='modal-xl' show={true} onHide={handleClose} centered>
+    <Modal className="modal-xl" show={true} onHide={handleClose} centered>
       <ModalHeader closeButton>
         <h5>Delivery Tracking {distance && `(${distance} km)`}</h5>
       </ModalHeader>
       <ModalBody>
-        <div style={{ height: '400px', width: '100%' }}>
-        {window.google ? (
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          center={center}
-          zoom={10}
-          onLoad={(map) => (mapRef.current = map)}
-        >
-          {/* Markers will be added via useEffect */}
-        </GoogleMap>
-      ) : (
-          <LoadScript googleMapsApiKey={apiKey} libraries={['places']}>
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={center}
-              zoom={15}
-              onLoad={(map) => {
-                mapRef.current = map;
-              }}
-            >
-              {/* Markers and route will be added via useEffect */}
-            </GoogleMap>
-          </LoadScript>
+        {isGoogleLoaded ? (
+          <div
+            id="map"
+            style={mapContainerStyle}
+            ref={(el) => {
+              if (el && !mapRef.current) {
+                const map = new window.google.maps.Map(el, {
+                  center,
+                  zoom: 10,
+                });
+                handleMapLoad(map);
+              }
+            }}
+          />
+        ) : (
+          <div>Loading Map...</div>
         )}
-        </div>
       </ModalBody>
     </Modal>
   );
