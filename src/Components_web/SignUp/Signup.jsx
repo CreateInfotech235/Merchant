@@ -249,7 +249,7 @@ function Signup() {
                     <Field
                       type="text"
                       name="medicalCertificateNumber"
-                      placeholder="Medical Certificate Number"
+                      placeholder="Company Register Number"
                       className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#221F92] focus:border-[#221F92]"
                     />
                     {errors.medicalCertificateNumber && touched.medicalCertificateNumber && (
@@ -306,7 +306,7 @@ function Signup() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="medicalCertificate">
-                      Medical Certificate
+                      Company Register Document
                     </label>
                     <input
                       type="file"

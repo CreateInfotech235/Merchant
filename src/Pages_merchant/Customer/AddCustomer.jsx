@@ -148,34 +148,9 @@ const AddUser = () => {
                 component="div"
                 className="error text-danger ps-2"
               />
+
             </div>
-
-            <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <Field
-                type="text"
-                name="postCode"
-                className="form-control"
-                placeholder="Post Code"
-                style={{
-                  height: "4.5em",
-                  border: "1px solid #E6E6E6",
-                  borderRadius: "5px",
-                }}
-              />
-              <ErrorMessage
-                name="postCode"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
-          </div>
-
-          {/* Additional Fields with Icon Styling */}
-          <div className="row input-box">
-            {/* Email Field */}
-
-            {/* Address Field */}
-            <div className="input-error col-10 mb-3">
+<div className="input-error col-10 mb-3">
               <div className="location">
                 <Field
                   type="text"
@@ -195,33 +170,8 @@ const AddUser = () => {
                 className="error text-danger ps-2"
               />
             </div>
-          </div>
-
-          <div className="row input-box">{/* Post Code Field */}</div>
-
-          {/* Country and City Dropdown */}
-          <div className="row input-box">
-            <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <div className="location">
-                <Field
-                  type="text"
-                  name="country"
-                  className="form-control"
-                  placeholder="Country name"
-                  style={{
-                    height: "4.5em",
-                    border: "1px solid #E6E6E6",
-                    borderRadius: "5px",
-                  }}
-                />
-              </div>
-              <ErrorMessage
-                name="country"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
-            <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+             
+            <div className="input-error col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
               <div className="location">
                 <Field
                   type="text"
@@ -241,58 +191,44 @@ const AddUser = () => {
                 className="error text-danger ps-2"
               />
             </div>
-
-
-
-            {/* <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+            <div className="input-error col-xxl-3 col-xl-3 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
               <Field
-                as="select"
-                name="country"
-                className="form-select"
+                type="text"
+                name="postCode"
+                className="form-control"
+                placeholder="Post Code"
                 style={{
                   height: "4.5em",
                   border: "1px solid #E6E6E6",
                   borderRadius: "5px",
                 }}
-              >
-                <option value="" label="Select Country" />
-                {countries.map((country) => (
-                  <option key={country.countryId} value={country.countryId}>
-                    {country.countryName}
-                  </option>
-                ))}
-              </Field>
+              />
+              <ErrorMessage
+                name="postCode"
+                component="div"
+                className="error text-danger ps-2"
+              />
+            </div>
+            <div className="input-error col-xxl-4 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+              <div className="location">
+                <Field
+                  type="text"
+                  name="country"
+                  className="form-control"
+                  placeholder="Country name"
+                  style={{
+                    height: "4.5em",
+                    border: "1px solid #E6E6E6",
+                    borderRadius: "5px",
+                  }}
+                />
+              </div>
               <ErrorMessage
                 name="country"
                 component="div"
                 className="error text-danger ps-2"
               />
-            </div> */}
-
-            {/* <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <Field
-                as="select"
-                name="city"
-                className="form-select"
-                style={{
-                  height: "4.5em",
-                  border: "1px solid #E6E6E6",
-                  borderRadius: "5px",
-                }}
-              >
-                <option value="" label="Select City" />
-                {cities.map((city) => (
-                  <option key={city.cityId} value={city.cityId}>
-                    {city.cityName}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="city"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div> */}
+            </div>
           </div>
 
           {/* Buttons */}

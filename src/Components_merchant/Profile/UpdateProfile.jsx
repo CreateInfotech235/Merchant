@@ -194,13 +194,13 @@ const UpdateProfile = () => {
                   <div className="form-group">
                     <label className="flex items-center text-gray-700 font-medium mb-1 sm:mb-2 text-sm sm:text-base">
                       <FaIdCard className="mr-2" />
-                      Medical Certificate Number
+                      Company Register Number
                     </label>
                     <Field
                       type="text"
                       name="medicalCertificateNumber"
                       className="form-input w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                      placeholder="Enter certificate number"
+                      placeholder="Enter company register number"
                     />
                     <ErrorMessage name="medicalCertificateNumber" component="div" className="text-red-500 text-xs sm:text-sm mt-1" />
                   </div>
@@ -271,7 +271,7 @@ const UpdateProfile = () => {
 
                 {/* Medical Certificate Upload */}
                 <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Medical Certificate</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Company Register Document</h3>
                   <div className="space-y-4">
                     <div className="flex items-center justify-center w-full">
                       <label className="flex flex-col w-full h-24 sm:h-32 border-4 border-dashed hover:bg-gray-100 hover:border-blue-300 group">
@@ -279,7 +279,7 @@ const UpdateProfile = () => {
                           <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                           </svg>
-                          <p className="pt-1 text-xs sm:text-sm tracking-wider text-gray-400 group-hover:text-blue-600">Upload Certificate</p>
+                          <p className="pt-1 text-xs sm:text-sm tracking-wider text-gray-400 group-hover:text-blue-600">Upload Company Register Document</p>
                         </div>
                         <input
                           type="file"

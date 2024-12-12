@@ -92,14 +92,14 @@ const SubscriptionPlanModel = ({
               <div className="row input-box">
                 <div className="input-error col-12">
                   <label className="w-100" style={{ color: "#999696" }}>
-                    medicalCertificate Number
+                    Company Register Number
                   </label>
                   <Field
                     type="text"
                     name="medicalCertificateNumber"
                     className="form-control"
                     style={{ height: "4.5em" }}
-                    placeholder="medicalCertificate Number"
+                    placeholder="Company Register Number"
                   />
                   <ErrorMessage
                     name="medicalCertificateNumber"
@@ -115,7 +115,7 @@ const SubscriptionPlanModel = ({
                         className="form-label w-100"
                         style={{ color: "#999696" }}
                       >
-                        medicalCertificate Images
+                        Company Register Document
                       </label>
                       <div
                         className="img d-flex flex-column-reverse bg-white p-2 justify-content-center align-items-center rounded-3"

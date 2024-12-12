@@ -84,18 +84,18 @@ const ProfilePage = () => {
 
             {/* Medical Info */}
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">Medical Information</h2>
+              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">Company Registration Information</h2>
               
               <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <FaIdCard className="text-blue-500" />
                 <div>
-                  <p className="text-sm text-gray-500">Certificate Number</p>
+                  <p className="text-sm text-gray-500">Company Register Number</p>
                   <p className="font-medium">{merchant.medicalCertificateNumber || 'N/A'}</p>
                 </div>
               </div>
 
               <div className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <p className="text-sm text-gray-500 mb-2">Medical Certificate</p>
+                <p className="text-sm text-gray-500 mb-2">Company Register Document</p>
                 <img
                   src={merchant.medicalCertificate || certificatePlaceholder}
                   alt="Medical Certificate"
