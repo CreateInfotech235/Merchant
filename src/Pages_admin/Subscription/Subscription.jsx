@@ -11,7 +11,7 @@ const Subscription = () => {
             <img src="./src/assets/subscription-edit.svg" />
           </div>
           <h5 class="fw-bold text-center">Forever Free</h5>
-          <h1 class="fw-bold text-center">$0</h1>
+          <h1 class="fw-bold text-center">£0</h1>
           <p class="fw-bold text-center">per agent per month</p>
 
           <div class="d-flex flex-column align-items-center p-3">
@@ -49,7 +49,7 @@ const Subscription = () => {
             <img src="./src/assets/subscription-edit.svg" />
           </div>
           <h5 class="fw-bold text-center">1 MONTH</h5>
-          <h1 class="fw-bold text-center">$299</h1>
+          <h1 class="fw-bold text-center">£299</h1>
           <p class="fw-bold text-center">per agent per month</p>
 
           <div class="d-flex flex-column align-items-center p-3">
@@ -87,7 +87,7 @@ const Subscription = () => {
             <img src="./src/assets/subscription-edit.svg" />
           </div>
           <h5 class="fw-bold text-center">6 MONTH</h5>
-          <h1 class="fw-bold text-center">$799</h1>
+          <h1 class="fw-bold text-center">£799</h1>
           <p class="fw-bold text-center">per agent per month</p>
 
           <div class="d-flex flex-column align-items-center p-3">
@@ -126,7 +126,7 @@ const Subscription = () => {
             <img src="./src/assets/subscription-edit.svg" />
           </div>
           <h5 class="fw-bold text-center">12 MONTH</h5>
-          <h1 class="fw-bold text-center">$1999</h1>
+          <h1 class="fw-bold text-center">£1999</h1>
           <p class="fw-bold text-center">per agent per month</p>
 
           <div class="d-flex flex-column align-items-center p-3">

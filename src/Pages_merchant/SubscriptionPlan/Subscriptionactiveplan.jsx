@@ -54,7 +54,7 @@ function Subscriptionactiveplan({ plans }) {
                                         <div className="row align-items-center">
                                             <div className="col-md-4 text-center border-end">
                                                 <h4 className="text-primary mb-3">{el.subcriptionId.type}</h4>
-                                                <h2 className="display-4 fw-bold mb-0">${el.subcriptionId.amount}</h2>
+                                                <h2 className="display-4 fw-bold mb-0">£{el.subcriptionId.amount}</h2>
                                                 <p className="text-muted">per agent per {el.subcriptionId.seconds} days</p>
                                             </div>
 

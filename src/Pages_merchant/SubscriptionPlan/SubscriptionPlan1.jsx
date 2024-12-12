@@ -56,7 +56,7 @@ const SubscriptionPlan1 = ({ plans }) => {
                 </div>
                 <div className="card-body">
                   <div className="text-center mb-4">
-                    <span className="display-5 fw-bold">${plan.amount}</span>
+                    <span className="display-5 fw-bold">£{plan.amount}</span>
                     <span className="fs-4 text-muted">/{convertSecondsToMonths(plan.seconds)} Months</span>
                   </div>
                   

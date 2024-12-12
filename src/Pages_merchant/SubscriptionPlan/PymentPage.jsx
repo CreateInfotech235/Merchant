@@ -180,7 +180,7 @@ const CheckoutForm = ({ plans }) => {
                                                 <span className="badge bg-warning ms-2 d-none d-md-inline">Most Popular</span>
                                             )}
                                         </div>
-                                        <h3 className="display-6 fw-bold">${selectedPlan.amount}</h3>
+                                        <h3 className="display-6 fw-bold">£{selectedPlan.amount}</h3>
                                         <p className="text-muted">{convertSecondsToMonths(selectedPlan.seconds)} Months</p>
                                         {selectedPlan.type && (
                                             <span className="badge bg-warning d-md-none">Most Popular</span>
@@ -208,7 +208,7 @@ const CheckoutForm = ({ plans }) => {
                                     <div className="pricing-details mt-3 p-3 bg-light rounded">
                                         <div className="d-flex justify-content-between mb-2">
                                             <span>Base Price:</span>
-                                            <span>${selectedPlan.amount}/month</span>
+                                            <span>£{selectedPlan.amount}/month</span>
                                         </div>
                                         <div className="d-flex justify-content-between mb-2">
                                             <span>Duration:</span>
@@ -228,7 +228,7 @@ const CheckoutForm = ({ plans }) => {
                                         </div>
                                         <div className="d-flex justify-content-between fw-bold mt-2 pt-2 border-top">
                                             <span>Total Amount:</span>
-                                            <span>${calculateTotalAmount().toFixed(2)}</span>
+                                            <span>£{calculateTotalAmount().toFixed(2)}</span>
                                         </div>
                                     </div>
                                 </>
@@ -352,7 +352,7 @@ const CheckoutForm = ({ plans }) => {
                                     onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1a1863'}
                                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#221F92'}
                                 >
-                                    Pay ${calculateTotalAmount().toFixed(2)}
+                                    Pay £{calculateTotalAmount().toFixed(2)}
                                 </button>
 
                                 {error && (

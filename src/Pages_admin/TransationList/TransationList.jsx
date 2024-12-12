@@ -23,7 +23,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -33,7 +33,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -43,7 +43,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -53,7 +53,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -63,7 +63,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -73,7 +73,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -83,7 +83,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -93,7 +93,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -103,7 +103,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
     {
       no: "1",
@@ -113,7 +113,7 @@ const [activeTab, setActiveTab] = useState("profile");
       Reference: "Download ",
       Description: "p",
       Status: "Pending",
-      Amount: "$1000.00"
+      Amount: "£1000.00"
     },
 
   ];

@@ -214,7 +214,7 @@ const MerchantSidebar = () => {
             {activeTab === 6 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
-                  <li className={currentPath === "/vehicle" ? "active" : ""}>
+                  <li className={currentPath === "/Show-list-of-support-ticket" ? "active" : ""}>
                     <Link to="/Show-list-of-support-ticket">Show list of support ticket</Link>
                   </li>
                   {/* <li className={currentPath === "/add-extra-charges" ? "active" : ""}>

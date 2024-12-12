@@ -4,6 +4,7 @@ import LoginImg from "../../assets_web/post job.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import profileIcon from "../../assets_mercchant/profile.png";
 import { MdDashboardCustomize } from "react-icons/md";
+import Button from "./Button";
 
 function Navbar({ Login, userData }) {
   const location = useLocation();
@@ -67,9 +68,10 @@ function Navbar({ Login, userData }) {
           <div className="flex items-center lg:space-x-4 md:space-x-2">
             {Login ? (
               <div className="navbar-option p-2 position-relative flex items-center">
-                <Link to="/Merchant-dashboard" className="bg-blue-500 hover:bg-blue-600 transition-colors p-2 rounded-lg mr-2 flex items-center group-hover:bg-blue-600">
-                  <MdDashboardCustomize className="text-white text-2xl md:text-3xl" />
-                  <span className="text-white ml-1 text-sm hidden md:inline flex-none group-hover:flex">Dashboard</span>
+                <Link to="/Merchant-dashboard" className=" flex items-center">
+                  <Button />
+                  {/* <MdDashboardCustomize className="text-white text-2xl md:text-3xl" />
+                  <span className="text-white ml-1 text-sm hidden md:inline flex-none group-hover:flex">Dashboard</span> */}
                 </Link>
                 {
                   userData?.image ? (
