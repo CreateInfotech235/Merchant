@@ -11,7 +11,7 @@ const OrderModal = ({ order, onHide }) => {
         <div className="order-details">
           <div className="row">
             <label className="col-6">Order ID:</label>
-            <span className="col-6">{order.orderId}</span>
+            <span className="col-6">{order.showOrderNumber}</span>
           </div>
           <div className="row">
             <label className="col-6">Customer Name:</label>

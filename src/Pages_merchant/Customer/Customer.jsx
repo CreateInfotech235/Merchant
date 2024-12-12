@@ -44,16 +44,14 @@ const Customers = () => {
 
   const fetchCustomers = async () => {
     const response = await getAllCustomers();
-    if (response?.status && response?.data) {
+    if (response.status) {
       setCustomers(response.data);
-    } else {
-      setCustomers([]);
     }
   };
 
   useEffect(() => {
     fetchCustomers();
-  }, [showModel , showEditModal]);
+  }, [showModel]);
 
   const filteredCustomers = customers.filter((customer) => {
     const query = searchQuery.toLowerCase();
@@ -154,7 +152,7 @@ const Customers = () => {
               filteredCustomers.map((customer, index) => (
                 customer.trashed === false ? (
                 <tr key={index}>
-                  <td className="p-3">{customer.customerId}</td>
+                  <td className="p-3">{customer.showCustomerNumber}</td>
                   <td className="p-3">{customer.firstName}</td>
                   <td className="p-3">{customer.lastName}</td>
                   <td className="p-3">{customer.address}</td>

@@ -32,8 +32,10 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("merchantId");
+    localStorage.removeItem("userData");
     setIsProfileMenuOpen(false);
     navigate("/");
+    window.location.reload();
   };
 
   const handleMarkAsRead = async (notificationId) => {

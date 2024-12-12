@@ -188,13 +188,13 @@ const CreateOrder = () => {
       },
       dateTime: "",
       merchantId: merchant._id || "",
-      address: `${merchant?.address?.street} , ${merchant?.address?.city} , ${merchant?.address?.country}` || "",
+      address: `${merchant?.address?.street} , ${merchant?.address?.city} , ${merchant?.address?.postalCode} , ${merchant?.address?.country}` || "",
       // countryCode: merchant.countryCode || "",
       mobileNumber: merchant.contactNumber || "",
       email: merchant.email || "",
       name: `${merchant.firstName} ${merchant.lastName}` || "",
       description: "",
-      postCode: merchant.postCode || "",
+      postCode: merchant?.address?.postalCode || "",
     },
     deliveryDetails: {
       location: {
@@ -769,7 +769,7 @@ const CreateOrder = () => {
                         if (selectedOption) {
                           setFieldValue(
                             "deliveryDetails.address",
-                            selectedOption.address
+                            `${selectedOption.address}, ${selectedOption.city || ''}, ${selectedOption.postCode || ''}, ${selectedOption.country || ''}`
                           );
                           // setFieldValue(
                           //   "deliveryDetails.countryCode",

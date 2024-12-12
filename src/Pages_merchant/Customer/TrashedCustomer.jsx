@@ -138,7 +138,7 @@ const TrashedCustomer = () => {
             ) : (
               filteredCustomers.map((customer, index) => (
                 <tr key={index}>
-                  <td className="p-3">{customer.customerId}</td>
+                  <td className="p-3">{customer.showCustomerNumber}</td>
                   <td className="p-3">{customer.firstName}</td>
                   <td className="p-3">{customer.lastName}</td>
                   <td className="p-3">{customer.address}</td>

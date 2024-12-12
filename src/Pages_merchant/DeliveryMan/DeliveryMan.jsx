@@ -41,7 +41,7 @@ const DeliveryMan = () => {
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [currentPage,showModal, showEditModal, searchTerm]); // Fetch data when page or search term changes
+  }, [currentPage,showModal, searchTerm]); // Fetch data when page or search term changes
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -154,6 +154,7 @@ const DeliveryMan = () => {
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
                 <th className="p-3 text-light"></th>
+                <th className="p-3 text-light">Delivery Man Number</th>
                 <th className="p-3 text-light">First Name</th>
                 <th className="p-3 text-light">Last Name</th>
                 <th className="p-3 text-light">Contact number</th>
@@ -179,6 +180,7 @@ const DeliveryMan = () => {
                     <td className="user-table1">
                       <input type="checkbox" />
                     </td>
+                    <td className="p-3">{deliveryman?.showDeliveryManNumber ?? "-"}</td>
                     <td className="p-3">{deliveryman?.firstName ?? "-"}</td>
                     <td className="p-3">{deliveryman?.lastName ?? "-"}</td>
                     <td className="p-3">

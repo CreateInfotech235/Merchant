@@ -321,7 +321,7 @@ const AllOrder = () => {
                         <input type="checkbox" />
                       </td>
                       <td className="p-3 text-primary">
-                        {order?.orderId ?? "-"}
+                        {order?.showOrderNumber ?? "-"}
                       </td>
                       <td className="p-3 text-dark fw-bold">
                         {order?.customerName ?? "-"}
@@ -381,7 +381,14 @@ const AllOrder = () => {
                       <td className="city-data">
                         <button 
                         className="delete-btn"
-                        onClick={() => hadleTrackOrder(order.deliveryManId, order.deliveryAddress.location ,order.pickupAddress.location , order.status)}
+                        onClick={() => {
+                          if (["ACCEPTED", "ASSIGNED", "CANCELLED", "DELIVERED", "CREATED"].includes(order.status)) {
+                            alert("You are not able to track. Tracking starts from the status 'Arrived' to 'Delivered'.");
+                          } else {
+                            hadleTrackOrder(order.deliveryManId, order.deliveryAddress.location, order.pickupAddress.location, order.status);
+                          }
+                        }}
+                    
                         >
                           <img src={tracking} alt="Tracking" className="mx-auto"/>
                         </button>

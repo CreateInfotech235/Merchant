@@ -185,7 +185,7 @@ const TrashedOrder = () => {
                     <td className="city-data">
                       <input type="checkbox" />
                     </td>
-                    <td className="p-3 text-primary">{order?.orderId ?? '-'}</td>
+                    <td className="p-3 text-primary">{order?.showOrderNumber ?? '-'}</td>
                     <td className="p-3 text-dark fw-bold">
                       {order?.customerName ??'-'}
                     </td>

@@ -48,6 +48,20 @@ function SubscriptionPlan() {
       return null;
     }
   };
+  const convertSecondsToMonths = (seconds) => {
+    // Number of seconds in a day
+    const secInDay = 24 * 60 * 60;
+  
+    // Average days in a month (approx.)
+    const daysInMonth = 30.44;
+  
+    // Convert seconds to months
+    const months = (seconds / secInDay) / daysInMonth;
+  
+    // If the result is less than 1, round it to 1
+    return months < 1 ? 1 : Math.round(months);
+  };
+  
   return (
     <div className="w-100">
       <div className="w-100 d-flex justify-content-end">
@@ -73,7 +87,7 @@ function SubscriptionPlan() {
               </div>
               <h5 class="fw-bold text-center">{el.type}</h5>
               <h1 class="fw-bold text-center">${el.amount}</h1>
-              <p class="fw-bold text-center">per agent per {el.seconds} days</p>
+              <p class="fw-bold text-center">per agent per {convertSecondsToMonths(el.seconds)} Months</p>
               {/* monthCalcuation */}
 
               <div class="d-flex flex-column align-items-center p-3">

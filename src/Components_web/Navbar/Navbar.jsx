@@ -10,7 +10,7 @@ function Navbar({ Login, userData }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
-
+  console.log(userData);
   const navLinks = [
     { to: "/", text: "Home" },
     { to: "/pricing", text: "Pricing" },

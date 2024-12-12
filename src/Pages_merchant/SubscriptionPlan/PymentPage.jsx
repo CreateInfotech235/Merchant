@@ -11,6 +11,7 @@ import { FaArrowLeft } from 'react-icons/fa';
 const stripePromise = loadStripe('your_stripe_publishable_key');
 
 const CheckoutForm = ({ plans }) => {
+    console.log(plans);
     const [succeeded, setSucceeded] = useState(false);
     const [error, setError] = useState(null);
     const [planId, setPlanId] = useState(null);
@@ -28,33 +29,35 @@ const CheckoutForm = ({ plans }) => {
         { value: '12', label: '1 Year' }
     ];
 
-    // Calculate expiry date based on duration
     const calculateExpiryDate = (months) => {
         const date = new Date();
-        date.setMonth(date.getMonth() + parseInt(months));
+        date.setMonth(date.getMonth() + parseInt(months, 10)); // Add selected months
         return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
         });
     };
+    
 
     // Calculate total amount based on duration without discounts
     const calculateTotalAmount = () => {
         if (!selectedPlan) return 0;
         const months = parseInt(duration);
-        return selectedPlan.price * months;
+        return selectedPlan.amount * months;
     };
 
     useEffect(() => {
         // Get planId from URL query parameters
         const searchParams = new URLSearchParams(location.search);
         const planFromUrl = searchParams.get('plan');
+        console.log(planFromUrl);
         setPlanId(planFromUrl);
 
         // Find and set the selected plan
         if (planFromUrl && plans) {
             const plan = plans.find(p => p._id === planFromUrl);
+            console.log(plan , "dsdsds");
             if (!plan) {
                 setSelectedPlan(plans[0]); // Default to Team plan
             } else {
@@ -66,9 +69,12 @@ const CheckoutForm = ({ plans }) => {
     }, [location, plans]);
 
     useEffect(() => {
-        // Update expiry date whenever duration changes
-        setExpiryDate(calculateExpiryDate(duration));
-    }, [duration]);
+        if (selectedPlan && duration) {
+            // Calculate expiry date based on the selected plan and duration
+            setExpiryDate(calculateExpiryDate(convertSecondsToMonths(selectedPlan.seconds)));
+        }
+    }, [duration, selectedPlan]);
+    
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -102,6 +108,19 @@ const CheckoutForm = ({ plans }) => {
             setSucceeded(true);
         }
     };
+    const convertSecondsToMonths = (seconds) => {
+        // Number of seconds in a day
+        const secInDay = 24 * 60 * 60;
+      
+        // Average days in a month (approx.)
+        const daysInMonth = 30.44;
+      
+        // Convert seconds to months
+        const months = (seconds / secInDay) / daysInMonth;
+      
+        // If the result is less than 1, round it to 1
+        return months < 1 ? 1 : Math.round(months);
+      };
 
     return (
         <div className="container py-5 bg-[#f8f9fa]" >
@@ -156,14 +175,14 @@ const CheckoutForm = ({ plans }) => {
                                 <>
                                     <div className="plan-header mb-4 text-center d-md-block d-flex flex-column align-items-center">
                                         <div className="d-flex align-items-center justify-content-center flex-column gap-2">
-                                            <h4 className="text-primary mb-0">{selectedPlan.name} Plan</h4>
-                                            {selectedPlan.popular && (
+                                            <h4 className="text-primary mb-0">{selectedPlan.type} Plan</h4>
+                                            {selectedPlan.type && (
                                                 <span className="badge bg-warning ms-2 d-none d-md-inline">Most Popular</span>
                                             )}
                                         </div>
-                                        <h3 className="display-6 fw-bold">${selectedPlan.price}</h3>
-                                        <p className="text-muted">{selectedPlan.period}</p>
-                                        {selectedPlan.popular && (
+                                        <h3 className="display-6 fw-bold">${selectedPlan.amount}</h3>
+                                        <p className="text-muted">{convertSecondsToMonths(selectedPlan.seconds)} Months</p>
+                                        {selectedPlan.type && (
                                             <span className="badge bg-warning d-md-none">Most Popular</span>
                                         )}
                                     </div>
@@ -171,18 +190,12 @@ const CheckoutForm = ({ plans }) => {
                                     <div className="plan-features mb-4">
                                         <h5 className="mb-3 text-center d-md-block">Plan Features:</h5>
                                         <ul className="list-group">
-                                            <li className="list-group-item text-center d-md-block">
-                                                <i className="fas fa-check text-success me-2"></i>
-                                                {selectedPlan.features.websites} Websites
-                                            </li>
-                                            <li className="list-group-item text-center d-md-block">
-                                                <i className="fas fa-check text-success me-2"></i>
-                                                {selectedPlan.features.storage} Storage
-                                            </li>
-                                            <li className="list-group-item text-center d-md-block">
-                                                <i className="fas fa-check text-success me-2"></i>
-                                                {selectedPlan.features.database} Database
-                                            </li>
+                                            {selectedPlan.features.map((feature, index) => (
+                                                <li key={index} className="list-group-item text-center d-md-block">
+                                                    <i className="fas fa-check text-success me-2"></i>
+                                                    {feature}
+                                                </li>
+                                            ))}
                                             {selectedPlan.features.bandwidth && (
                                                 <li className="list-group-item text-center d-md-block">
                                                     <i className="fas fa-check text-success me-2"></i>
@@ -195,11 +208,11 @@ const CheckoutForm = ({ plans }) => {
                                     <div className="pricing-details mt-3 p-3 bg-light rounded">
                                         <div className="d-flex justify-content-between mb-2">
                                             <span>Base Price:</span>
-                                            <span>${selectedPlan.price}/month</span>
+                                            <span>${selectedPlan.amount}/month</span>
                                         </div>
                                         <div className="d-flex justify-content-between mb-2">
                                             <span>Duration:</span>
-                                            <span>{duration} {duration === '12' ? 'year' : 'months'}</span>
+                                            <span>{convertSecondsToMonths(selectedPlan.seconds)} Months</span>
                                         </div>
                                         <div className="d-flex justify-content-between mb-2">
                                             <span>Start Date:</span>
@@ -233,7 +246,7 @@ const CheckoutForm = ({ plans }) => {
                                 <div className="mx-auto" style={{ width: '60px', height: '4px', background: '#221F92' }}></div>
                             </div>
 
-                            <div className="form-group mb-3">
+                            {/* <div className="form-group mb-3">
                                 <label htmlFor="duration" className="form-label">Select Duration:</label>
                                 <select
                                     id="duration"
@@ -251,7 +264,7 @@ const CheckoutForm = ({ plans }) => {
                                         </option>
                                     ))}
                                 </select>
-                            </div>
+                            </div> */}
 
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-4">

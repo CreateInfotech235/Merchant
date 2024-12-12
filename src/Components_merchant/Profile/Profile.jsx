@@ -11,6 +11,7 @@ const ProfilePage = () => {
   const getMerchant = async () => {
     const res = await getMerchantProfile();
     if (res.status) setMerchant(res.data[0]);
+    console.log(res.data[0]);
   };
 
   useEffect(() => {

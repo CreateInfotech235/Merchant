@@ -20,7 +20,7 @@ const OrderInfoModal = ({ Order, onHide }) => {
                                 <FaIdCard className="me-2" />
                                 Order ID:
                             </label>
-                            <span className="col-6 text-end text-sm py-2">{Order?.orderId ?? '-'}</span>
+                            <span className="col-6 text-end text-sm py-2">{Order?.showOrderNumber ?? '-'}</span>
                         </div>
                         <div className="row mb-2">
                             <label className="col-6 d-flex align-items-center text-sm">

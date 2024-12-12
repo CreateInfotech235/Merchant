@@ -161,6 +161,7 @@ function App() {
   var accessToken = localStorage.getItem("accessToken");
   var merchnatId = localStorage.getItem("merchnatId");
   var userData = JSON.parse(localStorage.getItem("userData"));
+
   useEffect(() => {
     accessToken = localStorage.getItem("accessToken");
     merchnatId = localStorage.getItem("merchnatId");

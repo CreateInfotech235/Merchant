@@ -33,7 +33,7 @@ const CutomerInfoModal = ({ customer, onHide }) => {
                                 <FaIdCard className="me-2" />
                                 Customer ID:
                             </label>
-                            <span className="col-6 text-end text-sm py-2">{customer.customerId}</span>
+                            <span className="col-6 text-end text-sm py-2">{customer.showCustomerNumber}</span>
                         </div>
                         <div className="row mb-2">
                             <label className="col-6 d-flex align-items-center text-sm">

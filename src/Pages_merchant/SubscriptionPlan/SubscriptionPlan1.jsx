@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
+import { useEffect, useState } from "react";
+import { getAllSubscription } from "../../Components_merchant/Api/Subscription";
 
 const SubscriptionPlan1 = ({ plans }) => {
+
+  console.log(plans);
+  
+  
   
   const featureLabels = {
     websites: 'Website number',
@@ -13,6 +19,20 @@ const SubscriptionPlan1 = ({ plans }) => {
     wordpress: 'WordPress install',
     speed: 'Server speed'
   };
+  const convertSecondsToMonths = (seconds) => {
+    // Number of seconds in a day
+    const secInDay = 24 * 60 * 60;
+  
+    // Average days in a month (approx.)
+    const daysInMonth = 30.44;
+  
+    // Convert seconds to months
+    const months = (seconds / secInDay) / daysInMonth;
+  
+    // If the result is less than 1, round it to 1
+    return months < 1 ? 1 : Math.round(months);
+  };
+  
 
   return (
     <section className="py-4">
@@ -25,23 +45,23 @@ const SubscriptionPlan1 = ({ plans }) => {
         </div>
 
         <div className="row row-cols-1 row-cols-md-3 g-4">
-          {plans.map((plan, i) => (
+          {plans.filter(plan => plan.type !== "1 Month Free Trial").map((plan, i) => (
             <div key={i} className="col">
-              <div className={`card border ${plan.popular ? 'border-primary' : 'border-light'} h-100`}>
+              <div className={`card border ${plan.type ? 'border-primary' : 'border-light'} h-100`}>
                 <div className="card-header bg-transparent border-bottom-0 pt-4">
-                  {plan.popular && (
+                  {plan.type && (
                     <span className="badge bg-primary float-end fs-6">Popular</span>
                   )}
-                  <h4 className="mb-0 text-secondary" style={{fontSize: '1.8rem'}}>{plan.name}</h4>
+                  <h4 className="mb-0 text-secondary" style={{fontSize: '1.8rem'}}>{plan.type}</h4>
                 </div>
                 <div className="card-body">
                   <div className="text-center mb-4">
-                    <span className="display-5 fw-bold">${plan.price}</span>
-                    <span className="fs-4 text-muted">/{plan.period}</span>
+                    <span className="display-5 fw-bold">${plan.amount}</span>
+                    <span className="fs-4 text-muted">/{convertSecondsToMonths(plan.seconds)} Months</span>
                   </div>
                   
                   <div className="fs-5">
-                    {Object.entries(featureLabels).map(([key, label]) => (
+                    {/* {Object.entries(featureLabels).map(([key, label]) => (
                       <div key={key} className="d-flex align-items-center mb-3">
                         {typeof plan.features[key] === 'boolean' ? (
                           plan.features[key] ? (
@@ -61,6 +81,11 @@ const SubscriptionPlan1 = ({ plans }) => {
                             <span>{label}: {plan.features[key]}</span>
                           </>
                         )}
+                      </div>
+                    ))} */}
+                    {plan.features.map((feature, index) => (
+                      <div key={index} className="d-flex align-items-center mb-3">
+                        <span>{feature}</span>
                       </div>
                     ))}
                   </div>

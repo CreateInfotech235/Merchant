@@ -3,10 +3,11 @@ import NavBar from '../Navbar/Navbar'
 import Footer from '../Footer/Footer'
 import './Formate.css'
 function Formate({children,Login,useData}) {
+
     
   return (
   <>
-    <NavBar Login={Login} useData={useData}/>
+    <NavBar Login={Login} userData={useData}/>
     <div className=''>
       {children}
     </div>

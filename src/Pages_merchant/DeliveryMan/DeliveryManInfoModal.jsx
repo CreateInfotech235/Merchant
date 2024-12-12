@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, ModalBody, ModalHeader, Button } from "react-bootstrap";
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaMapPin } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaMapPin, FaIdCard } from "react-icons/fa";
 
 const DeliveryBoyInfoModal = ({ deliveryBoy, onHide }) => {
     if (!deliveryBoy) return null;
@@ -23,7 +23,7 @@ const DeliveryBoyInfoModal = ({ deliveryBoy, onHide }) => {
                                 {`${deliveryBoy.firstName} ${deliveryBoy.lastName}`}
                             </span>
                         </div>
-                        
+                      
                         <div className="row mb-2">
                             <label className="col-6 d-flex align-items-center text-sm">
                                 <FaEnvelope className="me-2" />
@@ -39,6 +39,14 @@ const DeliveryBoyInfoModal = ({ deliveryBoy, onHide }) => {
                             </label>
                             <span className="col-6 text-end text-sm py-2">{deliveryBoy.contactNumber}</span>
                         </div>
+                        <div className="row mb-2">
+                            <label className="col-6 d-flex align-items-center text-sm">
+                                <FaIdCard className="me-2" />
+                                Delivery Man ID:
+                            </label>
+                            <span className="col-6 text-end text-sm py-2">{deliveryBoy.showDeliveryManNumber}</span>
+                        </div>
+                        
                     </div>
 
                     <div>

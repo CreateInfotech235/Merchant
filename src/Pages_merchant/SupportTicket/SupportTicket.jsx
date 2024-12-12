@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import { postSupportTicket, getadmindata, getSupportTicket, DeleteSupportTicket } from "../../Components_merchant/Api/SupportTicket";
+import { postSupportTicket, getadmindata, getSupportTicket, DeleteSupportTicket, SupportTicketUpdate } from "../../Components_merchant/Api/SupportTicket";
 
 const SupportTicket = () => {
   const [userData, setUserData] = useState({ name: '', userid: '' });
@@ -9,8 +9,11 @@ const SupportTicket = () => {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [listofproblem, setlistofproblem] = useState([]);
+  const [isUpdate, setIsUpdate] = useState('');
+  const [currentTicket, setCurrentTicket] = useState(null);
 
-  // Fetch admin data
+  const merchnatId = localStorage.getItem('merchnatId');
+console.log(merchnatId);
   const getadmindatafromapi = async () => {
     setLoading(true);
     try {
@@ -22,7 +25,6 @@ const SupportTicket = () => {
     setLoading(false);
   };
 
-  // Fetch support tickets
   const getSupportTicketapi = async () => {
     try {
       const response = await getSupportTicket();
@@ -43,7 +45,6 @@ const SupportTicket = () => {
     }
   }, []);
 
-  // Fetch admin data and support tickets on mount
   useEffect(() => {
     const fetchData = async () => {
       await getadmindatafromapi();
@@ -53,17 +54,14 @@ const SupportTicket = () => {
     fetchData();
   }, []);
 
-  // Formik validation schema
   const validationSchema = Yup.object({
     subject: Yup.string().required('Subject is required'),
     problem: Yup.string().required('Problem description is required'),
     adminId: Yup.string().required('Admin is required'),
   });
 
-  // Formik configuration
   const formik = useFormik({
     initialValues: {
-      name: userData.name,
       userid: userData.userid,
       subject: '',
       problem: '',
@@ -73,35 +71,48 @@ const SupportTicket = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await postSupportTicket(values);
+        if (isUpdate) {
+          await SupportTicketUpdate(isUpdate,merchnatId, values);
+        } else {
+          await postSupportTicket(values);
+        }
         console.log("Ticket submitted", values);
-        getSupportTicketapi();  // Refetch the support tickets
-        setshowpopup(false);    // Close the popup after successful submission
+        getSupportTicketapi();
+        setshowpopup(false);
+        setIsUpdate('');
       } catch (error) {
         console.error("Failed to submit support ticket:", error);
       }
     },
   });
 
-  // Function to format the date
   const formatDate = (date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return new Date(date).toLocaleDateString('en-US', options);
   };
 
-  // Handle Delete Button Click
   const handleDelete = async (ticketId) => {
-    // Optimistically remove the ticket from the UI
     setlistofproblem((prevList) => prevList.filter(ticket => ticket._id !== ticketId));
 
     try {
       await DeleteSupportTicket(ticketId);
-      getSupportTicketapi();  // Ensure data is synced from the server
+      getSupportTicketapi();
     } catch (error) {
       console.error("Failed to delete ticket:", error);
-      // If deletion fails, re-fetch the ticket list to show the deleted ticket
       getSupportTicketapi();
     }
+  };
+
+  const handleUpdate = async (ticket) => {
+    setIsUpdate(ticket._id);
+    formik.setValues({
+      name: userData.name,
+      userid: userData.userid,
+      subject: ticket.subject,
+      problem: ticket.problem,
+      adminId: ticket.adminId?._id || '',
+    });
+    setshowpopup(true);
   };
 
   return (
@@ -118,9 +129,7 @@ const SupportTicket = () => {
         <div>
           <div className="text-lg font-semibold mb-4">Support Ticket Form</div>
           <form onSubmit={formik.handleSubmit}>
-            {/* Admin and Subject Fields - Side by Side */}
             <div className="mb-4 flex space-x-4">
-              {/* Admin Selector */}
               <div className="flex-1">
                 <label htmlFor="adminId" className="block text-sm font-medium text-gray-700">
                   Assign to Admin
@@ -146,7 +155,6 @@ const SupportTicket = () => {
                 )}
               </div>
 
-              {/* Subject Field */}
               <div className="flex-1">
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
                   Subject
@@ -168,7 +176,6 @@ const SupportTicket = () => {
               </div>
             </div>
 
-            {/* Problem Field */}
             <div className="mb-4">
               <label htmlFor="problem" className="block text-sm font-medium text-gray-700">
                 Problem Description
@@ -187,7 +194,6 @@ const SupportTicket = () => {
               )}
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               className="bg-blue-500 text-white py-2 px-4 rounded"
@@ -199,7 +205,6 @@ const SupportTicket = () => {
         </div>
       )}
 
-      {/* Table to display support tickets */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold mb-4">List of Support Tickets</h2>
         <table className="min-w-full table-auto border-collapse">
@@ -212,21 +217,22 @@ const SupportTicket = () => {
               <th className="px-4 py-2 border">Admin Assigned</th>
               <th className="px-4 py-2 border">Status</th>
               <th className="px-4 py-2 border">Delete</th>
+              <th className="px-4 py-2 border">Update</th>
             </tr>
           </thead>
           <tbody>
             {listofproblem.map((ticket, index) => (
               <tr key={ticket._id}>
-                <td className="px-4 py-2 border">{index + 1}</td> {/* Display formatted date */}
-                <td className="px-4 py-2 border">{formatDate(ticket.createdAt)}</td> {/* Display formatted date */}
+                <td className="px-4 py-2 border">{index + 1}</td>
+                <td className="px-4 py-2 border">{formatDate(ticket.createdAt)}</td>
                 <td className="px-4 py-2 border">{ticket.subject}</td>
                 <td className="px-4 py-2 border">{ticket.problem}</td>
                 <td className="px-4 py-2 border">
                   {ticket.adminId ? ticket.adminId.name : 'No admin assigned'}
                 </td>
-                <td className="px-4 py-2 border ">
+                <td className="px-4 py-2 border">
                   <div className="flex justify-center items-center">
-                    <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: ticket.problemSolved ? "green" : "red" }}> </div>
+                    <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: ticket.problemSolved ? "green" : "red" }}></div>
                     <div className="ml-[10px]">
                       {ticket.problemSolved ? 'Solved' : 'Unresolved'}
                     </div>
@@ -235,9 +241,17 @@ const SupportTicket = () => {
                 <td className="px-4 py-2 border">
                   <button
                     onClick={() => handleDelete(ticket._id)}
-                    className="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-red-600 rounded-lg hover:bg-red-700 "
+                    className="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-red-600 rounded-lg hover:bg-red-700"
                   >
                     Delete
+                  </button>
+                </td>
+                <td className="px-4 py-2 border">
+                  <button
+                    onClick={() => handleUpdate(ticket)}
+                    className="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                  >
+                    Update
                   </button>
                 </td>
               </tr>

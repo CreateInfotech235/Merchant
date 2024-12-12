@@ -217,9 +217,9 @@ const MerchantSidebar = () => {
                   <li className={currentPath === "/vehicle" ? "active" : ""}>
                     <Link to="/Show-list-of-support-ticket">Show list of support ticket</Link>
                   </li>
-                  <li className={currentPath === "/add-extra-charges" ? "active" : ""}>
+                  {/* <li className={currentPath === "/add-extra-charges" ? "active" : ""}>
                     <Link to="/Show-list-of-support-ticket">Raise issue</Link>
-                  </li>
+                  </li> */}
               
                 </ul>
               </div>
