@@ -88,7 +88,7 @@ const CheckoutForm = ({ plans }) => {
         console.log(amount);
 
         // Call backend to create payment intent
-        const { data: { clientSecret } } = await axios.post('https://create-4.onrender.com/create-payment-intent', {
+        const { data: { clientSecret } } = await axios.post('http://localhost:8001/create-payment-intent', {
             amount,
             planId,
             duration,

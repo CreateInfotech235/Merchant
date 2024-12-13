@@ -18,6 +18,23 @@ export const getAllDeliveryMan = async (page, pageLimit, search) => {
     return { status: false, message: error.message };
   }
 };
+export const getAllDeliveryMans = async (page, pageLimit, search) => {
+  try {
+    const response = await API.get(
+      `deliveryMan/getAllDeliveryMans`
+    );
+    console.log("response", response);
+    if (response.status) {
+      return { status: true, data: response.data.data };
+    } else {
+      console.log("API error", response.message);
+      return { status: false, message: response.message };
+    }
+  } catch (error) {
+    console.error("Error fetching delivery man:", error);
+    return { status: false, message: error.message };
+  }
+};
 export const getAllDeliveryManOfMerchant = async (page, pageLimit, search) => {
   try {
     const response = await API.get(

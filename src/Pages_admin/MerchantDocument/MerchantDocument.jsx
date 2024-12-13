@@ -97,7 +97,7 @@ const MerchantDocument = () => {
     document.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredData?.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   // Handle page click
@@ -133,9 +133,6 @@ const MerchantDocument = () => {
     <>
       <div className="w-100">
        
-
-      
-
         <div className="search-container mb-3">
         <input
                 type="search"
@@ -166,7 +163,19 @@ const MerchantDocument = () => {
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((document) => (
+            {currentItems.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="text-center p-3">
+                      <div className="d-flex justify-content-center">
+                        <div className="mx-auto">
+                          <Loader />
+                          No Data Found
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+              currentItems.map((document) => (
                 <tr key={document.id}>
                   <td>
                     <input type="checkbox" />
@@ -187,7 +196,8 @@ const MerchantDocument = () => {
                     </select>
                   </td>
                 </tr>
-              ))}
+              ))
+            )}
             </tbody>
           </table>
         </div>

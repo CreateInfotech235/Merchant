@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import totalorder from "../../assets_admin/totalorder.png"; // Correct import path
+import Shopping_bag from "../../assets_admin/shopping-bag.png"; // Correct import path
+
 import recentorder from "../../assets_admin/recentorder.png"; // Correct import path
 import LineChart from "../../Components_admin/LineChart/LineChart";
 import LineChart1 from "../../Components_admin/LineChart1/LineChart1";
@@ -15,12 +16,27 @@ import Header from "../../Components_admin/Header/Header";
 import searchIcon from "../../assets_admin/search.png";
 import { getCounts } from "../../Components_admin/Api/Dashboard";
 import Loader from "../../Components_admin/Loader/Loader";
-
+import { getAllDeliveryMans } from "../../Components_admin/Api/DeliveryMan";
+import { getAllOrder } from "../../Components_admin/Api/Order";
+import Delivered from "../../assets_mercchant/total-order.svg";
+import Totalorderss from "../../assets_admin/Total orders.png";
+import Acceptedorders from "../../assets_admin/Accepted orders.png";
+import Arrivedorders from "../../assets_admin/Arrived orders.png";
+import Assignedorders from "../../assets_admin/Assigned orders.png";
+import Cancelledorders from "../../assets_admin/Cancelled orders.png";
+import Createdorders from "../../assets_admin/Created orders.png";
+import Departedorders from "../../assets_admin/Departed orders.png";
+import Pickedorders from "../../assets_admin/Picked orders.png";
+import DeliveryMan from "../../assets_admin/DeliveryMan.png";
+import Subscribe from "../../assets_admin/subscribe.png";
+import UnSubscribe from "../../assets_admin/unfollow.png";
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [themeMode, setThemeMode] = useState("light");
   const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(false);
+  const [order , setOrder] = useState([])
+
 
   const fetchCount = async () => {
     setLoading(true);
@@ -38,8 +54,18 @@ const Dashboard = () => {
     }
   }, [themeMode]);
 
+ const fetchOrder = async() => {
+  const response = await getAllOrder(false)
+  if (response.status) {
+    const fetchTenOrder = response.data.slice(0 , 10)
+    setOrder(fetchTenOrder)
+  }
+  console.log(response , "Oder");
+  
+ }
   useEffect(() => {
     fetchCount();
+    fetchOrder()
   }, []);
 
   const toggleThemeMode = () => {
@@ -53,7 +79,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="position-relative" style={{ minHeight: "100vh" }}>
+    <div className="position-relative h-[calc(100vh-187px)]">
       {loading ? (
         <div className="position-absolute top-50 start-50 translate-middle">
           <Loader />
@@ -62,7 +88,7 @@ const Dashboard = () => {
         <>
           {loading && <Loader />}
           <div class="d-xxl-flex justify-content-xxl-end d-xl-flex justify-content-xl-end d-lg-flex justify-content-lg-end d-md-flex justify-content-center align-items-center justify-content-md-between d-sm-flex  flex-sm-column  flex-column  flex-lg-row  flex-md-row   flex-xl-row align-items-center"></div>
-          <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between  d-lg-flex justify-content-lg-between  d-md-flex justify-content-md-between d-sm-flex justify-content-sm-center d-flex flex-column  flex-xxl-row   flex-xl-row  flex-lg-row   flex-md-row   flex-sm-column align-items-center nav-bar pb-3">
+          {/* <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between  d-lg-flex justify-content-lg-between  d-md-flex justify-content-md-between d-sm-flex justify-content-sm-center d-flex flex-column  flex-xxl-row   flex-xl-row  flex-lg-row   flex-md-row   flex-sm-column align-items-center nav-bar pb-3">
             <div
               className={`navbar ${themeMode === "dark" ? "dark-mode" : ""}`}
             >
@@ -80,7 +106,7 @@ const Dashboard = () => {
               </div>
             </div>
             <div></div>
-          </div>
+          </div> */}
 
           <div className="container-fluid">
             <div
@@ -90,7 +116,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Totalorderss} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -114,7 +140,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Acceptedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -138,7 +164,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Arrivedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -162,7 +188,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Assignedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -186,7 +212,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Cancelledorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -210,7 +236,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Createdorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -234,7 +260,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Delivered} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -258,7 +284,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Departedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -282,7 +308,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Pickedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -306,7 +332,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={DeliveryMan} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -330,7 +356,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={Subscribe} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -354,7 +380,7 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div class="d-flex align-items-center justify-content-between pb-4">
-                    <img src={totalorder} alt="Total Order" />
+                    <img style={{ width: "55px" }} src={UnSubscribe} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -407,11 +433,12 @@ const Dashboard = () => {
 
           <div className="container-fluid">
             <div class="recent-order row align-items-center pt-3 w-120 h-100">
+              {order.map((order , i)=>(
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
                 <div className="border-box rounded-2 p-2">
                   <div class="d-flex p-2">
                     <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="pe-2" />
+                      <img src={Shopping_bag} alt="Total Order" class="pe-2" />
                     </div>
 
                     <table
@@ -457,7 +484,7 @@ const Dashboard = () => {
                             class="border-0 text-white rounded-1 ps-1 pe-1 "
                             style={{ background: "#976CDD", fontSize: "8px" }}
                           >
-                            Created
+                            {order.status}
                           </button>
                         </td>
                       </tr>
@@ -466,535 +493,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-1">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-1">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-1">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-1">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-2">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-1">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-1">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-1">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td>
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-1">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={recentorder} alt="Total Order" class="me-3" />
-                    </div>
-
-                    <table
-                      class=" table-borderless lh-lg"
-                      style={{ fontSize: "10px" }}
-                    >
-                      <thead>
-                        <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class=" ps-4">mark</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class=" ps-4">-</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            Created
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 

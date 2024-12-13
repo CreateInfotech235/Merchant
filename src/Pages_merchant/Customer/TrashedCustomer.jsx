@@ -13,6 +13,7 @@ import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import CutomerInfoModal from "./CustomerInfoModal";
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
 import ConformDeleteModel from "../ConformDeleteModel/ConformDeleteModel";
+import Loader from "../../Components_admin/Loader/Loader";
 // Custom marker icon for leaflet
 const markerIcon = new L.Icon({
   iconUrl: locationimg,
@@ -132,7 +133,12 @@ const TrashedCustomer = () => {
             {filteredCustomers.length === 0 ? (
               <tr>
                 <td colSpan="9" className="text-center p-3">
-                  No data found
+                <div className="d-flex justify-content-center">
+                        <div className="mx-auto">
+                          <Loader />
+                          No Data Found
+                        </div>
+                      </div>
                 </td>
               </tr>
             ) : (

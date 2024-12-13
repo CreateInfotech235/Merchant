@@ -187,6 +187,7 @@ import ViewUser from "../../Components_admin/ViewUser/ViewUser";
 import Pagination from "../../Components_admin/Pagination/Pagination";
 import { getAllUsers } from "../../Components_admin/Api/User"; // Fetch function
 import UserInfoModal from "./UserInfoPopup";
+import Loader from "../../Components_admin/Loader/Loader";
 
 const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -273,7 +274,19 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user, index) => (
+          {filteredUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="text-center p-3">
+                      <div className="d-flex justify-content-center">
+                        <div className="mx-auto">
+                          <Loader />
+                          No Data Found
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+            filteredUsers.map((user, index) => (
               <tr key={index}>
                 <td className="p-3">{user?._id || '-'}</td>
                 <td className="p-3">{user?.firstName || '-'}</td>
@@ -289,7 +302,8 @@ const Users = () => {
                   </button>
                 </td>
               </tr>
-            ))}
+            ))
+          )}
           </tbody>
         </table>
       </div>

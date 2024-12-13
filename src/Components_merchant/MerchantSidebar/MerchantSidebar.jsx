@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
@@ -15,6 +15,9 @@ import transfer_1 from '../../assets_mercchant/transfer 1.svg'
 const MerchantSidebar = () => {
   const [activeTab, setActiveTab] = useState(null);
   const [isSidebarVisible, setSidebarVisible] = useState(false);
+  const [currentpage, setCurrentpage] = useState(0);
+
+
   const location = useLocation(); // Get current location
 
   const toggleSubmenu = (index) => {
@@ -24,6 +27,47 @@ const MerchantSidebar = () => {
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
+
+  const patelist = [
+    {
+      path: ["/Merchant-dashboard"],
+      num: 0,
+    },
+    {
+      path: ["/subscription-active"],
+      num: 1,
+    },
+    {
+      path: ["/create-order", "/all-order", "/order-location", "/trashed-order", "/invoice-format"],
+      num: 2,
+    },
+    {
+      path: ["/all-customer", "/add-customer", "/trashed-customer"],
+      num: 3,
+    },
+    {
+      path: ["/delivery-man", "/add-delivery-man", "/delivery-man-location", "/delivery-man-trashed"],
+      num: 4,
+    },
+    {
+      path: ["/Show-list-of-support-ticket"],
+      num: 5,
+    },
+  ]
+
+  const findIndex = () => {
+    const currentPath = location.pathname; // Current path for checking active links
+    return patelist.findIndex(item => item.path.includes(currentPath));
+  }
+
+  useEffect(() => {
+    setCurrentpage(findIndex());
+  }, []);
+
+  useEffect(() => {
+    setCurrentpage(findIndex());
+  }, [location.pathname]);
+
 
   const currentPath = location.pathname; // Current path for checking active links
 
@@ -35,7 +79,7 @@ const MerchantSidebar = () => {
       <div className={`col-xxl-2 col-xl-2 p-3 overflow-y-scroll position-fixed h-100 ${isSidebarVisible ? "sidebar visible" : "sidebar"}`}>
         <div className="col-xs-3 mt-5 mb-3 ms-3 me-3">
           <Link to="/Merchant-dashboard" className="d-flex items-center justify-content-center align-items-center text-white">
-          {/* <div className="d-flex items-center justify-content-center blur"></div> */}
+            {/* <div className="d-flex items-center justify-content-center blur"></div> */}
             <img src={logo} width={'200px'} className="" alt="logo" />
           </Link>
         </div>
@@ -43,8 +87,8 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Link to="/Merchant-dashboard" className="link">
               <Button
-                className={`w-100 ${currentPath === "/Merchant-dashboard" ? "active" : ""}`}
-                onClick={() => setActiveTab(0)}
+                className={`w-100 ${currentpage === 0 ? "active" : ""}`}
+                onClick={() => setCurrentpage(0)}
               >
                 <span className=" pe-4">
                   <img src={dashboard} alt="dashboard" />
@@ -56,18 +100,18 @@ const MerchantSidebar = () => {
 
           <li className="my-2">
             <Button
-              className={`w-100 ${activeTab === 2 ? "active" : ""}`}
-              onClick={() => toggleSubmenu(2)}
+              className={`w-100 ${currentpage === 1 ? "active" : ""}`}
+              onClick={() => setCurrentpage(1)}
             >
               <span className=" pe-4">
                 <img src={subcription} style={{ width: "25px" }} alt="subscription" />
               </span>
               Subscription
-              <span className={`arrow ${activeTab === 2 ? "rotate" : ""}`}>
+              <span className={`arrow ${currentpage === 1 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-            {activeTab === 2 && (
+            {currentpage === 1 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   {/* <li className={currentPath === "/subscription-plans" ? "active" : ""}>
@@ -83,18 +127,18 @@ const MerchantSidebar = () => {
 
           <li className="my-2">
             <Button
-              className={`w-100 ${activeTab === 3 ? "active" : ""}`}
-              onClick={() => toggleSubmenu(3)}
+              className={`w-100 ${currentpage === 2 ? "active" : ""}`}
+              onClick={() => setCurrentpage(2)}
             >
               <span className=" pe-4">
                 <img src={order} style={{ width: "25px" }} alt="order" />
               </span>
               Orders
-              <span className={`arrow ${activeTab === 3 ? "rotate" : ""}`}>
+              <span className={`arrow ${currentpage === 2 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-            {activeTab === 3 && (
+            {currentpage === 2 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/create-order" ? "active" : ""}>
@@ -119,21 +163,21 @@ const MerchantSidebar = () => {
 
           <li className="my-2">
             <Button
-              className={`w-100 ${activeTab === 4 ? "active" : ""}`}
-              onClick={() => toggleSubmenu(4)}
+              className={`w-100 ${currentpage === 3 ? "active" : ""}`}
+              onClick={() => setCurrentpage(3)}
             >
               <span className=" pe-4">
                 <img src={customer} style={{ width: "25px" }} alt="order" />
               </span>
               Customers
-              <span className={`arrow ${activeTab === 4 ? "rotate" : ""}`}>
+              <span className={`arrow ${currentpage === 3 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-            {activeTab === 4 && (
+            {currentpage === 3 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
-                <li className={currentPath === "/all-customer" ? "active" : ""}>
+                  <li className={currentPath === "/all-customer" ? "active" : ""}>
                     <Link to="/all-customer">All Customers</Link>
                   </li>
                   <li className={currentPath === "/add-customer" ? "active" : ""}>
@@ -149,18 +193,18 @@ const MerchantSidebar = () => {
 
           <li className="my-2">
             <Button
-              className={`w-100 ${activeTab === 5 ? "active" : ""}`}
-              onClick={() => toggleSubmenu(5)}
+              className={`w-100 ${currentpage === 4 ? "active" : ""}`}
+              onClick={() => setCurrentpage(4)}
             >
               <span className=" pe-4">
                 <img src={man} style={{ width: "25px" }} alt="delivery" />
               </span>
               Delivery Mans
-              <span className={`arrow ${activeTab === 5 ? "rotate" : ""}`}>
+              <span className={`arrow ${currentpage === 4 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-            {activeTab === 5 && (
+            {currentpage === 4 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/delivery-man" ? "active" : ""}>
@@ -200,18 +244,18 @@ const MerchantSidebar = () => {
 
           <li className="my-2">
             <Button
-              className={`w-100 ${activeTab === 6 ? "active" : ""}`}
-              onClick={() => toggleSubmenu(6)}
+              className={`w-100 ${currentpage === 5 ? "active" : ""}`}
+              onClick={() => setCurrentpage(5)}
             >
               <span className=" pe-4">
                 <img src={support} style={{ width: "25px" }} alt="offers" />
               </span>
-           Support Ticket
-              <span className={`arrow ${activeTab === 6 ? "rotate" : ""}`}>
+              Support Ticket
+              <span className={`arrow ${currentpage === 5 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-            {activeTab === 6 && (
+            {currentpage === 5 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/Show-list-of-support-ticket" ? "active" : ""}>
@@ -220,12 +264,12 @@ const MerchantSidebar = () => {
                   {/* <li className={currentPath === "/add-extra-charges" ? "active" : ""}>
                     <Link to="/Show-list-of-support-ticket">Raise issue</Link>
                   </li> */}
-              
+
                 </ul>
               </div>
             )}
           </li>
-      
+
           {/* <li className="my-2">
             <Link to="/offer" className="link">
               <Button

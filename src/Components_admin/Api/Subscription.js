@@ -54,3 +54,12 @@ export const manageSubscription = async (data) => {
     return { status: false, message: error.message };
   }
 };
+export const exportFreeSubscription = async () => {
+  try {
+    const response = await API.get("/subscriptions/getexportFreeSubscription");
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error("Error exporting free subscription:", error);
+  }
+};

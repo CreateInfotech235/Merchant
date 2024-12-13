@@ -9,6 +9,7 @@ import searchIcon from "../../assets_mercchant/search.png";
 import { getOrders } from "../../Components_merchant/Api/Order";
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
 import ConformDeleteModel from "../ConformDeleteModel/ConformDeleteModel";
+import Loader from "../../Components_admin/Loader/Loader";
 
 
 const TrashedOrder = () => {
@@ -176,7 +177,12 @@ const TrashedOrder = () => {
               {filteredOrders.length === 0 ? (
                 <tr>
                   <td colSpan="12" className="p-3 text-center">
-                    No trashed orders found
+                  <div className="d-flex justify-content-center">
+                        <div className="mx-auto">
+                          <Loader />
+                          No Data Found
+                        </div>
+                      </div>
                   </td>
                 </tr>
               ) : (

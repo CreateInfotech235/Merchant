@@ -13,6 +13,7 @@ import DeliveryManInfoModal from "./DeliveryManInfoModal";
 import DeleteModal from "../../Components_admin/DeleteModal";
 import { getAllDeliveryMan, deleteDeliveryBoy, getAllDeliveryManOfMerchant } from "../../Components_admin/Api/DeliveryMan";
 import "./DeliveryMan.css";
+import Loader from "../../Components_admin/Loader/Loader";
 
 const MerchantDeliveryMan = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -152,7 +153,12 @@ const MerchantDeliveryMan = () => {
               {filteredDeliverymen.length === 0 ? (
                 <tr>
                   <td colSpan="10" className="text-center p-3">
-                    No data found
+                  <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                      <Loader />
+                      No Data Found
+                      </div>
+                     </div>
                   </td>
                 </tr>
               ) : (

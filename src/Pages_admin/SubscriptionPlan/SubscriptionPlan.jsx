@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import SubscriptionModel from "./SubscriptionModel";
 import { getAllSubscription } from "../../Components_admin/Api/Subscription";
+import Loader from "../../Components_admin/Loader/Loader";
 function SubscriptionPlan() {
   const [showModel, setShowModel] = useState(false);
   const [type, setType] = useState();
   const [subcriptionData, setSubcriptionData] = useState([]);
   const [selectedSubscription, setSelectedSubscription] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const getallSubscriptions = async () => {
+    setLoading(true)
     const response = await getAllSubscription(0, 0);
     if (response.status) {
       setSubcriptionData(response.data);
+      setLoading(true)
     }
     //   console.log(response.data);
   };
@@ -63,12 +66,19 @@ function SubscriptionPlan() {
   };
   
   return (
-    <div className="w-100">
-      <div className="w-100 d-flex justify-content-end">
+    <div className="w-100 h-[calc(100vh-187px)]">
+      <div className="w-100 d-flex justify-content-end ">
         <button className="p-2 rounded" onClick={() => handleShowModal1("Add")}>
           Add Subscription
         </button>
       </div>
+      {loading ? (
+        <div className="flex justify-center items-center">
+          <Loader />
+        </div>
+      ) : (
+        <>
+          {loading && <Loader />}
       <div className="subscription  d-flex fluid-container W-100   align-items-center;">
         <div className="row justify-content-center w-100 ">
           {subcriptionData.map((el, i) => (
@@ -115,6 +125,8 @@ function SubscriptionPlan() {
           />
         )}
       </div>
+    </>
+      )}
     </div>
   );
 }

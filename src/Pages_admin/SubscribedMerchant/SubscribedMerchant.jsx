@@ -11,6 +11,7 @@ import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import Pagination from "../../Components_admin/Pagination/Pagination";
 import { getScbscriptionUsers } from "../../Components_admin/Api/User"; // Fetch function
 import UnsubscriptionUserPopup from '../UnsubscribedMerchant/UnSubsctibedMerchnatPopup'
+import Loader from "../../Components_admin/Loader/Loader";
 
 const SubscribedMerchnat = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -143,7 +144,12 @@ const SubscribedMerchnat = () => {
             {currentUsers.length === 0 ? (
               <tr>
                 <td colSpan="9" className="text-center p-3">
-                  No data found
+                <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                      <Loader />
+                      No Data Found
+                      </div>
+                     </div>
                 </td>
               </tr>
             ) : (

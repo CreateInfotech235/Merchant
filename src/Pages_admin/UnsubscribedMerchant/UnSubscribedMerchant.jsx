@@ -11,6 +11,7 @@ import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import Pagination from "../../Components_admin/Pagination/Pagination";
 import { getUnScbscriptionUsers } from "../../Components_admin/Api/User"; 
 import UnsubscriptionUserPopup from './UnSubsctibedMerchnatPopup'
+import Loader from "../../Components_admin/Loader/Loader";
 
 const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,9 +95,9 @@ const Users = () => {
   return (
     <>
       <div className="d-flex justify-content-end align-items-center">
-        <button onClick={toggleThemeMode} className="btn btn-dark">
+        {/* <button onClick={toggleThemeMode} className="btn btn-dark">
           Toggle {themeMode === "light" ? "Dark" : "Light"} Mode
-        </button>
+        </button> */}
       </div>
       <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
         <div className="navbar">
@@ -115,13 +116,13 @@ const Users = () => {
         </div>
         <div>
           <Link to="/add-user">
-            <button className="btn text-white" style={{ background: "#D65246" }}>
+            <button className="btn text-white flex items-center" style={{ background: "#D65246" }}>
               <img src={add} className="pe-2" alt="Add" />
               Add User
             </button>
           </Link>
         </div>
-      </div>
+      </div>  
 
       <div className="table-responsive">
         <table className="table-borderless w-100 text-center bg-light" style={{ fontSize: "12px" }}>
@@ -143,7 +144,12 @@ const Users = () => {
             {currentUsers.length === 0 ? (
               <tr>
                 <td colSpan="9" className="text-center p-3">
-                  No data found
+                <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                      <Loader />
+                      No Data Found
+                      </div>
+                     </div>
                 </td>
               </tr>
             ) : (

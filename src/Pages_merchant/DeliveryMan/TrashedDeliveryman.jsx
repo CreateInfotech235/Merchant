@@ -14,6 +14,7 @@ import UpdateDeliveryBoyModal from "./UpdateDeliveryManModal";
 import DeliveryManInfoModal from "./DeliveryManInfoModal"; // Import the new modal
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
 import ConformDeleteModel from "../ConformDeleteModel/ConformDeleteModel";
+import Loader from "../../Components_admin/Loader/Loader";
 
 const TrashedDeliveryman = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -169,7 +170,12 @@ const TrashedDeliveryman = () => {
               {currentDeliveryMen.length === 0 ? (
                 <tr>
                   <td colSpan="10" className="text-center p-3">
-                    No data found
+                  <div className="d-flex justify-content-center">
+                        <div className="mx-auto">
+                          <Loader />
+                          No Data Found
+                        </div>
+                      </div>
                   </td>
                 </tr>
               ) : (

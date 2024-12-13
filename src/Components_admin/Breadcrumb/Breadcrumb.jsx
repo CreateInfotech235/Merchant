@@ -18,7 +18,8 @@ const Breadcrumb = () => {
           return (
             <li key={name} className={`breadcrumb-item ${isLast ? 'active' : ''}`} aria-current={isLast ? 'page' : undefined}>
               {isLast ? (
-                name
+                name.slice(1,name.length)[0].toUpperCase() +
+                name.slice(2 , name.length)
               ) : (
                 <Link to={routeTo}>{name}</Link>
               

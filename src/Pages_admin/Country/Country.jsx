@@ -10,6 +10,7 @@ import CountryInfoModal from "./CountryInfoModal";
 import DeleteModal from "../../Components_admin/DeleteModal";
 import UpdateCountryModal from "./UpdateCountryModal";
 import { deleteCountry } from "../../Components_admin/Api/Country";
+import Loader from "../../Components_admin/Loader/Loader";
 
 const Country = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +32,7 @@ const Country = () => {
     try {
       const searchParam = searchTerm ? `&searchValue=${searchTerm}` : '';
       const response = await fetch(
-        `https://create-4.onrender.com/admin/country?pageCount=${currentPage}&pageLimit=${itemsPerPage}${searchParam}`,
+        `http://localhost:8001/admin/country?pageCount=${currentPage}&pageLimit=${itemsPerPage}${searchParam}`,
         {
           method: "GET",
           headers: {
@@ -125,7 +126,12 @@ const Country = () => {
               {filteredCountries.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center p-3">
-                    No data found
+                  <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                      <Loader />
+                      No Data Found
+                      </div>
+                     </div>
                   </td>
                 </tr>
               ) : (

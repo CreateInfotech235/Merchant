@@ -28,22 +28,25 @@ import Createdorders from "../../assets_mercchant/Created orders.png";
 import Departedorders from "../../assets_mercchant/Departed orders.png";
 import Pickedorders from "../../assets_mercchant/Picked orders.png";
 import DeliveryMan from "../../assets_mercchant/DeliveryMan.png";
+import Loader from "../../Components_admin/Loader/Loader";
 
 
 const MerchantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [counts, setCounts] = useState({});
-
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false); // State to handle modal visibility
   const [showSubscriptionModel, setShowSubscriptionModel] = useState(false);
   const [Error, setError] = useState(null);
 
   const fetchCount = async () => {
+    setLoading(true)
     const res = await getCounts();
-    console.log(res);
-    console.log(res.data);
+    if(res.status){
+      setCounts(res.data);
+      setLoading(false)
+    }
 
-    setCounts(res.data);
   };
 
 
@@ -98,7 +101,7 @@ const MerchantDashboard = () => {
   }; // Function to close the modal
 
   return (
-    <>
+    <div className="h-[calc(100vh-187px)]">
       <Modal show={showModal} centered>
         <Modal.Header>
           <Modal.Title>Welcome to Your Dashboard</Modal.Title>
@@ -124,9 +127,15 @@ const MerchantDashboard = () => {
       )}
 
       <div className="d-xxl-flex justify-content-xxl-end d-xl-flex justify-content-xl-end d-lg-flex justify-content-lg-end d-md-flex justify-content-center align-items-center justify-content-md-between d-sm-flex  flex-sm-column  flex-column  flex-lg-row  flex-md-row   flex-xl-row align-items-center"></div>
-      
-
       <div className="container-fluid">
+      {loading ? (
+        <div className="position-absolute top-50 start-50 translate-middle">
+          <Loader />
+        </div>
+      ) : (
+        <>
+          {loading && <Loader />}
+     
         <div
           className="dashboard row pt-3 h-100 w-120"
           style={{ marginLeft: "-10px" }}
@@ -379,8 +388,10 @@ const MerchantDashboard = () => {
           <h2 className="font-bold text-[30px] mb-4 underline">Recent Order</h2>
           <RecentOrder />
         </div>
+      </>
+      )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -8,6 +8,7 @@ import locationimg from "../../assets_admin/locationimg.png";
 import show from "../../assets_admin/show.png";
 import { getAllCustomers } from "../../Components_admin/Api/Admincustomer";
 import CutomerInfoModal from "./CustomerInfoModal";
+import Loader from "../../Components_admin/Loader/Loader";
 
 
 const Customers = () => {
@@ -143,7 +144,12 @@ const Customers = () => {
                         {!filteredCustomers || filteredCustomers.length === 0 ? (
                             <tr>
                                 <td colSpan="9" className="text-center p-3">
-                                    No data found
+                                <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                      <Loader />
+                      No Data Found
+                      </div>
+                     </div>
                                 </td>
                             </tr>
                         ) : (

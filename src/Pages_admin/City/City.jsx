@@ -12,6 +12,7 @@ import { formatDateTime } from "../../helper_admin/common";
 import Pagination from "../../Components_admin/Pagination/Pagination";
 import DeleteModal from "../../Components_admin/DeleteModal";
 import UpdateCityModal from "./UpdateCityModal";
+import Loader from "../../Components_admin/Loader/Loader";
 
 const City = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -146,7 +147,12 @@ const City = () => {
                 currentCities.length === 0 ? (
                 <tr>
                   <td colSpan="15" className="text-center p-3">
-                    No data found
+                  <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                      <Loader />
+                      No Data Found
+                      </div>
+                     </div>
                   </td>
                 </tr>
               ) : (currentCities.map((city, index) => (

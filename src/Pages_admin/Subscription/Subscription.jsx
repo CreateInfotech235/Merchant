@@ -5,7 +5,7 @@ const Subscription = () => {
     <div className="subscription  d-flex fluid-container W-100   align-items-center;
 
 " >
-      <div className="row w-100 ">
+      <div className="row w-100  ">
         <div class="col-xxl-2 col-xl-3 col-lg-4 col-md-4  col-sm-6 col-12 p-3 rounded-4 m-3" style={{ background: "#CCD6B1", width: "330px" }}>
           <div class="d-flex justify-content-end pb-5">
             <img src="./src/assets/subscription-edit.svg" />

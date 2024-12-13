@@ -16,6 +16,7 @@ import OrderInfoModal from "./OrderInfoModal";
 import { getDeliveryManLocationByOrder } from "../../Components_merchant/Api/DeliveryMan";
 import MapModal from "./MapModal";
 import html2pdf from 'html2pdf.js';
+import Loader from "../../Components_admin/Loader/Loader";
 
 const AllOrder = () => {
   const [showModel, setShowModel] = useState(false);
@@ -310,7 +311,12 @@ const AllOrder = () => {
               {(!currentOrders || currentOrders.length === 0) ? (
                 <tr>
                   <td colSpan="13" className="p-3 text-center">
-                    No orders found
+                  <div className="d-flex justify-content-center">
+                        <div className="mx-auto">
+                          <Loader />
+                          No Data Found
+                        </div>
+                      </div>
                   </td>
                 </tr>
               ) : (

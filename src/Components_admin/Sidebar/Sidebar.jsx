@@ -3,7 +3,7 @@ import "./Sidebar.css";
 import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets_admin/logo.png";
+import logo from "../../assets_admin/logo copy.png";
 
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState(null);
@@ -33,10 +33,10 @@ const Sidebar = () => {
           isSidebarVisible ? "sidebar visible" : "sidebar"
         }`}
       >
-        <div className="col-xs-3 mt-5 mb-3 ms-3 me-3">
-          <Link to={"/dashboard"} className="d-flex align-items-center text-white">
-            <img src={logo} className="logo" alt="logo" />
-            <span className="ml-2 fs-4 ps-3">Create Courier</span>
+       <div className="col-xs-3 mt-5 mb-3 ms-3 me-3">
+          <Link to="/dashboard" className="d-flex items-center justify-content-center align-items-center text-white">
+          {/* <div className="d-flex items-center justify-content-center blur"></div> */}
+            <img src={logo} width={'200px'} className="" alt="logo" />
           </Link>
         </div>
         <ul>
@@ -79,12 +79,12 @@ const Sidebar = () => {
                   <li className={isActive("/demo-used-merchant") ? "active" : ""}>
                     <Link to="/demo-used-merchant">Demo Used Merchant</Link>
                   </li>
-                  <li className={isActive("/pending-merchant-document") ? "active" : ""}>
+                  {/* <li className={isActive("/pending-merchant-document") ? "active" : ""}>
                     <Link to="/pending-merchant-document">unverified Merchants</Link>
-                  </li>
-                  <li className={isActive("/documents-required") ? "active" : ""}>
+                  </li> */}
+                  {/* <li className={isActive("/documents-required") ? "active" : ""}>
                     <Link to="/documents-required">Documents Required</Link>
-                  </li>
+                  </li> */}
                   <li className={isActive("/subscription-required") ? "active" : ""}>
                     <Link to="/subscription-required">Subscription Plan</Link>
                   </li>
@@ -165,9 +165,9 @@ const Sidebar = () => {
                   {/* <li className={isActive("/pending-delivery-man") ? "active" : ""}>
                     <Link to="/pending-delivery-man">Pending Delivery Man</Link>
                   </li> */}
-                  <li className={isActive("/document") ? "active" : ""}>
+                  {/* <li className={isActive("/document") ? "active" : ""}>
                     <Link to="/document">Documents Required</Link>
-                  </li>
+                  </li> */}
                   <li className={isActive("/delivery-man-destination") ? "active" : ""}>
                     <Link to="/delivery-man-destination">Delivery Man Locations</Link>
                   </li>
