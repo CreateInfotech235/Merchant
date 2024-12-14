@@ -93,12 +93,8 @@ const SubscribedMerchnat = () => {
   };
 
   return (
-    <>
-      <div className="d-flex justify-content-end align-items-center">
-        <button onClick={toggleThemeMode} className="btn btn-dark">
-          Toggle {themeMode === "light" ? "Dark" : "Light"} Mode
-        </button>
-      </div>
+    <div className="h-[calc(100vh-187px)]">
+      
       <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
         <div className="navbar">
           <div className="navbar-options d-flex">
@@ -164,7 +160,7 @@ const SubscribedMerchnat = () => {
                   <td className="p-3">{user.city || "N/A"}</td>
                   <td className="p-3">{new Date(user.registerDate).toLocaleString()}</td>
                   <td className="p-3">
-                    <button className="enable-btn">{user.status === "ENABLE" ? "Disable" : "Enable"}</button>
+                    <button className="enable-btn">{user.status}</button>
                   </td>
                   <td className="table-head2">
                     <div className="d-flex align-items-center justify-content-center">
@@ -193,7 +189,7 @@ const SubscribedMerchnat = () => {
       }
 
       <Pagination currentPage={currentPage} totalPages={totalPages} handleClick={handleClick} />
-    </>
+    </div>
   );
 };
 

@@ -10,19 +10,22 @@ import customer from '../../assets_mercchant/customer.png'
 import order from '../../assets_mercchant/order-delivery (1).png'
 import support from '../../assets_mercchant/support.png'
 import "./MerchantSidebar.css";
-import transfer_1 from '../../assets_mercchant/transfer 1.svg'
 
 const MerchantSidebar = () => {
-  const [activeTab, setActiveTab] = useState(null);
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [currentpage, setCurrentpage] = useState(0);
-
+  const [ismobile, setIsmobile] = useState(false);
+  const [showsublink, setShowsublink] = useState(true);
 
   const location = useLocation(); // Get current location
 
-  const toggleSubmenu = (index) => {
-    setActiveTab(activeTab === index ? null : index);
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsmobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
@@ -71,6 +74,18 @@ const MerchantSidebar = () => {
 
   const currentPath = location.pathname; // Current path for checking active links
 
+  const handleSublinkClick = (page) => {
+    if (showsublink) {
+      setShowsublink(false);
+    } else {
+      setShowsublink(true);
+    }
+    if (currentpage !== page) {
+      setShowsublink(true);
+      setCurrentpage(page);
+    }
+  }
+
   return (
     <>
       <button className="toggle-btn" onClick={toggleSidebar}>
@@ -85,10 +100,10 @@ const MerchantSidebar = () => {
         </div>
         <ul>
           <li className="my-2">
-            <Link to="/Merchant-dashboard" className="link">
+            <Link to="/Merchant-dashboard" className="link" >
               <Button
                 className={`w-100 ${currentpage === 0 ? "active" : ""}`}
-                onClick={() => setCurrentpage(0)}
+                onClick={() => { setCurrentpage(0); setSidebarVisible(false) }}
               >
                 <span className=" pe-4">
                   <img src={dashboard} alt="dashboard" />
@@ -101,7 +116,7 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 1 ? "active" : ""}`}
-              onClick={() => setCurrentpage(1)}
+              onClick={() => {handleSublinkClick(1);}}
             >
               <span className=" pe-4">
                 <img src={subcription} style={{ width: "25px" }} alt="subscription" />
@@ -111,14 +126,14 @@ const MerchantSidebar = () => {
                 <FaAngleRight />
               </span>
             </Button>
-            {currentpage === 1 && (
+            {(currentpage === 1 && showsublink === true) && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   {/* <li className={currentPath === "/subscription-plans" ? "active" : ""}>
                     <Link to="/subscription-plans">Subscription Plans</Link>
                   </li> */}
                   <li className={currentPath === "/subscription-active" ? "active" : ""}>
-                    <Link to="/subscription-active">Subscription Active Plan</Link>
+                    <Link to="/subscription-active" onClick={() => setSidebarVisible(false)}>Subscription Active Plan</Link>
                   </li>
                 </ul>
               </div>
@@ -128,7 +143,7 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 2 ? "active" : ""}`}
-              onClick={() => setCurrentpage(2)}
+              onClick={() => {handleSublinkClick(2);}}
             >
               <span className=" pe-4">
                 <img src={order} style={{ width: "25px" }} alt="order" />
@@ -138,23 +153,23 @@ const MerchantSidebar = () => {
                 <FaAngleRight />
               </span>
             </Button>
-            {currentpage === 2 && (
+            {(currentpage === 2 && showsublink === true) && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/create-order" ? "active" : ""}>
-                    <Link to="/create-order">Create Order</Link>
+                    <Link to="/create-order" onClick={() => setSidebarVisible(false)}>Create Order</Link>
                   </li>
                   <li className={currentPath === "/all-order" ? "active" : ""}>
-                    <Link to="/all-order">All Orders</Link>
+                    <Link to="/all-order" onClick={() => setSidebarVisible(false)}>All Orders</Link>
                   </li>
                   <li className={currentPath === "/order-location" ? "active" : ""}>
-                    <Link to="/order-location">Orders Location</Link>
+                    <Link to="/order-location" onClick={() => setSidebarVisible(false)} >Orders Location</Link>
                   </li>
                   <li className={currentPath === "/trashed-order" ? "active" : ""}>
-                    <Link to="/trashed-order">Trashed Order</Link>
+                    <Link to="/trashed-order" onClick={() => setSidebarVisible(false)}>Trashed Order</Link>
                   </li>
                   <li className={currentPath === "/invoice-format" ? "active" : ""}>
-                    <Link to="/invoice-format">Invoice Format</Link>
+                    <Link to="/invoice-format" onClick={() => setSidebarVisible(false)} >Invoice Format</Link>
                   </li>
                 </ul>
               </div>
@@ -164,7 +179,7 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 3 ? "active" : ""}`}
-              onClick={() => setCurrentpage(3)}
+              onClick={() => {handleSublinkClick(3);}}
             >
               <span className=" pe-4">
                 <img src={customer} style={{ width: "25px" }} alt="order" />
@@ -174,17 +189,17 @@ const MerchantSidebar = () => {
                 <FaAngleRight />
               </span>
             </Button>
-            {currentpage === 3 && (
+            {(currentpage === 3 && showsublink === true) && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/all-customer" ? "active" : ""}>
-                    <Link to="/all-customer">All Customers</Link>
+                    <Link to="/all-customer" onClick={() => setSidebarVisible(false)}>All Customers</Link>
                   </li>
                   <li className={currentPath === "/add-customer" ? "active" : ""}>
-                    <Link to="/add-customer">Create Customer</Link>
+                    <Link to="/add-customer" onClick={() => setSidebarVisible(false)} >Create Customer</Link>
                   </li>
                   <li className={currentPath === "/trashed-customer" ? "active" : ""}>
-                    <Link to="/trashed-customer">Trashed Customer</Link>
+                    <Link to="/trashed-customer" onClick={() => setSidebarVisible(false)}>Trashed Customer</Link>
                   </li>
                 </ul>
               </div>
@@ -194,7 +209,7 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 4 ? "active" : ""}`}
-              onClick={() => setCurrentpage(4)}
+              onClick={() => {handleSublinkClick(4);}}
             >
               <span className=" pe-4">
                 <img src={man} style={{ width: "25px" }} alt="delivery" />
@@ -204,14 +219,14 @@ const MerchantSidebar = () => {
                 <FaAngleRight />
               </span>
             </Button>
-            {currentpage === 4 && (
+            {(currentpage === 4 && showsublink === true) && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/delivery-man" ? "active" : ""}>
-                    <Link to="/delivery-man"> All delivery Mans</Link>
+                    <Link to="/delivery-man" onClick={() => setSidebarVisible(false)}> All delivery Mans</Link>
                   </li>
                   <li className={currentPath === "/add-delivery-man" ? "active" : ""}>
-                    <Link to="/add-delivery-man">Create delivery man</Link>
+                    <Link to="/add-delivery-man" onClick={() => setSidebarVisible(false)}>Create delivery man</Link>
                   </li>
                   {/* <li className={currentPath === "/document" ? "active" : ""}>
                     <Link to="/deposite">deposite</Link>
@@ -232,10 +247,10 @@ const MerchantSidebar = () => {
                     <Link to="/upload-document">upload document</Link>
                   </li> */}
                   <li className={currentPath === "/delivery-man-destination" ? "active" : ""}>
-                    <Link to="/delivery-man-location">delivery man location</Link>
+                    <Link to="/delivery-man-location" onClick={() => setSidebarVisible(false)}>delivery man location</Link>
                   </li>
                   <li className={currentPath === "/delivery-man-trashed" ? "active" : ""}>
-                    <Link to="/delivery-man-trashed">Trashed delivery man</Link>
+                    <Link to="/delivery-man-trashed" onClick={() => setSidebarVisible(false)}>Trashed delivery man</Link>
                   </li>
                 </ul>
               </div>
@@ -245,7 +260,7 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 5 ? "active" : ""}`}
-              onClick={() => setCurrentpage(5)}
+              onClick={() => {handleSublinkClick(5);}}
             >
               <span className=" pe-4">
                 <img src={support} style={{ width: "25px" }} alt="offers" />
@@ -255,11 +270,11 @@ const MerchantSidebar = () => {
                 <FaAngleRight />
               </span>
             </Button>
-            {currentpage === 5 && (
+            {(currentpage === 5 && showsublink === true) && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/Show-list-of-support-ticket" ? "active" : ""}>
-                    <Link to="/Show-list-of-support-ticket">Show list of support ticket</Link>
+                    <Link to="/Show-list-of-support-ticket" onClick={() => setSidebarVisible(false)}>Show list of support ticket</Link>
                   </li>
                   {/* <li className={currentPath === "/add-extra-charges" ? "active" : ""}>
                     <Link to="/Show-list-of-support-ticket">Raise issue</Link>

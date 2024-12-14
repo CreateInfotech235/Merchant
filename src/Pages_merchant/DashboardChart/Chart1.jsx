@@ -122,10 +122,10 @@ const OrderCountsChart = () => {
 
   return (
     <div>
-      <div className='flex justify-between'>
-        <h2  className="font-bold text-[30px] mb-4 underline">Order Counts</h2>
-        <div className='flex'>
-          <div className='flex items-center ml-2'>
+      <div className='flex justify-between flex-wrap'>
+        <h2 className="font-bold text-[30px] mb-4 underline">Order Counts</h2>
+        <div className='flex flex-wrap'>
+          <div className='flex items-center ml-2 justify-between w-full md:justify-start md:w-auto' >
             <div className='mr-2 text-gray-600 font-medium'>
               Start date:
             </div>
@@ -139,12 +139,12 @@ const OrderCountsChart = () => {
             />
           </div>
 
-          <div className='flex items-center mx-2'>
+          <div className='flex items-center mx-2 mt-[10px] md:mt-0 w-full justify-between md:justify-start md:w-auto' >
             <div className='mr-2 text-gray-600 font-medium'>
               End date:
             </div>
             <input
-              type="date" 
+              type="date"
               value={endDate}
               onChange={handleEndDateChange}
               placeholder="End Date"
@@ -154,29 +154,36 @@ const OrderCountsChart = () => {
             />
           </div>
 
-          <div className='flex items-center'>
-            <button
-              onClick={() => {
-                setStartDate(today);
-                setEndDate(today);
-              }}
-              className="bg-blue-500 text-white font-medium rounded-md px-4 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-            >
-              Today
-            </button>
+          <div className='mx-auto mt-2 md:mt-0'>
+            <div className='flex flex-wrap'>
+              <div className='flex items-center'>
+                <button
+                  onClick={() => {
+                    setStartDate(today);
+                    setEndDate(today);
+                  }}
+                  className="bg-blue-500 text-white font-medium rounded-md px-4 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                >
+                  Today
+                </button>
+              </div>
+
+              <div className='flex items-center ml-2'>
+                <button
+                  onClick={() => {
+                    setStartDate('');
+                    setEndDate('');
+                  }}
+                  className="bg-white text-gray-700 font-medium rounded-md px-4 py-2 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+
           </div>
 
-          <div className='flex items-center ml-2'>
-            <button
-              onClick={() => {
-                setStartDate('');
-                setEndDate('');
-              }}
-              className="bg-gray-100 text-gray-700 font-medium rounded-md px-4 py-2 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-            >
-              Clear
-            </button>
-          </div>
+
         </div>
       </div>
 

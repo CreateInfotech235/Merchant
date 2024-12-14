@@ -88,7 +88,6 @@ function RecentOrder() {
   if (error) {
     return <div className="error-message">{error}</div>; // Display error message
   }
-
   return (
     <div>
       <div className="w-100">
@@ -122,7 +121,7 @@ function RecentOrder() {
                           <input type="checkbox" />
                         </td>
                         <td className="p-3 text-primary">
-                          {order?.orderId ?? "-"}
+                          {order?.showOrderNumber ?? "-"}
                         </td>
                         <td className="p-3 text-dark fw-bold">
                           {order?.customerName ?? "-"}

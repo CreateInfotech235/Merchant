@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useEffect } from 'react';
 import {
   Label,
   LineChart,
@@ -59,7 +59,8 @@ const initialState = {
 };
 
 export default class Example extends PureComponent {
-//   static demoUrl = 'https://codesandbox.io/p/sandbox/highlight-zoom-line-chart-rrj8f4';
+  //   static demoUrl = 'https://codesandbox.io/p/sandbox/highlight-zoom-line-chart-rrj8f4';
+
 
   constructor(props) {
     super(props);
@@ -114,15 +115,14 @@ export default class Example extends PureComponent {
   }
 
   render() {
-    const { data, barIndex, left, right, refAreaLeft, refAreaRight, top, bottom, top2, bottom2 } = this.state;
+    const { data, left, right, refAreaLeft, refAreaRight, top, bottom, top2, bottom2 } = this.state;
 
     return (
       <div className="highlight-bar-charts" style={{ userSelect: 'none', width: '100%' }}>
         <button type="button" className="btn update" onClick={this.zoomOut.bind(this)}>
           Zoom Out
         </button>
-
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={window.innerWidth < 400 ? 200 : 400}>
           <LineChart
             width={800}
             height={400}
@@ -145,7 +145,7 @@ export default class Example extends PureComponent {
             ) : null}
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </div >
     );
   }
 }

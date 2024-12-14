@@ -6,7 +6,7 @@ export const getAllDeliveryMan = async (page, pageLimit, search) => {
     const response = await API.get(
       `deliveryMan?pageCount=${page}&pageLimit=${pageLimit}&isVerified=true&createdByAdmin=true`
     );
-    console.log("response", response);
+    console.log("response", response.data.data.data);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {

@@ -12,7 +12,7 @@ const LogoutButton = () => {
       }
 
       const response = await axios.patch(
-        'http://localhost:8001/admin/auth/logout',
+        'https://create-4.onrender.com/admin/auth/logout',
         {
           refreshToken: refreshToken,
           personType: 'ADMIN'

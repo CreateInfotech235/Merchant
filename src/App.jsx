@@ -497,7 +497,7 @@ function App() {
           }
         />
         <Route
-          path="/add-delivery-man"
+          path="/add-delivery-man-admin"
           element={
             <ProtectedRouteAdmin>
               <AddDeliveryManAdmin />
@@ -1093,7 +1093,7 @@ function App() {
           path="/add-customer-admin"
           element={
             <ProtectedRouteAdmin>
-              <AddCustomer />
+              <AddCustomerAdmin />
             </ProtectedRouteAdmin>
           }
         />

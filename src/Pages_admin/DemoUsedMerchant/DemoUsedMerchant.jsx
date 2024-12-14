@@ -97,7 +97,7 @@ const DemoUsedMerchant = () => {
 
   return (
     <>
-      <div className="w-100">
+      <div className="w-100 h-[calc(100vh-187px)]">
         <div className="fluid-container">
           <div className="navbar">
             <div className="navbar-options d-flex my-2 col-12">
@@ -171,24 +171,24 @@ const DemoUsedMerchant = () => {
                       </td>
                       <td className="user-table1">
                         <div className="d-flex justify-content-center align-items-center">
-                          <button
+                          {/* <button
                             className="edit-btn"
                             onClick={() => handleEdit(deliveryman)}
                           >
-                            <img src={edit} alt="Edit" />
-                          </button>
+                            <img src={edit} alt="Edit" className="mx-auto" />
+                          </button> */}
                           <button
                             className="delete-btn ms-1"
                             onClick={() => setShowModel(true)}
                           >
-                            <img src={deleteimg} alt="Delete" />
+                            <img src={deleteimg} alt="Delete" className="mx-auto" />
                           </button>
                           {showModel && <DeleteUser closeModel={closeModel} />}
                           <button
                             className="show-btn ms-1"
                             onClick={() => handleView(deliveryman)}
                           >
-                            <img src={show} alt="Show" />
+                            <img src={show} alt="Show" className="mx-auto" />
                           </button>
                         </div>
                       </td>

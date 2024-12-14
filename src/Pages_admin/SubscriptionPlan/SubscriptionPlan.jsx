@@ -13,13 +13,13 @@ function SubscriptionPlan() {
     const response = await getAllSubscription(0, 0);
     if (response.status) {
       setSubcriptionData(response.data);
-      setLoading(true)
+      setLoading(false)
     }
     //   console.log(response.data);
   };
   useEffect(() => {
     getallSubscriptions();
-  }, [showModel]);
+  }, []);
 
   console.log(subcriptionData);
 
@@ -38,6 +38,7 @@ function SubscriptionPlan() {
     setShowModel(false);
     setType(null);
     setSelectedSubscription(null);
+    getallSubscriptions()
   };
 
   const monthCalcuation = (milliseconds) => {
@@ -68,7 +69,7 @@ function SubscriptionPlan() {
   return (
     <div className="w-100 h-[calc(100vh-187px)]">
       <div className="w-100 d-flex justify-content-end ">
-        <button className="p-2 rounded" onClick={() => handleShowModal1("Add")}>
+        <button className="p-2 rounded bg-[#253A71] text-white" onClick={() => handleShowModal1("Add")}>
           Add Subscription
         </button>
       </div>
@@ -92,7 +93,7 @@ function SubscriptionPlan() {
                   className="bg-transparent border-0"
                   onClick={() => handleShowModal(el)}
                 >
-                  <img src="./src/assets/subscription-edit.svg" />
+                  <img src="./src/assets_admin/subscription-edit.svg" />
                 </button>
               </div>
               <h5 class="fw-bold text-center">{el.type}</h5>
@@ -106,7 +107,7 @@ function SubscriptionPlan() {
                     key={i}
                     class="d-flex align-items-center align-content-center "
                   >
-                    <img src="./src/assets/checkbox.svg" class="pe-3" />{" "}
+                    <img src="./src/assets_admin/checkbox.svg" class="pe-3" />{" "}
                     <p>{features}</p>{" "}
                   </div>
                 ))}

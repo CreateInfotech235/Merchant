@@ -1,4 +1,4 @@
-  import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import html2canvas from 'html2canvas';
@@ -21,6 +21,7 @@ function InvoiceFormate() {
     fromCompanyCity: 'London, UK',
     orderDetails: {
       orderId: orderData?.orderId || '',
+      showOrderNumber: orderData?.showOrderNumber || '-',
       date: orderData?.createdAt || new Date().toISOString(),
       parcelType: orderData?.parcelType || '',
       weight: orderData?.weight || 0,
@@ -173,7 +174,7 @@ function InvoiceFormate() {
           ) : (
             <h1 className="text-4xl font-bold text-gray-800">{invoiceSettings.header}</h1>
           )}
-          <p className="text-gray-500 mt-1">Invoice #{invoiceSettings.orderDetails.orderId}</p>
+          <p className="text-gray-500 mt-1">Invoice #{invoiceSettings.orderDetails.showOrderNumber}</p>
         </div>
         <div className="flex gap-4">
           <button

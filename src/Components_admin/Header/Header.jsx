@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import "./Header.css";
-import notificationIcon from "../../assets_admin/notification.png";
+import notificationIcon from "../../assets_admin/bell.png";
 import profileIcon from "../../assets_admin/profile.png";
 import ReactFlagsSelect from "react-flags-select";
 
@@ -110,7 +110,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
   
       // Make the PATCH request to log out
       const response = await axios.patch(
-        'http://localhost:8001/admin/auth/logout',
+        'https://create-4.onrender.com/admin/auth/logout',
         {
           refreshToken: refreshToken,
           personType: 'ADMIN',

@@ -9,8 +9,8 @@ import ViewUser from "../../Components_admin/ViewUser/ViewUser";
 import DisableUser from "../../Components_admin/DisableUser/DisableUser";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import Pagination from "../../Components_admin/Pagination/Pagination";
-import { getUnScbscriptionUsers } from "../../Components_admin/Api/User"; 
-import UnsubscriptionUserPopup from './UnSubsctibedMerchnatPopup'
+import { getUnScbscriptionUsers } from "../../Components_admin/Api/User";
+import UnsubscriptionUserPopup from "./UnSubsctibedMerchnatPopup";
 import Loader from "../../Components_admin/Loader/Loader";
 
 const Users = () => {
@@ -55,7 +55,7 @@ const Users = () => {
   const filteredUsers = users.filter((user) => {
     const query = searchQuery.toLowerCase();
     return (
-        user?.firstName?.toLowerCase().includes(query) ||
+      user?.firstName?.toLowerCase().includes(query) ||
       user?.lastName?.toLowerCase().includes(query) ||
       user?.email?.toLowerCase().includes(query) ||
       user?.countryCode?.toLowerCase().includes(query) ||
@@ -93,7 +93,7 @@ const Users = () => {
   };
 
   return (
-    <>
+    <div className="h-[calc(100vh-187px)]">
       <div className="d-flex justify-content-end align-items-center">
         {/* <button onClick={toggleThemeMode} className="btn btn-dark">
           Toggle {themeMode === "light" ? "Dark" : "Light"} Mode
@@ -116,16 +116,22 @@ const Users = () => {
         </div>
         <div>
           <Link to="/add-user">
-            <button className="btn text-white flex items-center" style={{ background: "#D65246" }}>
+            <button
+              className="btn text-white flex items-center"
+              style={{ background: "#D65246" }}
+            >
               <img src={add} className="pe-2" alt="Add" />
               Add User
             </button>
           </Link>
         </div>
-      </div>  
+      </div>
 
       <div className="table-responsive">
-        <table className="table-borderless w-100 text-center bg-light" style={{ fontSize: "12px" }}>
+        <table
+          className="table-borderless w-100 text-center bg-light"
+          style={{ fontSize: "12px" }}
+        >
           <thead className="text-light" style={{ background: "#253A71" }}>
             <tr>
               <th className="p-3">User ID</th>
@@ -144,12 +150,12 @@ const Users = () => {
             {currentUsers.length === 0 ? (
               <tr>
                 <td colSpan="9" className="text-center p-3">
-                <div className="d-flex justify-content-center">
-                      <div className="mx-auto">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">
                       <Loader />
                       No Data Found
-                      </div>
-                     </div>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -162,9 +168,13 @@ const Users = () => {
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">{user.countryCode}</td>
                   <td className="p-3">{user.city || "N/A"}</td>
-                  <td className="p-3">{new Date(user.registerDate).toLocaleString()}</td>
                   <td className="p-3">
-                    <button className="enable-btn">{user.status === "ENABLE" ? "Disable" : "Enable"}</button>
+                    {new Date(user.registerDate).toLocaleString()}
+                  </td>
+                  <td className="p-3">
+                    <button className="enable-btn">
+                      {user.status}
+                    </button>
                   </td>
                   <td className="table-head2">
                     <div className="d-flex align-items-center justify-content-center">
@@ -174,7 +184,10 @@ const Users = () => {
                       <button className="delete-btn" onClick={() => setIsDeleteModalOpen(true)}>
                         <img src={deleteimg} alt="Delete" />
                       </button> */}
-                      <button className="show-btn m-2" onClick={() => handleShowInfo(user)}>
+                      <button
+                        className="show-btn m-2"
+                        onClick={() => handleShowInfo(user)}
+                      >
                         <img src={show} alt="Show" className="mx-auto" />
                       </button>
                     </div>
@@ -186,13 +199,17 @@ const Users = () => {
         </table>
       </div>
       {isInfoModalOpen && (
-  <UnsubscriptionUserPopup 
-    user={selectedUser} 
-    onHide={() => setIsInfoModalOpen(false)} 
-  />
-)}
-      <Pagination currentPage={currentPage} totalPages={totalPages} handleClick={handleClick} />
-    </>
+        <UnsubscriptionUserPopup
+          user={selectedUser}
+          onHide={() => setIsInfoModalOpen(false)}
+        />
+      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handleClick={handleClick}
+      />
+    </div>
   );
 };
 

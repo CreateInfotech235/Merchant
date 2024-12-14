@@ -31,22 +31,20 @@ import DeliveryMan from "../../assets_admin/DeliveryMan.png";
 import Subscribe from "../../assets_admin/subscribe.png";
 import UnSubscribe from "../../assets_admin/unfollow.png";
 const Dashboard = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [themeMode, setThemeMode] = useState("light");
   const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(false);
-  const [order , setOrder] = useState([])
+  const [order, setOrder] = useState([])
 
 
   const fetchCount = async () => {
     setLoading(true);
     const res = await getCounts();
-    console.log(res);
     setCounts(res.data);
     setLoading(false);
   };
   useEffect(() => {
-    // Update body class based on themeMode
+    // Update body className based on themeMode
     if (themeMode === "dark") {
       document.body.classList.add("dark-mode");
     } else {
@@ -54,29 +52,18 @@ const Dashboard = () => {
     }
   }, [themeMode]);
 
- const fetchOrder = async() => {
-  const response = await getAllOrder(false)
-  if (response.status) {
-    const fetchTenOrder = response.data.slice(0 , 10)
-    setOrder(fetchTenOrder)
+  const fetchOrder = async () => {
+    const response = await getAllOrder()
+    console.log(response, "Oder");
+    if (response.status) {
+      const fetchTenOrder = response.data.slice(0, 10)
+      setOrder(fetchTenOrder)
+    }
   }
-  console.log(response , "Oder");
-  
- }
   useEffect(() => {
     fetchCount();
     fetchOrder()
   }, []);
-
-  const toggleThemeMode = () => {
-    // Toggle between light and dark mode
-    setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-    setCurrentPage(1); // Reset pagination to the first page when search changes
-  };
 
   return (
     <div className="position-relative h-[calc(100vh-187px)]">
@@ -87,7 +74,7 @@ const Dashboard = () => {
       ) : (
         <>
           {loading && <Loader />}
-          <div class="d-xxl-flex justify-content-xxl-end d-xl-flex justify-content-xl-end d-lg-flex justify-content-lg-end d-md-flex justify-content-center align-items-center justify-content-md-between d-sm-flex  flex-sm-column  flex-column  flex-lg-row  flex-md-row   flex-xl-row align-items-center"></div>
+          <div className="d-xxl-flex justify-content-xxl-end d-xl-flex justify-content-xl-end d-lg-flex justify-content-lg-end d-md-flex justify-content-center align-items-center justify-content-md-between d-sm-flex  flex-sm-column  flex-column  flex-lg-row  flex-md-row   flex-xl-row align-items-center"></div>
           {/* <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between  d-lg-flex justify-content-lg-between  d-md-flex justify-content-md-between d-sm-flex justify-content-sm-center d-flex flex-column  flex-xxl-row   flex-xl-row  flex-lg-row   flex-md-row   flex-sm-column align-items-center nav-bar pb-3">
             <div
               className={`navbar ${themeMode === "dark" ? "dark-mode" : ""}`}
@@ -110,17 +97,17 @@ const Dashboard = () => {
 
           <div className="container-fluid">
             <div
-              class="dashboard row pt-3 h-100 w-120"
+              className="dashboard row pt-3 h-100 w-120"
               style={{ marginLeft: "-10px" }}
             >
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Totalorderss} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-5 pb-2"
+                  className="pe-2 ps-5 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "10px" }}>
@@ -139,12 +126,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Acceptedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -163,12 +150,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Arrivedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -187,12 +174,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Assignedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -211,12 +198,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Cancelledorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -235,12 +222,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Createdorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -259,12 +246,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Delivered} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -283,12 +270,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Departedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -307,12 +294,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Pickedorders} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -331,12 +318,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={DeliveryMan} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -355,12 +342,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={Subscribe} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -379,12 +366,12 @@ const Dashboard = () => {
 
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
-                  <div class="d-flex align-items-center justify-content-between pb-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
                     <img style={{ width: "55px" }} src={UnSubscribe} alt="Total Order" />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
-                  class="pe-2 ps-2 pb-2"
+                  className="pe-2 ps-2 pb-2"
                   style={{ height: "20px" }}
                 />
                 <p style={{ fontSize: "9px" }}>
@@ -432,66 +419,66 @@ const Dashboard = () => {
           </div>
 
           <div className="container-fluid">
-            <div class="recent-order row align-items-center pt-3 w-120 h-100">
-              {order.map((order , i)=>(
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 ">
-                <div className="border-box rounded-2 p-2">
-                  <div class="d-flex p-2">
-                    <div class="d-flex flex-row align-items-center justify-content-between ">
-                      <img src={Shopping_bag} alt="Total Order" class="pe-2" />
+            <div className="recent-order row align-items-center pt-3 w-120 h-100">
+              {order.map((order, i) => (
+                <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 " key={i}>
+                  <div className="border-box rounded-2 p-2">
+                    <div className="d-flex p-2">
+                      <div className="d-flex flex-row align-items-center justify-content-between ">
+                        <img src={Shopping_bag} alt="Total Order" className="pe-2" />
+                      </div>
+
+                      <table
+                        className=" table-borderless lh-lg"
+                        style={{ fontSize: "10px" }}
+                      >
+                        <thead>
+                          <tr>
+                            <td className="fw-bold">Name:</td>
+                          <td className="text-end">{order.customerName}</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="fw-bold">delivery man :</td>
+                            <td className="text-end">{order.deliveryMan}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
 
+                    <hr className="text-white border-2" />
+
                     <table
-                      class=" table-borderless lh-lg"
+                      className=" table-borderless m-2 lh-lg"
                       style={{ fontSize: "10px" }}
                     >
                       <thead>
                         <tr>
-                          <td class="fw-bold">Name:</td>
-                          <td class="text-end">mark</td>
+                          <td className="fw-bold">pickup date: </td>
+                          <td className=" ps-4">{order.pickupDate}</td>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td class="fw-bold">delivery man :</td>
-                          <td class="text-end">-</td>
+                          <td className="fw-bold">created date :</td>
+                          <td className=" ps-4  ">{order.createdDate}</td>
+                        </tr>
+                        <tr>
+                          <td className="fw-bold">status :</td>
+                          <td className=" ps-4">
+                            <button
+                              className="border-0 text-white rounded-1 ps-1 pe-1 "
+                              style={{ background: "#976CDD", fontSize: "8px" }}
+                            >
+                                {order.status}
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
-
-                  <hr class="text-white border-2" />
-
-                  <table
-                    class=" table-borderless m-2 lh-lg"
-                    style={{ fontSize: "10px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <td class="fw-bold">pickup date: </td>
-                        <td class=" ps-4">14May2024 | 03:42 PM</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="fw-bold">created date :</td>
-                        <td class=" ps-4  ">38 minutes ago</td>
-                      </tr>
-                      <tr>
-                        <td class="fw-bold">status :</td>
-                        <td class=" ps-4">
-                          <button
-                            class="border-0 text-white rounded-1 ps-1 pe-1 "
-                            style={{ background: "#976CDD", fontSize: "8px" }}
-                          >
-                            {order.status}
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
                 </div>
-              </div>
 
               ))}
             </div>

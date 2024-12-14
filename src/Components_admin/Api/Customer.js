@@ -18,7 +18,7 @@ export const getAllCustomers= async (page, pageLimit) => {
 
 export const addCustomer = async (data) => {
     try {
-        const response = await API.post(`/customer/auth/signUp`, data);
+        const response = await API.post(`/admin/customer/addCustomer`, data);
         console.log('response', response);
 
         if (response.status === 200) {

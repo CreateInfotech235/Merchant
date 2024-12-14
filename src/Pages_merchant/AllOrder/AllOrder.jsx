@@ -217,6 +217,7 @@ const AllOrder = () => {
         state: {
           orderData: {
             orderId: order.orderId,
+            showOrderNumber: order.showOrderNumber,
             createdAt: order.dateTime,
             parcelType: order.parcelType,
             weight: order.weight,

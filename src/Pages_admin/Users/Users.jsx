@@ -232,7 +232,7 @@ const Users = () => {
   };
 
   return (
-    <>
+    <div className="">
       <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
         <div className="navbar">
           <div className="navbar-options d-flex">
@@ -316,7 +316,7 @@ const Users = () => {
           onHide={() => setIsInfoModalOpen(false)} // Close modal function
         />
       )}
-    </>
+    </div>
   );
 };
 

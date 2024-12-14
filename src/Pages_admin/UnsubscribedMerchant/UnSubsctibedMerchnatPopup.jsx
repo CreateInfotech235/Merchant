@@ -4,6 +4,8 @@ import { formatDateTime } from "../../helper_admin/common";
 
 const UnsubscriptionUserPopup = ({ user, onHide }) => {
   if (!user) return null;
+  console.log(user);
+  
 
   return (
     <Modal show={true} onHide={onHide} centered>
@@ -50,7 +52,7 @@ const UnsubscriptionUserPopup = ({ user, onHide }) => {
           <div className="d-flex align-items-center mb-3 p-2" style={{background: "#F8F9FA", borderRadius: "8px"}}>
             <label className="fw-semibold me-3" style={{minWidth: "140px", color: "#6C757D"}}>Status:</label>
             <span className={`badge ${user.status === "ENABLE" ? "bg-success" : "bg-danger"}`}>
-              {user.status === "ENABLE" ? "Enabled" : "Disabled"}
+              {user.status}
             </span>
           </div>
         </div>

@@ -207,25 +207,25 @@ const Order = () => {
 
     <div className="table-responsive">
         <table
-          class="table-borderless w-100 text-center bg-light"
+          className="table-borderless w-100 text-center bg-light"
           style={{ fontSize: "10px" }}
         >
-          <thead class="text-light" style={{ background: "#253A71" }}>
+          <thead className="text-light" style={{ background: "#253A71" }}>
           <tr>
-          <th class="p-3"></th>
-          <th class="p-3">Order ID</th>
-             <th class="p-3">Customer Name</th>
-             <th class="p-3">Pickup Address</th>
-             <th class="p-3">Delivery Address</th>
-             <th class="p-3">Delivery Man</th>
-             <th class="p-3">Pickup Date</th>
-             <th class="p-3">Delivery Date</th>
-             <th class="p-3">Invoice</th>
-             <th class="p-3">Created Date</th>
-             <th class="p-3">Status</th>
-             <th class="p-3">Assign</th>
-             <th class="p-3">Action</th>
-             <th class="p-3">Order Tracking</th>
+          <th className="p-3"></th>
+          <th className="p-3">Order ID</th>
+             <th className="p-3">Customer Name</th>
+             <th className="p-3">Pickup Address</th>
+             <th className="p-3">Delivery Address</th>
+             <th className="p-3">Delivery Man</th>
+             <th className="p-3">Pickup Date</th>
+             <th className="p-3">Delivery Date</th>
+             <th className="p-3">Invoice</th>
+             <th className="p-3">Created Date</th>
+             <th className="p-3">Status</th>
+             <th className="p-3">Assign</th>
+             <th className="p-3">Action</th>
+             <th className="p-3">Order Tracking</th>
           </tr>
         </thead>
         <tbody>
@@ -234,16 +234,16 @@ const Order = () => {
               <td className="city-data">
                 <input type="checkbox" />
               </td>
-              <td class="p-3 text-primary">{order.orderId}</td>
-              <td class="p-3 text-dark fw-bold">{order.customerName}</td>
-               <td class="p-3">{order.pickupAddress}</td>
-               <td class="p-3">{order.deliveryAddress}</td>
-               <td class="p-3">{order.deliveryMan}</td>
-               <td class="p-3">{order.pickupDate}</td>
-               <td class="p-3">{order.deliveryDate}</td>
-               <td class="p-3 fw-bold">{order.invoice}</td>
-               <td class="p-3">{order.createdDate}</td>
-               <td class="p-3">
+              <td className="p-3 text-primary">{order.orderId}</td>
+              <td className="p-3 text-dark fw-bold">{order.customerName}</td>
+               <td className="p-3">{order.pickupAddress}</td>
+               <td className="p-3">{order.deliveryAddress}</td>
+               <td className="p-3">{order.deliveryMan}</td>
+               <td className="p-3">{order.pickupDate}</td>
+               <td className="p-3">{order.deliveryDate}</td>
+               <td className="p-3 fw-bold">{order.invoice}</td>
+               <td className="p-3">{order.createdDate}</td>
+               <td className="p-3">
                 <button className="enable-btn">{order.status}</button>
               </td>
               <td className="city-data">Assign</td>

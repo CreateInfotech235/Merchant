@@ -38,8 +38,8 @@ const CreateOrder = () => {
 
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
-      
       const deliveryMans = await getAllDeliveryMans();
+      
       const deliveryManRes = await getDeliveryMan();
       if (deliveryManRes.data || deliveryMans.data) {
         // Filter active delivery men from first source
@@ -615,6 +615,7 @@ const CreateOrder = () => {
                         </button>
                       </div>
                     </div>
+
                     <div className="input-error mb-3">
                       <label className="fw-thin p-0 pb-1 ">Pickup Postcode :</label>
                       <Field

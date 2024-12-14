@@ -195,7 +195,7 @@ const AllOrder = () => {
         </div>
       </div>
 
-      <div className="w-100 h-screen">
+      <div className="w-100 h-[calc(100vh-187px)]">
         <div className="d-flex justify-content-between py-3">
           <div className="d-flex gap-3">
             <button className="btn btn-primary" onClick={() => handleAdminOrder()}>Admin Orders</button>
