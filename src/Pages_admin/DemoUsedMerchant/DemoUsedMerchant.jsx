@@ -47,7 +47,7 @@ const DemoUsedMerchant = () => {
   }, []);
 
   const filteredDeliverymen = deliverymen.filter((deliveryman) =>
-    deliveryman.name.toLowerCase().includes(searchTerm.toLowerCase())
+    deliveryman.firstName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -94,6 +94,13 @@ const DemoUsedMerchant = () => {
     setSearchTerm(event.target.value);
     setCurrentPage(1);
   };
+  const statusColors = {
+    ENABLE: "purple",
+    DISABLE: "red",
+  };
+
+  const getColorClass = (status) =>
+    `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
   return (
     <>
@@ -117,16 +124,16 @@ const DemoUsedMerchant = () => {
             <table className="table-borderless w-100 text-center bg-light">
               <thead className="text-light" style={{ background: "#253A71" }}>
                 <tr>
-                  <th className="p-3"></th>
-                  <th className="p-3 text-[12px]">Name</th>
-                  <th className="p-3 text-[12px]">Contact number</th>
-                  <th className="p-3 text-[12px]">Email id</th>
+                  <th className="p-3 text-[12px]">User ID</th>
+                  <th className="p-3 text-[12px]">First Name</th>
+                  <th className="p-3 text-[12px]">Last Name</th>
+                  <th className="p-3 text-[12px]">Contact</th>
+                  <th className="p-3 text-[12px]">Email</th>
                   <th className="p-3 text-[12px]">Country</th>
                   <th className="p-3 text-[12px]">City</th>
-                  <th className="p-3 text-[12px]">Register date</th>
+                  <th className="p-3 text-[12px]">Register Date</th>
                   <th className="p-3 text-[12px]">Status</th>
-                  <th className="p-3 text-[12px]">Verify</th>
-                  <th className="p-3 text-[12px]">Action</th>
+                  <th className="p-3 text-[12px]">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,51 +149,48 @@ const DemoUsedMerchant = () => {
                     </td>
                   </tr>
                 ) : (
-                  currentItems.map((deliveryman) => (
-                    <tr key={deliveryman._id}>
-                      <td className="user-table1">
-                        <input type="checkbox" />
+                  currentItems.map((deliveryman, index) => (
+                    <tr key={index}>
+                      <td className="p-3 text-[12px]">{index + 1}</td>
+                      <td className="p-3 text-[12px]">
+                        {deliveryman?.firstName ?? "-"}
                       </td>
-                      <td className="p-3 text-[12px]">{deliveryman.name}</td>
+                      <td className="p-3 text-[12px]">
+                        {deliveryman?.lastName ?? "-"}
+                      </td>
                       <td className="p-3 text-[12px]">
                         {deliveryman.contactNumber}
                       </td>
                       <td className="p-3 text-[12px]">{deliveryman.email}</td>
-                      <td className="p-3 text-[12px]">{deliveryman.country}</td>
-                      <td className="p-3 text-[12px]">{deliveryman.city}</td>
                       <td className="p-3 text-[12px]">
-                        {deliveryman.registerDate}
+                        {deliveryman.countryCode}
                       </td>
-                      <td className="p-3">
+                      <td className="p-3 text-[12px]">
+                        {deliveryman.city || "N/A"}
+                      </td>
+                      <td className="p-3 text-[12px]">
+                        {new Date(deliveryman.registerDate).toLocaleString()}
+                      </td>
+                      <td className="p-3 text-[12px]">
                         <button
-                          className="enable-btn"
-                          onClick={() => setShowModel(true)}
+                          className={`enable-btn ${
+                            deliveryman.status === "ENABLE" ? "green" : "red"
+                          }`}
                         >
-                          {deliveryman.status}
+                          {deliveryman.status === "ENABLE" ? "ACTIVE" : "INACTIVE"}
                         </button>
-                        {showModel && <DisableUser closeModel={closeModel} />}
                       </td>
-                      <td className="user-table1">
-                        <input type="checkbox" />
-                      </td>
-                      <td className="user-table1">
-                        <div className="d-flex justify-content-center align-items-center">
-                          {/* <button
-                            className="edit-btn"
-                            onClick={() => handleEdit(deliveryman)}
-                          >
-                            <img src={edit} alt="Edit" className="mx-auto" />
-                          </button> */}
+                      <td className="table-head2 text-[12px]">
+                        <div className="d-flex align-items-center justify-content-center">
+                          {/* <button className="edit-btn m-2" onClick={() => handleEditdeliveryman(deliveryman)}>
+                                            <img src={edit} alt="Edit" />
+                                          </button>
+                                          <button className="delete-btn" onClick={() => setIsDeleteModalOpen(true)}>
+                                            <img src={deleteimg} alt="Delete" />
+                                          </button> */}
                           <button
-                            className="delete-btn ms-1"
-                            onClick={() => setShowModel(true)}
-                          >
-                            <img src={deleteimg} alt="Delete" className="mx-auto" />
-                          </button>
-                          {showModel && <DeleteUser closeModel={closeModel} />}
-                          <button
-                            className="show-btn ms-1"
-                            onClick={() => handleView(deliveryman)}
+                            className="show-btn m-2"
+                            onClick={() => handleShowInfo(deliveryman)}
                           >
                             <img src={show} alt="Show" className="mx-auto" />
                           </button>

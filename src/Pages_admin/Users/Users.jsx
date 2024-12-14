@@ -288,14 +288,14 @@ const Users = () => {
                 ) : (
             filteredUsers.map((user, index) => (
               <tr key={index}>
-                <td className="p-3">{user?._id || '-'}</td>
+                <td className="p-3">{index + 1 || '-'}</td>
                 <td className="p-3">{user?.firstName || '-'}</td>
                 <td className="p-3">{user?.lastName || '-'}</td>
                 <td className="p-3">{user?.contactNumber || '-'}</td>
                 <td className="p-3">{user?.email || '-'}</td>
                 <td className="p-3">{user?.countryCode || '-'}</td>
-                <td className="p-3">{user?.city || "N/A"}</td>
-                <td className="p-3">{new Date(user.registerDate).toLocaleString()}</td>
+                <td className="p-3">{user?.address?.city || "N/A"}</td>
+                <td className="p-3">{user.registerDate}</td>
                 <td className="table-head2">
                   <button className="show-btn m-2" onClick={() => handleShowInfo(user)}>
                     <img src={show} alt="Show" className="mx-auto"/>

@@ -41,6 +41,8 @@ const SubscribedMerchnat = () => {
   // Fetch users from API
   const fetchUsers = async () => {
     const response = await getScbscriptionUsers(currentPage, usersPerPage);
+    console.log(response);
+    
     if (response.status) {
       setUsers(response.data[0].data); // Set user data from API
       setTotalPages(Math.ceil(response.data[0].totalDataCount / usersPerPage));
@@ -91,6 +93,14 @@ const SubscribedMerchnat = () => {
     setSearchQuery(event.target.value);
     setCurrentPage(1); // Reset pagination to the first page when search changes
   };
+  const statusColors = {
+    ENABLE: "purple",
+    DISABLE: "red",
+  };
+
+  const getColorClass = (status) =>
+    `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
+
 
   return (
     <div className="h-[calc(100vh-187px)]">
@@ -151,7 +161,7 @@ const SubscribedMerchnat = () => {
             ) : (
               currentUsers.map((user, index) => (
                 <tr key={index}>
-                  <td className="p-3">{user.userId}</td>
+                  <td className="p-3">{index + 1}</td>
                   <td className="p-3">{user.firstName}</td>
                   <td className="p-3">{user.lastName}</td>
                   <td className="p-3">{user.contactNumber}</td>
@@ -159,9 +169,12 @@ const SubscribedMerchnat = () => {
                   <td className="p-3">{user.countryCode}</td>
                   <td className="p-3">{user.city || "N/A"}</td>
                   <td className="p-3">{new Date(user.registerDate).toLocaleString()}</td>
-                  <td className="p-3">
-                    <button className="enable-btn">{user.status}</button>
-                  </td>
+                  <td className="p-3 text-[12px]">
+                  <button className={`enable-btn ${user.status === 'ENABLE' ? 'green' : 'red'}`}>
+                        {user.status === 'ENABLE' ? "ACTIVE" : "INACTIVE"}
+                      </button>
+                      
+                      </td>
                   <td className="table-head2">
                     <div className="d-flex align-items-center justify-content-center">
                       {/* <button className="edit-btn m-2" onClick={() => handleEditUser(user)}>

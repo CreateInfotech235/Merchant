@@ -26,13 +26,13 @@ const ProtectedRoute = ({ children }) => {
       navigate("/login");
     }
   }, [token, merchantId, navigate]);
-
-  // Check free subscription
+  
   useEffect(() => {
     if (userData.freeSubscription === false) {
       setShowModel(true);
     }
-  }, [userData.freeSubscription]);
+  }, [userData?.freeSubscription]);
+  // Check free subscription
 
   // Theme mode effect
   useEffect(() => {

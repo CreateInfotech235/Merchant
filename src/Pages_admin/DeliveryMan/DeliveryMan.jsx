@@ -136,13 +136,15 @@ const DeliveryMan = () => {
         <div className="table-responsive">
           <table className="table-borderless w-100 text-center bg-light" style={{ fontSize: "12px" }}>
             <thead className="text-light" style={{ background: "#253A71" }}>
-              <tr>
+            <tr>
                 <th className="p-3 text-light"></th>
+                <th className="p-3 text-light">DeliveryMan Id</th>
                 <th className="p-3 text-light">First Name</th>
                 <th className="p-3 text-light">Last Name</th>
                 <th className="p-3 text-light">Contact number</th>
                 <th className="p-3 text-light">Email id</th>
-                <th className="p-3 text-light">CountryCode</th>
+                <th className="p-3 text-light">Address</th>
+                <th className="p-3 text-light">Post Code</th>
                 <th className="p-3 text-light">Status</th>
                 <th className="p-3 text-light">Verify</th>
                 <th className="p-3 text-light">Action</th>
@@ -162,37 +164,57 @@ const DeliveryMan = () => {
                 </tr>
               ) : (
                 filteredDeliverymen.map((deliveryman) => (
-                  <tr key={deliveryman._id}>
-                    <td className="user-table1">
-                      <input type="checkbox" />
-                    </td>
-                    <td className="p-3">{deliveryman?.firstName || '-'}</td>
-                    <td className="p-3">{deliveryman?.lastName || '-'}</td>
-                    <td className="p-3">{deliveryman?.countryCode || '-'} {deliveryman.contactNumber}</td>
-                    <td className="p-3">{deliveryman?.email || '-'}</td>
-                    <td className="p-3">{deliveryman?.countryCode || '-'}</td>
-                    <td className="p-3">
-                    <button className={getColorClass(deliveryman.status)}>
-                        {deliveryman.status === 'ENABLE' ? 'ONLINE' : 'OFFLINE'}
-                      </button> 
-                    </td>
-                    <td className="user-table1">
-                      <input type="checkbox" checked={deliveryman.isVerified} />
-                    </td>
-                    <td className="user-table1">
-                      <div className="d-flex justify-content-center align-items-center">
-                        <button className="edit-btn">
-                          <img src={locationimg} alt="Edit" className="mx-auto" />
-                        </button>
-                        <button className="delete-btn ms-1" onClick={() => handleDeleteClick(deliveryman)}>
-                          <img src={deleteimg} alt="Delete" className="mx-auto" />
-                        </button>
-                        <button className="show-btn ms-1" onClick={() => handleViewClick(deliveryman)}>
-                          <img src={show} alt="Show" className="mx-auto" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                 <tr key={deliveryman._id}>
+                                     <td className="user-table1">
+                                       <input type="checkbox" />
+                                     </td>
+                                     <td className="p-3">{deliveryman?.showDeliveryManNumber ?? "-"}</td>
+                                     <td className="p-3">{deliveryman?.firstName ?? "-"}</td>
+                                     <td className="p-3">{deliveryman?.lastName ?? "-"}</td>
+                                     <td className="p-3">
+                                       {deliveryman.countryCode} {deliveryman.contactNumber}
+                                     </td>
+                                     <td className="p-3">{deliveryman.email}</td>
+                                     <td className="p-3">{deliveryman.address}</td>
+                                     <td className="p-3">{deliveryman.postCode}</td>
+                                     <td className="p-3">
+                                       <button className={getColorClass(deliveryman.status)}>
+                                         {deliveryman.status === 'ENABLE' ? 'ONLINE' : 'OFFLINE'}
+                                       </button> 
+                                     </td>
+                                     <td className="user-table1">
+                                       <button className={`enable-btn ${deliveryman.isVerified ? 'green' : 'red'}`}>
+                                         {deliveryman.isVerified ? "ACTIVE" : "INACTIVE"}
+                                       </button>
+                                       {/* <input type="checkb ox" checked={deliveryman.isVerified} /> */}
+                                     </td>
+                                     <td className="user-table1">
+                                       <div className="d-flex justify-content-center align-items-center">
+                                         <button className="edit-btn">
+                                           <img src={locationimg} alt="Edit" className="mx-auto"/>
+                                         </button>
+                                         <button
+                                           className="edit-btn ms-1"
+                                           onClick={() => handleEditClick(deliveryman)}
+                                         >
+                                           <img src={edit} alt="Edit" className="mx-auto"/>
+                                         </button>
+                                         <button
+                                           className="delete-btn ms-1"
+                                           onClick={() => handleDeleteClick(deliveryman)}
+                                         >
+                                           <img src={deleteimg} alt="Delete" className="mx-auto"/>
+                                         </button>
+                 
+                                         <button
+                                           className="show-btn ms-1"
+                                           onClick={() => handleViewClick(deliveryman)}
+                                         >
+                                           <img src={show} alt="Show" className="mx-auto" />
+                                         </button>
+                                       </div>
+                                     </td>
+                                   </tr>
                 ))
               )}
             </tbody>

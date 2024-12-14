@@ -4,6 +4,24 @@ import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets_admin/logo copy.png";
+import dashboard from "../../assets_admin/dashboard.svg";
+import subcription from "../../assets_admin/subcription.svg";
+import order from "../../assets_admin/order.svg";
+import merchent from "../../assets_admin/merchent.svg";
+import withdraw from "../../assets_admin/withdraw.svg";
+import pickup_request from "../../assets_admin/pickup-request.svg";
+import notification_bell from "../../assets_admin/notification-bell.svg";
+import offer1 from "../../assets_admin/offer1.svg";
+import mail from "../../assets_admin/mail.svg";
+import support_ticket from "../../assets_admin/support-ticket.svg";
+import website from "../../assets_admin/website.svg";
+import country from "../../assets_admin/country.svg";
+import city from "../../assets_admin/city.svg";
+import setting from "../../assets_admin/setting.svg";
+import invoice1 from "../../assets_admin/invoice1.svg";
+import delivery from "../../assets_admin/delivery.svg";
+import deposite from "../../assets_admin/deposite.svg";
+
 
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState(null);
@@ -47,7 +65,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/dashboard.svg"} alt="dashboard" />
+                  <img src={dashboard} alt="dashboard" />
                 </span>
                 Dashboard
               </Button>
@@ -60,7 +78,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(1)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/subcription.svg"} alt="subscription" />
+                <img src={subcription} alt="subscription" />
               </span>
               Subscription
               <span className={`arrow ${activeTab === 1 ? "rotate" : ""}`}>
@@ -99,7 +117,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(4)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/order.svg"} alt="order" />
+                <img src={order} alt="order" />
               </span>
               Order
               <span className={`arrow ${activeTab === 4 ? "rotate" : ""}`}>
@@ -133,7 +151,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/merchent.svg"} alt="merchant" />
+                  <img src={merchent} alt="merchant" />
                 </span>
                 Merchants
               </Button>
@@ -146,7 +164,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(6)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/delivery.svg"} alt="delivery" />
+                <img src={delivery} alt="delivery" />
               </span>
               Delivery Man
               <span className={`arrow ${activeTab === 6 ? "rotate" : ""}`}>
@@ -183,7 +201,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/country.svg"} alt="country" />
+                  <img src={country} alt="country" />
                 </span>
                 Country
               </Button>
@@ -197,7 +215,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/country.svg"} alt="country" />
+                  <img src={country} alt="country" />
                 </span>
                 Customer
               </Button>
@@ -211,7 +229,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/city.svg"} alt="city" />
+                  <img src={city} alt="city" />
                 </span>
                 City
               </Button>
@@ -224,7 +242,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(7)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/setting.svg"} alt="settings" />
+                <img src={setting} alt="settings" />
               </span>
               Settings
               <span className={`arrow ${activeTab === 7 ? "rotate" : ""}`}>
@@ -257,7 +275,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(8)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/withdraw.svg"} alt="withdraw" />
+                <img src={withdraw} alt="withdraw" />
               </span>
               Withdraw Request
               <span className={`arrow ${activeTab === 8 ? "rotate" : ""}`}>
@@ -287,7 +305,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(9)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/deposite.svg"} alt="deposit" />
+                <img src={deposite} alt="deposit" />
               </span>
               Deposit
               <span className={`arrow ${activeTab === 9 ? "rotate" : ""}`}>
@@ -315,7 +333,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/invoice1.svg"} alt="invoice setting" />
+                  <img src={invoice1} alt="invoice setting" />
                 </span>
                 Invoice Setting
               </Button>
@@ -328,7 +346,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(11)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/setting.svg"} alt="app setting" />
+                <img src={setting} alt="app setting" />
               </span>
               App Setting
               <span className={`arrow ${activeTab === 11 ? "rotate" : ""}`}>
@@ -358,7 +376,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(12)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/website.svg"} alt="website section" />
+                <img src={website} alt="website section" />
               </span>
               Website Section
               <span className={`arrow ${activeTab === 12 ? "rotate" : ""}`}>
@@ -409,7 +427,7 @@ const Sidebar = () => {
               onClick={() => toggleSubmenu(13)}
             >
               <span className="icon">
-                <img src={"/src/assets_admin/pickup-request.svg"} alt="pickup request" />
+                <img src={pickup_request} alt="pickup request" />
               </span>
               Pickup Request
               <span className={`arrow ${activeTab === 13 ? "rotate" : ""}`}>
@@ -437,7 +455,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/support-ticket.svg"} alt="support ticket" />
+                  <img src={support_ticket} alt="support ticket" />
                 </span>
                 Support Ticket
               </Button>
@@ -451,7 +469,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/mail.svg"} alt="auto mail" />
+                  <img src={mail} alt="auto mail" />
                 </span>
                 Auto Mail
               </Button>
@@ -465,7 +483,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/offer1.svg"} alt="offer" />
+                  <img src={offer1} alt="offer" />
                 </span>
                 Offer
               </Button>
@@ -479,7 +497,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={"/src/assets_admin/notification-bell.svg"} alt="notification" />
+                  <img src={notification_bell} alt="notification" />
                 </span>
                 Notification
               </Button>

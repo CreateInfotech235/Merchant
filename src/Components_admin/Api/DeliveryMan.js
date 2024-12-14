@@ -93,6 +93,8 @@ export const getDeliveryManLocation = async (page, pageLimit) => {
     const response = await API.get(
       `/deliveryman/locations?pageCount=${page}&pageLimit=${pageLimit}`
     );
+    console.log(response);
+    
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {

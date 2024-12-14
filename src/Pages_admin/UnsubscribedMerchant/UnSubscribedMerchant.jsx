@@ -40,7 +40,9 @@ const Users = () => {
 
   // Fetch users from API
   const fetchUsers = async () => {
-    const response = await getUnScbscriptionUsers(currentPage, usersPerPage);
+    const response = await getUnScbscriptionUsers(currentPage, 2000);
+    console.log(response.data[0]);
+    
     if (response.status) {
       setUsers(response.data[0].data); // Set user data from API
       setTotalPages(Math.ceil(response.data[0].totalDataCount / usersPerPage));
@@ -91,6 +93,15 @@ const Users = () => {
     setSearchQuery(event.target.value);
     setCurrentPage(1); // Reset pagination to the first page when search changes
   };
+
+  const statusColors = {
+    ENABLE: "purple",
+    DISABLE: "red",
+  };
+
+  const getColorClass = (status) =>
+    `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
+
 
   return (
     <div className="h-[calc(100vh-187px)]">
@@ -161,9 +172,9 @@ const Users = () => {
             ) : (
               currentUsers.map((user, index) => (
                 <tr key={index}>
-                  <td className="p-3">{user.userId}</td>
-                  <td className="p-3">{user.firstName}</td>
-                  <td className="p-3">{user.lastName}</td>
+                  <td className="p-3">{index + 1}</td>
+                  <td className="p-3">{user?.firstName ?? '-'}</td>
+                  <td className="p-3">{user?.lastName ?? '-'}</td>
                   <td className="p-3">{user.contactNumber}</td>
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">{user.countryCode}</td>
@@ -172,9 +183,9 @@ const Users = () => {
                     {new Date(user.registerDate).toLocaleString()}
                   </td>
                   <td className="p-3">
-                    <button className="enable-btn">
-                      {user.status}
-                    </button>
+                  <button className={`enable-btn ${user.status === 'ENABLE' ? 'green' : 'red'}`}>
+                        {user.status === 'ENABLE' ? "ACTIVE" : "INACTIVE"}
+                      </button>
                   </td>
                   <td className="table-head2">
                     <div className="d-flex align-items-center justify-content-center">
