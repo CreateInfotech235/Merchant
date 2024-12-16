@@ -155,14 +155,14 @@ const Customers = () => {
                         ) : (
                             filteredCustomers.map((customer, index) => (
                                 <tr key={index}>
-                                    <td className="p-3">{customer._id}</td>
+                                    <td className="p-3">{index + 1}</td>
                                     <td className="p-3">{customer.name}</td>
                                     <td className="p-3">{customer.address}</td>
                                     <td className="p-3">{customer.email}</td>
                                     <td className="p-3">{customer.postCode}</td>
                                     <td className="table-head2">
                                         <div className="d-flex align-items-center justify-content-center">
-                                            <button
+                                            {/* <button
                                                 className="edit-btn"
                                                 onClick={() =>
                                                     handleLocationClick([
@@ -172,12 +172,12 @@ const Customers = () => {
                                                 }
                                             >
                                                 <img src={locationimg} alt="Location" />
-                                            </button>
+                                            </button> */}
                                             <button
                                                 className="show-btn m-2"
                                                 onClick={() => handleShowInfo(customer)}
                                             >
-                                                <img src={show} alt="Show" />
+                                                <img src={show} className="mx-auto" alt="Show" />
                                             </button>
                                         </div>
                                     </td>

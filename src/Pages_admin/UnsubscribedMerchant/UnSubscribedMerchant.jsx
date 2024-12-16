@@ -5,6 +5,7 @@ import add from "../../assets_admin/add.png";
 import edit from "../../assets_admin/edit.png";
 import deleteimg from "../../assets_admin/deleteimg.png";
 import show from "../../assets_admin/show.png";
+import send from "../../assets_admin/send.png";
 import ViewUser from "../../Components_admin/ViewUser/ViewUser";
 import DisableUser from "../../Components_admin/DisableUser/DisableUser";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
@@ -12,6 +13,7 @@ import Pagination from "../../Components_admin/Pagination/Pagination";
 import { getUnScbscriptionUsers } from "../../Components_admin/Api/User";
 import UnsubscriptionUserPopup from "./UnSubsctibedMerchnatPopup";
 import Loader from "../../Components_admin/Loader/Loader";
+import { PostEmail } from "../../Components_admin/Api/Email";
 
 const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,6 +101,19 @@ const Users = () => {
     DISABLE: "red",
   };
 
+  const handleMail = async(user) => {
+    const data ={
+      email : user.email,
+      contactNumber : user.contactNumber,
+      subject : 'We Miss You! Reactivate Your Subscription Today',
+      messageSend : 'We noticed that you haven’t logged into your account for a while, and your subscription is still inactive. We’d love to have you back and help you make the most of our services.Reactivating your subscription is quick and easy. Simply log in to your account and activate your plan to regain access to all the features you love.If you have any questions or need assistance, our support team is always here to help.',
+      personType: 'ADMIN'
+    }
+    const response = await PostEmail(data)
+    console.log(response);
+    
+    
+  }
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
@@ -200,6 +215,12 @@ const Users = () => {
                         onClick={() => handleShowInfo(user)}
                       >
                         <img src={show} alt="Show" className="mx-auto" />
+                      </button>
+                      <button
+                        className="show-btn m-2"
+                        onClick={() => handleMail(user)}
+                      >
+                        <img src={send} alt="Show" className="mx-auto" />
                       </button>
                     </div>
                   </td>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import add from "../../assets_admin/add.png";
 import edit from "../../assets_admin/edit.png";
@@ -8,16 +8,33 @@ import { Link } from "react-router-dom";
 import ViewUser from "../../Components_admin/ViewUser/ViewUser";
 import DisableUser from "../../Components_admin/DisableUser/DisableUser";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
+import { getSupportTicket } from "../../Components_admin/Api/SupportTicket";
 
 const SupportTicket = () => {
   const [showDeleteModel, setShowDeleteModel] = useState(false);
   const [showEnableModel, setShowEnableModel] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [supportTicket , setSupportTicket] = useState([])
   const usersPerPage = 10;
 
   const closeDeleteModel = () => setShowDeleteModel(false);
   const closeEnableModel = () => setShowEnableModel(false);
 
+  useEffect(()=>{
+    const fetchSupportTicket = async() => {
+      const response = await getSupportTicket()
+      console.log("Support" , response.data.data);
+      
+      if (response.status) {
+        console.log("Done");
+        setSupportTicket(response.data.data)
+        
+      }else{
+        setSupportTicket([])
+      }
+    }
+    fetchSupportTicket()
+  },[])
   // Mock data for users (Replace with actual data fetching logic)
   const users = [
     {
@@ -265,30 +282,35 @@ const SupportTicket = () => {
             <thead class="text-light" style={{ background: "#253A71" }}>
               <tr>
                 <th class="p-4 "></th>
-                <th class="p-4 ">Name</th>
-                <th class="p-4 ">Contact number</th>
-                <th class="p-4 ">Email id</th>
-                <th class="p-4 ">Service</th>
-                <th class="p-4 ">City</th>
-                <th class="p-4 ">Register date</th>
+                <th class="p-4 ">NO</th>
+                <th class="p-4 ">Merchant Name</th>
+                <th class="p-4 ">Merchnat Email</th>
+                <th class="p-4 ">Subject</th>
+                <th class="p-4 ">Problem</th>
                 <th class="p-4 ">Status</th>
-                <th class="p-4 ">Verify</th>
                 <th class="p-4 ">Action</th>
+                {/* <th class="p-4 ">Status</th>
+                <th class="p-4 ">Verify</th>
+                <th class="p-4 ">Action</th> */}
               </tr>
             </thead>
             <tbody>
-              {currentUsers.map((user) => (
-                <tr key={user.id}>
+              {supportTicket.map((user , i) => (
+                <tr key={i}>
                   <td class="p-3">
                     <input type="checkbox" />
                   </td>
-                  <td class="p-3">{user.name}</td>
-                  <td class="p-3">{user.contact}</td>
-                  <td class="p-3">{user.email}</td>
-                  <td class="p-3">{user.service}</td>
-                  <td class="p-3">{user.city}</td>
-                  <td class="p-3">{user.registerDate}</td>
+                  <td class="p-3">{i + 1}</td>
+                  <td class="p-3">{`${user?.userid?.firstName ?? '-'} ${user?.userid?.lastName ?? '-'}`}</td>
+                  <td class="p-3">{user?.userid?.email ?? '-'}</td>
+                  <td class="p-3">{user?.subject ?? '-'}</td>
+                  <td class="p-3">{user?.problem ?? '-'}</td>
                   <td class="p-3">
+                  <button className={`enable-btn ${user.problemSolved === true ? 'green' : 'red'}`}>
+                        {user.problemSolved === true ? "SOLVED" : "UNSOLVED"}
+                      </button>
+                  </td>
+                  {/* <td class="p-3">
                     <button
                       className="enable-btn"
                       onClick={() => setShowEnableModel(true)}
@@ -298,29 +320,29 @@ const SupportTicket = () => {
                     {showEnableModel && (
                       <DisableUser closeModel={closeEnableModel} />
                     )}
-                  </td>
-                  <td class="p-3">
+                  </td> */}
+                  {/* <td class="p-3">
                     <input type="checkbox" />
-                  </td>
+                  </td> */}
                   <td class="p-3">
                     <div class="d-flex align-items-center  justify-content-lg-center">
                       <Link to="/edit-user">
                         <button className="edit-btn">
-                          <img src={edit} alt="Edit" />
+                          <img src={edit} alt="Edit" className="mx-auto" />
                         </button>
                       </Link>
                       <button
                         className="delete-btn"
                         onClick={() => setShowDeleteModel(true)}
                       >
-                        <img src={deleteimg} alt="Delete" />
+                        <img src={deleteimg} alt="Delete" className="mx-auto" />
                       </button>
                       {showDeleteModel && (
                         <DeleteUser closeModel={closeDeleteModel} />
                       )}
                       <Link to="/view-user">
                         <button className="show-btn">
-                          <img src={show} alt="Show" />
+                          <img src={show} alt="Show" className="mx-auto" />
                         </button>
                       </Link>
                     </div>

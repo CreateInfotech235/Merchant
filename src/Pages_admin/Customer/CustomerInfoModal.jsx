@@ -17,7 +17,7 @@ const CutomerInfoModal = ({ customer, onHide }) => {
                             <FaIdCard className="me-2" />
                             Customer ID:
                         </label>
-                        <span className="col-6">{customer.customerId}</span>
+                        <span className="col-6 flex items-center">{customer.customerId}</span>
                     </div>
                     <div className="row mb-2">
                         <label className="col-6 d-flex align-items-center">
@@ -69,7 +69,7 @@ const CutomerInfoModal = ({ customer, onHide }) => {
                         </label>
                         <span className="col-6">{customer.postCode}</span>
                     </div>
-                    <div className="row mb-2">
+                    {/* <div className="row mb-2">
                         <label className="col-6 d-flex align-items-center">
                             <FaMapMarkerAlt className="me-2" />
                             Location:
@@ -77,7 +77,7 @@ const CutomerInfoModal = ({ customer, onHide }) => {
                         <span className="col-6">
                             {customer.location?.coordinates?.join(', ') || 'N/A'}
                         </span>
-                    </div>
+                    </div> */}
                 </div>
             </ModalBody>
         </Modal>
