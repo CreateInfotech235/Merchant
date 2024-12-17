@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:8001'); // Connect to backend server
+const socket = io('https://create-4.onrender.com'); // Connect to backend server
 
 function ViewSupportTickets() {
   const [messages, setMessages] = useState([]);
@@ -24,7 +24,7 @@ function ViewSupportTickets() {
 
     // Fetch messages for the selected ticket
     axios
-      .get(`http://localhost:8001/admin/auth/support-tickets/${ticketId}/messages`)
+      .get(`https://create-4.onrender.com/admin/auth/support-tickets/${ticketId}/messages`)
       .then((response) => setMessages(response.data));
 
     // Listen for new messages from the server
@@ -43,7 +43,7 @@ function ViewSupportTickets() {
     if (inputValue.trim()) {
       axios
         .post(
-          `http://localhost:8001/admin/auth/support-tickets/${ticketId}/messages`,
+          `https://create-4.onrender.com/admin/auth/support-tickets/${ticketId}/messages`,
           {
             text: inputValue,
             sender: "admin", // Sending message as support
@@ -75,7 +75,7 @@ function ViewSupportTickets() {
     // Send delete request to the server
     axios
       .delete(
-        `http://localhost:8001/admin/auth/support-tickets/${ticketId}/messages/${messageId}`
+        `https://create-4.onrender.com/admin/auth/support-tickets/${ticketId}/messages/${messageId}`
       )
       .then(() => {
         // Emit the message deletion through socket to inform all clients
