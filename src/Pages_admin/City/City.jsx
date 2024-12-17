@@ -92,7 +92,7 @@ const City = () => {
     setCurrentPage(1); // Reset pagination to the first page when search changes
   };
 
-  console.log(cities)
+  // console.log(cities)
   return (
     <>
       <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between d-lg-flex justify-content-lg-between d-md-flex justify-content-md-between d-sm-flex justify-content-sm-center d-flex flex-column flex-xxl-row flex-xl-row flex-lg-row flex-md-row flex-sm-column align-items-center nav-bar pb-3">

@@ -21,7 +21,7 @@ function Login() {
     setError('');
   
     try {
-      const response = await fetch('https://create-4.onrender.com/admin/auth/signIn', {
+      const response = await fetch('http://localhost:8001/admin/auth/signIn', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,14 +34,14 @@ function Login() {
       });
   
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       
       if (response.ok && data.status === 'SUCCESS') {
         const { accessToken, refreshToken } = data.data.adminAuthData;
   
         localStorage.setItem('accessTokenForAdmin', accessToken);
         localStorage.setItem('refreshTokenForAdmin', refreshToken);
-        console.log(accessToken);
+        // console.log(accessToken);
         navigate('/dashboard')
         
       } else {

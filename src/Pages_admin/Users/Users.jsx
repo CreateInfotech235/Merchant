@@ -288,7 +288,7 @@ const Users = () => {
                 ) : (
             filteredUsers.map((user, index) => (
               <tr key={index}>
-                <td className="p-3">{index + 1 || '-'}</td>
+                <td className="p-3 text-primary">{index + 1 || '-'}</td>
                 <td className="p-3">{user?.firstName || '-'}</td>
                 <td className="p-3">{user?.lastName || '-'}</td>
                 <td className="p-3">{user?.contactNumber || '-'}</td>

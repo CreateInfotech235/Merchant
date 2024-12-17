@@ -44,7 +44,7 @@ const ScheduleOrder = () => {
       vehicleSelect: Yup.string().required("Required"),
     }),
     onSubmit: (values) => {
-      console.log(values);
+      // console.log(values);
     },
   });
 

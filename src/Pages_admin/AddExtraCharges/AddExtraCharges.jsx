@@ -54,7 +54,7 @@ const AddExtraCharges = () => {
           onSubmit={onSubmit}
         >
           {({ values,errors , handleChange }) => {
-            console.log('error', errors , values)
+            // console.log('error', errors , values)
             return <Form>
               {/* Country Dropdown */}
               <div className="row input-box">

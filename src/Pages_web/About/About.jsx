@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react'
-import Gotop from '../../Components_web/Gotop/Gotop'
+import React, { useEffect } from 'react';
+import Gotop from '../../Components_web/Gotop/Gotop';
 import { useNavigate } from 'react-router-dom';
-import tracking from "../../assets_web/Group (4).png";
-import oficina from "../../assets_web/oficina.jpg";
-import courierman from "../../assets_web/courier man.jpg";
-
+import tracking from '../../assets_web/Group (4).png';
+import oficina from '../../assets_web/oficina.jpg';
+import courierman from '../../assets_web/courier man.jpg';
 
 function About() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
+  
   const navigate = useNavigate();
   const handleClick = () => {
     navigate('/contact');
@@ -17,86 +17,135 @@ function About() {
 
   return (
     <>
-      <div className='w-full flex items-center justify-center h-[600px] bg-[url("https://media.licdn.com/dms/image/v2/C4D12AQHrfGZdQ2Uqpw/article-inline_image-shrink_1000_1488/article-inline_image-shrink_1000_1488/0/1602750302518?e=1737590400&v=beta&t=H4BZORXsTMnicPf9j7fNHfqBH50bzhONT5BW186Cnyk")] bg-cover  bg-[rgba(0,0,0,0.6)] bg-blend-multiply' style={{ backgroundPositionX: "center", backgroundPositionY: "0" }}>
-        <div className='container mx-auto text-white px-4'>
-          <div className='w-full lg:w-[70%] font-bold text-[30px] sm:text-[40px] md:text-[50px]' style={{ lineHeight: "1.2" }}>
+      {/* Hero Section */}
+      <div className="relative w-full h-[600px] bg-cover bg-center flex items-center justify-center" 
+           style={{ backgroundImage: 'url("https://media.licdn.com/dms/image/v2/C4D12AQHrfGZdQ2Uqpw/article-inline_image-shrink_1000_1488/article-inline_image-shrink_1000_1488/0/1602750302518?e=1737590400&v=beta&t=H4BZORXsTMnicPf9j7fNHfqBH50bzhONT5BW186Cnyk")' }}>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#00000088] to-[#000000a3]"></div>
+        <div className="relative text-center text-white px-4">
+          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
             Smart Delivery Management Platform
-          </div>
-          <div className='font-medium text-[16px] sm:text-[20px] md:text-[25px] w-full sm:w-[80%] md:w-[60%] mt-[20px]'>
-            We provide delivery partners with an easy-to-use web platform to manage deliveries and track orders across London efficiently.
-          </div>
+          </h1>
+          <p className="text-lg md:text-2xl font-medium max-w-xl mx-auto mb-6">
+            Manage deliveries and track orders across London efficiently using our user-friendly platform.
+          </p>
           <button
-            type="button"
-            className="text-white mt-4 bg-[#221F92] hover:bg-[#2824a1] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
             onClick={handleClick}
+            className="bg-gradient-to-r from-[#221F92] to-[#4A47C1] hover:from-[#1D1A7E] hover:to-[#3B37A1] px-6 py-3 rounded-lg text-white font-semibold shadow-md transform hover:scale-105 transition-all duration-300"
           >
-            Contact us
-            <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-            </svg>
+            Contact Us
           </button>
         </div>
       </div>
 
-      <div className='mb-4 items-center mt-[40px]'>
-        <div className='container'>
-          <div>
-            <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-              Our Support
-            </h1>
-            <div className="flex justify-center mt-3 items-center">
-              <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-              <img src={tracking} className="text-center" width={"50px"} alt="Tracking Icon" />
-              <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-            </div>
+      {/* Section: Our Support */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold mb-4">Our Support</h2>
+          <div className="flex justify-center items-center">
+            <div className="h-[2px] w-24 bg-[#221F92]"></div>
+            <img src={tracking} alt="Tracking Icon" className="mx-2 w-12" />
+            <div className="h-[2px] w-24 bg-[#221F92]"></div>
           </div>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-[30px]'>
-            <div className='w-full'>
-              <div className='mx-auto w-[100%] lg:w-[80%] rounded overflow-hidden shadow'>
-                <img src={oficina} alt="Support Office" className='w-full' />
-              </div>
-            </div>
-            <div className='w-full flex items-center'>
-              <div className='w-full'>
-                <div className='w-full text-center font-bold text-[25px] lg:text-[40px]'>
-                  24/7 Support
-                </div>
-                <div className='mt-3 text-[19px] lg:text-[20px] leading-7'>
-                  Our web platform provides comprehensive support for courier service management. We offer real-time tracking assistance, delivery route optimization, and technical support to ensure smooth operations for all our delivery partners.
-                </div>
-                <div className='mt-3 text-[19px] lg:text-[20px] leading-7'>
-                  With our dedicated support team available around the clock, we help resolve delivery issues promptly and provide guidance on using our platform effectively. Our system streamlines courier management, making it easier for partners to focus on what matters most - delivering excellent service.
-                </div>
-              </div>
-            </div>
-          </div>
+        </div>
 
-          <div className='my-[50px] flex flex-col-reverse md:flex-row items-center justify-between gap-8 md:gap-4'>
-            <div className='w-full md:w-[48%]'>
-              <div className='w-full'>
-                <div className='w-full text-center font-bold text-[22px] sm:text-[25px] lg:text-[40px]'>
-                  24/7 Courier Tracking
-                </div>
-                <div className='mt-3 text-[16px] sm:text-[19px] lg:text-[20px] leading-7'>
-                  Our web platform provides real-time courier management and tracking capabilities. Monitor your deliveries 24/7 with live location updates, estimated arrival times, and detailed delivery status information.
-                </div>
-                <div className='mt-3 text-[16px] sm:text-[19px] lg:text-[20px] leading-7'>
-                  Track multiple couriers simultaneously, access delivery history, and generate detailed reports. Our platform helps you stay in control with features like instant notifications, proof of delivery, and route optimization to ensure efficient operations.
-                </div>
+        {/* Support Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          {/* Image */}
+          <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+            <img src={oficina} alt="Support Office" className="w-full object-cover transform hover:scale-105 transition-transform duration-300" />
+          </div>
+          {/* Text */}
+          <div>
+            <h3 className="text-3xl font-bold text-center md:text-left mb-4">24/7 Support</h3>
+            <p className="text-lg leading-relaxed mb-4">
+              Our web platform offers comprehensive courier service management with real-time tracking, route optimization, and technical support. We ensure smooth operations for delivery partners across London.
+            </p>
+            <p className="text-lg leading-relaxed">
+              With our dedicated support team available 24/7, we help resolve delivery issues promptly, ensuring a hassle-free experience for all our partners.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="bg-gray-100 py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Why Choose Us?</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Delivering unmatched service with innovative technology, customer-first solutions, and reliable support.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Feature 1 */}
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 bg-[#4A47C1] rounded-full flex items-center justify-center text-white text-2xl font-semibold">
+                1
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-1">Real-Time Tracking</h3>
+                <p className="text-gray-600">
+                  Stay updated on every step of your delivery with live GPS tracking.
+                </p>
               </div>
             </div>
-            <div className='w-full md:w-[48%]'>
-              <div className='mx-auto w-[100%] md:w-[90%] lg:w-[80%] rounded overflow-hidden shadow'>
-                <img src={"https://insights.workwave.com/wp-content/uploads/2024/09/pp-blog-gps.jpg"} alt="Courier Tracking Dashboard" className='w-full' />
+
+            {/* Feature 2 */}
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 bg-[#4A47C1] rounded-full flex items-center justify-center text-white text-2xl font-semibold">
+                2
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-1">Route Optimization</h3>
+                <p className="text-gray-600">
+                  Reduce delivery times with AI-driven route optimization.
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 bg-[#4A47C1] rounded-full flex items-center justify-center text-white text-2xl font-semibold">
+                3
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-1">Dedicated Support</h3>
+                <p className="text-gray-600">
+                  Our support team works around the clock to resolve all your queries.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
+      {/* Section: Courier Tracking */}
+      <div className="bg-gray-100 py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col-reverse md:flex-row gap-8 items-center">
+            {/* Text */}
+            <div className="w-full md:w-1/2">
+              <h3 className="text-3xl font-bold text-center md:text-left mb-4">24/7 Courier Tracking</h3>
+              <p className="text-lg leading-relaxed mb-4">
+                Track your couriers in real-time with live updates, delivery status, and location monitoring. Stay in control and optimize delivery routes effortlessly.
+              </p>
+              <p className="text-lg leading-relaxed">
+                Our platform provides instant notifications, delivery reports, and proof of delivery for a seamless experience.
+              </p>
+            </div>
+            {/* Image */}
+            <div className="w-full md:w-1/2 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+              <img
+                src="https://insights.workwave.com/wp-content/uploads/2024/09/pp-blog-gps.jpg"
+                alt="Courier Tracking Dashboard"
+                className="w-full transform hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
+      {/* Go Top Button */}
       <Gotop />
     </>
-  )
+  );
 }
 
-export default About
+export default About;

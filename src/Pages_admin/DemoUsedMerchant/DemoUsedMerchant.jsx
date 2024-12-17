@@ -40,7 +40,7 @@ const DemoUsedMerchant = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await exportFreeSubscription();
-      console.log(response.data.data);
+      // console.log(response.data.data);
       setDeliverymen(response.data.data);
     };
     fetchData();
@@ -163,10 +163,10 @@ const DemoUsedMerchant = () => {
                       </td>
                       <td className="p-3 text-[12px]">{deliveryman.email}</td>
                       <td className="p-3 text-[12px]">
-                        {deliveryman.countryCode}
+                        {deliveryman?.address?.countryCode}
                       </td>
                       <td className="p-3 text-[12px]">
-                        {deliveryman.city || "N/A"}
+                        {deliveryman?.address?.city || "N/A"}
                       </td>
                       <td className="p-3 text-[12px]">
                         {new Date(deliveryman.registerDate).toLocaleString()}

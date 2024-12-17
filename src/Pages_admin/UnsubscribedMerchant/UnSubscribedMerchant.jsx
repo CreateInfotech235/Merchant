@@ -43,7 +43,7 @@ const Users = () => {
   // Fetch users from API
   const fetchUsers = async () => {
     const response = await getUnScbscriptionUsers(currentPage, 2000);
-    console.log(response.data[0]);
+    // console.log(response.data[0]);
     
     if (response.status) {
       setUsers(response.data[0].data); // Set user data from API
@@ -110,7 +110,7 @@ const Users = () => {
       personType: 'ADMIN'
     }
     const response = await PostEmail(data)
-    console.log(response);
+    // console.log(response);
     
     
   }
@@ -192,8 +192,8 @@ const Users = () => {
                   <td className="p-3">{user?.lastName ?? '-'}</td>
                   <td className="p-3">{user.contactNumber}</td>
                   <td className="p-3">{user.email}</td>
-                  <td className="p-3">{user.countryCode}</td>
-                  <td className="p-3">{user.city || "N/A"}</td>
+                  <td className="p-3">{user?.address?.country}</td>
+                  <td className="p-3">{user?.address?.city || "N/A"}</td>
                   <td className="p-3">
                     {new Date(user.registerDate).toLocaleString()}
                   </td>

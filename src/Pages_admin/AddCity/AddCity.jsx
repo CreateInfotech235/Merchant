@@ -38,7 +38,7 @@ const AddCity = () => {
   });
 
   const onSubmit = async (values) => {
-    console.log('values', values);
+    // console.log('values', values);
 
     const res = await createCity(values);
     if (res.status) {

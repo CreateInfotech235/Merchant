@@ -21,7 +21,7 @@ function SubscriptionPlan() {
     getallSubscriptions();
   }, []);
 
-  console.log(subcriptionData);
+  // console.log(subcriptionData);
 
   const handleShowModal = (data) => {
     setType(type);

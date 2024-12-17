@@ -6,12 +6,12 @@ import { moveToTrashCustomer } from "../Api/Customer";
 import { moveToTrashDeliveryMan } from "../Api/DeliveryMan";
 
 const DeleteModal = ({ onHide, onDelete, Id, text }) => {
-  console.log(Id);
+  // console.log(Id);
   
   const handleRemoveOrder = async (onDelete, text, id) => {
     if (text === "Order") {
       const response = await moveToTrashOrder(id);
-      console.log(response);
+      // console.log(response);
 
       if (response.status) {
         onHide();

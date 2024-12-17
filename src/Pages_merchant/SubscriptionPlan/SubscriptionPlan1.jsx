@@ -5,7 +5,7 @@ import { getAllSubscription } from "../../Components_merchant/Api/Subscription";
 
 const SubscriptionPlan1 = ({ plans }) => {
 
-  console.log(plans);
+  // console.log(plans);
   
   
   

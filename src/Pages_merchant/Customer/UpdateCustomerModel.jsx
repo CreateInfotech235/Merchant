@@ -8,7 +8,7 @@ import countryList from "react-select-country-list";
 import { updateCustomer } from "../../Components_merchant/Api/Customer";
 
 const UpdateCustomerModel = ({ onHide, customer }) => {
-  console.log("customer", customer);
+  // console.log("customer", customer);
 
   const navigate = useNavigate();
 
@@ -39,7 +39,7 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
   });
 
   const onSubmit = async (values) => {
-    console.log(values);
+    // console.log(values);
     
     const res = await updateCustomer(customer._id, values);
     if (res.status) {

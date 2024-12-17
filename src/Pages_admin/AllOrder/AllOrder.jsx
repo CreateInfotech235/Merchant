@@ -46,7 +46,7 @@ const AllOrder = () => {
 
   const fetchOrders = async () => {
     const response = await getAllOrder(null , currentPage, ordersPerPage);
-    console.log(response.data , "Data");
+    // console.log(response.data , "Data");
     
     if (response.status) {
       setOrders(response.data);
@@ -54,9 +54,9 @@ const AllOrder = () => {
     }
   };
   const handleAdminOrder = async () => {
-    console.log("Admin Order");
+    // console.log("Admin Order");
     const response = await getAllOrder(false, currentPage, ordersPerPage);
-    console.log(response , "response");
+    // console.log(response , "response");
     if(response.status){
       setOrders(response.data);
       setFilteredOrders(response.data);
@@ -66,9 +66,9 @@ const AllOrder = () => {
   };
 
   const handleMerchantOrder = async () => {
-    console.log("Merchant Order");
+    // console.log("Merchant Order");
     const response = await getAllOrder(true, currentPage, ordersPerPage);
-    console.log(response , "response");
+    // console.log(response , "response");
     if(response.status){
       setOrders(response.data);
       setFilteredOrders(response.data);
@@ -141,9 +141,9 @@ const AllOrder = () => {
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
   const hadleTrackOrder = async(id, deliveryLocation , pickupLocation , status) => {
-    console.log("deliveryLocation", deliveryLocation);
-    console.log("pickupLocation", pickupLocation);
-    console.log("status", status);
+    // console.log("deliveryLocation", deliveryLocation);
+    // console.log("pickupLocation", pickupLocation);
+    // console.log("status", status);
     try {
       if (status) {
         setStatus(status)
@@ -258,7 +258,7 @@ const AllOrder = () => {
                       <td className="city-data">
                         <input type="checkbox" />
                       </td>
-                      <td className="p-3 text-primary">{order.orderId}</td>
+                      <td className="p-3 text-primary">{order?.showOrderNumber ?? '-'}</td>
                       <td className="p-3">{order.customerName}</td>
                       <td className="p-3">{order.pickupAddress.address}</td>
                       <td className="p-3">{order.deliveryAddress.address}</td>

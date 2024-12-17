@@ -49,7 +49,7 @@ const AddUser = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
-    console.log(values);
+    // console.log(values);
     const res = await addCustomer(values);
     if (res.status) {
       navigate("/all-customer");

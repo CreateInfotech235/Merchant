@@ -3,12 +3,12 @@ import { toast } from "react-toastify";
 export const getAllOrder = async (exists, page, pageLimit) => {
   try {
     const response = await API.get(`/orders/getAllOrders?existss=${exists}`);
-    console.log(response);
+    // console.log(response);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -23,7 +23,7 @@ export const getOrderLocation = async () => {
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -35,13 +35,13 @@ export const getOrderLocation = async () => {
 export const createOrder = async (data) => {
   try {
     const response = await API.post(`/orders/create`, data);
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,

@@ -24,7 +24,7 @@ import Acceptedorders from "../../assets_mercchant/Accepted orders.png";
 import Arrivedorders from "../../assets_mercchant/Arrived orders.png";
 import Assignedorders from "../../assets_mercchant/Assigned orders.png";
 import Cancelledorders from "../../assets_mercchant/Cancelled orders.png";
-import Createdorders from "../../assets_mercchant/Created orders.png";
+import Createdorders from "../../assets_mercchant/management-service.png";
 import Departedorders from "../../assets_mercchant/Departed orders.png";
 import Pickedorders from "../../assets_mercchant/Picked orders.png";
 import DeliveryMan from "../../assets_mercchant/DeliveryMan.png";

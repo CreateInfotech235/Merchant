@@ -7,7 +7,7 @@ export const createInvoiceSettings = async (data) => {
     const requestData = { ...data, merchantId: merchantId };
 
     const response = await API.post("/mobile/invoice/create", requestData);
-    console.log("response1", response);
+    // console.log("response1", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
@@ -35,7 +35,7 @@ export const updateInvoiceSettings = async (data) => {
       `/mobile/invoice/update/${merchantId}`,
       requestData
     );
-    console.log("response1", response);
+    // console.log("response1", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);

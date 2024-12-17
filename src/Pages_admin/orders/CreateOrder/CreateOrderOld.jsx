@@ -49,7 +49,7 @@ const CreateOrder = () => {
   });
 
   const onSubmit = async (values) => {
-    console.log('values', values);
+    // console.log('values', values);
 
     const res = await createOrder(values);
     if (res.status) {

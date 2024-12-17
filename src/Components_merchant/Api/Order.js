@@ -4,13 +4,13 @@ import { toast } from "react-toastify";
 export const createOrder = async (data) => {
   try {
     const response = await API.post(`/mobile/order/create`, data);
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -30,13 +30,13 @@ export const updateOrder = async (orderId, data) => {
       `/mobile/order/updateOrder/${orderId}`,
       data
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -62,7 +62,7 @@ export const getOrders = async (userId, pageCount, pageLimit) => {
         },
       }
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       //   toast.success(response.data.message);
@@ -93,7 +93,7 @@ export const getRecentOrders = async (userId, pageCount, pageLimit) => {
         },
       }
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       //   toast.success(response.data.message);
@@ -123,13 +123,13 @@ export const moveToTrashOrder = async (OrderID) => {
       //   },
       // }
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -152,13 +152,13 @@ export const deleteIOrder = async (OrderID) => {
       //   },
       // }
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,

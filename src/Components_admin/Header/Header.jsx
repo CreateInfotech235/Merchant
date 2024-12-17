@@ -79,7 +79,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
   useEffect(() => {
     const fetchNotifications = async () => {
       const res = await getAllNotifications();
-      console.log(res);
+      // console.log(res);
       
       if (res.status) {
         setNotifications(res.data);
@@ -110,7 +110,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
   
       // Make the PATCH request to log out
       const response = await axios.patch(
-        'https://create-4.onrender.com/admin/auth/logout',
+        'http://localhost:8001/admin/auth/logout',
         {
           refreshToken: refreshToken,
           personType: 'ADMIN',
@@ -125,7 +125,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
   
       // Handle successful logout
       if (response.status === 200 && response.data.status === 'SUCCESS') {
-        console.log('Logout successful:', response.data.message);
+        // console.log('Logout successful:', response.data.message);
   
         // Remove the tokens from local storage
         localStorage.removeItem('refreshTokenForAdmin');

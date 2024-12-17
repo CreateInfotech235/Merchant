@@ -30,7 +30,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     }
   }, [customer]);
 
-  console.log(Order);
+  // console.log(Order);
   useEffect(() => {
     const fetchData = async () => {
       const customerRes = await getAllCustomers();

@@ -17,7 +17,7 @@ const AddParcelType = () => {
     }),
     onSubmit: values => {
       // Handle form submission
-      console.log(values);
+      // console.log(values);
     },
   });
 

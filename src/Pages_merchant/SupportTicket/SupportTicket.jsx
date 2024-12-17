@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import * as Yup from 'yup';
-import { postSupportTicket, getadmindata, getSupportTicket, DeleteSupportTicket, SupportTicketUpdate } from "../../Components_merchant/Api/SupportTicket";
+import * as Yup from "yup";
+import {
+  postSupportTicket,
+  getadmindata,
+  getSupportTicket,
+  DeleteSupportTicket,
+  SupportTicketUpdate,
+} from "../../Components_merchant/Api/SupportTicket";
+import { Link } from "react-router-dom";
+import show from "../../assets_admin/show.png";
+
+
 
 const SupportTicket = () => {
-  const [userData, setUserData] = useState({ name: '', userid: '' });
+  const [userData, setUserData] = useState({ name: "", userid: "" });
   const [showpopup, setshowpopup] = useState(false);
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [listofproblem, setlistofproblem] = useState([]);
-  const [isUpdate, setIsUpdate] = useState('');
+  const [isUpdate, setIsUpdate] = useState("");
   const [currentTicket, setCurrentTicket] = useState(null);
+    const [selectedTicketId, setSelectedTicketId] = useState(null);
+  
 
-  const merchnatId = localStorage.getItem('merchnatId');
-console.log(merchnatId);
+  const merchnatId = localStorage.getItem("merchnatId");
+  // console.log(merchnatId);
   const getadmindatafromapi = async () => {
     setLoading(true);
     try {
@@ -35,12 +47,12 @@ console.log(merchnatId);
   };
 
   useEffect(() => {
-    const storedUserData = localStorage.getItem('userData');
+    const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
       const parsedUserData = JSON.parse(storedUserData);
       setUserData({
-        name: parsedUserData.name || '',
-        userid: parsedUserData._id || ''
+        name: parsedUserData.name || "",
+        userid: parsedUserData._id || "",
       });
     }
   }, []);
@@ -55,31 +67,31 @@ console.log(merchnatId);
   }, []);
 
   const validationSchema = Yup.object({
-    subject: Yup.string().required('Subject is required'),
-    problem: Yup.string().required('Problem description is required'),
-    adminId: Yup.string().required('Admin is required'),
+    subject: Yup.string().required("Subject is required"),
+    problem: Yup.string().required("Problem description is required"),
+    adminId: Yup.string().required("Admin is required"),
   });
 
   const formik = useFormik({
     initialValues: {
       userid: userData.userid,
-      subject: '',
-      problem: '',
-      adminId: '',
+      subject: "",
+      problem: "",
+      adminId: "",
     },
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values) => {
       try {
         if (isUpdate) {
-          await SupportTicketUpdate(isUpdate,merchnatId, values);
+          await SupportTicketUpdate(isUpdate, merchnatId, values);
         } else {
           await postSupportTicket(values);
         }
-        console.log("Ticket submitted", values);
+        // console.log("Ticket submitted", values);
         getSupportTicketapi();
         setshowpopup(false);
-        setIsUpdate('');
+        setIsUpdate("");
       } catch (error) {
         console.error("Failed to submit support ticket:", error);
       }
@@ -87,12 +99,20 @@ console.log(merchnatId);
   });
 
   const formatDate = (date) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(date).toLocaleDateString('en-US', options);
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(date).toLocaleDateString("en-US", options);
   };
 
   const handleDelete = async (ticketId) => {
-    setlistofproblem((prevList) => prevList.filter(ticket => ticket._id !== ticketId));
+    setlistofproblem((prevList) =>
+      prevList.filter((ticket) => ticket._id !== ticketId)
+    );
 
     try {
       await DeleteSupportTicket(ticketId);
@@ -110,7 +130,7 @@ console.log(merchnatId);
       userid: userData.userid,
       subject: ticket.subject,
       problem: ticket.problem,
-      adminId: ticket.adminId?._id || '',
+      adminId: ticket.adminId?._id || "",
     });
     setshowpopup(true);
   };
@@ -131,7 +151,10 @@ console.log(merchnatId);
           <form onSubmit={formik.handleSubmit}>
             <div className="mb-4 flex space-x-4">
               <div className="flex-1">
-                <label htmlFor="adminId" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="adminId"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Assign to Admin
                 </label>
                 <select
@@ -143,7 +166,9 @@ console.log(merchnatId);
                   className="mt-1 p-2 border border-gray-300 rounded w-full"
                   disabled={loading}
                 >
-                  <option value="" disabled>Select an Admin</option>
+                  <option value="" disabled>
+                    Select an Admin
+                  </option>
                   {admins.map((admin) => (
                     <option key={admin._id} value={admin._id}>
                       {admin.name}
@@ -151,12 +176,17 @@ console.log(merchnatId);
                   ))}
                 </select>
                 {formik.touched.adminId && formik.errors.adminId && (
-                  <div className="text-red-500 text-xs">{formik.errors.adminId}</div>
+                  <div className="text-red-500 text-xs">
+                    {formik.errors.adminId}
+                  </div>
                 )}
               </div>
 
               <div className="flex-1">
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="subject"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Subject
                 </label>
                 <input
@@ -171,13 +201,18 @@ console.log(merchnatId);
                   disabled={loading}
                 />
                 {formik.touched.subject && formik.errors.subject && (
-                  <div className="text-red-500 text-xs">{formik.errors.subject}</div>
+                  <div className="text-red-500 text-xs">
+                    {formik.errors.subject}
+                  </div>
                 )}
               </div>
             </div>
 
             <div className="mb-4">
-              <label htmlFor="problem" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="problem"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Problem Description
               </label>
               <textarea
@@ -190,7 +225,9 @@ console.log(merchnatId);
                 disabled={loading}
               ></textarea>
               {formik.touched.problem && formik.errors.problem && (
-                <div className="text-red-500 text-xs">{formik.errors.problem}</div>
+                <div className="text-red-500 text-xs">
+                  {formik.errors.problem}
+                </div>
               )}
             </div>
 
@@ -218,23 +255,33 @@ console.log(merchnatId);
               <th className="px-4 py-2 border">Status</th>
               <th className="px-4 py-2 border">Delete</th>
               <th className="px-4 py-2 border">Update</th>
+              <th className="px-4 py-2 border">View</th>
             </tr>
           </thead>
           <tbody>
             {listofproblem.map((ticket, index) => (
               <tr key={ticket._id}>
                 <td className="px-4 py-2 border">{index + 1}</td>
-                <td className="px-4 py-2 border">{formatDate(ticket.createdAt)}</td>
+                <td className="px-4 py-2 border">
+                  {formatDate(ticket.createdAt)}
+                </td>
                 <td className="px-4 py-2 border">{ticket.subject}</td>
                 <td className="px-4 py-2 border">{ticket.problem}</td>
                 <td className="px-4 py-2 border">
-                  {ticket.adminId ? ticket.adminId.name : 'No admin assigned'}
+                  {ticket.adminId ? ticket.adminId.name : "No admin assigned"}
                 </td>
                 <td className="px-4 py-2 border">
                   <div className="flex justify-center items-center">
-                    <div style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: ticket.problemSolved ? "green" : "red" }}></div>
+                    <div
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        backgroundColor: ticket.problemSolved ? "green" : "red",
+                      }}
+                    ></div>
                     <div className="ml-[10px]">
-                      {ticket.problemSolved ? 'Solved' : 'Unresolved'}
+                      {ticket.problemSolved ? "Solved" : "Unresolved"}
                     </div>
                   </div>
                 </td>
@@ -253,6 +300,16 @@ console.log(merchnatId);
                   >
                     Update
                   </button>
+                </td>
+                <td className="px-4 py-2 border">
+                  <Link to="/view-tickets-merchant" state={{ ticketId: ticket._id }}>
+                    <button
+                      onClick={() => setSelectedTicketId(ticket._id)}
+                      className="show-btn "
+                    >
+                      <img src={show} alt="Show" className="mx-auto" />
+                    </button>
+                  </Link>
                 </td>
               </tr>
             ))}

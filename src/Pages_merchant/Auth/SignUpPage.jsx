@@ -135,7 +135,7 @@ const Signup = () => {
           onSubmit={onSubmit}
         >
           {({ isSubmitting, errors, values, setErrors, setFieldValue }) => {
-            console.log('formik', errors, values)
+            // console.log('formik', errors, values)
             return <Form>
               <div className="row mb-3">
                 {/* Name Field */}

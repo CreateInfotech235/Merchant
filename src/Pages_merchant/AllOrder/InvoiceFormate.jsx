@@ -8,7 +8,7 @@ import { createInvoiceSettings, getInvoiceSettings, updateInvoiceSettings } from
 function InvoiceFormate() {
   const location = useLocation();
   const orderData = location.state?.orderData;
-  console.log("orderData", orderData);
+  // console.log("orderData", orderData); 
   const [invoiceSettingsData, setInvoiceSettingsData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [invoiceSettings, setInvoiceSettings] = useState({
@@ -109,11 +109,11 @@ function InvoiceFormate() {
       if (!invoiceSettingsData) {
         // If no existing settings, create new
         response = await createInvoiceSettings(value);
-        console.log("response1", response);
+        // console.log("response1", response);
       } else {
         // If settings exist, update them
         response = await updateInvoiceSettings(value);
-        console.log("response2", response);
+        // console.log("response2", response);
       }
 
       if (response.status) {

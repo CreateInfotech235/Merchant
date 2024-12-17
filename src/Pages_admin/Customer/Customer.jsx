@@ -34,8 +34,10 @@ const Customers = () => {
 
     
     const fetchCustomers = async (createdBy) => {
-        console.log('🚀 ~ fetchCustomers ~ createdBy:', createdBy);
+        // console.log('🚀 ~ fetchCustomers ~ createdBy:', createdBy);
         const response = await getAllCustomers(createdBy);
+        // console.log(response);
+        
         if (response.status) {
             setCustomers(response.data);
         }
@@ -136,7 +138,10 @@ const Customers = () => {
                             <th className="p-3">Name</th>
                             <th className="p-3">Address</th>
                             <th className="p-3">Email</th>
+                            <th className="p-3">Country</th>
+                            <th className="p-3">City</th>
                             <th className="p-3">Postcode</th>
+                            <th className="p-3">Merchant Name</th>
                             <th className="p-3">Actions</th>
                         </tr>
                     </thead>
@@ -155,11 +160,14 @@ const Customers = () => {
                         ) : (
                             filteredCustomers.map((customer, index) => (
                                 <tr key={index}>
-                                    <td className="p-3">{index + 1}</td>
+                                    <td className="p-3 text-primary">{customer?.showCustomerNumber ?? '-'}</td>
                                     <td className="p-3">{customer.name}</td>
                                     <td className="p-3">{customer.address}</td>
                                     <td className="p-3">{customer.email}</td>
+                                    <td className="p-3">{customer.country}</td>
+                                    <td className="p-3">{customer.city}</td>
                                     <td className="p-3">{customer.postCode}</td>
+                                    <td className="p-3">{customer.merchant}</td>
                                     <td className="table-head2">
                                         <div className="d-flex align-items-center justify-content-center">
                                             {/* <button

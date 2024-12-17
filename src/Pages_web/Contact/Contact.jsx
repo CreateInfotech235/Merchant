@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import Gotop from '../../Components_web/Gotop/Gotop';
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -146,6 +147,7 @@ function Contact() {
           </div>
         </div>
       </div>
+      <Gotop />
     </div>
   );
 }

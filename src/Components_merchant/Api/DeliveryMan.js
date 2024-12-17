@@ -8,12 +8,12 @@ export const getDeliveryMan = async (page, pageLimit, search) => {
     const response = await API.get(
       `deliveryBoy/auth/getDeliveryBoysForMerchant/${merchnatId}`
     );
-    console.log("respone", response);
+    // console.log("respone", response);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -30,7 +30,7 @@ export const getDeliveryManDocument = async (page, pageLimit) => {
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -47,7 +47,7 @@ export const getDeliveryManLocation = async (page, pageLimit) => {
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -64,12 +64,12 @@ export const getDeliveryManLocationByOrder = async (
     const response = await API.get(
       `/mobile/auth/getDeliveryManLocations/${id}?pageCount=${page}&pageLimit=${pageLimit}`
     );
-    console.log(response);
+    // console.log(response);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -84,13 +84,13 @@ export const updateDocumentStatus = async (data) => {
       `/deliveryman/updateVerificationStatus`,
       data
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -106,13 +106,13 @@ export const updateDocumentStatus = async (data) => {
 export const addDeliveryBoy = async (data) => {
   try {
     const response = await API.post(`/deliveryBoy/auth/signUp`, data);
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -131,13 +131,13 @@ export const updateDeliveryBoy = async (id, data) => {
       `/mobile/auth/updateDeliveryManProfile/${id}`,
       data
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -154,13 +154,13 @@ export const moveToTrashDeliveryMan = async (id) => {
     const response = await API.patch(
       `/mobile/auth/moveToTrashDeliveryMan/${id}`
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -175,13 +175,13 @@ export const moveToTrashDeliveryMan = async (id) => {
 export const deleteDeliveryMan = async (id) => {
   try {
     const response = await API.delete(`/mobile/auth/deleteDeliveryMan/${id}`);
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -197,11 +197,11 @@ export const deleteDeliveryMan = async (id) => {
 export const getAllDeliveryMans = async () => {
   try {
     const response = await API.get(`/mobile/auth/getAllDeliveryMans`);
-    console.log("response", response);
+    // console.log("response", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {

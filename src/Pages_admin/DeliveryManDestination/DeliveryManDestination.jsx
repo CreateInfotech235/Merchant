@@ -135,7 +135,7 @@ function DeliveryManDestination() {
 
     const fetchDeliveryMen = async () => {
         const response = await getDeliveryManLocation(1 , 500000);
-        console.log("response", response);
+        // console.log("response", response);
         if (response.status) {
             setDeliveryMen(response.data.data);
             
@@ -173,7 +173,7 @@ function DeliveryManDestination() {
                     setTimeout(addMarkers, retryInterval);
                     return;
                 }
-                console.log('Failed to load map after maximum retries');
+                // console.log('Failed to load map after maximum retries');
                 return;
             }
 

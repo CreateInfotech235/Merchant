@@ -12,8 +12,8 @@ const OrderCountsChart = () => {
 
   // Fetch order count data from the API with the selected dates
   const fetchOrderCounts = async () => {
-    console.log(startDate);
-    console.log(endDate);
+    // console.log(startDate);
+    // console.log(endDate);
     try {
       const res = await getdata(startDate, endDate);
 

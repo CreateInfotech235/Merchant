@@ -46,13 +46,13 @@ const SubscriptionPlanModel = ({
 
   const onSubmit = async (values) => {
     const Fvalues = { ...values, userId: marchantId };
-    console.log(Fvalues);
+    // console.log(Fvalues);
 
     const subscriptionResponse = await freeSubscription(Fvalues);
     
     if (subscriptionResponse.status) {
       const profileResponse = await getMerchantProfile();
-      console.log(profileResponse.data[0], "Profile");
+      // console.log(profileResponse.data[0], "Profile");
       
       if (profileResponse.status) {
         localStorage.setItem('userData', JSON.stringify(profileResponse.data[0]));
@@ -60,7 +60,7 @@ const SubscriptionPlanModel = ({
       navigate("/subscription-active");
       onHide();
     }
-    console.log(subscriptionResponse, "Data");
+    // console.log(subscriptionResponse, "Data");
   };
 
   const handleClose = () => {

@@ -44,7 +44,7 @@ const Document = () => {
   };
 
   const updateStatus = async (e, data) => {
-    console.log('data', data);
+    // console.log('data', data);
 
     const payload = {
       deliveryManId: data.deliveryManId,
@@ -52,7 +52,7 @@ const Document = () => {
       status: e.target.value
     }
     const res = await updateDocumentStatus(payload)
-    console.log('func res', respnse)
+    // console.log('func res', respnse)
   }
 
   return (

@@ -20,7 +20,7 @@ const CreateOrder = () => {
   const [merchant, setMerchnat] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(null);
 
-  console.log("merchant", merchant);
+  // console.log("merchant", merchant);
 
   useEffect(() => {
     // Get current location
@@ -56,7 +56,7 @@ const CreateOrder = () => {
           contactNumber: man.contactNumber,
           status: man.status || 'ENABLE'
         })) || [];
-        console.log("formattedAdminDeliveryMen", formattedAdminDeliveryMen);
+        // console.log("formattedAdminDeliveryMen", formattedAdminDeliveryMen);
 
         // Combine both arrays and remove duplicates by _id and email
         setLengthofdeliverymen(activeDeliveryMen.length)
@@ -73,7 +73,7 @@ const CreateOrder = () => {
             return acc;
           }, []);
 
-        console.log("mergedDeliveryMen", mergedDeliveryMen);
+        // console.log("mergedDeliveryMen", mergedDeliveryMen);
         setDeliveryMen(mergedDeliveryMen);
       }
       if (customerRes?.status) setCustomer(customerRes?.data || []);
@@ -113,7 +113,7 @@ const CreateOrder = () => {
           );
           const data = await response.json();
 
-          console.log(data);
+          // console.log(data);
           if (data.results && data.results.length > 0) {
             const formattedAddress =
               data.results[0].formatted_address || "Unable to fetch address";
@@ -143,7 +143,7 @@ const CreateOrder = () => {
   };
 
   const getCoordinatesFromAddress = async (address, setFieldValue) => {
-    console.log(address);
+    // console.log(address);
 
     if (address) {
       // Fetch the coordinates using geocoding
@@ -152,13 +152,13 @@ const CreateOrder = () => {
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
       );
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
 
       if (data.results && data.results.length > 0) {
         const { lat, lng } = data.results[0].geometry.location; // Correctly extract latitude and longitude
         const formattedAddress = data.results[0]?.formatted_address || "Unable to fetch address";
 
-        console.log(formattedAddress, lat, lng);
+        // console.log(formattedAddress, lat, lng);
         const postalCodeComponent = data.results[0].address_components.find(component =>
           component.types.includes('postal_code')
         );
@@ -279,7 +279,7 @@ const CreateOrder = () => {
     }
 
     if (!values.pickupDetails.location.latitude && !values.pickupDetails.location.longitude) {
-      console.log('Helo');
+      // console.log('Helo');
       if (values.pickupDetails.address) {
         // Fetch the coordinates using geocoding
         const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
@@ -287,13 +287,13 @@ const CreateOrder = () => {
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.pickupDetails.address)}&key=${apiKey}`
         );
         const data = await response.json();
-        console.log(setFieldValue);
+        // console.log(setFieldValue);
 
         if (data.results && data.results.length > 0) {
           const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
           const formattedAddress = await data.results[0]?.formatted_address || "Unable to fetch address";
 
-          console.log(formattedAddress, lat, lng);
+          // console.log(formattedAddress, lat, lng);
           const postalCodeComponent = data.results[0].address_components.find(component =>
             component.types.includes('postal_code')
           );
@@ -318,7 +318,7 @@ const CreateOrder = () => {
 
     }
     if (!values.deliveryDetails.location.latitude && !values.deliveryDetails.location.longitude) {
-      console.log('Helo');
+      // console.log('Helo');
       if (values.pickupDetails.address) {
         // Fetch the coordinates using geocoding
         const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
@@ -326,13 +326,13 @@ const CreateOrder = () => {
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.deliveryDetails.address)}&key=${apiKey}`
         );
         const data = await response.json();
-        console.log(setFieldValue);
+        // console.log(setFieldValue);
 
         if (data.results && data.results.length > 0) {
           const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
           const formattedAddress = await data.results[0]?.formatted_address || "Unable to fetch address";
 
-          console.log(formattedAddress, lat, lng);
+          // console.log(formattedAddress, lat, lng);
           const postalCodeComponent = data.results[0].address_components.find(component =>
             component.types.includes('postal_code')
           );
@@ -357,7 +357,7 @@ const CreateOrder = () => {
 
     }
 
-    console.log(values);
+    // console.log(values);
 
     // Create a copy of values and conditionally include paymentCollectionRupees
     const payload = {
@@ -391,7 +391,7 @@ const CreateOrder = () => {
     if (res.status) {
       naviagte("/all-order");
     }
-    console.log(payload); // Log final payload for debugging
+    // console.log(payload); // Log final payload for debugging
   };
 
   return (

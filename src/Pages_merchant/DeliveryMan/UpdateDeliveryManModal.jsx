@@ -8,7 +8,7 @@ import countryList from "react-select-country-list";
 
 const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
   const navigate = useNavigate();
-  console.log(deliveryBoy);
+  // console.log(deliveryBoy);
 
   const initialValues = {
     firstName: deliveryBoy ? deliveryBoy.firstName : "",

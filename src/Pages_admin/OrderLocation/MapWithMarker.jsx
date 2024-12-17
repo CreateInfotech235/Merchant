@@ -24,7 +24,7 @@ function MapWithMarker() {
     try {
       const merchnatId = localStorage.getItem("merchnatId");
       const response = await getAllOrder(null , 1, 1000000);
-      console.log("response", response.data);
+      // console.log("response", response.data);
 
       if (response?.data) {
         setOrders(response.data || []);
@@ -66,7 +66,7 @@ function MapWithMarker() {
           setTimeout(addMarkers, retryInterval);
           return;
         }
-        console.log("Failed to load map after maximum retries");
+        // console.log("Failed to load map after maximum retries");
         return;
       }
 

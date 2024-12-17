@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://create-4.onrender.com/admin",
+  baseURL: "http://localhost:8001/admin",
   headers: { "Content-Type": "application/json" },
 });
 

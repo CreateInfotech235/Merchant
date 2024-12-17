@@ -7,12 +7,12 @@ export const getMerchantProfile = async () => {
     const response = await API.get(
       `/mobile/auth/getProfileOfMerchant/${merchnatId}`
     );
-    console.log("respone", response);
+    // console.log("respone", response);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -29,13 +29,13 @@ export const updateMerchantProfile = async (data) => {
       `/mobile/auth/updateProfileOfMerchant/${merchnatId}`,
       data
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,

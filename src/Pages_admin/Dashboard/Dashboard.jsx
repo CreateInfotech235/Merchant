@@ -24,7 +24,7 @@ import Acceptedorders from "../../assets_admin/Accepted orders.png";
 import Arrivedorders from "../../assets_admin/Arrived orders.png";
 import Assignedorders from "../../assets_admin/Assigned orders.png";
 import Cancelledorders from "../../assets_admin/Cancelled orders.png";
-import Createdorders from "../../assets_admin/Created orders.png";
+import Createdorders from "../../assets_admin/management-service.png";
 import Departedorders from "../../assets_admin/Departed orders.png";
 import Pickedorders from "../../assets_admin/Picked orders.png";
 import DeliveryMan from "../../assets_admin/DeliveryMan.png";
@@ -54,7 +54,7 @@ const Dashboard = () => {
 
   const fetchOrder = async () => {
     const response = await getAllOrder()
-    console.log(response, "Oder");
+    // console.log(response, "Oder");
     if (response.status) {
       const fetchTenOrder = response.data.slice(0, 10)
       setOrder(fetchTenOrder)

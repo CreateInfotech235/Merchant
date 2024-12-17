@@ -44,7 +44,7 @@ const AddDeliveryBoy = () => {
   });
 
   const onSubmit = async (values) => {
-    console.log(values);
+    // console.log(values);
     const res = await addDeliveryBoy(values);
     if (res.status) {
       navigate("/delivery-man-admin");

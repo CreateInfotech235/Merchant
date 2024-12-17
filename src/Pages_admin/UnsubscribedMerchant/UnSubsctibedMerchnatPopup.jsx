@@ -4,7 +4,7 @@ import { formatDateTime } from "../../helper_admin/common";
 
 const UnsubscriptionUserPopup = ({ user, onHide }) => {
   if (!user) return null;
-  console.log(user);
+  // console.log(user);
   
 
   return (
@@ -31,12 +31,12 @@ const UnsubscriptionUserPopup = ({ user, onHide }) => {
 
           <div className="d-flex align-items-center mb-3 p-2" style={{background: "#F8F9FA", borderRadius: "8px"}}>
             <label className="fw-semibold me-3" style={{minWidth: "140px", color: "#6C757D"}}>Country:</label>
-            <span className="text-dark">{user.countryCode}</span>
+            <span className="text-dark">{user?.address?.country}</span>
           </div>
 
           <div className="d-flex align-items-center mb-3 p-2" style={{background: "#F8F9FA", borderRadius: "8px"}}>
             <label className="fw-semibold me-3" style={{minWidth: "140px", color: "#6C757D"}}>City:</label>
-            <span className="text-dark">{user.city || "N/A"}</span>
+            <span className="text-dark">{user?.address?.city || "N/A"}</span>
           </div>
 
           <div className="d-flex align-items-center mb-3 p-2" style={{background: "#F8F9FA", borderRadius: "8px"}}>

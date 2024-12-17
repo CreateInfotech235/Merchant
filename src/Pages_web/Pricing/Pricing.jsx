@@ -155,148 +155,72 @@ function Pricing() {
 
 
       {/* part 3 */}
-      <div className='mb-4 items-center mt-[20px]'>
-        <div className='container'>
-          <div className="">
-            <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-              our delivery man
-            </h1>
-            <div className="flex justify-center mt-3 items-center">
-              <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-              <img src={tracking} className="text-center" width={"50px"} alt="" />
-              <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-            </div>
-          </div>
-          <div className=' grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {/* Card 1 */}
-            <div className="group relative mt-[125px] shadow-lg transform hover:scale-[1.05] transition duration-500">
-              <div className='w-[98%] mx-auto'>
-                <div className='absolute top-[-125px] left-[40px] text-[#221F92] font-extrabold text-[160px] font-["Oswald"]'>
-                  01
-                </div>
-                <div className='mt-[80px]'>
-                  <div className='w-[200px] h-[200px] rounded-full mx-auto bg-[#cccbf581] flex justify-center items-center text-[#fff] font-extrabold text-[150px]'>
-                    <PiTruckDuotone />
-                  </div>
-                  <div className='text-center font-bold text-[30px] mt-3'>
-                    Transport By Truck
-                  </div>
-                  <div className='mt-3 h-[200px] text-[20px] text-[#221F92] font-bold w-[70%] mx-auto flex flex-col'>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <BsBoxSeam />
-                      <div className='ml-3'>
-                        Weight: 2kg
-                      </div>
-                    </div>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <TbClock />
-                      <div className='ml-3'>
-                        Time: 7 days
-                      </div>
-                    </div>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <FaPoundSign />
-                      <div className='ml-3 flex justify-center ' style={{ lineHeight: "1" }}>
-                        Amount: 30<FaPoundSign className='mb-[0px]' style={{ fontSize: "19px" }} />
-                      </div>
-                    </div>
-                    <div className='flex justify-center mt-[30px]'>
-                      <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center inline-flex items-center">
-                        Buy now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="group relative mt-[125px] shadow-lg transform hover:scale-[1.05] transition duration-500">
-              <div className='w-[98%] mx-auto'>
-                <div className='absolute top-[-125px] left-[40px] text-[#221F92] font-extrabold text-[160px] font-["Oswald"]'>
-                  02
-                </div>
-                <div className='mt-[80px]'>
-                  <div className='w-[200px] h-[200px] rounded-full mx-auto bg-[#cccbf581] flex justify-center items-center text-[#fff] font-extrabold text-[150px]'>
-                    <PiTruckDuotone />
-                  </div>
-                  <div className='text-center font-bold text-[30px] mt-3'>
-                    Transport By Truck
-                  </div>
-                  <div className='mt-3 h-[200px] text-[20px] text-[#221F92] font-bold w-[70%] mx-auto flex flex-col'>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <BsBoxSeam />
-                      <div className='ml-3'>
-                        Weight: 25kg
-                      </div>
-                    </div>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <TbClock />
-                      <div className='ml-3'>
-                        Time: 7 days
-                      </div>
-                    </div>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <FaPoundSign />
-                      <div className='ml-3 flex justify-center ' style={{ lineHeight: "1" }}>
-                        Amount: 78<FaPoundSign className='mb-[0px]' style={{ fontSize: "19px" }} />
-                      </div>
-                    </div>
-                    <div className='flex justify-center mt-[30px]'>
-                      <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center inline-flex items-center">
-                        Buy now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="group relative mt-[125px] shadow-lg transform hover:scale-[1.05] transition duration-500">
-              <div className='w-[98%] mx-auto'>
-                <div className='absolute top-[-125px] left-[40px] text-[#221F92] font-extrabold text-[160px] font-["Oswald"]'>
-                  03
-                </div>
-                <div className='mt-[80px]'>
-                  <div className='w-[200px] h-[200px] rounded-full mx-auto bg-[#cccbf581] flex justify-center items-center text-[#fff] font-extrabold text-[150px]'>
-                    <PiTruckDuotone />
-                  </div>
-                  <div className='text-center font-bold text-[30px] mt-3'>
-                    Transport By Truck
-                  </div>
-                  <div className='mt-3 h-[200px] text-[20px] text-[#221F92] font-bold w-[70%] mx-auto flex flex-col'>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <BsBoxSeam />
-                      <div className='ml-3'>
-                        Weight: 70kg
-                      </div>
-                    </div>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <TbClock />
-                      <div className='ml-3'>
-                        Time: 7 days
-                      </div>
-                    </div>
-                    <div className='mt-2 flex items-center justify-center'>
-                      <FaPoundSign />
-                      <div className='ml-3 flex justify-center ' style={{ lineHeight: "1" }}>
-                        Amount: 140<FaPoundSign className='mb-[0px]' style={{ fontSize: "19px" }} />
-                      </div>
-                    </div>
-                    <div className='flex justify-center mt-[30px]'>
-                      <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-10 py-2.5 text-center inline-flex items-center">
-                        Buy now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+      <div className="mb-4 mt-[20px]">
+  <div className="container mx-auto px-4">
+    {/* Title Section */}
+    <div className="text-center mb-10">
+      <h1 className="text-4xl font-extrabold text-[#221F92] tracking-wide uppercase">
+        Our Delivery Services
+      </h1>
+      <div className="flex justify-center items-center mt-4">
+        <div className="w-24 h-[2px] bg-[#221F92]"></div>
+        <img src={tracking} className="mx-3" width="50px" alt="Tracking Icon" />
+        <div className="w-24 h-[2px] bg-[#221F92]"></div>
       </div>
+    </div>
+
+    {/* Card Section */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Card Component */}
+      {[
+        { id: 1, weight: "2kg", time: "7 days", amount: "30" },
+        { id: 2, weight: "25kg", time: "7 days", amount: "78" },
+        { id: 3, weight: "70kg", time: "7 days", amount: "140" },
+      ].map((item) => (
+        <div
+          key={item.id}
+          className="relative shadow-lg rounded-lg overflow-hidden bg-white group hover:scale-105 transition-transform duration-300"
+        >
+          {/* Card Number */}
+          <div className="absolute -top-12 left-8 text-[#221F92] font-extrabold text-[100px] opacity-10">
+            0{item.id}
+          </div>
+
+          {/* Card Content */}
+          <div className="p-6 text-center">
+            <div className="flex justify-center items-center mb-6">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-r from-[#221F92] to-[#6B5FD1] flex items-center justify-center">
+                <PiTruckDuotone className="text-white text-5xl" />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-[#221F92] mb-4">Transport By Truck</h2>
+
+            <div className="text-lg text-gray-700 mb-4">
+              <div className="flex items-center justify-center mb-2">
+                <BsBoxSeam className="text-[#221F92] mr-2" /> Weight: {item.weight}
+              </div>
+              <div className="flex items-center justify-center mb-2">
+                <TbClock className="text-[#221F92] mr-2" /> Time: {item.time}
+              </div>
+              <div className="flex items-center justify-center">
+                <FaPoundSign className="text-[#221F92] mr-1" /> Amount: {item.amount}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white py-2 px-6 rounded-lg shadow-lg font-medium"
+            >
+              Buy Now
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
 
       {/* swiper slider */}

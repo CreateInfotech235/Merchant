@@ -3,11 +3,11 @@ import API from "./Api";
 export const getSupportTicket = async () => {
   try {
     const response = await API.get(`/auth/getAdminSupportTicket`);
-    console.log("Response:", response);
+    // console.log("Response:", response);
     if (response.status === 200) {
       return { status: true, data: response.data };
     } else {
-      console.log("API error", response?.data?.message || "Unknown error");
+      // console.log("API error", response?.data?.message || "Unknown error");
       return {
         status: false,
         message: response?.data?.message || "Unknown error",

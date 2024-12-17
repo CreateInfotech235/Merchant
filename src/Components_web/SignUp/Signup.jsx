@@ -84,7 +84,7 @@ function Signup() {
     };
 
     const response = await sendOtp(otpPayload);
-    console.log(response);
+    // console.log(response);
 
     if (response.status) {
       setOtpSent(true);
@@ -99,7 +99,7 @@ function Signup() {
 
     const formattedValue = { ...values, countryCode: values.address.country }
     const response = await signup(formattedValue);
-    console.log(response);
+    // console.log(response);
 
     if (response.status) {
       navigate("/login");

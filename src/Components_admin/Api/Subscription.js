@@ -10,7 +10,7 @@ export const getAllSubscription = async (page, pageLimit) => {
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -28,7 +28,7 @@ export const getAllPendingSubscription = async (page, pageLimit) => {
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -40,13 +40,13 @@ export const getAllPendingSubscription = async (page, pageLimit) => {
 export const manageSubscription = async (data) => {
   try {
     const response = await API.post("/subscriptions/manage", data);
-    console.log(response);
+    // console.log(response);
 
     if (response.status === 200) {
       toast.success("Subscription updated successfully");
       return { status: true, message: "Subscription updated successfully" };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -57,7 +57,7 @@ export const manageSubscription = async (data) => {
 export const exportFreeSubscription = async () => {
   try {
     const response = await API.get("/subscriptions/getexportFreeSubscription");
-    console.log(response);
+    // console.log(response);
     return response;
   } catch (error) {
     console.error("Error exporting free subscription:", error);

@@ -49,7 +49,7 @@ import SupportTicket from "./Pages_merchant/SupportTicket/SupportTicket";
 import About from "./Pages_web/About/About";
 import Contact from "./Pages_web/Contact/Contact";
 import InvoiceFormate from "./Pages_merchant/AllOrder/InvoiceFormate";
-
+import ViewSupportTicketsMerchant from './Pages_merchant/SupportTicket/ViewSupportTickets'
 import ProtectedRouteAdmin from "./Pages_admin/Protected/Protected";
 import UnprotectedRouteAdmin from "./Pages_admin/Protected/UnProtectedRoute";
 import Dashboard from "./Pages_admin/Dashboard/Dashboard";
@@ -140,6 +140,7 @@ import AddDeliveryManAdmin from "./Pages_admin/DeliveryMan/AddDeliveryMan";
 import SubscriptionPlanAdmin from "./Pages_admin/SubscriptionPlan/SubscriptionPlan";
 import Order from "./Pages_admin/Order/Order";
 import MerchantDeliveryMan from "./Pages_admin/DeliveryMan/MerchantDeliveryMan";
+import ViewSupportTickets from "./Pages_admin/SupportTicket/ViewSupportTickets";
 
 
 function App() {
@@ -184,7 +185,7 @@ function App() {
     setIslogin(setalogin());
   }, [accessToken, merchnatId, userData]);
 
-  console.log("USER islogin", islogin);
+  // console.log("USER islogin", islogin);
   return (
     <BrowserRouter>
       <ToastContainer theme="colored" />
@@ -361,6 +362,14 @@ function App() {
           element={
             <ProtectedRoute>
               <TrashedCustomer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/view-tickets-merchant"
+          element={
+            <ProtectedRoute>
+              <ViewSupportTicketsMerchant />
             </ProtectedRoute>
           }
         />
@@ -565,6 +574,14 @@ function App() {
           element={
             <ProtectedRouteAdmin>
               <ViewUser />
+            </ProtectedRouteAdmin>
+          }
+        />
+        <Route
+          path="/view-tickets"
+          element={
+            <ProtectedRouteAdmin>
+              <ViewSupportTickets />
             </ProtectedRouteAdmin>
           }
         />

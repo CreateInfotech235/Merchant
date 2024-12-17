@@ -65,7 +65,7 @@ function SubscriptionActive() {
     const fetchSubscriptions = async () => {
       try {
         const response = await getAllSubscription(); // Adjust page and limit as needed
-        console.log(response.data);
+        // console.log(response.data);
         if (response.status) {
           setSubscriptionData(response.data);
         } else {

@@ -11,7 +11,7 @@ import { FaArrowLeft } from 'react-icons/fa';
 const stripePromise = loadStripe('your_stripe_publishable_key');
 
 const CheckoutForm = ({ plans }) => {
-    console.log(plans);
+    // console.log(plans);
     const [succeeded, setSucceeded] = useState(false);
     const [error, setError] = useState(null);
     const [planId, setPlanId] = useState(null);
@@ -51,13 +51,13 @@ const CheckoutForm = ({ plans }) => {
         // Get planId from URL query parameters
         const searchParams = new URLSearchParams(location.search);
         const planFromUrl = searchParams.get('plan');
-        console.log(planFromUrl);
+        // console.log(planFromUrl);
         setPlanId(planFromUrl);
 
         // Find and set the selected plan
         if (planFromUrl && plans) {
             const plan = plans.find(p => p._id === planFromUrl);
-            console.log(plan , "dsdsds");
+            // console.log(plan , "dsdsds");
             if (!plan) {
                 setSelectedPlan(plans[0]); // Default to Team plan
             } else {
@@ -85,10 +85,10 @@ const CheckoutForm = ({ plans }) => {
 
         const card = elements.getElement(CardElement);
         const amount = calculateTotalAmount()
-        console.log(amount);
+        // console.log(amount);
 
         // Call backend to create payment intent
-        const { data: { clientSecret } } = await axios.post('https://create-4.onrender.com/create-payment-intent', {
+        const { data: { clientSecret } } = await axios.post('http://localhost:8001/create-payment-intent', {
             amount,
             planId,
             duration,

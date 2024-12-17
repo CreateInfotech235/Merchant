@@ -33,7 +33,7 @@ const DeliveryMan = () => {
   const fetchDeliveryMen = async () => {
     const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
     const res = await getAllDeliveryMan(currentPage, itemsPerPage, searchParam);
-    console.log(res);
+    // console.log(res);
     if (res.status) {
       setDeliverymen(res.data.data);
       setTotalPages(Math.ceil(res.data.totalDataCount / itemsPerPage));
@@ -185,7 +185,7 @@ const DeliveryMan = () => {
                     <td className="user-table1">
                       <input type="checkbox" />
                     </td>
-                    <td className="p-3">
+                    <td className="p-3 text-primary">
                       {deliveryman?.showDeliveryManNumber ?? "-"}
                     </td>
                     <td className="p-3">{deliveryman?.firstName ?? "-"}</td>

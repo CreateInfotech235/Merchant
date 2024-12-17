@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, ModalBody, ModalHeader, Button } from "react-bootstrap";
 import { FaIdCard, FaMapMarkerAlt, FaCalendarAlt, FaCashRegister, FaCheck, FaTimes } from "react-icons/fa"; // Icons
 const OrderModal = ({ Order, onHide }) => {
-  console.log(Order);
+//   console.log(Order);
   
   if (!Order) return null
   return (

@@ -9,243 +9,245 @@ import ViewUser from "../../Components_admin/ViewUser/ViewUser";
 import DisableUser from "../../Components_admin/DisableUser/DisableUser";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import { getSupportTicket } from "../../Components_admin/Api/SupportTicket";
+import ViewSupportTickets from "./ViewSupportTickets";
 
 const SupportTicket = () => {
   const [showDeleteModel, setShowDeleteModel] = useState(false);
   const [showEnableModel, setShowEnableModel] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [supportTicket , setSupportTicket] = useState([])
+  const [supportTicket, setSupportTicket] = useState([]);
   const usersPerPage = 10;
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
+
 
   const closeDeleteModel = () => setShowDeleteModel(false);
   const closeEnableModel = () => setShowEnableModel(false);
 
-  useEffect(()=>{
-    const fetchSupportTicket = async() => {
-      const response = await getSupportTicket()
-      console.log("Support" , response.data.data);
-      
+  useEffect(() => {
+    const fetchSupportTicket = async () => {
+      const response = await getSupportTicket();
+      // console.log("Support", response.data.data);
+
       if (response.status) {
-        console.log("Done");
-        setSupportTicket(response.data.data)
-        
-      }else{
-        setSupportTicket([])
+        // console.log("Done");
+        setSupportTicket(response.data.data);
+      } else {
+        setSupportTicket([]);
       }
-    }
-    fetchSupportTicket()
-  },[])
+    };
+    fetchSupportTicket();
+  }, []);
   // Mock data for users (Replace with actual data fetching logic)
-  const users = [
-    {
-      id: 1,
-      name: "mae strosin",
-      contact: "+91 5632 2157",
-      email: "hagejfhn@gmail.com",
-      service: "pickup",
-      city: "ahmedabad",
-      registerDate: "14May2024 | 03:42 PM",
-      ticketnumber:"45121564"
-    },
-    {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-      {
-        id: 1,
-        name: "mae strosin",
-        contact: "+91 5632 2157",
-        email: "hagejfhn@gmail.com",
-        service: "pickup",
-        city: "ahmedabad",
-        registerDate: "14May2024 | 03:42 PM",
-        ticketnumber:"45121564"
-      },
-  ];
+  // const users = [
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "mae strosin",
+  //     contact: "+91 5632 2157",
+  //     email: "hagejfhn@gmail.com",
+  //     service: "pickup",
+  //     city: "ahmedabad",
+  //     registerDate: "14May2024 | 03:42 PM",
+  //     ticketnumber: "45121564",
+  //   },
+  // ];
 
   // Calculate the users to display based on the current page
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = supportTicket.slice(indexOfFirstUser, indexOfLastUser);
 
   // Calculate total pages
-  const totalPages = Math.ceil(users.length / usersPerPage);
+  const totalPages = Math.ceil(supportTicket.length / usersPerPage);
 
   // Pagination controls
   const handleClick = (event) => {
@@ -271,12 +273,11 @@ const SupportTicket = () => {
 
   // Add empty rows to fill up the table to 10 rows
   const emptyRows = usersPerPage - currentUsers.length;
-
+  // console.log(selectedTicketId);
+  
   return (
     <>
       <div className=" w-100">
-        
-
         <div className="table-responsive">
           <table class="table-borderless w-100 text-center bg-light">
             <thead class="text-light" style={{ background: "#253A71" }}>
@@ -295,20 +296,26 @@ const SupportTicket = () => {
               </tr>
             </thead>
             <tbody>
-              {supportTicket.map((user , i) => (
+              {supportTicket.map((user, i) => (
                 <tr key={i}>
                   <td class="p-3">
                     <input type="checkbox" />
                   </td>
                   <td class="p-3">{i + 1}</td>
-                  <td class="p-3">{`${user?.userid?.firstName ?? '-'} ${user?.userid?.lastName ?? '-'}`}</td>
-                  <td class="p-3">{user?.userid?.email ?? '-'}</td>
-                  <td class="p-3">{user?.subject ?? '-'}</td>
-                  <td class="p-3">{user?.problem ?? '-'}</td>
+                  <td class="p-3">{`${user?.userid?.firstName ?? "-"} ${
+                    user?.userid?.lastName ?? "-"
+                  }`}</td>
+                  <td class="p-3">{user?.userid?.email ?? "-"}</td>
+                  <td class="p-3">{user?.subject ?? "-"}</td>
+                  <td class="p-3">{user?.problem ?? "-"}</td>
                   <td class="p-3">
-                  <button className={`enable-btn ${user.problemSolved === true ? 'green' : 'red'}`}>
-                        {user.problemSolved === true ? "SOLVED" : "UNSOLVED"}
-                      </button>
+                    <button
+                      className={`enable-btn ${
+                        user.problemSolved === true ? "green" : "red"
+                      }`}
+                    >
+                      {user.problemSolved === true ? "SOLVED" : "UNSOLVED"}
+                    </button>
                   </td>
                   {/* <td class="p-3">
                     <button
@@ -332,7 +339,7 @@ const SupportTicket = () => {
                         </button>
                       </Link>
                       <button
-                        className="delete-btn"
+                        className="delete-btn "
                         onClick={() => setShowDeleteModel(true)}
                       >
                         <img src={deleteimg} alt="Delete" className="mx-auto" />
@@ -340,31 +347,21 @@ const SupportTicket = () => {
                       {showDeleteModel && (
                         <DeleteUser closeModel={closeDeleteModel} />
                       )}
-                      <Link to="/view-user">
-                        <button className="show-btn">
+                      <Link to="/view-tickets" state={{ ticketId: user._id }}>
+
+                        <button
+                          onClick={() => setSelectedTicketId(user._id)}
+                          className="show-btn "
+                        >
                           <img src={show} alt="Show" className="mx-auto" />
+                          
                         </button>
                       </Link>
                     </div>
                   </td>
                 </tr>
               ))}
-              {Array.from({ length: emptyRows }).map((_, index) => (
-                <tr key={index + currentUsers.length}>
-                  <td>
-                    <input type="checkbox" />
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              ))}
+             
             </tbody>
           </table>
         </div>
@@ -373,6 +370,13 @@ const SupportTicket = () => {
           <ul className="pagination">{renderPageNumbers()}</ul>
         </div>
       </div>
+
+
+      {/* {selectedTicketId && (
+        <div className="mt-4">
+          <ViewSupportTickets ticketId={selectedTicketId} />
+        </div>
+      )} */}
     </>
   );
 };

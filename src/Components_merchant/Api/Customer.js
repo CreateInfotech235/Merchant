@@ -8,11 +8,11 @@ export const getAllCustomers = async () => {
     const response = await API.get(`/customer/auth/getCustomers`, {
       params: tampdata,
     });
-    console.log("res", response);
+    // console.log("res", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
@@ -25,21 +25,21 @@ export const addCustomer = async (data) => {
   try {
     // Get merchantId from localStorage
     const merchantId = localStorage.getItem("merchnatId");
-    console.log(merchantId);
+    // console.log(merchantId);
     // Create a new object with the original data and merchantId
     const tampdata = { ...data, merchantId };
     // Log the tampdata to confirm it's correctly constructed
-    console.log("tampdata", tampdata);
+    // console.log("tampdata", tampdata);
     // Send the tampdata to the API
     const response = await API.post(`/customer/auth/signUp`, tampdata);
     // Log the response for debugging
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -63,13 +63,13 @@ export const updateCustomer = async (id, data) => {
       `/customer/auth/customerUpdate/${id}`,
       tampdata
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -92,13 +92,13 @@ export const moveToTrashCustomer = async (id) => {
       //   },
       // }
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -121,13 +121,13 @@ export const deleteCustomer = async (id) => {
       //   },
       // }
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,

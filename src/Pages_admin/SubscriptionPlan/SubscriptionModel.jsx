@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { manageSubscription } from "../../Components_admin/Api/Subscription";
 
 const SubscriptionModel = ({ onHide, types, subscription }) => {
-  console.log(subscription);
+  // console.log(subscription);
 
   const initialValues = {
     ...(types === "Add"
@@ -42,7 +42,7 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
   
 
   const onSubmit = async (values) => {
-    console.log("Form Data:", values);
+    // console.log("Form Data:", values);
     const response = await manageSubscription(values);
 
     if (response) {

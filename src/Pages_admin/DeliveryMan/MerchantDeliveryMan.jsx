@@ -38,7 +38,7 @@ const MerchantDeliveryMan = () => {
       itemsPerPage,
       searchParam
     );
-    console.log(res);
+    // console.log(res);
     if (res.status) {
       setDeliverymen(res.data.data);
       setTotalPages(Math.ceil(res.data.totalDataCount / itemsPerPage));
@@ -159,7 +159,7 @@ const MerchantDeliveryMan = () => {
           >
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
-                <th className="p-3 text-light"></th>
+                <th className="p-3 text-light "></th>
                 <th className="p-3 text-light">DeliveryMan Id</th>
                 <th className="p-3 text-light">First Name</th>
                 <th className="p-3 text-light">Last Name</th>
@@ -190,7 +190,7 @@ const MerchantDeliveryMan = () => {
                     <td className="user-table1">
                       <input type="checkbox" />
                     </td>
-                    <td className="p-3">
+                    <td className="p-3 text-primary">
                       {deliveryman?.showDeliveryManNumber ?? "-"}
                     </td>
                     <td className="p-3">{deliveryman?.firstName ?? "-"}</td>

@@ -3,11 +3,8 @@ import { toast } from "react-toastify";
 
 export const getAllNotifications = async () => {
   try {
-  
-    const response = await API.get(
-      `/auth/getAllNotifications`
-    );
-    console.log("response", response);
+    const response = await API.get(`/auth/getAllNotifications`);
+    // console.log("response", response);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
@@ -18,7 +15,7 @@ export const getAllNotifications = async () => {
       };
     }
   } catch (error) {
-    console.error("Error fetching notifications:", error);
+    // console.error("Error fetching notifications:", error);
     toast.error(error.message);
     return { status: false, message: error.message };
   }
@@ -30,7 +27,7 @@ export const markNotificationAsRead = async (notificationId) => {
     const response = await API.patch(
       `/auth/markNotificationAsRead/${notificationId}`
     );
-    console.log("response", response);
+    // console.log("response", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
@@ -40,7 +37,7 @@ export const markNotificationAsRead = async (notificationId) => {
       };
     }
   } catch (error) {
-    console.error("Error marking notification as read:", error);
+    // console.error("Error marking notification as read:", error);
     toast.error(error.message);
     return { status: false, message: error.message };
   }
@@ -48,9 +45,7 @@ export const markNotificationAsRead = async (notificationId) => {
 export const markAllNotificationsAsRead = async () => {
   try {
     const userId = localStorage.getItem("merchnatId");
-    const response = await API.patch(
-      `/auth/markAllNotificationsAsRead`
-    );
+    const response = await API.patch(`/auth/markAllNotificationsAsRead`);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
@@ -61,7 +56,7 @@ export const markAllNotificationsAsRead = async () => {
       };
     }
   } catch (error) {
-    console.error("Error marking all notifications as read:", error);
+    // console.error("Error marking all notifications as read:", error);
     toast.error(error.message);
     return { status: false, message: error.message };
   }
@@ -73,7 +68,7 @@ export const deleteNotification = async (notificationId) => {
     const response = await API.delete(
       `/auth/deleteNotification/${notificationId}`
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
@@ -84,7 +79,7 @@ export const deleteNotification = async (notificationId) => {
       };
     }
   } catch (error) {
-    console.error("Error deleting notification:", error);
+    // console.error("Error deleting notification:", error);
     toast.error(error.message);
     return { status: false, message: error.message };
   }
@@ -93,9 +88,7 @@ export const deleteNotification = async (notificationId) => {
 export const getUnreadNotificationCount = async () => {
   try {
     const userId = localStorage.getItem("merchnatId");
-    const response = await API.get(
-      `/auth/getUnreadNotificationCount`
-    );
+    const response = await API.get(`/auth/getUnreadNotificationCount`);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data.count };
@@ -106,7 +99,7 @@ export const getUnreadNotificationCount = async () => {
       };
     }
   } catch (error) {
-    console.error("Error getting unread notification count:", error);
+    // console.error("Error getting unread notification count:", error);
     toast.error(error.message);
     return { status: false, message: error.message };
   }

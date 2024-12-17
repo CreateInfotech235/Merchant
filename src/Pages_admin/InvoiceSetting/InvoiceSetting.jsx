@@ -25,7 +25,7 @@ const InvoiceSetting = () => {
     }),
     onSubmit: (values) => {
       // Handle form submission
-      console.log("Form data:", values);
+      // console.log("Form data:", values);
     },
   });
 

@@ -8,7 +8,7 @@ const UnprotectedRoute = ({ children }) => {
   const merchnatId = localStorage.getItem('merchnatId')
   const navigate = useNavigate();
 
-  console.log('token', token, merchnatId);
+  // console.log('token', token, merchnatId);
   
   useEffect(() => {
     if (token && merchnatId) {

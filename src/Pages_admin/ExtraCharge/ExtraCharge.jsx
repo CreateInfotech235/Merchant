@@ -22,7 +22,7 @@ const ExtraCharge = () => {
 
   const fetchCharges = async () => {
     const response = await getAllExtraCharges(currentPage, itemPerPage, searchQuery);
-    console.log('response', response)
+    // console.log('response', response)
     if (response.status) {
       setCharges(response.data[0].data);
       setTotalPages(Math.ceil(response.data[0].totalDataCount / itemPerPage));

@@ -5,13 +5,13 @@ import { toast } from "react-toastify";
 export const freeSubscription = async (data) => {
   try {
     const response = await API.post(`/mobile/auth/activatePlan`, data);
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
       toast.error(response.response.data.message || response.message);
       return {
         status: false,
@@ -35,7 +35,7 @@ export const SubscriptionInfo = async (data) => {
       toast.success(response.data.message);
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.response.data.message);
+      // console.log("API error", response.response.data.message);
 
       toast.error(response.response.data.message || response.message);
       return {
@@ -53,12 +53,12 @@ export const SubscriptionInfo = async (data) => {
 export const getAllSubscription = async (page, pageLimit) => {
   try {
     const response = await API.get(`/mobile/auth/subscriptions`);
-    console.log(response);
+    // console.log(response);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      console.log("API error", response.message);
+      // console.log("API error", response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {

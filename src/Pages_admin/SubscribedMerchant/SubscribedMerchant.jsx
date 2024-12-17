@@ -41,7 +41,7 @@ const SubscribedMerchnat = () => {
   // Fetch users from API
   const fetchUsers = async () => {
     const response = await getScbscriptionUsers(currentPage, usersPerPage);
-    console.log(response);
+    // console.log(response);
     
     if (response.status) {
       setUsers(response.data[0].data); // Set user data from API
@@ -166,8 +166,8 @@ const SubscribedMerchnat = () => {
                   <td className="p-3">{user.lastName}</td>
                   <td className="p-3">{user.contactNumber}</td>
                   <td className="p-3">{user.email}</td>
-                  <td className="p-3">{user.countryCode}</td>
-                  <td className="p-3">{user.city || "N/A"}</td>
+                  <td className="p-3">{user?.address?.country ?? '-'}</td>
+                  <td className="p-3">{user?.address?.city || "N/A"}</td>
                   <td className="p-3">{new Date(user.registerDate).toLocaleString()}</td>
                   <td className="p-3 text-[12px]">
                   <button className={`enable-btn ${user.status === 'ENABLE' ? 'green' : 'red'}`}>

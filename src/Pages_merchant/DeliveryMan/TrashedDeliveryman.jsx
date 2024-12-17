@@ -97,13 +97,13 @@ const TrashedDeliveryman = () => {
 
   // Function to open info modal and set the selected delivery man
   const handleViewClick = (deliveryMan) => {
-    console.log("delivery", deliveryMan);
+    // console.log("delivery", deliveryMan);
 
     setShowInfoModal(true); // Show the info modal
     setSelectedDeliveryMan(deliveryMan);
   };
 
-  console.log("view", showInfoModal);
+  // console.log("view", showInfoModal);
 
   // Function to close the info modal
   const closeInfoModal = () => {

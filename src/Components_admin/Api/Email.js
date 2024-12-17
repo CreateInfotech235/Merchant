@@ -2,13 +2,13 @@ import API from "./Api";
 import { toast } from "react-toastify";
 export const PostEmail = async (data) => {
   try {
-    const response = await API.post(`/auth/Email` , data);
-    console.log("Response:", response);
+    const response = await API.post(`/auth/Email`, data);
+    // console.log("Response:", response);
     if (response.status === 200) {
-        toast.success(response.data.message)
+      toast.success(response.data.message);
       return { status: true, data: response.data };
     } else {
-      console.log("API error", response?.data?.message || "Unknown error");
+      // console.log("API error", response?.data?.message || "Unknown error");
       return {
         status: false,
         message: response?.data?.message || "Unknown error",

@@ -4,11 +4,11 @@ import { toast } from "react-toastify";
 export const getAllNotifications = async () => {
   try {
     const userId = localStorage.getItem("merchnatId");
-    console.log("userId", userId);
+    // console.log("userId", userId);
     const response = await API.get(
       `/mobile/auth/getAllNotifications/${userId}`
     );
-    console.log("response", response);
+    // console.log("response", response);
 
     if (response.status === 200) {
       return { status: true, data: response.data.data };
@@ -31,7 +31,7 @@ export const markNotificationAsRead = async (notificationId) => {
     const response = await API.patch(
       `/mobile/auth/markNotificationAsRead/${userId}/${notificationId}`
     );
-    console.log("response", response);
+    // console.log("response", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
