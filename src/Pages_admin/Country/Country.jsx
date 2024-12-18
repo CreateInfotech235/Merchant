@@ -32,7 +32,7 @@ const Country = () => {
     try {
       const searchParam = searchTerm ? `&searchValue=${searchTerm}` : '';
       const response = await fetch(
-        `https://create-4.onrender.com/admin/country?pageCount=${currentPage}&pageLimit=${itemsPerPage}${searchParam}`,
+        `http://localhost:8001/admin/country?pageCount=${currentPage}&pageLimit=${itemsPerPage}${searchParam}`,
         {
           method: "GET",
           headers: {
