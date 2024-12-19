@@ -225,6 +225,7 @@ const AllOrder = () => {
               <tr>
                 <th className="p-3"></th>
                 <th className="p-3">Order ID</th>
+                <th className="p-3">Merchant Name</th>
                 <th className="p-3">Customer Name</th>
                 <th className="p-3">Pickup Address</th>
                 <th className="p-3">Delivery Address</th>
@@ -259,6 +260,7 @@ const AllOrder = () => {
                         <input type="checkbox" />
                       </td>
                       <td className="p-3 text-primary">{order?.showOrderNumber ?? '-'}</td>
+                      <td className="p-3">{order.merchantName || "-"}</td>
                       <td className="p-3">{order.customerName}</td>
                       <td className="p-3">{order.pickupAddress.address}</td>
                       <td className="p-3">{order.deliveryAddress.address}</td>

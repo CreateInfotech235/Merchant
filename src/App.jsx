@@ -141,6 +141,7 @@ import SubscriptionPlanAdmin from "./Pages_admin/SubscriptionPlan/SubscriptionPl
 import Order from "./Pages_admin/Order/Order";
 import MerchantDeliveryMan from "./Pages_admin/DeliveryMan/MerchantDeliveryMan";
 import ViewSupportTickets from "./Pages_admin/SupportTicket/ViewSupportTickets";
+import HomePage from "./Pages_admin/HomePage/HomePage";
 
 
 function App() {
@@ -770,10 +771,10 @@ function App() {
           }
         />
         <Route
-          path="/information"
+          path="/home-page"
           element={
             <ProtectedRouteAdmin>
-              <Information />
+              <HomePage />
             </ProtectedRouteAdmin>
           }
         />

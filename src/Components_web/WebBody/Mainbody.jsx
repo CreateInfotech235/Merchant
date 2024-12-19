@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import tracking from "../../assets_web/Group (4).png";
 import service from "../../assets_web/service icon.png";
 import service1 from "../../assets_web/service icon (1).png";
@@ -22,7 +22,8 @@ import { IoHomeOutline } from "react-icons/io5";
 import "./Mainbody.css";
 
 import Gotop from "../Gotop/Gotop"
-const services = [
+import { getWebHome } from "../Api/Webapi";
+const servicesdata = [
   {
     service: "Timely Delivery",
     description:
@@ -62,268 +63,225 @@ const links = [
   { name: "Meet our leadership", href: "#" },
 ];
 const stats = [
-  { name: "Offices worldwide", value: "12" },
-  { name: "Full-time colleagues", value: "300+" },
-  { name: "Hours per week", value: "40" },
-  { name: "Paid time off", value: "Unlimited" },
+  { name: "total order", value: "12" },
+  { name: "total customer", value: "300+" },
+  { name: "total delivery", value: "40" },
 ];
 function Mainbody() {
+  const [webHome, setWebHome] = useState(null);
+  const [services, setservices] = useState([]);
+
+  useEffect(() => {
+    const data = async () => {
+      const data = await getWebHome()
+      setWebHome(data)
+    }
+    data()
+  }, []);
+
+
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
+
+
+
+
+
+
   return (
     <>
       <div>
-        <div className="w-full relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32">
-          <img
-            alt=""
-            src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=focalpoint&fp-y=.8&w=2830&h=1500&q=80&blend=111827&sat=-100&exp=15&blend-mode=multiply"
-            className="absolute inset-0 -z-10 size-full object-cover object-right md:object-center"
-          />
-          <div
-            aria-hidden="true"
-            className="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl"
-          >
-            <div
-              style={{
-                clipPath:
-                  "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-              }}
-              className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
+        {
+          webHome?.header?.isShow &&
+          <div className="w-full relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32">
+            <img
+              alt=""
+              src={webHome?.header?.bgImage}
+              className="absolute inset-0 -z-10 size-full object-cover object-right md:object-center"
             />
-          </div>
-          <div
-            aria-hidden="true"
-            className="absolute -top-52 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:top-[-28rem] sm:ml-16 sm:translate-x-0 sm:transform-gpu"
-          >
             <div
-              style={{
-                clipPath:
-                  "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-              }}
-              className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
-            />
-          </div>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl lg:mx-0">
-              <h3 className="text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight text-white leading-[1.2] md:leading-[1.4] capitalize">
-                Revolutionizing London's Delivery Experience with Speed and Reliability
-              </h3>
-              <p className="mt-4 md:mt-8 text-base md:text-lg lg:text-xl text-gray-300 font-medium">
-                Experience seamless delivery solutions with Delibox. Our advanced tracking system ensures your parcels are delivered safely and on time, every time.
-              </p>
+              aria-hidden="true"
+              className="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl"
+            >
+              <div
+                style={{
+                  clipPath:
+                    "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+                }}
+                className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
+              />
             </div>
-            <div className="mx-auto mt-6 md:mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-4 md:gap-6 lg:gap-10 text-sm md:text-base font-semibold text-white">
-                {links.map((link) => (
-                  <a key={link.name} href={link.href} className="hover:text-blue-400 transition-colors">
-                    {link.name} <span aria-hidden="true">&rarr;</span>
-                  </a>
-                ))}
-              </div>
-              <dl className="mt-8 md:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                {stats.map((stat) => (
-                  <div key={stat.name} className="flex flex-col-reverse gap-1 bg-black/20 p-4 rounded-lg">
-                    <dt className="text-sm md:text-base text-gray-300">{stat.name}</dt>
-                    <dd className="text-2xl md:text-4xl font-bold text-white">
-                      {stat.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+            <div
+              aria-hidden="true"
+              className="absolute -top-52 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:top-[-28rem] sm:ml-16 sm:translate-x-0 sm:transform-gpu"
+            >
+              <div
+                style={{
+                  clipPath:
+                    "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
+                }}
+                className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
+              />
             </div>
-          </div>
-        </div>
-
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">
-          <div className="">
-            <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-              our top services
-            </h1>
-            <div className="flex justify-center mt-3 items-center">
-              <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-              <img src={tracking} className="text-center" width={"50px"} alt="" />
-              <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10 justify-center">
-            {/* First card */}
-            <div className="demo hover:bg-[#221F92] py-5 px-2 max-w-sm border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 group">
-              <div className="flex flex-col items-center">
-                <img
-                  className="w-24 h-24 mb-3 group-hover:opacity-75 transition-opacity"
-                  src={service}
-                  alt="service image"
-                />
-                <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white group-hover:text-white transition-colors">
-                  Fast Delivery Service
-                </h5>
-                <span className="text-sm text-gray-500 dark:text-gray-400 px-14 text-center group-hover:text-white transition-colors">
-                  Fast, reliable courier service for timely medical deliveries.
-                </span>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="max-w-2xl lg:mx-0">
+                <h3 className="text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight text-white leading-[1.2] md:leading-[1.4] capitalize">
+                  {webHome?.header?.title}
+                </h3>
+                <p className="mt-4 md:mt-8 text-base md:text-lg lg:text-xl text-gray-300 font-medium">
+                  {webHome?.header?.description}
+                </p>
               </div>
-              <div className="flex justify-end px-4 pt-4">
-                <svg
-                  className="w-5 h-5 text-gray-900 group-hover:text-white transition-colors"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 16 3"
-                >
-                  <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Second card */}
-            <div className="demo hover:bg-[#221F92] py-5 px-2 max-w-sm border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 group">
-              <div className="flex flex-col items-center">
-                <img
-                  className="w-24 h-24 mb-3 group-hover:opacity-75 transition-opacity"
-                  src={service1}
-                  alt="service image"
-                />
-                <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white group-hover:text-white transition-colors">
-                  24 X 7 Concierge Services
-                </h5>
-                <span className="text-sm text-gray-500 dark:text-gray-400 px-14 text-center group-hover:text-white transition-colors">
-                  24/7 concierge for fast, reliable medical courier services nationwide.
-                </span>
-              </div>
-              <div className="flex justify-end px-4 pt-4">
-                <svg
-                  className="w-5 h-5 text-gray-900 group-hover:text-white transition-colors"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 16 3"
-                >
-                  <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Third card */}
-            <div className="demo hover:bg-[#221F92] py-5 px-2 max-w-sm border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 group">
-              <div className="flex flex-col items-center">
-                <img
-                  className="w-24 h-24 mb-3 group-hover:opacity-75 transition-opacity"
-                  src={service2}
-                  alt="service image"
-                />
-                <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white group-hover:text-white transition-colors">
-                  e-commerce shipping
-                </h5>
-                <span className="text-sm text-gray-500 dark:text-gray-400 px-14 text-center group-hover:text-white transition-colors">
-                  top delivery product for our best support
-                </span>
-              </div>
-              <div className="flex justify-end px-4 pt-4">
-                <svg
-                  className="w-5 h-5 text-gray-900 group-hover:text-white transition-colors"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 16 3"
-                >
-                  <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Fourth card */}
-            <div className="demo hover:bg-[#221F92] py-5 px-2 max-w-sm border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 group">
-              <div className="flex flex-col items-center">
-                <img
-                  className="w-24 h-24 mb-3 group-hover:opacity-75 transition-opacity"
-                  src={service3}
-                  alt="service image"
-                />
-                <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white group-hover:text-white transition-colors">
-                  Track Location
-                </h5>
-                <span className="text-sm text-gray-500 dark:text-gray-400 px-14 text-center group-hover:text-white transition-colors">
-                  best service you get in your web website
-                </span>
-              </div>
-              <div className="flex justify-end px-4 pt-4">
-                <svg
-                  className="w-5 h-5 text-gray-900 group-hover:text-white transition-colors"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 16 3"
-                >
-                  <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="mx-auto  my-24">
-          <div className="mb-9">
-            <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-              delivery solutions
-            </h1>
-            <div className="flex justify-center mt-3 items-center">
-              <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-              <img src={tracking} className="text-center" width={"50px"} alt="" />
-              <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-            </div>
-          </div>
-
-          <div className="w-full bg-[#111827] text-white">
-            <div className="mx-auto max-w-7xl px-6 lg:px-8">
-              <div className="py-20 flex flex-wrap justify-center">
-                <div className="w-full sm:w-1/3 flex justify-center mb-8 sm:mb-0">
-                  <div className="w-[80%]">
-                    <LiaMapMarkedAltSolid className="font-medium text-5xl" />
-                    <div className="text-[20px] mt-[10px] font-extrabold">
-                      B2C Brands
+              <div className="mx-auto mt-6 md:mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-4 md:gap-6 lg:gap-10 text-sm md:text-base font-semibold text-white">
+                  {links.map((link) => (
+                    <a key={link.name} href={link.href} className="hover:text-blue-400 transition-colors">
+                      {link.name} <span aria-hidden="true">&rarr;</span>
+                    </a>
+                  ))}
+                </div>
+                <dl className="mt-8 md:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                  {webHome?.header?.status?.map((stat) => (
+                    <div key={stat.title} className="flex flex-col-reverse gap-1 bg-black/20 p-4 rounded-lg">
+                      <dt className="text-sm md:text-base text-gray-300">{stat.title}</dt>
+                      <dd className="text-2xl md:text-4xl font-bold text-white">
+                        {stat.number}
+                      </dd>
                     </div>
-                    <div className="mt-[10px]">
-                      Logistics in London is more than moving goods; it’s about building trust and enhancing experiences for your brand and customers. Our team provides personalized support every step of the way.
-                    </div>
-                    <div className="mt-[25px] text-[#c2ccff] font-semibold text-[15px] flex items-center group hover:text-[#c2ccff] transition ease-in-out delay-150 duration-500">
-                      Know More <FaArrowRight className="ml-2 group-hover:ml-4" />
-                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+          </div>
+        }
+        {
+          webHome?.services?.isShow && (
+            <>
+              <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">
+                <div className="">
+                  <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
+                    {webHome?.services?.title}
+                  </h1>
+                  <div className="flex justify-center mt-3 items-center">
+                    <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
+                    <img src={tracking} className="text-center" width={"50px"} alt="" />
+                    <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
                   </div>
                 </div>
 
-                <div className="w-full sm:w-1/3 flex justify-center mb-8 sm:mb-0">
-                  <div className="w-[80%]">
-                    <TbTruckDelivery className="font-medium text-5xl" />
-                    <div className="text-[20px] mt-[10px] font-extrabold">
-                      Fast Delivery
-                    </div>
-                    <div className="mt-[10px]">
-                      Looking for fast and secure delivery in London? Our courier service guarantees prompt, reliable, and efficient delivery for all your packages, big or small, ensuring your items arrive on time.
-                    </div>
-                    <div className="mt-[25px] text-[#c2ccff] font-semibold text-[15px] flex items-center group hover:text-[#c2ccff] transition ease-in-out delay-150 duration-500">
-                      Know More <FaArrowRight className="ml-2 group-hover:ml-4" />
-                    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10 justify-center">
+                  {
+                    webHome?.services?.data?.map((service) => (
+                      <>
+                        <div className="demo hover:bg-[#221F92] py-5 px-2 max-w-sm border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 group">
+                          <div className="flex flex-col items-center">
+                            <img
+                              className="w-24 h-24 mb-3 group-hover:opacity-75 transition-opacity"
+                              src={service.image}
+                              alt="service image"
+                            />
+                            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white group-hover:text-white transition-colors">
+                              {service.title}
+                            </h5>
+                            <span className="text-sm text-gray-500 dark:text-gray-400 px-14 text-center group-hover:text-white transition-colors">
+                              {service.description}
+                            </span>
+                          </div>
+                          <div className="flex justify-end px-4 pt-4">
+                            <svg
+                              className="w-5 h-5 text-gray-900 group-hover:text-white transition-colors"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="currentColor"
+                              viewBox="0 0 16 3"
+                            >
+                              <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </>
+                    ))
+                  }
+
+                </div>
+              </div>
+            </>
+          )
+        }
+
+        {
+          webHome?.deliverySolutions?.isShow && (
+            <>
+              <div className="mx-auto  my-24">
+                <div className="mb-9">
+                  <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
+                    {webHome?.deliverySolutions?.title}
+                  </h1>
+                  <div className="flex justify-center mt-3 items-center">
+                    <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
+                    <img src={tracking} className="text-center" width={"50px"} alt="" />
+                    <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
                   </div>
                 </div>
 
-                <div className="w-full sm:w-1/3 flex justify-center mb-8 sm:mb-0">
-                  <div className="w-[80%]">
-                    <IoHomeOutline className="font-medium text-5xl" />
-                    <div className="text-[20px] mt-[10px] font-extrabold">
-                      Delivery At Home
-                    </div>
-                    <div className="mt-[10px]">
-                      Get your items delivered straight to your doorstep in London with our hassle-free home delivery service. From groceries to electronics and gifts, we bring everything you need quickly and safely.
-                    </div>
-                    <div className="mt-[25px] text-[#c2ccff] font-semibold text-[15px] flex items-center group hover:text-[#c2ccff] transition ease-in-out delay-150 duration-500">
-                      Know More <FaArrowRight className="ml-2 group-hover:ml-4" />
+                <div className="w-full bg-[#111827] text-white">
+                  <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div className="py-20 flex flex-wrap justify-center">
+                      <div className="w-full sm:w-1/3 flex justify-center mb-8 sm:mb-0">
+                        <div className="w-[80%]">
+                          <img src={webHome?.deliverySolutions?.data[0]?.image} alt="" width={"30px"} />
+                          <div className="text-[20px] mt-[10px] font-extrabold">
+                            B2C Brands
+                          </div>
+                          <div className="mt-[10px]">
+                            Logistics in London is more than moving goods; it’s about building trust and enhancing experiences for your brand and customers. Our team provides personalized support every step of the way.
+                          </div>
+                          <div className="mt-[25px] text-[#c2ccff] font-semibold text-[15px] flex items-center group hover:text-[#c2ccff] transition ease-in-out delay-150 duration-500">
+                            Know More <FaArrowRight className="ml-2 group-hover:ml-4" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="w-full sm:w-1/3 flex justify-center mb-8 sm:mb-0">
+                        <div className="w-[80%]">
+                          <TbTruckDelivery className="font-medium text-5xl" />
+                          <div className="text-[20px] mt-[10px] font-extrabold">
+                            Fast Delivery
+                          </div>
+                          <div className="mt-[10px]">
+                            Looking for fast and secure delivery in London? Our courier service guarantees prompt, reliable, and efficient delivery for all your packages, big or small, ensuring your items arrive on time.
+                          </div>
+                          <div className="mt-[25px] text-[#c2ccff] font-semibold text-[15px] flex items-center group hover:text-[#c2ccff] transition ease-in-out delay-150 duration-500">
+                            Know More <FaArrowRight className="ml-2 group-hover:ml-4" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="w-full sm:w-1/3 flex justify-center mb-8 sm:mb-0">
+                        <div className="w-[80%]">
+                          <IoHomeOutline className="font-medium text-5xl" />
+                          <div className="text-[20px] mt-[10px] font-extrabold">
+                            Delivery At Home
+                          </div>
+                          <div className="mt-[10px]">
+                            Get your items delivered straight to your doorstep in London with our hassle-free home delivery service. From groceries to electronics and gifts, we bring everything you need quickly and safely.
+                          </div>
+                          <div className="mt-[25px] text-[#c2ccff] font-semibold text-[15px] flex items-center group hover:text-[#c2ccff] transition ease-in-out delay-150 duration-500">
+                            Know More <FaArrowRight className="ml-2 group-hover:ml-4" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+            </>)
+        }
+
+
+
 
 
         <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">

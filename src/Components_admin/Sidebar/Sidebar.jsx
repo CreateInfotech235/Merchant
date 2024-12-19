@@ -21,6 +21,7 @@ import setting from "../../assets_admin/setting.svg";
 import invoice1 from "../../assets_admin/invoice1.svg";
 import delivery from "../../assets_admin/delivery.svg";
 import deposite from "../../assets_admin/deposite.svg";
+import customer from "../../assets_admin/customer.png";
 
 
 const Sidebar = () => {
@@ -215,7 +216,7 @@ const Sidebar = () => {
                 onClick={() => setActiveTab(null)}
               >
                 <span className="icon">
-                  <img src={country} alt="country" />
+                  <img src={customer} alt="country" />
                 </span>
                 Customer
               </Button>
@@ -255,7 +256,7 @@ const Sidebar = () => {
                   <li className={isActive("/vehicle") ? "active" : ""}>
                     <Link to="/vehicle">Vehicle</Link>
                   </li>
-                  <li className={isActive("/add-extra-charges") ? "active" : ""}>
+                  <li className={isActive("/extra-charge") ? "active" : ""}>
                     <Link to="/extra-charge">Extra Charges</Link>
                   </li>
                   <li className={isActive("/parcel-type") ? "active" : ""}>
@@ -386,8 +387,8 @@ const Sidebar = () => {
             {activeTab === 12 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
-                  <li className={isActive("/information") ? "active" : ""}>
-                    <Link to="/information">Information</Link>
+                <li className={isActive("/home-page") ? "active" : ""}>
+                    <Link to="/home-page">Home Page</Link>
                   </li>
                   <li className={isActive("/why-delivery") ? "active" : ""}>
                     <Link to="/why-delivery">Why Delivery</Link>

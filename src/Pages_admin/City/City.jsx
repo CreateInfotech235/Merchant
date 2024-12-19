@@ -170,7 +170,7 @@ const City = () => {
                   <td className="p-3">{city.perDistanceCharge || 0}</td>
                   <td className="p-3">{city.perWeightCharge || 0}</td>
                   <td className="p-3">{city.adminCommission || 0}</td>
-                  <td className="p-3 fw-bold fs-6">{city.currency || "$"}</td>
+                  <td className="p-3 fw-bold fs-6">{city.currency || "£"}</td>
                   <td className="p-3">{formatDateTime(city.createdDate)}</td>
                   <td className="table-head2">
                     <button className="enable-btn">{city.isActive ? 'Active' : 'Block'}</button>

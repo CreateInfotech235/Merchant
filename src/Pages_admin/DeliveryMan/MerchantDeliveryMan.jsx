@@ -161,6 +161,7 @@ const MerchantDeliveryMan = () => {
               <tr>
                 <th className="p-3 text-light "></th>
                 <th className="p-3 text-light">DeliveryMan Id</th>
+                <th className="p-3 text-light">Merchant Name</th>
                 <th className="p-3 text-light">First Name</th>
                 <th className="p-3 text-light">Last Name</th>
                 <th className="p-3 text-light">Contact number</th>
@@ -193,6 +194,7 @@ const MerchantDeliveryMan = () => {
                     <td className="p-3 text-primary">
                       {deliveryman?.showDeliveryManNumber ?? "-"}
                     </td>
+                    <td className="p-3">{deliveryman?.merchantName ?? "-"}</td>
                     <td className="p-3">{deliveryman?.firstName ?? "-"}</td>
                     <td className="p-3">{deliveryman?.lastName ?? "-"}</td>
                     <td className="p-3">
