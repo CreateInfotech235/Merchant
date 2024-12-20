@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { convertImageToBase64 } from './convertImageToBase64';
 import { getWebHome } from '../../Components_web/Api/Webapi';
 import { updateWebHome } from '../webApi/webApi';
 import Inputimg from './inputimg';
@@ -125,11 +124,6 @@ const HomePage = () => {
 
   }
 
-
-
-
-
-
   const handleSection2datasave = () => {
     if (editIndex2 === null) {
       var data = { ...section2 };
@@ -142,7 +136,7 @@ const HomePage = () => {
         index === editIndex2 ? { ...item, title: section2data.title, image: section2data.image, description: section2data.description } : item
       );
       setSection2({ ...section2, data: updatedStatus });
-      setEditIndex(null);
+      setEditIndex2(null);
     }
     setSection2data({
       title: '',
@@ -150,22 +144,84 @@ const HomePage = () => {
       description: '',
     });
   }
-
-
-
-
-
-
-
-
-  console.log("section2", section2);
   // section 2 end
+
+
+
+
+
+
+
+
+  // section 3 start
+
+  const [section3, setSection3] = useState({
+    title: '',
+    data: [],
+  });
+
+  const [editIndex3, setEditIndex3] = useState(null);
+
+  const [section3data, setSection3data] = useState({
+    title: '',
+    description: '',
+    image: null,
+  });
+
+  useEffect(() => {
+    if (section3) {
+      setWebpage({ ...webpage, deliverySolutions: section3 });
+    }
+  }, [section3]);
+
+  const handleDeletesection3data = (index) => {
+    const updatedData = section3.data.filter((_, i) => i !== index);
+    setSection3({ ...section3, data: updatedData }); // Update the 'data' array in section2
+  };
+
+  const handleEditssection3data = (index) => {
+    setEditIndex3(index);
+    console.log(index);
+    setSection3data(
+      {
+        title: section3.data[index].title,
+        description: section3.data[index].description,
+        image: section3.data[index].image,
+      }
+    )
+
+  }
+
+  const handleSection3datasave = () => {
+    if (editIndex3 === null) {
+      var data = { ...section3 };
+      console.log("data", data);
+      const status = { title: section3data.title, image: section3data.image, description: section3data.description };
+      data.data.push(status);
+      setSection3(data);
+    } else {
+      const updatedStatus = section3.data.map((item, index) =>
+        index === editIndex3 ? { ...item, title: section3data.title, image: section3data.image, description: section3data.description } : item
+      );
+      setSection3({ ...section3, data: updatedStatus });
+      setEditIndex3(null);
+    }
+    setSection3data({
+      title: '',
+      image: '',
+      description: '',
+    });
+  }
+  // section 3 end
+
+
 
 
   useEffect(() => {
     if (webpage) {
       setSection1(webpage?.header);
       setSection2(webpage?.services);
+      setSection3(webpage?.deliverySolutions)
     }
 
   }, [webpage]);
@@ -188,13 +244,16 @@ const HomePage = () => {
       }
     }
   };
-  console.log("section2data", section2data);
+  console.log("web", webpage);
 
   useEffect(() => {
+    console.log("aaa");
+    
     if (JSON.stringify(bakupwebpage) !== JSON.stringify(webpage)) {
+
       if (window.confirm('your data is not save can you want to save')) {
         handleSave()
-      }else { 
+      } else {
         setWebpage(bakupwebpage);
       }
     }
@@ -226,7 +285,7 @@ const HomePage = () => {
         <div className="w-11/12 mx-auto">
           <h1 className="text-3xl font-bold text-center">Home Page</h1>
         </div>
-
+        {/*    section 1 */}
         <div>
           <div className="w-full flex text-2xl font-bold pl-10">
             section 1
@@ -324,15 +383,11 @@ const HomePage = () => {
                   </tbody>
                 </table>
               </div>
-
             </div>
-
-
-
-
           </div>
         </div>
 
+        {/*    section 2 */}
 
         <div>
           <div className="w-full flex text-2xl font-bold pl-10 mt-10">
@@ -349,9 +404,9 @@ const HomePage = () => {
             </div>
 
             <div>
-              <div className='w-11/12 mx-auto'>
-                <div className='flex justify-between items-center'>
-                  <div className='w-2/12 p-3'>
+              <div className='w-11/12 mx-auto '>
+                <div className='flex justify-between  items-center'>
+                  <div className='w-3/12 p-3 '>
                     <Inputimg path={["image"]} status={section2data} setStatus={setSection2data} title="Services icon" height="150px" width="150px" />
                   </div>
                   <div className='w-3/12 p-3'>
@@ -396,7 +451,7 @@ const HomePage = () => {
                       {
                         section2?.data.map((item, index) => (
                           <>
-                            <tr className=' w-full pb-2'>
+                            <tr className=' w-full pb-2 border-b'>
                               <td>{index + 1}</td>
                               <td >
                                 <img src={item.image} alt="" style={{ width: "100px", backgroundColor: "black", border: "2px solid white" }} />
@@ -426,6 +481,109 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+
+        {/*  section 3 */}
+
+        <div >
+          <div className="w-full flex text-2xl font-bold pl-10 mt-10">
+            section 3
+          </div>
+          <div className='w-full '>
+            <div>
+              <div className='w-11/12 mx-auto'>
+                <div className='mb-6'>
+                  <label htmlFor="section2-title" className="block text-sm font-medium text-gray-900 dark:text-white">Title</label>
+                  <input type="text" id="section2-title" name="title" value={section3?.title} onChange={(e) => { setSection3({ ...section3, title: e.target.value }) }} className="p-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className='w-11/12 mx-auto '>
+                <div className='flex justify-between  items-center'>
+                  <div className='w-3/12 p-3 '>
+                    <Inputimg path={["image"]} status={section3data} setStatus={setSection3data} title="delivery solutions" height="150px" width="150px" />
+                  </div>
+                  <div className='w-3/12 p-3'>
+                    <label htmlFor="section3-title" className="block text-sm font-medium text-gray-900 dark:text-white">Title</label>
+                    <input type="text" id="section3-title" name="title" value={section3data?.title} onChange={(e) => { setSection3data({ ...section3data, title: e.target.value }) }} className="p-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                  </div>
+                  <div className='w-4/12 p-3'>
+                    <label htmlFor="section3-description" className="block text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                    <input type="text" id="section3-description" name="description" value={section3data?.description} onChange={(e) => { setSection3data({ ...section3data, description: e.target.value }) }} className="p-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                  </div>
+                  <div className='w-2/12 p-3'>
+                    <div className='mt-10'>
+                      <button className="btn rounded-2 h-[53px]  fw-bold" type='button' style={{ width: "150px", background: "#d65246", color: "white" }} onClick={() => handleSection3datasave()}>{editIndex3 === null ? "Add" : "update"}</button>
+                    </div>
+
+                  </div>
+                  <div className='w-2/12 p-3'>
+                    <div className='mt-10'>
+                      <button className="btn rounded-2 h-[53px]  fw-bold" type='button' style={{ width: "150px", background: "#d65246", color: "white" }} onClick={() => {
+                        setSection3data({
+                          title: '',
+                          description: '',
+                          image: null,
+                        })
+                        setEditIndex3(null)
+                      }}>cancel</button>
+                    </div>
+                  </div>
+                </div>
+                <div className=' w-full'>
+                  <table className='w-full'>
+                    <thead style={{ background: "rgb(37, 58, 113)", color: "white", textAlign: "center" }}>
+                      <tr >
+                        <th className='w-1/12' >No</th>
+                        <th className='w-1/12' >Image</th>
+                        <th className='w-3/12'>Title</th>
+                        <th>Description</th>
+                        <th className='w-3/12' >Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className='bg-white' style={{ textAlign: "center" }}>
+                      {
+                        section3?.data.map((item, index) => (
+                          <>
+                            <tr className=' w-full pb-2 border-b'>
+                              <td>{index + 1}</td>
+                              <td >
+                                <img src={item.image} alt="" style={{ width: "100px", backgroundColor: "black", border: "2px solid white" }} />
+                              </td>
+                              <td>
+                                {item.title}
+                              </td>
+                              <td>
+                                {item.description}
+                              </td>
+                              <td >
+                                <div className='w-full h-full  flex justify-evenly items-center'>
+                                  <button type="button" className="btn rounded-2 " style={{ width: "100px", height: "40px", background: "rgb(214, 82, 70) ", color: "white" }} onClick={() => handleDeletesection3data(index)}>Delete</button>
+                                  <button type="button" className="btn rounded-2 " style={{ width: "100px", height: "40px", background: "green", color: "white" }} onClick={() => handleEditssection3data(index)}>Edit</button>
+                                </div>
+                              </td>
+
+                            </tr>
+                          </>
+                        ))
+                      }
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/*  section 4 */}
+        <div>
+          <div className="w-full flex text-2xl font-bold pl-10 mt-10">
+            section 4
+          </div>
+        </div>
+
 
       </div >
     </>
