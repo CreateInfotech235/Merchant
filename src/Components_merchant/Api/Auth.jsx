@@ -3,6 +3,8 @@ import API from "./Api";
 import { toast } from "react-toastify";
 export const login = async (data) => {
     try {
+        console.log(data);
+        
         const response = await API.post(`/mobile/auth/signIn`, data);
         // console.log(response);
         
@@ -20,7 +22,7 @@ export const login = async (data) => {
 export const sendOtp = async (data) => {
     try {
         const response = await API.post(`mobile/auth/sendEmailOrMobileOtp`, data);
-        // console.log('abcd', response);
+        console.log('abcd', response);
         
         if (response.status === 200) {
             toast.success('OTP send to your email/contact no, Please check it')

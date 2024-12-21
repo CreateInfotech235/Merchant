@@ -85,7 +85,7 @@ const Signup = () => {
       email: values.email,
       contactNumber: values.contactNumber,
       personType: "CUSTOMER",
-      countryCode: values.address.country // You can change this based on the user type
+      // countryCode: values.address.country // You can change this based on the user type
     };
 
     const response = await sendOtp(otpPayload); // Call send OTP API

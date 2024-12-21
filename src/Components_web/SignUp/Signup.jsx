@@ -80,7 +80,7 @@ function Signup() {
       email: values.email,
       contactNumber: values.contactNumber,
       personType: "CUSTOMER",
-      countryCode: values.address.country
+      // countryCode: values.address.country
     };
 
     const response = await sendOtp(otpPayload);
