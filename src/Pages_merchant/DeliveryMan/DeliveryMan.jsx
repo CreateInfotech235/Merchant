@@ -25,18 +25,35 @@ const DeliveryMan = () => {
   const [showEditModal, setShowEditModal] = useState(false); // State for showing the edit modal
   const [showModal, setShowModal] = useState(false); // State for showing the edit modal
   const [showInfoModal, setShowInfoModal] = useState(false); // State for showing the view modal
+  const [loading, setLoading] = useState(true);
 
   const closeModel = () => setShowModel(false);
 
   const fetchDeliveryMen = async () => {
-    const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
-    const res = await getDeliveryMan(currentPage, itemsPerPage, searchParam);
+    setLoading(true);
+    try {
+      const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
+      const res = await getDeliveryMan(currentPage, itemsPerPage, searchParam);
 
-    if (res.status) {
-      const sortedDeliveryMen = res.data.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-      setDeliverymen(sortedDeliveryMen);
+      if (res.status) {
+        const trashedData = res.data
+          .filter((data) => data.trashed === false)
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+        const sortedDeliveryMen = res.data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+      
+        setDeliverymen(trashedData);
+      
+        // If you want to set trashed data somewhere, you can also handle it
+        // setTrashedDeliverymen(trashedData);
+      }
+      
+    } catch (err) {
+      console.error("Error fetching delivery men:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,6 +93,8 @@ const DeliveryMan = () => {
     indexOfLastDeliveryMan,
   );
 
+  console.log("currentDeliveryMen", currentDeliveryMen);
+  
   const handleDeleteClick = (deliveryMan) => {
     setSelectedDeliveryMan(deliveryMan._id);
     setShowModal(true);
@@ -168,18 +187,25 @@ const DeliveryMan = () => {
               </tr>
             </thead>
             <tbody>
-              {currentDeliveryMen.length === 0 ? (
-                <tr>
-                  <td colSpan="10" className="text-center p-3">
+            {loading ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
                   <div className="d-flex justify-content-center">
-                        <div className="mx-auto">
-                          <Loader />
-                          No Data Found
-                        </div>
-                      </div>
-                  </td>
-                </tr>
-              ) : (
+                    <div className="mx-auto">
+                      <Loader />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ) : currentDeliveryMen.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
+                  </div>
+                </td>
+              </tr>
+            ) : (
                 currentDeliveryMen.map((deliveryman) => (
                   deliveryman.trashed === false ? (
                   <tr key={deliveryman._id}>

@@ -1,19 +1,44 @@
 import React, { useEffect, useState } from "react";
 import tracking from "../../assets_web/Group (4).png";
+import Setting from "../../assets_web/services 1.png";
+import fast_delivery from "../../assets_web/fast-delivery 1.png";
+import iconamoon_clock from "../../assets_web/iconamoon_clock-bold.png";
+import international_delivery from "../../assets_web/international-delivery-svgrepo-com 1.png";
+import tracking_icon from "../../assets_web/tracking_icon.png";
+import happy_man from "../../assets_web/Rectangle 12.png";
+import pakage from "../../assets_web/image 1.png";
+import VideoPlayer from "../../assets_web/Icon.png";
 import deliveryMan from "../../assets_web/12008 1.png";
+import HeavyBox from "../../assets_web/Heavy box-amico.png";
 import Icon from "../../assets_web/Group 7.png";
 import Icon1 from "../../assets_web/Group 7 (1).png";
 import Icon2 from "../../assets_web/Group 7 (2).png";
 import Icon3 from "../../assets_web/Group 7 (3).png";
 import Icon4 from "../../assets_web/Group 7 (4).png";
+import carbon_task from "../../assets_web/carbon_task-approved.png";
 import partner1 from "../../assets_web/partner logo (1).jpg";
 import partner2 from "../../assets_web/partner logo (2).jpg";
 import { FaArrowRight } from "react-icons/fa";
+import bgImage from "../../assets_web/HeroImg.png";
+
+import solar_box from "../../assets_web/solar_box-linear.png";
+import people from "../../assets_web/fluent_people-team-16-regular.png";
+import earth from "../../assets_web/ion_earth.png";
+import weight from "../../assets_web/mdi_weight-kg.png";
+import basil_processor from "../../assets_web/basil_processor-outline.png";
 
 import "./Mainbody.css";
 
-import Gotop from "../Gotop/Gotop"
+import streamline_payment from "../../assets_web/streamline_payment-10.png";
+import order_confirmation from "../../assets_web/order-confirmation 1.png";
+import Group_3 from "../../assets_web/Group-(3).png";
+
+
+
+
+import Gotop from "../Gotop/Gotop";
 import { getWebHome } from "../Api/Webapi";
+import SliderForWeb from "./SliderForWeb";
 const servicesdata = [
   {
     service: "Timely Delivery",
@@ -58,34 +83,29 @@ function Mainbody() {
   const [webHome, setWebHome] = useState(null);
   const [services, setservices] = useState([]);
 
-  useEffect(() => {
-    const data = async () => {
-      const data = await getWebHome()
-      //  tamrare
-      
-      setWebHome(data)
-      setservices(servicesdata)
-    }
-    data()
-  }, []);
+  // useEffect(() => {
+  //   const data = async () => {
+  //     const data = await getWebHome();
+  //     //  tamrare
 
+  //     // setWebHome(data);
+  //     // setservices(servicesdata);
+  //   };
+  //   data();
+  // }, []);
 
+  // useEffect(() => {
+  //   window.scrollTo({ top: 0, behavior: "instant" });
+  // }, []);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, []);
-
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [webHome])
-
-
+  // useEffect(() => {
+  //   window.scrollTo({ top: 0, behavior: "instant" });
+  // }, [webHome]);
 
   return (
     <>
       <div>
-        {
+        {/* {
           webHome?.header?.isShow ?
             <div className="w-full relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32">
               {
@@ -150,9 +170,9 @@ function Mainbody() {
                 </div>
               </div>
             </div> : <div className="space-y-8 animate-pulse">
-              {/* <!-- Hero Section Skeleton --> */}
+              {/* <!-- Hero Section Skeleton --> 
               <div className="relative w-full h-[600px] bg-gray-300 dark:bg-gray-700">
-                {/* <!-- Title and Description --> */}
+                {/* <!-- Title and Description --> 
                 <div className="absolute inset-0 flex flex-col items-center justify-center space-y-6 px-6">
                   <div className="w-3/4 h-10 bg-gray-200 rounded-full dark:bg-gray-600"></div>
                   <div className="w-2/3 h-6 bg-gray-200 rounded-full dark:bg-gray-600"></div>
@@ -161,439 +181,576 @@ function Mainbody() {
               </div>
             </div>
 
-        }
-        {
-          webHome?.services?.isShow ? (
-            <>
-              <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">
-                <div className="">
-                  <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-                    {webHome?.services?.title}
-                  </h1>
-                  <div className="flex justify-center mt-3 items-center">
-                    <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-                    <img src={tracking} className="text-center" width={"50px"} alt="" />
-                    <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10 justify-center">
-                  {
-                    webHome?.services?.data?.map((service) => (
-                      <>
-                        <div className="demo hover:bg-[#221F92] py-5 px-2 max-w-sm border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 group">
-                          <div className="flex flex-col items-center">
-                            <img
-                              className="w-24 h-24 mb-3 group-hover:opacity-75 transition-opacity"
-                              src={service.image}
-                              alt="service image"
-                            />
-                            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white group-hover:text-white transition-colors">
-                              {service.title}
-                            </h5>
-                            <span className="text-sm text-gray-500 dark:text-gray-400 px-14 text-center group-hover:text-white transition-colors">
-                              {service.description}
-                            </span>
-                          </div>
-                          <div className="flex justify-end px-4 pt-4">
-                            <svg
-                              className="w-5 h-5 text-gray-900 group-hover:text-white transition-colors"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 16 3"
-                            >
-                              <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </>
-                    ))
-                  }
-
-                </div>
+        } */}
+        <div className="w-full relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32">
+          <img
+            alt=""
+            src={bgImage}
+            className="absolute inset-0 -z-10 size-full object-cover object-right md:object-center"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute top-0 left-0 w-full h-full bg-[#06052D]/80 -z-10"
+          ></div>
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between">
+            <div className="max-w-2xl lg:mx-0">
+              <h1 className="text-2xl mt-3 md:text-3xl lg:text-5xl font-medium tracking-tight text-[#FF6600] leading-[1.2] md:leading-[1.4] capitalize noto small">
+                Welcome To Create Courier
+              </h1>
+              <h2 className="mt-4 md:mt-8 md:text-lg lg:text-4xl text-white font-bold">
+                Fast & Reliable Courier Services for All Your Shipping Needs.
+              </h2>
+              <p className="mt-4 md:mt-8 text-base md:text-lg lg:text-xl text-gray-300 font-medium">
+                we provide fast, reliable, and secure courier services to meet
+                all your delivery needs. Whether you're sending a small package
+                or a large shipment, our team ensures timely and safe delivery
+                with tracking options for peace of mind."
+              </p>
+              <div className="mx-auto mt-6 md:mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
+                <button className="bg-[#FF6600] text-white px-4 py-2 rounded-md">
+                  Get Started
+                  <span className="ml-2">&rarr;</span>
+                </button>
               </div>
-            </>
-          ) : <div className="space-y-8 animate-pulse px-6 py-10 w-8/12 mx-auto">
-            {/* Section Title Skeleton */}
-            <div className="text-center space-y-4">
-              <div className="w-48 h-6 mx-auto bg-gray-200 rounded-full dark:bg-gray-600"></div>
-              <div className="w-12 h-12 mx-auto bg-gray-300 rounded-full dark:bg-gray-700"></div>
             </div>
-            {/* Cards Skeleton */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4].map((_, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center p-6 bg-gray-300 rounded-lg dark:bg-gray-700"
-                >
-                  {/* Icon Skeleton */}
-                  <div className="w-16 h-16 bg-gray-200 rounded-full dark:bg-gray-600 mb-4"></div>
-
-                  {/* Title Skeleton */}
-                  <div className="w-32 h-6 bg-gray-200 rounded-full dark:bg-gray-600 mb-2"></div>
-
-                  {/* Description Skeleton */}
-                  <div className="w-full h-4 bg-gray-200 rounded-full dark:bg-gray-600 mb-1"></div>
-                  <div className="w-3/4 h-4 bg-gray-200 rounded-full dark:bg-gray-600 mb-1"></div>
-
-                  {/* Ellipsis Skeleton */}
-                  <div className="w-6 h-6 bg-gray-200 rounded-full dark:bg-gray-600"></div>
-                </div>
-              ))}
-
+            <div className="max-w-2xl lg:mx-0">
+              <img src={HeavyBox} alt="" width={"100%"} />
             </div>
           </div>
-        }
+        </div>
 
-        {
-          webHome?.deliverySolutions?.isShow ? (
-            <>
-              <div className="mx-auto  my-24">
-                <div className="mb-9">
-                  <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-                    {webHome?.deliverySolutions?.title}
-                  </h1>
-                  <div className="flex justify-center mt-3 items-center">
-                    <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-                    <img src={tracking} className="text-center" width={"50px"} alt="" />
-                    <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-                  </div>
-                </div>
-
-                <div className="w-full bg-[#111827] text-white">
-                  <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="py-20 flex flex-wrap justify-center">
-
-                      {
-                        webHome?.deliverySolutions?.data.map((item) => (
-                          <>
-                            <div className="w-full sm:w-1/3 flex justify-center mb-8 sm:mb-0">
-                              <div className="w-[80%]">
-                                <img src={item.image} alt="" width={"40px"} />
-                                <div className="text-[20px] mt-[10px] font-extrabold">
-                                  {item.title}
-                                </div>
-                                <div className="mt-[10px]">
-                                  {item.description}
-                                </div>
-                                <div className="mt-[25px] text-[#c2ccff] font-semibold text-[15px] flex items-center group hover:text-[#c2ccff] transition ease-in-out delay-150 duration-500">
-                                  Know More <FaArrowRight className="ml-2 group-hover:ml-4" />
-                                </div>
-                              </div>
-                            </div>
-                          </>
-                        ))
-                      }
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>) : <div className="space-y-8 animate-pulse px-6 py-10">
-            {/* Section Title Skeleton */}
-            <div className="text-center space-y-4">
-              <div className="w-48 h-6 mx-auto bg-gray-200 rounded-full dark:bg-gray-600"></div>
-              <div className="w-12 h-12 mx-auto bg-gray-300 rounded-full dark:bg-gray-700"></div>
-            </div>
-            {/* Cards Skeleton */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4].map((_, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center p-6 bg-gray-300 rounded-lg dark:bg-gray-700"
-                >
-                  {/* Icon Skeleton */}
-                  <div className="w-16 h-16 bg-gray-200 rounded-full dark:bg-gray-600 mb-4"></div>
-
-                  {/* Title Skeleton */}
-                  <div className="w-32 h-6 bg-gray-200 rounded-full dark:bg-gray-600 mb-2"></div>
-
-                  {/* Description Skeleton */}
-                  <div className="w-full h-4 bg-gray-200 rounded-full dark:bg-gray-600 mb-1"></div>
-                  <div className="w-3/4 h-4 bg-gray-200 rounded-full dark:bg-gray-600 mb-1"></div>
-
-                  {/* Ellipsis Skeleton */}
-                  <div className="w-6 h-6 bg-gray-200 rounded-full dark:bg-gray-600"></div>
-                </div>
-              ))}
-
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">
+          <div className="">
+            <h1 className="text-4xl capitalize text-center font-bold tracking-wide noto small">
+              Top Services
+            </h1>
+            <div className="flex justify-center mt-3 items-center">
+              <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
+              <img
+                src={Setting}
+                className="text-center"
+                width={"70px"}
+                alt=""
+              />
+              <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
             </div>
           </div>
-        }
 
-
-
-        {
-          webHome ? (
-            <>
-              <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">
-                <div className="">
-                  <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-                    our delivery about
-                  </h1>
-                  <div className="flex justify-center mt-3 items-center">
-                    <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-                    {/* <div className="flex justify-center"> */}
-                    <img
-                      src={tracking}
-                      className="text-center"
-                      width={"50px"}
-                      alt=""
-                    // srcset=""
-                    />
-                    {/* </div> */}
-                    <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-                  </div>
+          <div className="flex justify-center gap-2">
+            {/* Team Member 1 */}
+            <div className="flex flex-col items-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+              <div className="w-48 md:w-72 bg-gray-200 rounded-t-full overflow-hidden">
+                <div className="w-full flex justify-center mt-14">
+                  <img src={fast_delivery} alt="" />
+                </div>
+                <p className="text-center text-[20px] font-bold noto small mt-3">
+                  Fast Delivery
+                </p>
+                <p className="text-justify px-5 mt-2 text-[#7B7A8B]">
+                  With real-time tracking and a reliable network of drivers, we
+                  prioritize speed without compromising safety.Trust for all
+                  your urgent shipping needs.
+                </p>
+                <div className="w-full flex flex-wrap px-5 mt-2">
+                  <p className="flex py-1 w-full  items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    Corporate goods
+                  </p>
+                  <p className="flex py-1 w-full items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    Shipment
+                  </p>
+                  <p className="flex py-1 w-full items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    Accesories
+                  </p>
                 </div>
 
-                <div className="">
-                  <section id="features" className="md:py-40 xl:py-10">
-                    <div className="container flex flex-col mx-auto mt-10 space-y-12 sm:px-2 md:space-y-0 md:px-12 md:flex-row">
-                      <div className="flex-col space-y-12 h-full md:w-1/2">
-                        <h2 className="max-w-md text-4xl font-bold text-center lg:mx-0 sm:mx-auto md:text-left">
-                          What’s different about Manage?
-                        </h2>
-                        <p className="max-w-sm text-center text-darkGrayishBlue lg:mx-0 sm:mx-auto md:text-left">
-                          Manage provides all the functionality your team needs, without
-                          the complexity. Our software is tailor-made for modern digital
-                          product teams.
-                        </p>
-                        <img src={deliveryMan} width={"100%"} alt="" />
-                      </div>
-
-                      <div className="flex flex-col space-y-12 md:px-12 md:w-1/2">
-                        <div className="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row">
-                          <div className="rounded-l-full bg-brightRedSuperLight md:bg-transparent">
-                            <div className="flex items-center space-x-2">
-                              <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92] md:py-1">
-                                01
-                              </div>
-                              <h3 className="text-base font-bold md:mb-4 md:hidden">
-                                Track company-wide progress
-                              </h3>
-                            </div>
-                          </div>
-                          <div>
-                            <h3 className="hidden mb-4 text-lg font-bold md:block">
-                              Track company-wide progress
-                            </h3>
-                            <p className="text-darkGrayishBlue lg:mx-0 sm:mx-auto md:text-left">
-                              See how your day-to-day tasks fit into the wider vision.
-                              Go from tracking progress at the milestone level all the
-                              way done to the smallest of details. Never lose sight of
-                              the bigger picture again.
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row">
-                          <div className="rounded-l-full bg-brightRedSuperLight md:bg-transparent">
-                            <div className="flex items-center space-x-2">
-                              <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92] md:py-1">
-                                02
-                              </div>
-                              <h3 className="text-base font-bold md:mb-4 md:hidden">
-                                Advanced built-in reports
-                              </h3>
-                            </div>
-                          </div>
-                          <div>
-                            <h3 className="hidden mb-4 text-lg font-bold md:block">
-                              Advanced built-in reports
-                            </h3>
-                            <p className="text-darkGrayishBlue lg:mx-0 sm:mx-auto md:text-left">
-                              Advanced built-in reports for a courier company in London offer real-time tracking, delivery performance analysis, route optimization, traffic insights, customer feedback, and operational data to enhance efficiency and improve service.
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row">
-                          <div className="rounded-l-full bg-brightRedSuperLight md:bg-transparent">
-                            <div className="flex items-center space-x-2">
-                              <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92] md:py-1">
-                                03
-                              </div>
-                              <h3 className="text-base font-bold md:mb-4 md:hidden">
-                                Everything you need in one place
-                              </h3>
-                            </div>
-                          </div>
-                          <div>
-                            <h3 className="hidden mb-4 text-lg font-bold md:block">
-                              Everything you need in one place
-                            </h3>
-                            <p className="text-darkGrayishBlue lg:mx-0 sm:mx-auto md:text-left">
-                              Courier services across all of London, providing fast, reliable, and efficient delivery solutions. We handle all your needs in one place, ensuring quick and safe transportation throughout the city
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
+                <div
+                  className="flex justify-center items-center py-2 mx-5 my-6 hover:bg-orange-500 hover:text-white transition"
+                  style={{
+                    borderColor: "#FF6600",
+                    borderWidth: "3px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  Learn More
                 </div>
               </div>
-
-              <div className="mx-auto max-w-7xl px-6 lg:px-8 my-8">
-                <div className="">
-                  <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-                    our happy achivment
-                  </h1>
-                  <div className="flex justify-center mt-3 items-center">
-                    <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-                    {/* <div className="flex justify-center"> */}
-                    <img
-                      src={tracking}
-                      className="text-center"
-                      width={"50px"}
-                      alt=""
-                    />
-                    {/* </div> */}
-                    <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-                  </div>
-                </div>
-              </div>
-
-
-              <div className="w-full bg-[#221F92]">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                  <div className="flex flex-wrap py-10 justify-between lg:justify-center gap-y-8">
-                    <div className="w-full sm:w-1/2 md:w-1/4 my-6 flex flex-col items-center justify-center">
-                      <h2 className="text-3xl sm:text-4xl font-bold text-white">7K+</h2>
-                      <h4 className="text-white font-semibold text-lg sm:text-2xl">
-                        Branches
-                      </h4>
-                    </div>
-                    <div className="w-full sm:w-1/2 md:w-1/4 my-6 flex flex-col items-center justify-center">
-                      <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                        50m+
-                      </h2>
-                      <h4 className="text-white font-semibold text-lg sm:text-2xl">
-                        Parcel Delivered
-                      </h4>
-                    </div>
-                    <div className="w-full sm:w-1/2 md:w-1/4 my-6 flex flex-col items-center justify-center">
-                      <h2 className="text-3xl sm:text-4xl font-bold text-white">4L+</h2>
-                      <h4 className="text-white font-semibold text-lg sm:text-2xl">
-                        Happy Merchant
-                      </h4>
-                    </div>
-                    <div className="w-full sm:w-1/2 md:w-1/4 my-6 flex flex-col items-center justify-center">
-                      <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                        700+
-                      </h2>
-                      <h4 className="text-white font-semibold text-lg sm:text-2xl">
-                        Positive Reviews
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mx-auto max-w-7xl px-6 lg:px-8 my-14">
-                <div className="">
-                  <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-                    why we courier
-                  </h1>
-                  <div className="flex justify-center mt-3 items-center">
-                    <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-                    {/* <div className="flex justify-center"> */}
-                    <img
-                      src={tracking}
-                      className="text-center"
-                      width={"50px"}
-                      alt=""
-                    />
-                    {/* </div> */}
-                    <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-                  </div>
-                </div>
-
-                <div className="">
-                  <section id="services">
-                    <div className="mb-24 mt-9 flex flex-col justify-start space-y-10">
-                      <div className="grid items-center gap-1.5 md:grid-cols-2 xl:grid-cols-3">
-                        <div className="flex flex-col py-6 xl:p-6">
-                          <h2 className="text-4xl font-medium tracking-tight">
-                            Need more info?
-                            <br />
-                            <span className="text-gradient clash-grotesk tracking-normal">
-                              I got you.
-                            </span>
-                          </h2>
-                          <p className="mt-2 tracking-tighter text-secondary-foreground">
-                            Here are some of the services I offer. If you have any
-                            questions, feel free to reach out.
-                          </p>
-                        </div>
-                        {services.map((service) => (
-                          <div
-                            key={service.service}
-                            className="flex flex-col items-start rounded-md bg-[#dbe1ff] p-14 shadow-md backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:bg-[#0000001a] hover:shadow-md"
-                          >
-                            <div className="my-6 text-primary">
-                              <img src={service.icon} width={"50%"} alt="" />
-                            </div>
-                            <span className="text-lg tracking-tight font-bold text-foreground">
-                              {service.service}
-                            </span>
-                            <span className="mt-2 text-gray-500 tracking-tighter text-muted-foreground">
-                              {service.description}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </section>
-                </div>
-              </div>
-
-              <div className="mx-auto max-w-7xl px-6 lg:px-8 my-14">
-                <div className="">
-                  <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
-                    our best partner
-                  </h1>
-                  <div className="flex justify-center mt-3 items-center">
-                    <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-                    {/* <div className="flex justify-center"> */}
-                    <img
-                      src={tracking}
-                      className="text-center"
-                      width={"50px"}
-                      alt=""
-                    />
-                    {/* </div> */}
-                    <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-                  </div>
-                </div>
-
-
-                <div className="flex  justify-evenly flex-wrap mt-9 w-full gap-6">
-                  {[
-                    partner1,
-                    partner2,
-                  ].map((img, index) => (
-                    <div
-                      key={index}
-                      className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-24px)] rounded-lg border flex justify-center p-5"
-                    >
-                      <img src={img} width="150px" alt={`partner-${index}`} />
-                    </div>
-                  ))}
-                </div>
-
-              </div>
-            </>
-          ) :
-            <>
-            <div className="loader">
-              section 4
             </div>
-            </>
-        }
+            <div className="flex flex-col items-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4 mt-28">
+              <div className="w-48 md:w-72 bg-gray-200 rounded-t-full overflow-hidden">
+                <div className="w-full flex justify-center mt-14">
+                  <img src={iconamoon_clock} alt="" />
+                </div>
+                <p className="text-center text-[20px] font-bold noto small mt-3">
+                  24/7 Support
+                </p>
+                <p className="text-justify px-5 mt-2 text-[#7B7A8B]">
+                  we know that your shipping needs follow a 9-to-5 schedule.
+                  That's why 24/7 courier service is available our around
+                  packages .
+                </p>
+                <div className="w-full flex flex-wrap px-5 mt-2">
+                  <p className="flex py-1 w-full  items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    Corporate goods
+                  </p>
+                  <p className="flex py-1 w-full items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    Shipment
+                  </p>
+                  <p className="flex py-1 w-full items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    Accesories
+                  </p>
+                </div>
+
+                <div
+                  className="flex justify-center items-center py-2 mx-5 my-6 hover:bg-orange-500 hover:text-white transition"
+                  style={{
+                    borderColor: "#FF6600",
+                    borderWidth: "3px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  Learn More
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+              <div className="w-48 md:w-72 bg-gray-200 rounded-t-full overflow-hidden">
+                <div className="w-full flex justify-center mt-14">
+                  <img src={international_delivery} alt="" />
+                </div>
+                <p className="text-center text-[20px] font-bold noto small mt-3">
+                  International Shipping
+                </p>
+                <p className="text-justify px-5 mt-2 text-[#7B7A8B]">
+                  Courier globally with confidence, ensuring fast, secure, and
+                  reliable delivery to destinations around the world.
+                </p>
+                <div className="w-full flex flex-wrap px-5 mt-2">
+                  <p className="flex py-1 w-full  items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    ensuring fast
+                  </p>
+                  <p className="flex py-1 w-full items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    Safe & secure
+                  </p>
+                  <p className="flex py-1 w-full items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    Reliable delivery
+                  </p>
+                </div>
+
+                <div
+                  className="flex justify-center items-center py-2 mx-5 my-6 hover:bg-orange-500 hover:text-white transition"
+                  style={{
+                    borderColor: "#FF6600",
+                    borderWidth: "3px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  Learn More
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center w-full sm:w-1/2 md:w-1/3 lg:w-1/4 mt-28">
+              <div className="w-48 md:w-72 bg-gray-200 rounded-t-full overflow-hidden">
+                <div className="w-full flex justify-center mt-14">
+                  <img src={tracking_icon} alt="" />
+                </div>
+                <p className="text-center text-[20px] font-bold noto small mt-3">
+                  Package Tracking
+                </p>
+                <p className="text-justify px-5 mt-2 text-[#7B7A8B]">
+                  Stay updated with real-time tracking, providing you with
+                  complete visibility of your package’s journey from start to
+                  finish.
+                </p>
+                <div className="w-full flex flex-wrap px-5 mt-2">
+                  <p className="flex py-1 w-full  items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    staying updated
+                  </p>
+                  <p className="flex py-1 w-full items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    pick-up to delivery
+                  </p>
+                  <p className="flex py-1 w-full items-center text-[#7B7A8B]">
+                    <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>{" "}
+                    helpfull
+                  </p>
+                </div>
+
+                <div
+                  className="flex justify-center items-center py-2 mx-5 my-6 hover:bg-orange-500 hover:text-white transition"
+                  style={{
+                    borderColor: "#FF6600",
+                    borderWidth: "3px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  Learn More
+                </div>
+              </div>
+            </div>
+
+            {/* Team Member 2 */}
+          </div>
+        </div>
+        <div className="mx-auto relative isolate max-w-7xl px-6 lg:px-8 my-24">
+          {/* <div className=""> */}
+          <img
+            src={happy_man}
+            alt=""
+            width={"100%"}
+            className="absolute inset-0 -z-10 size-full "
+          />
+          {/* </div> */}
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-center">
+            <div className="max-w-2xl lg:mx-0">
+              <img
+                src={VideoPlayer}
+                alt=""
+                width={"20%"}
+                className="mx-auto mt-36"
+              />
+              <h1 className="text-2xl noto small  mt-3 text-center  md:text-3xl lg:text-[31px] font-medium tracking-tight text-[#FF6600] leading-[1.2] md:leading-[1.4] capitalize noto small">
+                {/* FASTEST DELIVERY */}
+                Fastest Delivery
+              </h1>
+              <h2 className="mt-4 max-w-md text-center md:mt-8 md:text-lg text-white font-medium mb-32">
+                You can get your valuable item in the fastest period of time
+                with safety. Because your emergency is our first priority.
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">
+          <div className="">
+            <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
+              our delivery about
+            </h1>
+            <div className="flex justify-center mt-3 items-center">
+              <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
+              {/* <div className="flex justify-center"> */}
+              <img
+                src={tracking}
+                className="text-center"
+                width={"50px"}
+                alt=""
+                // srcset=""
+              />
+              {/* </div> */}
+              <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
+            </div>
+          </div>
+
+          <div className="">
+            <section id="features" className="md:py-40 xl:py-10">
+              <div className="container flex flex-col mx-auto mt-10 space-y-12 sm:px-2 md:space-y-0 md:px-12 md:flex-row">
+                <div className="flex-col space-y-12 h-full md:w-1/2">
+                  <h2 className="max-w-md text-4xl font-bold text-center lg:mx-0 sm:mx-auto md:text-left">
+                    What’s different about Manage?
+                  </h2>
+                  <p className="max-w-sm text-center text-darkGrayishBlue lg:mx-0 sm:mx-auto md:text-left">
+                    Manage provides all the functionality your team needs,
+                    without the complexity. Our software is tailor-made for
+                    modern digital product teams.
+                  </p>
+                  <img src={deliveryMan} width={"100%"} alt="" />
+                </div>
+
+                <div className="flex flex-col space-y-12 md:px-12 md:w-1/2">
+                  <div className="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row">
+                    <div className="rounded-l-full bg-brightRedSuperLight md:bg-transparent">
+                      <div className="flex items-center space-x-2">
+                        <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92] md:py-1">
+                          01
+                        </div>
+                        <h3 className="text-base font-bold md:mb-4 md:hidden">
+                          Track company-wide progress
+                        </h3>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="hidden mb-4 text-lg font-bold md:block">
+                        Track company-wide progress
+                      </h3>
+                      <p className="text-darkGrayishBlue lg:mx-0 sm:mx-auto md:text-left">
+                        See how your day-to-day tasks fit into the wider vision.
+                        Go from tracking progress at the milestone level all the
+                        way done to the smallest of details. Never lose sight of
+                        the bigger picture again.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row">
+                    <div className="rounded-l-full bg-brightRedSuperLight md:bg-transparent">
+                      <div className="flex items-center space-x-2">
+                        <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92] md:py-1">
+                          02
+                        </div>
+                        <h3 className="text-base font-bold md:mb-4 md:hidden">
+                          Advanced built-in reports
+                        </h3>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="hidden mb-4 text-lg font-bold md:block">
+                        Advanced built-in reports
+                      </h3>
+                      <p className="text-darkGrayishBlue lg:mx-0 sm:mx-auto md:text-left">
+                        Advanced built-in reports for a courier company in
+                        London offer real-time tracking, delivery performance
+                        analysis, route optimization, traffic insights, customer
+                        feedback, and operational data to enhance efficiency and
+                        improve service.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row">
+                    <div className="rounded-l-full bg-brightRedSuperLight md:bg-transparent">
+                      <div className="flex items-center space-x-2">
+                        <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92] md:py-1">
+                          03
+                        </div>
+                        <h3 className="text-base font-bold md:mb-4 md:hidden">
+                          Everything you need in one place
+                        </h3>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="hidden mb-4 text-lg font-bold md:block">
+                        Everything you need in one place
+                      </h3>
+                      <p className="text-darkGrayishBlue lg:mx-0 sm:mx-auto md:text-left">
+                        Courier services across all of London, providing fast,
+                        reliable, and efficient delivery solutions. We handle
+                        all your needs in one place, ensuring quick and safe
+                        transportation throughout the city
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div className="w-full relative">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${pakage})`,
+            }}
+          ></div>
+          <div className="absolute inset-0 bg-[#1D1D37] bg-opacity-70"></div>
+          <div className="w-full max-w-screen-xl mx-auto relative ">
+            {/* Background image */}
+
+            {/* Content */}
+            <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between px-8 lg:px-16 py-12 lg:py-20">
+              {/* Left content */}
+              <div className="max-w-xl">
+                <h1 className="text-white text-4xl font-bold mb-4 noto small">
+                  We Take Care About Transport At on For Your Business
+                </h1>
+                <p className="text-gray-300 text-lg mb-16">
+                  Our services include Same-Day Delivery for urgent needs,
+                  Next-Day Delivery for quick turnarounds, and International
+                  Shipping for global reach.
+                </p>
+                <a
+                  href="#"
+                  className="bg-orange-500 text-white px-6 py-3 rounded-md font-semibold text-lg hover:bg-orange-600 transition"
+                >
+                  Read more
+                </a>
+              </div>
+
+              {/* Right stats */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 lg:mt-0">
+                {/* Stat card 1 */}
+                <div className="bg-[#1D1D37]  rounded-lg p-6 text-center text-white">
+                  <div className="text-orange-500 text-4xl mb-4">
+                    <img src={solar_box} alt="" className="mx-auto " />
+                  </div>
+                  <p className="text-2xl font-bold">380k+</p>
+                  <p className="text-gray-300 mt-2">Delivery Packagings</p>
+                </div>
+
+                {/* Stat card 2 */}
+                <div className="bg-[#1D1D37]  rounded-lg p-6 text-center text-white">
+                  <div className="text-orange-500 text-4xl mb-4">
+                    <img src={people} alt="" className="mx-auto " />
+                  </div>
+                  <p className="text-2xl font-bold">70k+</p>
+                  <p className="text-gray-300 mt-2">Happy Clients</p>
+                </div>
+
+                {/* Stat card 3 */}
+                <div className="bg-[#1D1D37]  rounded-lg p-6 text-center text-white">
+                  <div className="text-orange-500 text-4xl mb-4">
+                    <img src={earth} alt="" className="mx-auto " />
+                  </div>
+                  <p className="text-2xl font-bold">380k+</p>
+                  <p className="text-gray-300 mt-2">Delivery Packagings</p>
+                </div>
+
+                {/* Stat card 4 */}
+                <div className="bg-[#1D1D37]  rounded-lg p-6 text-center text-white">
+                  <div className="text-orange-500 text-4xl mb-4">
+                    <img src={weight} alt="" className="mx-auto " />
+                  </div>
+                  <p className="text-2xl font-bold">50k+</p>
+                  <p className="text-gray-300 mt-2">Tons Of Goods</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 my-8">
+          <div className="">
+            <h1 className="text-3xl text-[#F95C19] capitalize text-center font-bold tracking-wide">
+              TESTIMONIAL
+            </h1>
+            <p className="text-center text-[39px] noto small font-bold text-[#000000]">
+              Our Awesome Clients
+            </p>
+            <div className="flex justify-center mt-3 items-center">
+              <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
+              {/* <div className="flex justify-center"> */}
+              <img
+                src={tracking}
+                className="text-center"
+                width={"50px"}
+                alt=""
+              />
+              {/* </div> */}
+              <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full overflow-hidden">
+          <SliderForWeb />
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 my-14">
+          <div className="">
+            <h1 className="text-4xl capitalize text-center font-bold tracking-wide">
+              Working Process
+            </h1>
+            <div className="flex justify-center mt-3 items-center">
+              <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
+              {/* <div className="flex justify-center"> */}
+              <img
+                src={basil_processor}
+                className="text-center"
+                width={"50px"}
+                alt=""
+              />
+              {/* </div> */}
+              <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
+            </div>
+          </div>
+          <div className="flex mt-10">
+            <div className="w-1/2 p-4">
+              <h1 className="text-4xl capitalize font-bold tracking-wide noto small mt-20">
+                We Take Care About Transport At on For Your Business
+              </h1>
+              <p className="text-lg text-gray-500 mt-4">
+                Our services include Same-Day Delivery for urgent needs,
+                Next-Day Delivery for quick turnarounds, and International
+                Shipping for global reach.
+              </p>
+              <div>
+                <button className="bg-[#F95C19] text-white px-6 py-3 rounded-md font-semibold text-lg hover:bg-orange-600 transition mt-6">
+                  Read more
+                </button>
+              </div>
+            </div>
+            <div className="w-1/2 p-4">
+              <div className="flex items-center">
+                <div className="">
+                  <div className="w-20 h-20 rounded-full bg-[#1D1D37] flex justify-center items-center me-3">
+                    <img src={carbon_task} alt="" />
+                  </div>
+                </div>
+                <div className="my-4">
+                  <h1 className="text-2xl noto small capitalize font-bold tracking-wide">
+                    Shipment Booking
+                  </h1>
+                  <p className="text-[16px] text-gray-500">
+                    The first step in the courier process involves the customer
+                    booking a shipment. This is done through an online
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <div className="">
+                  <div className="w-20 h-20 rounded-full bg-[#1D1D37] flex justify-center items-center me-3">
+                    <img src={streamline_payment} alt="" />
+                  </div>
+                </div>
+                <div className="my-4">
+                  <h1 className="text-2xl noto small capitalize font-bold tracking-wide">
+                  Payment Process
+                  </h1>
+                  <p className="text-[16px] text-gray-500">
+                  Once the shipment details are confirmed, the customer is 
+                  directed to make a payment for the service.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <div className="">
+                  <div className="w-20 h-20 rounded-full bg-[#1D1D37] flex justify-center items-center me-3">
+                    <img src={Group_3} alt="" />
+                  </div>
+                </div>
+                <div className="my-4">
+                  <h1 className="text-2xl noto small capitalize font-bold tracking-wide">
+                  Tracking & Monitoring
+                  </h1>
+                  <p className="text-[16px] text-gray-500">
+                  After payment, the customer receives a tracking number, 
+                  which allows them to monitor the parcel’s journey.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <div className="">
+                  <div className="w-20 h-20 rounded-full bg-[#1D1D37] flex justify-center items-center me-3">
+                    <img src={order_confirmation} alt="" />
+                  </div>
+                </div>
+                <div className="my-4">
+                  <h1 className="text-2xl noto small capitalize font-bold tracking-wide">
+                  Delivery Conformation
+                  </h1>
+                  <p className="text-[16px] text-gray-500">
+                  If there are any issues with delivery the website often
+                  offers options to reschedule or track the delivery status.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* <div className="loader">section 4</div> */}
       </div>
       <Gotop />
     </>
-
   );
 }
 

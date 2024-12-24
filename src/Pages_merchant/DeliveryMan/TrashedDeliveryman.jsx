@@ -27,16 +27,23 @@ const TrashedDeliveryman = () => {
   const [showEditModal, setShowEditModal] = useState(false); // State for showing the edit modal
   const [showModal, setShowModal] = useState(false); // State for showing the edit modal
   const [showInfoModal, setShowInfoModal] = useState(false); // State for showing the view modal
-
+  const [loading, setLoading] = useState(true);
   const closeModel = () => setShowModel(false);
 
   const fetchDeliveryMen = async () => {
-    const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
-    const res = await getDeliveryMan(currentPage, itemsPerPage, searchParam);
-    const trashedData = await res.data.filter(data => data.trashed === true)
+    setLoading(true);
+    try {
+      const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
+      const res = await getDeliveryMan(currentPage, itemsPerPage, searchParam);
+      const trashedData = await res.data.filter(data => data.trashed === true)
     if (res.status) {
 
-      setDeliverymen(trashedData);
+        setDeliverymen(trashedData);
+      }
+    } catch (err) {
+      console.error("Error fetching delivery men:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -167,18 +174,25 @@ const TrashedDeliveryman = () => {
               </tr>
             </thead>
             <tbody>
-              {currentDeliveryMen.length === 0 ? (
-                <tr>
-                  <td colSpan="10" className="text-center p-3">
+            {loading ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
                   <div className="d-flex justify-content-center">
-                        <div className="mx-auto">
-                          <Loader />
-                          No Data Found
-                        </div>
-                      </div>
-                  </td>
-                </tr>
-              ) : (
+                    <div className="mx-auto">
+                      <Loader />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ) : currentDeliveryMen.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
+                  </div>
+                </td>
+              </tr>
+            ) : (
                 currentDeliveryMen.map((deliveryman) => (
                   <tr key={deliveryman._id}>
                     <td className="user-table1">

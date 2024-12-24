@@ -20,10 +20,12 @@ const TrashedOrder = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [themeMode, setThemeMode] = useState("light"); // Define themeMode state
-  const [orderData , setOrderData] = useState([])
+    const [orderData , setOrderData] = useState([])
+    const [loading , setLoading] = useState(true)
 
 
-  const fetchData = async() => {
+    const fetchData = async() => {
+      setLoading(true)
     try {
       const MerchantId = await localStorage.getItem('merchnatId')
       const response = await getOrders(MerchantId , 1 , 10)
@@ -39,6 +41,8 @@ const TrashedOrder = () => {
       console.error("Error fetching orders:", error)
       setOrderData([])
       setFilteredOrders([])
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -174,18 +178,25 @@ const TrashedOrder = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.length === 0 ? (
-                <tr>
-                  <td colSpan="12" className="p-3 text-center">
+            {loading ? (
+              <tr>
+                <td colSpan="13" className="text-center p-3">
                   <div className="d-flex justify-content-center">
-                        <div className="mx-auto">
-                          <Loader />
-                          No Data Found
-                        </div>
-                      </div>
-                  </td>
-                </tr>
-              ) : (
+                    <div className="mx-auto">
+                      <Loader />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ) : filteredOrders.length === 0 ? (
+              <tr>
+                <td colSpan="13" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
+                  </div>
+                </td>
+              </tr>
+            ) : (
                 filteredOrders.map((order, index) => (
                   <tr key={index} className="country-row">
                     <td className="city-data">

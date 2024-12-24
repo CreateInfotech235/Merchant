@@ -1,154 +1,178 @@
-import React, { useState } from 'react';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
-import { FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
-import Gotop from '../../Components_web/Gotop/Gotop';
+import React, { useState } from "react";
+import bgImage from "../../assets_web/image (41).png";
+import effect from "../../assets_web/image (42).png";
+import HeavyBox from "../../assets_web/Contact us-bro 1.png";
+import Setting from "../../assets_web/Group 127.png";
+import Imagess from "../../assets_web/image_2.png";
+import Mail from "../../assets_web/ic_outline-email.png";
+import Call from "../../assets_web/material-symbols_call.png";
+import Location from "../../assets_web/bytesize_location.png";
+import Partner from "../../assets_web/mdi_partnership-outline.png";
+import Partner1 from "../../assets_web/partner logo (1).jpg";
+import Partner2 from "../../assets_web/partner logo (2).jpg";
 
-const validationSchema = Yup.object({
-  name: Yup.string().required('Name is required'),
-  email: Yup.string().email('Invalid email format').required('Email is required'),
-  subject: Yup.string().required('Subject is required'),
-  message: Yup.string().required('Message is required')
-});
-
+import TomTomMap from "./TomTomMap";
 function Contact() {
-  const [submitStatus, setSubmitStatus] = useState(null);
-
-  const handleSubmit = async (values, { resetForm }) => {
-    try {
-      // Mock API call - replace with actual API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSubmitStatus('success');
-      resetForm();
-    } catch (error) {
-      setSubmitStatus('error');
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-[#221F92] sm:text-5xl">
-            Contact Us
-          </h1>
-          <p className="mt-4 text-xl text-gray-600">
-            We'd love to hear from you. Please fill out this form or shoot us an email.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Contact Information */}
-          <div className="bg-[#221F92] rounded-lg p-8 text-white">
-            <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
-            
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <FaPhone className="text-2xl" />
-                <div>
-                  <h3 className="font-semibold">Phone</h3>
-                  <p>+1 (555) 123-4567</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <FaEnvelope className="text-2xl" />
-                <div>
-                  <h3 className="font-semibold">Email</h3>
-                  <p>support@example.com</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <FaMapMarkerAlt className="text-2xl" />
-                <div>
-                  <h3 className="font-semibold">Address</h3>
-                  <p>123 Business Street</p>
-                  <p>Mumbai, India 400001</p>
-                </div>
-              </div>
+    <>
+       <div className="w-full relative isolate overflow-hidden bg-gray-900 py-12 sm:py-16 md:py-24 lg:py-32">
+        <img
+          alt=""
+          src={bgImage}
+          className="absolute inset-0 -z-10 w-full h-full object-cover object-right md:object-center"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute top-0 left-0 w-full h-full bg-[#06052D5D]/80 -z-10"
+        ></div>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center lg:justify-between">
+          {/* Text Content */}
+          <div className="max-w-full lg:max-w-2xl xs:text-center lg:text-left">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-medium tracking-tight text-[#FF6600] leading-snug capitalize noto small">
+            Get in Touch – We’re Here to Help!
+            </h1>
+            <h2 className="mt-4 md:mt-6 lg:mt-8 text-white text-base sm:text-lg md:text-xl lg:text-4xl font-bold">
+            Have Question or Need Support?We will Assist You Promptly!
+            </h2>
+            <p className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
+            We’re here to help! If you have any questions or need assistance with your 
+shipment, our friendly customer support team is just a call or click away. 
+hether you need help with booking a delivery, tracking a parcel
+            </p>
+            <div className="mt-6 sm:mt-8 md:mt-10 flex justify-center lg:justify-start">
+              <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
+                Get Started
+                <span className="ml-2">&rarr;</span>
+              </button>
             </div>
           </div>
-
-          {/* Contact Form */}
-          <div className="bg-white rounded-lg p-8 shadow-lg">
-            <Formik
-              initialValues={{ name: '', email: '', subject: '', message: '' }}
-              validationSchema={validationSchema}
-              onSubmit={handleSubmit}
-            >
-              {({ errors, touched }) => (
-                <Form className="space-y-6">
-                  <div>
-                    <Field
-                      name="name"
-                      type="text"
-                      placeholder="Your Name"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-[#221F92] focus:border-[#221F92]"
-                    />
-                    {errors.name && touched.name && (
-                      <p className="mt-1 text-red-500 text-sm">{errors.name}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Field
-                      name="email"
-                      type="email"
-                      placeholder="Your Email"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-[#221F92] focus:border-[#221F92]"
-                    />
-                    {errors.email && touched.email && (
-                      <p className="mt-1 text-red-500 text-sm">{errors.email}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Field
-                      name="subject"
-                      type="text"
-                      placeholder="Subject"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-[#221F92] focus:border-[#221F92]"
-                    />
-                    {errors.subject && touched.subject && (
-                      <p className="mt-1 text-red-500 text-sm">{errors.subject}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Field
-                      as="textarea"
-                      name="message"
-                      placeholder="Your Message"
-                      rows="4"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-[#221F92] focus:border-[#221F92]"
-                    />
-                    {errors.message && touched.message && (
-                      <p className="mt-1 text-red-500 text-sm">{errors.message}</p>
-                    )}
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-[#221F92] text-white py-3 px-6 rounded-lg hover:bg-[#1a1873] transition-colors duration-200"
-                  >
-                    Send Message
-                  </button>
-
-                  {submitStatus === 'success' && (
-                    <p className="text-green-600 text-center">Message sent successfully!</p>
-                  )}
-                  {submitStatus === 'error' && (
-                    <p className="text-red-600 text-center">Failed to send message. Please try again.</p>
-                  )}
-                </Form>
-              )}
-            </Formik>
+          {/* Image Content */}
+          <div className="mt-8 lg:mt-0 max-w-full lg:max-w-lg">
+            <img src={HeavyBox} alt="Heavy Box" className="w-full h-auto" />
           </div>
         </div>
       </div>
-      <Gotop />
-    </div>
+
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">
+        <div className="">
+          <h1 className="text-4xl capitalize text-center font-bold tracking-wide noto small">
+            Contact Us
+          </h1>
+          <div className="flex justify-center mt-3 items-center">
+            <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
+            <img src={Setting} className="text-center" width={"70px"} alt="" />
+            <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
+          </div>
+        </div>
+
+        <div className="flex justify-center items-center">
+          <div className="w-1/2 p-6">
+            {/* <img src={Imagess} alt="" width={"100%"} className="mt-5" /> */}
+            <TomTomMap />
+          </div>
+          <div className="w-1/2 p-6  rounded-lg">
+            <form className="space-y-4">
+              <div>
+                <input
+                  type="text"
+                  id="trackingId"
+                  name="trackingId"
+                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter your tracking ID"
+                />
+              </div>
+              <div>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  id="zipCode"
+                  name="zipCode"
+                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter your zip code"
+                />
+              </div>
+              <div>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows={3}
+                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter any additional notes"
+                ></textarea>
+              </div>
+              <div className="text-center">
+                <button
+                  type="submit"
+                  className="w-full bg-[#1D1D37] noto small text-white font-bold py-3 px-4 rounded-md hover:bg-[#3b3b6d] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Track Now
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div className="flex justify-center items-center gap-6">
+          <div className="w-1/3 border p-6 rounded-lg">
+            <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
+              <img src={Mail} alt="" />
+            </div>
+            <h1 className="text-center text-xl font-bold mt-3">
+              createcourier456@gmail.com
+            </h1>
+          </div>
+          <div className="w-1/3 border p-6 rounded-lg">
+            <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
+              <img src={Call} alt="" />
+            </div>
+            <h1 className="text-center text-xl font-bold mt-3">
+              +44 78945 61232
+            </h1>
+          </div>
+          <div className="w-1/3 border p-6 rounded-lg">
+            <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
+              <img src={Location} alt="" />
+            </div>
+            <h1 className="text-center text-xl font-bold mt-3">
+              123, Anywhere, UK
+            </h1>
+          </div>
+        </div>
+
+        <div className="mt-24">
+          <h1 className="text-4xl capitalize text-center font-bold tracking-wide noto small">
+            Our Partners
+          </h1>
+          <div className="flex justify-center mt-3 items-center">
+            <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
+            <img src={Partner} className="text-center" width={"70px"} alt="" />
+            <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
+          </div>
+
+          <div className="flex justify-center items-center gap-6 mt-10">
+            <img src={Partner1} alt="" width={"150px"} />
+            <img src={Partner2} alt="" width={"150px"} />   
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import searchIcon from "../../assets_mercchant/search.png";
@@ -31,6 +30,7 @@ const TrashedCustomer = () => {
   const [themeMode, setThemeMode] = useState("light");
   const [showModel, setShowModel] = useState(false);
   const [customerId, setCustomerId] = useState(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (themeMode === "dark") {
       document.body.classList.add("dark-mode");
@@ -44,11 +44,19 @@ const TrashedCustomer = () => {
   };
 
   const fetchCustomers = async () => {
-    const response = await getAllCustomers();
-
-    if (response.status) {
-        const trashedData = await response.data.filter(data => data.trashed === true)
-      setCustomers(trashedData);
+    try {
+      setLoading(true);
+      const response = await getAllCustomers();
+      if (response.status) {
+        const trashedData = await response.data.filter(
+          (data) => data.trashed === true
+        );
+        setCustomers(trashedData);
+      }
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,9 +97,9 @@ const TrashedCustomer = () => {
     // console.log(id);
   };
   const handleCloseModal = () => {
-    setShowModel(false)
-    setCustomerId(null)
-  }
+    setShowModel(false);
+    setCustomerId(null);
+  };
 
   return (
     <>
@@ -110,7 +118,6 @@ const TrashedCustomer = () => {
             </button>
           </div>
         </div>
-       
       </div>
 
       <div className="table-responsive">
@@ -130,15 +137,22 @@ const TrashedCustomer = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredCustomers.length === 0 ? (
+            {loading ? (
               <tr>
                 <td colSpan="9" className="text-center p-3">
-                <div className="d-flex justify-content-center">
-                        <div className="mx-auto">
-                          <Loader />
-                          No Data Found
-                        </div>
-                      </div>
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">
+                      <Loader />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ) : filteredCustomers.length === 0 ? (
+              <tr>
+                <td colSpan="9" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -152,10 +166,12 @@ const TrashedCustomer = () => {
                   <td className="p-3">{customer.postCode}</td>
                   <td className="table-head2">
                     <div className="d-flex align-items-center justify-content-center">
-                      
-                      <button className="delete-btn me-1" onClick={() => hadleDeleteOrder(customer._id)}>
-                      <img src={deleteimg} alt="Delete" className="mx-auto"/>
-                    </button>
+                      <button
+                        className="delete-btn me-1"
+                        onClick={() => hadleDeleteOrder(customer._id)}
+                      >
+                        <img src={deleteimg} alt="Delete" className="mx-auto" />
+                      </button>
                       {/* <button
                         className="show-btn m-2"
                         onClick={() => handleShowInfo(customer)}
@@ -171,12 +187,14 @@ const TrashedCustomer = () => {
         </table>
       </div>
 
-      {showModel && <ConformDeleteModel
-      text="Customer"
-      Id = {customerId}
-        onDelete={() => handleCloseModal()}
-        onHide={() => setShowModel(false)}
-      />}
+      {showModel && (
+        <ConformDeleteModel
+          text="Customer"
+          Id={customerId}
+          onDelete={() => handleCloseModal()}
+          onHide={() => setShowModel(false)}
+        />
+      )}
       {/* Map Modal */}
       {isMapModalOpen && selectedLocation && (
         <div className="modal">
@@ -198,8 +216,6 @@ const TrashedCustomer = () => {
           </div>
         </div>
       )}
-
-     
 
       {/* Customer Info Modal */}
       {isInfoModalOpen && selectedCustomer && (

@@ -23,6 +23,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
   const [customerId, setCustomerId] = useState(null);
   const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
 
+
   useEffect(() => {
     const selectedCustomer = customer.find((c) => c.email === Order.cutomerEmail)
     if (selectedCustomer?._id) {
@@ -30,7 +31,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     }
   }, [customer]);
 
-  // console.log(Order);
+  console.log(Order);
   useEffect(() => {
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
@@ -649,7 +650,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     <div className="input-error mb-3">
                       <label className="fw-thin p-0 pb-1">Delivery Postcode :</label>
                       <Field
-                        type="number"
+                        type="text"
                         name="deliveryDetails.postCode"
                         className="form-control w-25% h-100%"
                         placeholder="PostCode"

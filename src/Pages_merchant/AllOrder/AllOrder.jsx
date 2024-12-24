@@ -36,16 +36,24 @@ const AllOrder = () => {
   const [pickupLocation, setPickupLocation] = useState(null);
   const [status, setStatus] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
-    const MerchantId = await localStorage.getItem("merchnatId");
-    const response = await getOrders(MerchantId, currentPage, ordersPerPage);
+    setLoading(true);
+    try {
+      const MerchantId = await localStorage.getItem("merchnatId");
+      const response = await getOrders(MerchantId, currentPage, ordersPerPage);
     if (response?.data) {
       setOrderData(response.data);
       setFilteredOrders(response.data);
     } else {
       setOrderData([]);
       setFilteredOrders([]);
+      }
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -185,6 +193,7 @@ const AllOrder = () => {
   };
 
   const handleEditClick = (order) => {
+    
     setSelectedOrder(order);
     setShowEditModal(true);
   };
@@ -309,18 +318,25 @@ const AllOrder = () => {
               </tr>
             </thead>
             <tbody>
-              {(!currentOrders || currentOrders.length === 0) ? (
-                <tr>
-                  <td colSpan="13" className="p-3 text-center">
+            {loading ? (
+              <tr>
+                <td colSpan="13" className="text-center p-3">
                   <div className="d-flex justify-content-center">
-                        <div className="mx-auto">
-                          <Loader />
-                          No Data Found
-                        </div>
-                      </div>
-                  </td>
-                </tr>
-              ) : (
+                    <div className="mx-auto">
+                      <Loader />
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ) : currentOrders.length === 0 ? (
+              <tr>
+                <td colSpan="13" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
+                  </div>
+                </td>
+              </tr>
+            ) : (
                 currentOrders.map((order, index) =>
                   order.trashed === false ? (
                     <tr key={index} className="country-row">
