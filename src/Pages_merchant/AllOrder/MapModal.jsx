@@ -1,12 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Modal, ModalBody, ModalHeader } from 'react-bootstrap';
-import { loadGoogleMapsApi } from './loadGoogleMapsApi';
+import React, { useEffect, useRef, useState } from "react";
+import { Modal, ModalBody, ModalHeader } from "react-bootstrap";
+import { loadGoogleMapsApi } from "./loadGoogleMapsApi";
 
-const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }) => {
-  const mapContainerStyle = { width: '100%', height: '400px' };
-  const apiKey = 'AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ'; // Replace with your actual API key
+const MapModal = ({
+  location,
+  deliveryLocation,
+  onHide,
+  status,
+  pickupLocation,
+}) => {
+  const mapContainerStyle = { width: "100%", height: "400px" };
+  const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo"; // Replace with your actual API key
   const mapRef = useRef(null);
-  const [center, setCenter] = useState({ lat: 40.7128, lng: -74.0060 });
+  const [center, setCenter] = useState({ lat: 40.7128, lng: -74.006 });
   const [distance, setDistance] = useState(null);
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
 
@@ -15,14 +21,14 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
   }, [location]);
 
   useEffect(() => {
-    if (status === 'DELIVERED') {
+    if (status === "DELIVERED") {
       onHide();
       return;
     }
 
-    loadGoogleMapsApi(apiKey, ['places', 'geometry', 'directions'])
+    loadGoogleMapsApi(apiKey, ["places", "geometry", "directions"])
       .then(() => setIsGoogleLoaded(true))
-      .catch((error) => console.error('Error loading Google Maps API:', error));
+      .catch((error) => console.error("Error loading Google Maps API:", error));
   }, [apiKey, status, onHide]);
 
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
@@ -31,7 +37,10 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
     const dLon = deg2rad(lng2 - lng1);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return (R * c).toFixed(2); // Return distance in km
   };
@@ -42,8 +51,12 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
     mapRef.current = map;
 
     if (location && deliveryLocation) {
-      const showPickupMarker = ['CREATED', 'ASSIGNED', 'ACCEPTED'].includes(status);
-      const locationToShow = showPickupMarker ? pickupLocation : deliveryLocation;
+      const showPickupMarker = ["CREATED", "ASSIGNED", "ACCEPTED"].includes(
+        status
+      );
+      const locationToShow = showPickupMarker
+        ? pickupLocation
+        : deliveryLocation;
 
       const distanceInKm = calculateDistance(
         location.lat,
@@ -56,15 +69,15 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
       new window.google.maps.Marker({
         position: location,
         map: map,
-        title: 'Delivery Boy Location',
-        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        title: "Delivery Boy Location",
+        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
       });
 
       new window.google.maps.Marker({
         position: locationToShow,
         map: map,
-        title: showPickupMarker ? 'Pickup Location' : 'Delivery Location',
-        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        title: showPickupMarker ? "Pickup Location" : "Delivery Location",
+        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
       });
 
       const directionsService = new window.google.maps.DirectionsService();
@@ -81,7 +94,7 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
         if (status === window.google.maps.DirectionsStatus.OK) {
           directionsRenderer.setDirections(result);
         } else {
-          console.error('Directions request failed:', status);
+          console.error("Directions request failed:", status);
         }
       });
     }
@@ -91,7 +104,7 @@ const MapModal = ({ location, deliveryLocation, onHide, status, pickupLocation }
     onHide();
   };
 
-  if (status === 'DELIVERED') {
+  if (status === "DELIVERED") {
     return null;
   }
 

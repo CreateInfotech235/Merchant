@@ -142,6 +142,8 @@ import Order from "./Pages_admin/Order/Order";
 import MerchantDeliveryMan from "./Pages_admin/DeliveryMan/MerchantDeliveryMan";
 import ViewSupportTickets from "./Pages_admin/SupportTicket/ViewSupportTickets";
 import HomePage from "./Pages_admin/HomePage/HomePage";
+import Faqs from "./Pages_web/Faqs/Faqs";
+import PageNotFound from "./Pages_web/PageNotFound/PageNotFound";
 
 
 function App() {
@@ -431,6 +433,22 @@ function App() {
           element={
             <Formate Login={islogin} useData={userData}>
               <Mainbody />
+            </Formate>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Formate>
+              <PageNotFound />
+            </Formate>
+          }
+        />
+        <Route
+          path="/faqs"
+          element={
+            <Formate>
+              <Faqs />
             </Formate>
           }
         />

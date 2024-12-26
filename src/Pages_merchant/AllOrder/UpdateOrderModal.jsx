@@ -17,15 +17,18 @@ const UpdateOrderModal = ({ onHide, Order }) => {
   const navigate = useNavigate(); // Fixed duplicate navigate declaration
   const merchant = JSON.parse(localStorage.getItem("userData"));
   const [deliveryMan, setDeliveryMen] = useState([]);
-  const [deliveryManId, setDeliveryMenId] = useState(Order?.deliveryManId || null);
+  const [deliveryManId, setDeliveryMenId] = useState(
+    Order?.deliveryManId || null
+  );
   const [customer, setCustomer] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [customerId, setCustomerId] = useState(null);
   const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
 
-
   useEffect(() => {
-    const selectedCustomer = customer.find((c) => c.email === Order.cutomerEmail)
+    const selectedCustomer = customer.find(
+      (c) => c.email === Order.cutomerEmail
+    );
     if (selectedCustomer?._id) {
       setCustomerId(selectedCustomer?._id);
     }
@@ -40,30 +43,36 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       const deliveryManRes = await getDeliveryMan();
       if (deliveryManRes.data || deliveryMans.data) {
         // Filter active delivery men from first source
-        const activeDeliveryMen = deliveryManRes.data?.filter(man => man.status !== "DISABLE") || [];
-        const formattedAdminDeliveryMen = deliveryMans.data?.map(man => ({
-          ...man,
-          firstName: man.firstName || man.name?.split(' ')[0] || undefined,
-          lastName: man.lastName || (man.name?.split(' ').slice(1).join(' ')) || undefined,
-          _id: man._id,
-          email: man.email,
-          contactNumber: man.contactNumber,
-          status: man.status || 'ENABLE'
-        })) || [];
+        const activeDeliveryMen =
+          deliveryManRes.data?.filter((man) => man.status !== "DISABLE") || [];
+        const formattedAdminDeliveryMen =
+          deliveryMans.data?.map((man) => ({
+            ...man,
+            firstName: man.firstName || man.name?.split(" ")[0] || undefined,
+            lastName:
+              man.lastName ||
+              man.name?.split(" ").slice(1).join(" ") ||
+              undefined,
+            _id: man._id,
+            email: man.email,
+            contactNumber: man.contactNumber,
+            status: man.status || "ENABLE",
+          })) || [];
 
         // Combine both arrays and remove duplicates by _id and email
-        setLengthofdeliverymen(activeDeliveryMen.length)
-        const mergedDeliveryMen = [...activeDeliveryMen, ...formattedAdminDeliveryMen]
-          .reduce((acc, current) => {
-            const isDuplicate = acc.find(item =>
-              item._id === current._id ||
-              item.email === current.email
-            );
-            if (!isDuplicate && current.status !== "DISABLE") {
-              return acc.concat([current]);
-            }
-            return acc;
-          }, []);
+        setLengthofdeliverymen(activeDeliveryMen.length);
+        const mergedDeliveryMen = [
+          ...activeDeliveryMen,
+          ...formattedAdminDeliveryMen,
+        ].reduce((acc, current) => {
+          const isDuplicate = acc.find(
+            (item) => item._id === current._id || item.email === current.email
+          );
+          if (!isDuplicate && current.status !== "DISABLE") {
+            return acc.concat([current]);
+          }
+          return acc;
+        }, []);
 
         setDeliveryMen(mergedDeliveryMen);
       }
@@ -149,7 +158,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     deliveryDetails: Yup.object().shape({
       address: Yup.string().required("Required"),
       name: Yup.string().required("Required"),
-      mobileNumber: Yup.number().required("Required"), 
+      mobileNumber: Yup.number().required("Required"),
       email: Yup.string().email("Invalid email").required("Required"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
@@ -163,22 +172,29 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     let pickuplocation = null;
 
     // Handle pickup location
-    if (!values.pickupDetails.location.latitude && !values.pickupDetails.location.longitude) {
+    if (
+      !values.pickupDetails.location.latitude &&
+      !values.pickupDetails.location.longitude
+    ) {
       if (values.pickupDetails.address) {
         try {
-          const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+          const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
           const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.pickupDetails.address)}&key=${apiKey}`
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+              values.pickupDetails.address
+            )}&key=${apiKey}`
           );
           const data = await response.json();
 
           if (data.results && data.results.length > 0) {
             const { lat, lng } = data.results[0].geometry.location;
             const formattedAddress = data.results[0]?.formatted_address;
-            const postalCodeComponent = data.results[0].address_components.find(component =>
-              component.types.includes('postal_code')
+            const postalCodeComponent = data.results[0].address_components.find(
+              (component) => component.types.includes("postal_code")
             );
-            const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
+            const postalCode = postalCodeComponent
+              ? postalCodeComponent.long_name
+              : "";
 
             pickuplocation = { latitude: lat, longitude: lng };
             setFieldValue("pickupDetails.address", formattedAddress);
@@ -200,12 +216,17 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     }
 
     // Handle delivery location
-    if (!values.deliveryDetails.location.latitude && !values.deliveryDetails.location.longitude) {
+    if (
+      !values.deliveryDetails.location.latitude &&
+      !values.deliveryDetails.location.longitude
+    ) {
       if (values.deliveryDetails.address) {
         try {
-          const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+          const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
           const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.deliveryDetails.address)}&key=${apiKey}`
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+              values.deliveryDetails.address
+            )}&key=${apiKey}`
           );
           const data = await response.json();
 
@@ -237,11 +258,11 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       pickupDetails: {
         ...values.pickupDetails,
         dateTime: pictimestamp,
-        location: pickuplocation
+        location: pickuplocation,
       },
       deliveryDetails: {
         ...values.deliveryDetails,
-        location: deliverylocation
+        location: deliverylocation,
       },
     };
 
@@ -302,32 +323,38 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                   </div>
 
                   <div className="input-error col-12 col-sm-6 mb-3">
-                    <label className="fw-thin p-0 pb-1">Select Delivery Man :</label>
+                    <label className="fw-thin p-0 pb-1">
+                      Select Delivery Man :
+                    </label>
                     <Field
                       as="select"
                       name="deliveryManId"
                       className="w-full h-[4.5em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="" className="text-gray-500">Select Delivery Man</option>
+                      <option value="" className="text-gray-500">
+                        Select Delivery Man
+                      </option>
                       {deliveryMan.map((data, index) => {
                         if (lengthofdeliverymen === index) {
-                          return (<>
-                            <option
-                              key={index}
-                              value={"admin"}
-                              className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
-                              disabled
-                            >
-                              Admin
-                            </option>
-                            <option
-                              key={`${index}-data`}
-                              value={data._id}
-                              className="py-1.5 px-3 hover:bg-gray-100"
-                            >
-                              {`${data.firstName} ${data.lastName}`}
-                            </option>
-                          </>);
+                          return (
+                            <>
+                              <option
+                                key={index}
+                                value={"admin"}
+                                className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
+                                disabled
+                              >
+                                Admin
+                              </option>
+                              <option
+                                key={`${index}-data`}
+                                value={data._id}
+                                className="py-1.5 px-3 hover:bg-gray-100"
+                              >
+                                {`${data.firstName} ${data.lastName}`}
+                              </option>
+                            </>
+                          );
                         }
                         return (
                           <option
@@ -352,7 +379,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       key={"paymentCollectionRupees"}
                       className="input-error col-12 col-sm-6 mb-3"
                     >
-                      <label className="fw-thin p-0 pb-1">Payment Collection (Rupees) :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Payment Collection (Rupees) :
+                      </label>
                       <Field
                         as="input"
                         name="paymentCollectionRupees"
@@ -419,7 +448,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
 
                     {/* Pickup Details Fields */}
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Pickup Date & Time :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Pickup Date & Time :
+                      </label>
                       <Field
                         type="datetime-local"
                         name="pickupDetails.dateTime"
@@ -435,7 +466,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     </div>
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Pickup Address :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Pickup Address :
+                      </label>
                       <Field
                         type="text"
                         as="textarea"
@@ -451,7 +484,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Pickup Postcode :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Pickup Postcode :
+                      </label>
                       <Field
                         type="text"
                         name="pickupDetails.postCode"
@@ -491,7 +526,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     </div> */}
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Pickup Contact Number :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Pickup Contact Number :
+                      </label>
                       <Field
                         type="number"
                         name="pickupDetails.mobileNumber"
@@ -530,7 +567,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Merchant Name :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Merchant Name :
+                      </label>
                       <Field
                         type="text"
                         name="pickupDetails.name"
@@ -550,7 +589,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     </div>
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Pickup Description :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Pickup Description :
+                      </label>
                       <Field
                         as="textarea"
                         name="pickupDetails.description"
@@ -574,7 +615,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     <h3 className="fw-bold">Delivery Information</h3>
                     {/* Delivery Details Fields */}
                     {/* <div className="input-error mb-3"> */}
-                    <label className="fw-thin p-0 pb-1">Select Customer :</label>
+                    <label className="fw-thin p-0 pb-1">
+                      Select Customer :
+                    </label>
                     <Field name="customer">
                       {({ field, form }) => (
                         <div>
@@ -583,7 +626,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                             style={{
                               height: "4.5em",
                               border: "1px solid #E6E6E6",
-                              borderRadius: "5px"
+                              borderRadius: "5px",
                             }}
                             value={customerId || ""}
                             onChange={(e) => {
@@ -619,7 +662,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                               }
                             }}
                           >
-                            <option value="" disabled selected>Select Customer</option>
+                            <option value="" disabled selected>
+                              Select Customer
+                            </option>
                             {customer.map((cust) => (
                               <option key={cust._id} value={cust._id}>
                                 {`${cust.firstName} - ${cust.email} - ${cust.mobileNumber}`}
@@ -632,7 +677,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     {/* </div> */}
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Delivery Address :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Delivery Address :
+                      </label>
                       <Field
                         type="text"
                         as="textarea"
@@ -648,7 +695,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Delivery Postcode :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Delivery Postcode :
+                      </label>
                       <Field
                         type="text"
                         name="deliveryDetails.postCode"
@@ -687,7 +736,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div> */}
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Delivery Contact Number :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Delivery Contact Number :
+                      </label>
                       <Field
                         type="number"
                         name="deliveryDetails.mobileNumber"
@@ -706,7 +757,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Delivery Email :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Delivery Email :
+                      </label>
                       <Field
                         type="email"
                         name="deliveryDetails.email"
@@ -725,7 +778,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Customer Name :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Customer Name :
+                      </label>
                       <Field
                         type="text"
                         name="deliveryDetails.name"
@@ -744,7 +799,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1">Delivery Description :</label>
+                      <label className="fw-thin p-0 pb-1">
+                        Delivery Description :
+                      </label>
                       <Field
                         as="textarea"
                         name="deliveryDetails.description"

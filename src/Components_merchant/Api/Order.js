@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 export const createOrder = async (data) => {
   try {
     const response = await API.post(`/mobile/order/create`, data);
-    // console.log("response", response);
+    console.log("response", response);
 
     if (response.status === 200) {
       toast.success(response.data.message);
@@ -165,6 +165,23 @@ export const deleteIOrder = async (OrderID) => {
         message: response.response.data.message || response.message,
       };
     }
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    toast.error(error.message);
+    return { status: false, message: error.message };
+  }
+};
+
+
+export const calculateDistancee = async (pickuplocation, deliverylocation) => {
+  
+  try {
+    const apiKey = "AIzaSyBnWMbLVCkqKy2cHFAXnZqF2Ay-6T44Jzw";
+    const origin = `${pickuplocation.latitude},${pickuplocation.longitude}`;
+    const destination = `${deliverylocation.latitude},${deliverylocation.longitude}`;
+    const response = await API.post(`/mobile/auth/distance?origin=${origin}&destination=${destination}&apiKey=${apiKey}`);
+    console.log(response);
+    return response;
   } catch (error) {
     console.error("Error fetching orders:", error);
     toast.error(error.message);

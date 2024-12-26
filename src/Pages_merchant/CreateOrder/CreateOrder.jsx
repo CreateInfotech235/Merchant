@@ -4,12 +4,15 @@ import * as Yup from "yup";
 import countryList from "react-select-country-list";
 import "./CreateOrder.css";
 import { useNavigate } from "react-router-dom";
-import { createOrder } from "../../Components_merchant/Api/Order";
-import { getDeliveryMan, getAllDeliveryMans } from "../../Components_merchant/Api/DeliveryMan";
+import { calculateDistancee, createOrder } from "../../Components_merchant/Api/Order";
+import {
+  getDeliveryMan,
+  getAllDeliveryMans,
+} from "../../Components_merchant/Api/DeliveryMan";
 import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import { Spinner } from "react-bootstrap";
 import Select from "react-select";
-const CreateOrder = () => { 
+const CreateOrder = () => {
   const naviagte = useNavigate();
 
   const [deliveryMan, setDeliveryMen] = useState([]);
@@ -27,7 +30,7 @@ const CreateOrder = () => {
         (position) => {
           setCurrentLocation({
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude
+            longitude: position.coords.longitude,
           });
         },
         (error) => {
@@ -39,36 +42,41 @@ const CreateOrder = () => {
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
       const deliveryMans = await getAllDeliveryMans();
-      
+
       const deliveryManRes = await getDeliveryMan();
       if (deliveryManRes.data || deliveryMans.data) {
         // Filter active delivery men from first source
-        const activeDeliveryMen = deliveryManRes.data?.filter(man => man.status !== "DISABLE") || [];
-        const formattedAdminDeliveryMen = deliveryMans.data?.map(man => ({
-          ...man,
-          firstName: man.firstName || man.name?.split(' ')[0] || undefined,
-          lastName: man.lastName || (man.name?.split(' ').slice(1).join(' ')) || undefined,
-          _id: man._id,
-          email: man.email,
-          contactNumber: man.contactNumber,
-          status: man.status || 'ENABLE'
-        })) || [];
+        const activeDeliveryMen =
+          deliveryManRes.data?.filter((man) => man.status !== "DISABLE") || [];
+        const formattedAdminDeliveryMen =
+          deliveryMans.data?.map((man) => ({
+            ...man,
+            firstName: man.firstName || man.name?.split(" ")[0] || undefined,
+            lastName:
+              man.lastName ||
+              man.name?.split(" ").slice(1).join(" ") ||
+              undefined,
+            _id: man._id,
+            email: man.email,
+            contactNumber: man.contactNumber,
+            status: man.status || "ENABLE",
+          })) || [];
         // console.log("formattedAdminDeliveryMen", formattedAdminDeliveryMen);
 
         // Combine both arrays and remove duplicates by _id and email
-        setLengthofdeliverymen(activeDeliveryMen.length)
-        const mergedDeliveryMen = [...activeDeliveryMen, ...formattedAdminDeliveryMen]
-
-          .reduce((acc, current) => {
-            const isDuplicate = acc.find(item =>
-              item._id === current._id ||
-              item.email === current.email
-            );
-            if (!isDuplicate && current.status !== "DISABLE") {
-              return acc.concat([current]);
-            }
-            return acc;
-          }, []);
+        setLengthofdeliverymen(activeDeliveryMen.length);
+        const mergedDeliveryMen = [
+          ...activeDeliveryMen,
+          ...formattedAdminDeliveryMen,
+        ].reduce((acc, current) => {
+          const isDuplicate = acc.find(
+            (item) => item._id === current._id || item.email === current.email
+          );
+          if (!isDuplicate && current.status !== "DISABLE") {
+            return acc.concat([current]);
+          }
+          return acc;
+        }, []);
 
         // console.log("mergedDeliveryMen", mergedDeliveryMen);
         setDeliveryMen(mergedDeliveryMen);
@@ -84,25 +92,27 @@ const CreateOrder = () => {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2); 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c; // Distance in km
     return d.toFixed(2);
-  }
+  };
 
   const deg2rad = (deg) => {
-    return deg * (Math.PI/180);
-  }
+    return deg * (Math.PI / 180);
+  };
 
   const getCurrentLocation = async (setFieldValue) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
-          const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+          const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
 
           // Fetch the formatted address using reverse geocoding
           const response = await fetch(
@@ -114,14 +124,15 @@ const CreateOrder = () => {
           if (data.results && data.results.length > 0) {
             const formattedAddress =
               data.results[0].formatted_address || "Unable to fetch address";
-            const postalCodeComponent = data.results[0].address_components.find(component =>
-              component.types.includes('postal_code')
+            const postalCodeComponent = data.results[0].address_components.find(
+              (component) => component.types.includes("postal_code")
             );
-            const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
+            const postalCode = postalCodeComponent
+              ? postalCodeComponent.long_name
+              : "";
 
             setFieldValue("pickupDetails.address", formattedAddress);
             setFieldValue("pickupDetails.postCode", postalCode);
-
           }
 
           setFieldValue("pickupDetails.location.latitude", latitude);
@@ -144,23 +155,27 @@ const CreateOrder = () => {
 
     if (address) {
       // Fetch the coordinates using geocoding
-      const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+      const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          address
+        )}&key=${apiKey}`
       );
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
 
       if (data.results && data.results.length > 0) {
         const { lat, lng } = data.results[0].geometry.location; // Correctly extract latitude and longitude
-        const formattedAddress = data.results[0]?.formatted_address || "Unable to fetch address";
+        const formattedAddress =
+          data.results[0]?.formatted_address || "Unable to fetch address";
 
         // console.log(formattedAddress, lat, lng);
-        const postalCodeComponent = data.results[0].address_components.find(component =>
-          component.types.includes('postal_code')
+        const postalCodeComponent = data.results[0].address_components.find(
+          (component) => component.types.includes("postal_code")
         );
-        const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
-
+        const postalCode = postalCodeComponent
+          ? postalCodeComponent.long_name
+          : "";
 
         // Set the address and coordinates to the form
         setFieldValue("deliveryDetails.address", formattedAddress);
@@ -173,7 +188,6 @@ const CreateOrder = () => {
     } else {
       alert("Please enter an address.");
     }
-
   };
 
   const initialValues = {
@@ -188,7 +202,9 @@ const CreateOrder = () => {
       },
       dateTime: "",
       merchantId: merchant._id || "",
-      address: `${merchant?.address?.street} , ${merchant?.address?.city} , ${merchant?.address?.postalCode} , ${merchant?.address?.country}` || "",
+      address:
+        `${merchant?.address?.street} , ${merchant?.address?.city} , ${merchant?.address?.postalCode} , ${merchant?.address?.country}` ||
+        "",
       // countryCode: merchant.countryCode || "",
       mobileNumber: merchant.contactNumber || "",
       email: merchant.email || "",
@@ -210,6 +226,8 @@ const CreateOrder = () => {
       postCode: "",
     },
     cashOnDelivery: "false",
+    distance: "",
+    duration: "",
   };
 
   const validationSchema = Yup.object().shape({
@@ -218,6 +236,8 @@ const CreateOrder = () => {
       .positive("Must be positive")
       .min(1),
     dateTime: Yup.string().required("Required"),
+    // distance: Yup.string().required("Required"),
+    // duration: Yup.string().required("Required"),
     paymentCollectionRupees: Yup.string().test(
       "paymentCollectionRequired",
       "Payment collection is required when cash on delivery is Yes",
@@ -244,6 +264,7 @@ const CreateOrder = () => {
       email: Yup.string().email("Invalid email").required("Required"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
+
       // merchantId: Yup.number().required("Required"),
     }),
     deliveryDetails: Yup.object().shape({
@@ -268,38 +289,50 @@ const CreateOrder = () => {
   const onSubmit = async (values, { setFieldValue }) => {
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
-    var deliverylocation = null
+    var deliverylocation = null;
 
-    var pickuplocation = values.pickupDetails.location.latitude === null ? null : {
-      latitude: values.pickupDetails.location.latitude,
-      longitude: values.pickupDetails.location.longitude
-    }
+    var pickuplocation =
+      values.pickupDetails.location.latitude === null
+        ? null
+        : {
+            latitude: values.pickupDetails.location.latitude,
+            longitude: values.pickupDetails.location.longitude,
+          };
 
-    if (!values.pickupDetails.location.latitude && !values.pickupDetails.location.longitude) {
+    if (
+      !values.pickupDetails.location.latitude &&
+      !values.pickupDetails.location.longitude
+    ) {
       // console.log('Helo');
       if (values.pickupDetails.address) {
         // Fetch the coordinates using geocoding
-        const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+        const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.pickupDetails.address)}&key=${apiKey}`
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+            values.pickupDetails.address
+          )}&key=${apiKey}`
         );
         const data = await response.json();
-        // console.log(setFieldValue);
+        console.log(data);
 
         if (data.results && data.results.length > 0) {
           const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
-          const formattedAddress = await data.results[0]?.formatted_address || "Unable to fetch address";
+          const formattedAddress =
+            (await data.results[0]?.formatted_address) ||
+            "Unable to fetch address";
 
           // console.log(formattedAddress, lat, lng);
-          const postalCodeComponent = data.results[0].address_components.find(component =>
-            component.types.includes('postal_code')
+          const postalCodeComponent = data.results[0].address_components.find(
+            (component) => component.types.includes("postal_code")
           );
-          const postalCode = await postalCodeComponent ? postalCodeComponent.long_name : "";
+          const postalCode = (await postalCodeComponent)
+            ? postalCodeComponent.long_name
+            : "";
 
           pickuplocation = {
             latitude: lat,
-            longitude: lng
-          }
+            longitude: lng,
+          };
 
           // Set the address and coordinates to the form
           setFieldValue("pickupDetails.address", formattedAddress);
@@ -312,33 +345,42 @@ const CreateOrder = () => {
       } else {
         alert("Please enter an address.");
       }
-
     }
-    if (!values.deliveryDetails.location.latitude && !values.deliveryDetails.location.longitude) {
+    if (
+      !values.deliveryDetails.location.latitude &&
+      !values.deliveryDetails.location.longitude
+    ) {
       // console.log('Helo');
       if (values.pickupDetails.address) {
         // Fetch the coordinates using geocoding
-        const apiKey = "AIzaSyA_kcxyVAPdpAKnQtzpVdOVMOILjGrqWFQ";
+        const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(values.deliveryDetails.address)}&key=${apiKey}`
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+            values.deliveryDetails.address
+          )}&key=${apiKey}`
         );
         const data = await response.json();
+        console.log(data);
         // console.log(setFieldValue);
 
         if (data.results && data.results.length > 0) {
           const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
-          const formattedAddress = await data.results[0]?.formatted_address || "Unable to fetch address";
+          const formattedAddress =
+            (await data.results[0]?.formatted_address) ||
+            "Unable to fetch address";
 
           // console.log(formattedAddress, lat, lng);
-          const postalCodeComponent = data.results[0].address_components.find(component =>
-            component.types.includes('postal_code')
+          const postalCodeComponent = data.results[0].address_components.find(
+            (component) => component.types.includes("postal_code")
           );
-          const postalCode = await postalCodeComponent ? postalCodeComponent.long_name : "";
+          const postalCode = (await postalCodeComponent)
+            ? postalCodeComponent.long_name
+            : "";
 
           deliverylocation = {
             latitude: lat,
-            longitude: lng
-          }
+            longitude: lng,
+          };
 
           // Set the address and coordinates to the form
           setFieldValue("deliveryDetails.address", formattedAddress);
@@ -351,7 +393,62 @@ const CreateOrder = () => {
       } else {
         alert("Please enter an address.");
       }
+    }
 
+    if (
+      !values.distance &&
+      !values.duration &&
+      pickuplocation.latitude &&
+      pickuplocation.longitude &&
+      deliverylocation.latitude &&
+      deliverylocation.longitude
+    ) {
+      console.log("Hello");
+      console.log(
+        pickuplocation.latitude,
+        pickuplocation.longitude,
+        deliverylocation.latitude,
+        deliverylocation.longitude
+      );
+
+      const distance = await calculateDistancee(pickuplocation, deliverylocation);
+      console.log(distance);
+      setFieldValue("distance", distance);
+      // console.log(distance);
+
+      // const apiKey = "AIzaSyBnWMbLVCkqKy2cHFAXnZqF2Ay-6T44Jzw";
+      // const origin = `${pickuplocation.latitude},${pickuplocation.longitude}`;
+      // const destination = `${deliverylocation.latitude},${deliverylocation.longitude}`;
+      // const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}`;
+      // console.log(url);
+      // try {
+      //   const response = await fetch(url);
+      //   console.log(response);
+      //   if (!response.ok) {
+      //     throw new Error(`HTTP error! Status: ${response.status}`);
+      //   }
+      //   const data = await response.json();
+      //   console.log(data);
+      //   if (data.status === "OK") {
+      //     const element = data.rows[0].elements[0];
+      //     console.log(element);
+      //     if (element.status === "OK") {
+      //       setFieldValue("distance", element.distance.text); // Distance (e.g., "12.4 km")
+      //       setFieldValue("duration", element.duration.text); // Duration (e.g., "25 mins")
+      //     } else {
+      //       alert("No route found between locations.");
+      //     }
+      //   } else {
+      //     alert(
+      //       `Error fetching data from Google Maps API: ${data.error_message}`
+      //     );
+      //   }
+      // } catch (error) {
+      //   console.error("Error:", error);
+      //   alert(
+      //     "Failed to fetch data from Google Maps API. Check console for details."
+      //   );
+      // }
     }
 
     // console.log(values);
@@ -365,16 +462,16 @@ const CreateOrder = () => {
         dateTime: pictimestamp,
         location: {
           latitude: pickuplocation.latitude,
-          longitude: pickuplocation.longitude
-        }
+          longitude: pickuplocation.longitude,
+        },
       },
       deliveryDetails: {
         ...values.deliveryDetails,
 
         location: {
           latitude: deliverylocation.latitude,
-          longitude: deliverylocation.longitude
-        }
+          longitude: deliverylocation.longitude,
+        },
       },
     };
 
@@ -384,6 +481,7 @@ const CreateOrder = () => {
     }
 
     const res = await createOrder(payload);
+    console.log(res);
 
     if (res.status) {
       naviagte("/all-order");
@@ -437,16 +535,19 @@ const CreateOrder = () => {
                   </div>
 
                   <div className="input-error col-12 col-sm-6 mb-3">
-                    <label className="fw-thin p-0 pb-1 ">Select Delivery Man :</label>
+                    <label className="fw-thin p-0 pb-1 ">
+                      Select Delivery Man :
+                    </label>
                     <Field
                       as="select"
-                      
                       name="deliveryManId"
                       className="w-full h-[4.5em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="" className="text-gray-500">Select Delivery Man</option>
+                      <option value="" className="text-gray-500">
+                        Select Delivery Man
+                      </option>
                       {deliveryMan.map((data, index) => {
-                        let distance = '';
+                        let distance = "";
                         if (currentLocation && data.location) {
                           distance = calculateDistance(
                             currentLocation.latitude,
@@ -457,24 +558,30 @@ const CreateOrder = () => {
                         }
 
                         if (lengthofdeliverymen === index) {
-                          return (<>
-                            <option
-                              key={index}
-                              value={"admin"} 
-                              className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
-                              disabled
-                            >
-                              Admin
-                            </option>
-                            <option
-                              key={`${index}-data`}
-                              value={data._id}
-                              className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between mx-auto"
-                            >
-                              <span style={{float: 'left'}}>{`${data.firstName} ${data.lastName}`}</span>
-                              <span style={{float: 'right'}}>{distance ? `${distance} km away` : ''}</span>
-                            </option>
-                          </>);
+                          return (
+                            <>
+                              <option
+                                key={index}
+                                value={"admin"}
+                                className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
+                                disabled
+                              >
+                                Admin
+                              </option>
+                              <option
+                                key={`${index}-data`}
+                                value={data._id}
+                                className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between mx-auto"
+                              >
+                                <span
+                                  style={{ float: "left" }}
+                                >{`${data.firstName} ${data.lastName}`}</span>
+                                <span style={{ float: "right" }}>
+                                  {distance ? `${distance} km away` : ""}
+                                </span>
+                              </option>
+                            </>
+                          );
                         }
                         return (
                           <option
@@ -482,16 +589,31 @@ const CreateOrder = () => {
                             value={data._id}
                             className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between"
                           >
-                            <span style={{float: 'left', width: '65%'}}>{`${data.firstName} ${data.lastName}`}</span>
-                            <span style={{ display: 'inline-block', width: '100px' }}></span> 
-                            <span style={{float: 'right', width: '30%', marginLeft: '5%'}}>{distance ? `- (${distance} km away)` : ''}</span>
+                            <span
+                              style={{ float: "left", width: "65%" }}
+                            >{`${data.firstName} ${data.lastName}`}</span>
+                            <span
+                              style={{
+                                display: "inline-block",
+                                width: "100px",
+                              }}
+                            ></span>
+                            <span
+                              style={{
+                                float: "right",
+                                width: "30%",
+                                marginLeft: "5%",
+                              }}
+                            >
+                              {distance ? `- (${distance} km away)` : ""}
+                            </span>
                           </option>
                         );
                       })}
                     </Field>
                     <ErrorMessage
                       name={"deliveryManId"}
-                      component="div" 
+                      component="div"
                       className="error text-danger ps-2"
                     />
                   </div>
@@ -500,13 +622,15 @@ const CreateOrder = () => {
                       key={"paymentCollectionRupees"}
                       className="input-error col-12 col-sm-6 mb-3"
                     >
-                      <label className="fw-thin p-0 pb-1 ">Payment Collection : Amount</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Payment Collection : Amount
+                      </label>
                       <Field
                         as="input"
                         name="paymentCollectionRupees"
                         type="number"
                         className="form-control mt-3"
-                        style={{ height: "4.5em", border: "1px solid #E6E6E6", }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                         placeholder="Enter Payment Collection pounds  "
                       />
                       <ErrorMessage
@@ -521,7 +645,9 @@ const CreateOrder = () => {
                     key="cashOnDelivery"
                     className="input-error col-12 col-sm-6 mb-3"
                   >
-                    <label className="fw-thin p-0 pb-1 ">Cash on Delivery :</label>
+                    <label className="fw-thin p-0 pb-1 ">
+                      Cash on Delivery :
+                    </label>
 
                     <div className="d-flex align-items-center">
                       {/* True Option */}
@@ -562,17 +688,21 @@ const CreateOrder = () => {
                 {/* Pickup Information */}
                 <div className="pick-up mt-5 row">
                   <div className="col-12 col-lg-6">
-                    <h3 className="fw-bold text-2xl pb-3">Pickup Information</h3>
+                    <h3 className="fw-bold text-2xl pb-3">
+                      Pickup Information
+                    </h3>
 
                     {/* Pickup Details Fields */}
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Pickup Date & Time :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Pickup Date & Time :
+                      </label>
                       <Field
                         type="datetime-local"
                         name="pickupDetails.dateTime"
                         className="form-control w-25% h-100%"
                         placeholder="Date and Time"
-                        style={{ height: "4.5em", border: "1px solid #E6E6E6", }}
+                        style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -583,14 +713,19 @@ const CreateOrder = () => {
 
                     <div className="row">
                       <div className="input-error mb-3 col-9">
-                        <label className="fw-thin p-0 pb-1 ">Pickup Address :</label>
+                        <label className="fw-thin p-0 pb-1 ">
+                          Pickup Address :
+                        </label>
                         <Field
                           type="text"
                           as="textarea"
                           name="pickupDetails.address"
                           className="form-control w-25% h-100%"
                           placeholder="Pickup Address"
-                          style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+                          style={{
+                            height: "4.5em",
+                            border: "1px solid #E6E6E6",
+                          }}
                         />
                         <ErrorMessage
                           name="pickupDetails.address"
@@ -617,7 +752,9 @@ const CreateOrder = () => {
                     </div>
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Pickup Postcode :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Pickup Postcode :
+                      </label>
                       <Field
                         type="text"
                         name="pickupDetails.postCode"
@@ -657,7 +794,9 @@ const CreateOrder = () => {
                     </div> */}
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Pickup Contact Number :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Pickup Contact Number :
+                      </label>
                       <Field
                         type="number"
                         name="pickupDetails.mobileNumber"
@@ -677,7 +816,9 @@ const CreateOrder = () => {
                     </div>
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Pickup Email :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Pickup Email :
+                      </label>
                       <Field
                         type="email"
                         name="pickupDetails.email"
@@ -696,7 +837,9 @@ const CreateOrder = () => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Merchant Name :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Merchant Name :
+                      </label>
                       <Field
                         type="text"
                         name="pickupDetails.name"
@@ -716,7 +859,9 @@ const CreateOrder = () => {
                     </div>
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Pickup Instraction (Optional) :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Pickup Instraction (Optional) :
+                      </label>
                       <Field
                         as="textarea"
                         name="pickupDetails.description"
@@ -737,10 +882,14 @@ const CreateOrder = () => {
                   </div>
 
                   <div className="col-12 col-lg-6">
-                    <h3 className="fw-bold text-2xl pb-3">Delivery Information</h3>
+                    <h3 className="fw-bold text-2xl pb-3">
+                      Delivery Information
+                    </h3>
                     {/* Delivery Details Fields */}
                     {/* <div className="input-error mb-3"> */}
-                    <label className="fw-thin p-0 pb-1 ">Select Customer :</label>
+                    <label className="fw-thin p-0 pb-1 ">
+                      Select Customer :
+                    </label>
                     <Select
                       className="form-control mb-3 p-0"
                       styles={{
@@ -770,7 +919,11 @@ const CreateOrder = () => {
                         if (selectedOption) {
                           setFieldValue(
                             "deliveryDetails.address",
-                            `${selectedOption.address}, ${selectedOption.city || ''}, ${selectedOption.postCode || ''}, ${selectedOption.country || ''}`
+                            `${selectedOption.address}, ${
+                              selectedOption.city || ""
+                            }, ${selectedOption.postCode || ""}, ${
+                              selectedOption.country || ""
+                            }`
                           );
                           // setFieldValue(
                           //   "deliveryDetails.countryCode",
@@ -813,7 +966,9 @@ const CreateOrder = () => {
                     {/* </div> */}
 
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Delivery Address :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Delivery Address :
+                      </label>
                       <Field
                         type="text"
                         as="textarea"
@@ -837,7 +992,9 @@ const CreateOrder = () => {
                       Verify Adress
                     </button> */}
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Delivery Postcode :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Delivery Postcode :
+                      </label>
                       <Field
                         type="text"
                         name="deliveryDetails.postCode"
@@ -876,7 +1033,9 @@ const CreateOrder = () => {
                       />
                     </div> */}
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Delivery Contact Number :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Delivery Contact Number :
+                      </label>
                       <Field
                         type="number"
                         name="deliveryDetails.mobileNumber"
@@ -895,7 +1054,9 @@ const CreateOrder = () => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Delivery Email :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Delivery Email :
+                      </label>
                       <Field
                         type="email"
                         name="deliveryDetails.email"
@@ -914,7 +1075,9 @@ const CreateOrder = () => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Customer Name :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Customer Name :
+                      </label>
                       <Field
                         type="text"
                         name="deliveryDetails.name"
@@ -933,7 +1096,9 @@ const CreateOrder = () => {
                       />
                     </div>
                     <div className="input-error mb-3">
-                      <label className="fw-thin p-0 pb-1 ">Delivery Instraction (Optional) :</label>
+                      <label className="fw-thin p-0 pb-1 ">
+                        Delivery Instraction (Optional) :
+                      </label>
                       <Field
                         as="textarea"
                         name="deliveryDetails.description"

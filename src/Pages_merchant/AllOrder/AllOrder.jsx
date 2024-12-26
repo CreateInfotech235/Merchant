@@ -43,6 +43,8 @@ const AllOrder = () => {
     try {
       const MerchantId = await localStorage.getItem("merchnatId");
       const response = await getOrders(MerchantId, currentPage, ordersPerPage);
+      console.log("response", response);
+      
     if (response?.data) {
       setOrderData(response.data);
       setFilteredOrders(response.data);
