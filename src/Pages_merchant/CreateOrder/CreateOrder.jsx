@@ -395,25 +395,25 @@ const CreateOrder = () => {
       }
     }
 
-    if (
-      !values.distance &&
-      !values.duration &&
-      pickuplocation.latitude &&
-      pickuplocation.longitude &&
-      deliverylocation.latitude &&
-      deliverylocation.longitude
-    ) {
-      console.log("Hello");
-      console.log(
-        pickuplocation.latitude,
-        pickuplocation.longitude,
-        deliverylocation.latitude,
-        deliverylocation.longitude
-      );
+    // if (
+    //   !values.distance &&
+    //   !values.duration &&
+    //   pickuplocation.latitude &&
+    //   pickuplocation.longitude &&
+    //   deliverylocation.latitude &&
+    //   deliverylocation.longitude
+    // ) {
+    //   console.log("Hello");
+    //   console.log(
+    //     pickuplocation.latitude,
+    //     pickuplocation.longitude,
+    //     deliverylocation.latitude,
+    //     deliverylocation.longitude
+    //   );
 
-      const distance = await calculateDistancee(pickuplocation, deliverylocation);
-      console.log(distance);
-      setFieldValue("distance", distance);
+    //   const distance = await calculateDistancee(pickuplocation, deliverylocation);
+    //   console.log(distance);
+    //   setFieldValue("distance", distance);
       // console.log(distance);
 
       // const apiKey = "AIzaSyBnWMbLVCkqKy2cHFAXnZqF2Ay-6T44Jzw";
@@ -449,7 +449,7 @@ const CreateOrder = () => {
       //     "Failed to fetch data from Google Maps API. Check console for details."
       //   );
       // }
-    }
+    // }
 
     // console.log(values);
 
