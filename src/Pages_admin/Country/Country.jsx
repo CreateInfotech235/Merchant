@@ -22,7 +22,7 @@ const Country = () => {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const accessToken = localStorage.getItem('accessTokenForAdmin');
+  const accessToken = localStorage.getItem("accessTokenForAdmin");
 
   useEffect(() => {
     fetchCountries();
@@ -30,9 +30,9 @@ const Country = () => {
 
   const fetchCountries = async () => {
     try {
-      const searchParam = searchTerm ? `&searchValue=${searchTerm}` : '';
+      const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
       const response = await fetch(
-        `https://create-4.onrender.com/admin/country?pageCount=${currentPage}&pageLimit=${itemsPerPage}${searchParam}`,
+        `https://create-1-opqy.onrender.com/admin/country?pageCount=${currentPage}&pageLimit=${itemsPerPage}${searchParam}`,
         {
           method: "GET",
           headers: {
@@ -43,7 +43,6 @@ const Country = () => {
       );
       const data = await response.json();
 
-    
       if (data.status === "SUCCESS") {
         setCountries(data.data.data);
         setTotalPages(Math.ceil(data.data.totalDataCount / itemsPerPage));
@@ -73,12 +72,11 @@ const Country = () => {
     );
   });
 
-  const handleDelete = async() => {
-
+  const handleDelete = async () => {
     const res = await deleteCountry(selectedCountry.countryId);
 
     setIsDeleteModalOpen(false);
-    fetchCountries()
+    fetchCountries();
   };
 
   return (
@@ -86,7 +84,10 @@ const Country = () => {
       <div className="w-100">
         <div className="d-flex justify-content-between py-3">
           <Link to="/add-country">
-            <button className="btn text-light" style={{ background: "#D65246" }}>
+            <button
+              className="btn text-light"
+              style={{ background: "#D65246" }}
+            >
               <img src={add} alt="Add" />
               Add Country
             </button>
@@ -126,18 +127,20 @@ const Country = () => {
               {filteredCountries.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center p-3">
-                  <div className="d-flex justify-content-center">
+                    <div className="d-flex justify-content-center">
                       <div className="mx-auto">
-                      <Loader />
-                      No Data Found
+                        <Loader />
+                        No Data Found
                       </div>
-                     </div>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 filteredCountries.map((country) => (
                   <tr key={country.countryId} className="text-black">
-                    <td className="text-black p-3">{country.countryName || "-"}</td>
+                    <td className="text-black p-3">
+                      {country.countryName || "-"}
+                    </td>
                     <td className="p-3">{country.distanceType}</td>
                     <td className="p-3">{country.weightType}</td>
                     <td className="p-3">
@@ -154,16 +157,19 @@ const Country = () => {
                     </td>
                     <td className="p-2">
                       <div className="d-flex align-items-center justify-content-lg-center">
-                        <button className="edit-btn m-2" onClick={() => {
-                            setSelectedCountry(country); 
+                        <button
+                          className="edit-btn m-2"
+                          onClick={() => {
+                            setSelectedCountry(country);
                             setIsUpdateModalOpen(true);
-                          }}>
+                          }}
+                        >
                           <img src={edit} alt="Edit" />
                         </button>
                         <button
                           className="delete-btn"
                           onClick={() => {
-                            setSelectedCountry(country); 
+                            setSelectedCountry(country);
                             setIsDeleteModalOpen(true);
                             // Set the selected country for deletion
                           }}
@@ -173,7 +179,7 @@ const Country = () => {
                         <button
                           className="show-btn m-2"
                           onClick={() => {
-                            setSelectedCountry(country); 
+                            setSelectedCountry(country);
                             setIsInfoModalOpen(true);
                           }}
                         >
@@ -188,7 +194,11 @@ const Country = () => {
           </table>
         </div>
 
-        <Pagination currentPage={currentPage} totalPages={totalPages} handleClick={handleClick} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handleClick={handleClick}
+        />
 
         {/* Info Modal */}
         {isInfoModalOpen && (
@@ -203,7 +213,7 @@ const Country = () => {
           <DeleteModal
             onDelete={handleDelete}
             onHide={() => setIsDeleteModalOpen(false)}
-            text='Country'
+            text="Country"
           />
         )}
 

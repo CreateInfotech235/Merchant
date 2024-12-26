@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
-const socket = io('https://create-4.onrender.com'); // Connect to backend server
+const socket = io("https://create-1-opqy.onrender.com"); // Connect to backend server
 
 function ViewSupportTickets() {
   const [messages, setMessages] = useState([]);
@@ -20,21 +20,23 @@ function ViewSupportTickets() {
 
   useEffect(() => {
     // Join the ticket room
-    socket.emit('joinTicket', ticketId);
+    socket.emit("joinTicket", ticketId);
 
     // Fetch messages for the selected ticket
     axios
-      .get(`https://create-4.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`)
+      .get(
+        `https://create-1-opqy.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`
+      )
       .then((response) => setMessages(response.data));
 
     // Listen for new messages from the server
-    socket.on('newMessage', (message) => {
+    socket.on("newMessage", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
     // Cleanup on unmount
     return () => {
-      socket.off('newMessage'); // Ensure we clean up the event listener
+      socket.off("newMessage"); // Ensure we clean up the event listener
     };
   }, [ticketId]);
 
@@ -49,7 +51,7 @@ function ViewSupportTickets() {
       // Send message to the server
       axios
         .post(
-          `https://create-4.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`,
+          `https://create-1-opqy.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`,
           message
         )
         .then(() => {
@@ -82,11 +84,11 @@ function ViewSupportTickets() {
     // Send delete request to the server
     axios
       .delete(
-        `https://create-4.onrender.com/mobile/auth/support-tickets/${ticketId}/messages/${messageId}`
+        `https://create-1-opqy.onrender.com/mobile/auth/support-tickets/${ticketId}/messages/${messageId}`
       )
       .then(() => {
         // Emit the message deletion through socket to inform all clients
-        socket.emit('deleteMessage', ticketId, messageId);
+        socket.emit("deleteMessage", ticketId, messageId);
 
         setContextMenu(null); // Close the context menu
       })
@@ -97,7 +99,7 @@ function ViewSupportTickets() {
         // (this will ensure the chat is not desynchronized)
         setMessages((prevMessages) => [
           ...prevMessages,
-          { id: messageId, text: 'Error deleting message', sender: 'admin' },
+          { id: messageId, text: "Error deleting message", sender: "admin" },
         ]);
       });
   };
@@ -105,7 +107,10 @@ function ViewSupportTickets() {
   // Close the context menu if clicked outside of it
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target)) {
+      if (
+        contextMenuRef.current &&
+        !contextMenuRef.current.contains(e.target)
+      ) {
         setContextMenu(null); // Close the context menu
       }
     };
@@ -129,7 +134,9 @@ function ViewSupportTickets() {
         {messages.map((msg) => (
           <div
             key={msg.id} // Assuming each message has a unique `id`
-            className={`flex ${msg.sender === "merchant" ? "justify-end" : "justify-start"}`}
+            className={`flex ${
+              msg.sender === "merchant" ? "justify-end" : "justify-start"
+            }`}
             onContextMenu={(e) => handleContextMenu(e, msg._id, msg.sender)} // Pass sender to the handler
           >
             <div

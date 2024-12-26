@@ -1,31 +1,37 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API = axios.create({
-    baseURL: 'https://create-4.onrender.com',
-    headers: { 'Content-Type': 'application/json' }
+  baseURL: "https://create-1-opqy.onrender.com",
+  headers: { "Content-Type": "application/json" },
 });
 
-API.interceptors.request.use(config => {
-    const token = localStorage.getItem('accessToken');
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-}, error => {
+  },
+  (error) => {
     return error;
-});
+  }
+);
 
 // Add a response interceptor using a fat arrow function
-API.interceptors.response.use(response => {
+API.interceptors.response.use(
+  (response) => {
     return response;
-}, error => {
+  },
+  (error) => {
     if (error.response && error.response.status === 401) {
-        // Handle unauthorized error
-        localStorage.removeItem('accessToken')
-        console.error('Unauthorized, logging out...');
-        window.location.href = '/merchant/login';
+      // Handle unauthorized error
+      localStorage.removeItem("accessToken");
+      console.error("Unauthorized, logging out...");
+      window.location.href = "/merchant/login";
     }
     return error;
-});
+  }
+);
 
 export default API;

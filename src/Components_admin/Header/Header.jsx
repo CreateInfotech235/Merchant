@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import "./Header.css";
 import notificationIcon from "../../assets_admin/bell.png";
 import profileIcon from "../../assets_admin/profile.png";
@@ -9,7 +9,12 @@ import ReactFlagsSelect from "react-flags-select";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import logoutIcon from "../../assets_admin/logo.png";
 import { FaTimes, FaCheck, FaCheckDouble } from "react-icons/fa";
-import { deleteNotification, getAllNotifications, markAllNotificationsAsRead, markNotificationAsRead } from "../Api/Notification";
+import {
+  deleteNotification,
+  getAllNotifications,
+  markAllNotificationsAsRead,
+  markNotificationAsRead,
+} from "../Api/Notification";
 const Header = ({ toggleThemeMode, themeMode }) => {
   const [selected, setSelected] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -34,12 +39,14 @@ const Header = ({ toggleThemeMode, themeMode }) => {
     try {
       const response = await markNotificationAsRead(notificationId);
       if (response.status) {
-        setNotifications(notifications.map(notification => 
-          notification._id === notificationId 
-            ? { ...notification, isRead: true }
-            : notification
-        ));
-        setUnreadCount(prev => prev - 1);
+        setNotifications(
+          notifications.map((notification) =>
+            notification._id === notificationId
+              ? { ...notification, isRead: true }
+              : notification
+          )
+        );
+        setUnreadCount((prev) => prev - 1);
       }
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -50,10 +57,12 @@ const Header = ({ toggleThemeMode, themeMode }) => {
     try {
       const response = await markAllNotificationsAsRead();
       if (response.status) {
-        setNotifications(notifications.map(notification => ({
-          ...notification,
-          isRead: true
-        })));
+        setNotifications(
+          notifications.map((notification) => ({
+            ...notification,
+            isRead: true,
+          }))
+        );
         setUnreadCount(0);
       }
     } catch (error) {
@@ -66,9 +75,9 @@ const Header = ({ toggleThemeMode, themeMode }) => {
     try {
       const response = await deleteNotification(notificationId);
       if (response.status) {
-        setNotifications(notifications.filter(n => n._id !== notificationId));
-        if (!notifications.find(n => n._id === notificationId)?.isRead) {
-          setUnreadCount(prev => prev - 1);
+        setNotifications(notifications.filter((n) => n._id !== notificationId));
+        if (!notifications.find((n) => n._id === notificationId)?.isRead) {
+          setUnreadCount((prev) => prev - 1);
         }
       }
     } catch (error) {
@@ -80,15 +89,14 @@ const Header = ({ toggleThemeMode, themeMode }) => {
     const fetchNotifications = async () => {
       const res = await getAllNotifications();
       // console.log(res);
-      
+
       if (res.status) {
         setNotifications(res.data);
-        setUnreadCount(res.data.filter(n => !n.isRead).length);
+        setUnreadCount(res.data.filter((n) => !n.isRead).length);
       }
     };
     fetchNotifications();
   }, []);
-
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -98,50 +106,49 @@ const Header = ({ toggleThemeMode, themeMode }) => {
   const handleLogout = async () => {
     try {
       // Retrieve the refresh token from local storage
-      const refreshToken = localStorage.getItem('refreshTokenForAdmin');
-      
+      const refreshToken = localStorage.getItem("refreshTokenForAdmin");
+
       // Check if refreshToken is found
       if (!refreshToken) {
-        console.error('No refresh token found in localStorage');
+        console.error("No refresh token found in localStorage");
         return;
       }
-      
+
       // console.log('Found refreshToken:', refreshToken);
-  
+
       // Make the PATCH request to log out
       const response = await axios.patch(
-        'https://create-4.onrender.com/admin/auth/logout',
+        "https://create-1-opqy.onrender.com/admin/auth/logout",
         {
           refreshToken: refreshToken,
-          personType: 'ADMIN',
+          personType: "ADMIN",
         },
         {
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': '*/*',
+            "Content-Type": "application/json",
+            Accept: "*/*",
           },
         }
       );
-  
+
       // Handle successful logout
-      if (response.status === 200 && response.data.status === 'SUCCESS') {
+      if (response.status === 200 && response.data.status === "SUCCESS") {
         // console.log('Logout successful:', response.data.message);
-  
+
         // Remove the tokens from local storage
-        localStorage.removeItem('refreshTokenForAdmin');
-        localStorage.removeItem('accessTokenForAdmin');
-  
+        localStorage.removeItem("refreshTokenForAdmin");
+        localStorage.removeItem("accessTokenForAdmin");
+
         // Redirect to login page after logout
-        window.location.href = '/';
+        window.location.href = "/";
       } else {
-        console.error('Logout failed:', response.data.message);
+        console.error("Logout failed:", response.data.message);
       }
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
     }
   };
-  
-  
+
   return (
     <div className="d-xxl-flex justify-content-xxl-between align-items-center nav-bar pb-3 d-xl-flex flex-xl-row justify-content-xl-between d-lg-flex flex-lg-row justify-content-lg-between d-md-flex flex-md-row justify-content-md-between d-sm-flex flex-sm-column justify-content-sm-start d-flex flex-column justify-content-between">
       <div className="profile">
@@ -169,21 +176,36 @@ const Header = ({ toggleThemeMode, themeMode }) => {
               className="accept"
             />
           </div> */}
-            <div className="navbar-option p-2me-2 position-relative cursor-pointer" onClick={handleShow}>
-            <img src={notificationIcon} className="accept" alt="Notification Bell" />
+          <div
+            className="navbar-option p-2me-2 position-relative cursor-pointer"
+            onClick={handleShow}
+          >
+            <img
+              src={notificationIcon}
+              className="accept"
+              alt="Notification Bell"
+            />
             {unreadCount > 0 && (
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {unreadCount}
               </span>
             )}
           </div>
-        <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "400px" }}>
-            <Offcanvas.Header closeButton className="border-bottom bg-light d-flex justify-content-between">
+          <Offcanvas
+            show={show}
+            onHide={handleClose}
+            placement="end"
+            style={{ width: "400px" }}
+          >
+            <Offcanvas.Header
+              closeButton
+              className="border-bottom bg-light d-flex justify-content-between"
+            >
               <Offcanvas.Title className="fw-bold text-dark">
                 Notifications
               </Offcanvas.Title>
               {unreadCount > 0 && (
-                <button 
+                <button
                   className="btn btn-link text-primary"
                   onClick={handleMarkAllAsRead}
                 >
@@ -196,12 +218,14 @@ const Header = ({ toggleThemeMode, themeMode }) => {
                 <div
                   key={notification._id}
                   className={`notification-item p-3 hover-bg-light border-bottom d-flex align-items-start ${
-                    !notification.isRead ? 'bg-light' : ''
+                    !notification.isRead ? "bg-light" : ""
                   }`}
                   style={{
                     transition: "background-color 0.3s",
                     cursor: "pointer",
-                    borderLeft: notification.isRead ? "none" : "4px solid #0d6efd",
+                    borderLeft: notification.isRead
+                      ? "none"
+                      : "4px solid #0d6efd",
                   }}
                   onClick={() => handleMarkAsRead(notification._id)}
                 >
@@ -222,7 +246,9 @@ const Header = ({ toggleThemeMode, themeMode }) => {
                   <div className="d-flex flex-column">
                     <button
                       className="btn btn-sm text-danger p-0 mb-2"
-                      onClick={(e) => handleDeleteNotification(notification._id, e)}
+                      onClick={(e) =>
+                        handleDeleteNotification(notification._id, e)
+                      }
                       title="Delete notification"
                     >
                       <FaTimes />
@@ -255,12 +281,24 @@ const Header = ({ toggleThemeMode, themeMode }) => {
               )}
             </Offcanvas.Body>
           </Offcanvas>
-          <div className="navbar-option p-2 cursor-pointer" onClick={handleDropdownToggle} ref={dropdownRef}>
+          <div
+            className="navbar-option p-2 cursor-pointer"
+            onClick={handleDropdownToggle}
+            ref={dropdownRef}
+          >
             <img src={profileIcon} alt="Profile" />
             {dropdownOpen && (
               <div className="dropdown-menu">
-                <Link to="/admin-profile" className="dropdown-item">View Profile</Link>
-                <button type="button" className="dropdown-item" onClick={handleLogout}>Logout</button>
+                <Link to="/admin-profile" className="dropdown-item">
+                  View Profile
+                </Link>
+                <button
+                  type="button"
+                  className="dropdown-item"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
               </div>
             )}
           </div>

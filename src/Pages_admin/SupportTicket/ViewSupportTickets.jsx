@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
-const socket = io('https://create-4.onrender.com'); // Connect to backend server
+const socket = io("https://create-1-opqy.onrender.com"); // Connect to backend server
 
 function ViewSupportTickets() {
   const [messages, setMessages] = useState([]);
@@ -20,21 +20,23 @@ function ViewSupportTickets() {
 
   useEffect(() => {
     // Join the ticket room
-    socket.emit('joinTicket', ticketId);
+    socket.emit("joinTicket", ticketId);
 
     // Fetch messages for the selected ticket
     axios
-      .get(`https://create-4.onrender.com/admin/auth/support-tickets/${ticketId}/messages`)
+      .get(
+        `https://create-1-opqy.onrender.com/admin/auth/support-tickets/${ticketId}/messages`
+      )
       .then((response) => setMessages(response.data));
 
     // Listen for new messages from the server
-    socket.on('newMessage', (message) => {
+    socket.on("newMessage", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
     // Cleanup on unmount
     return () => {
-      socket.off('newMessage');
+      socket.off("newMessage");
     };
   }, [ticketId]);
 
@@ -43,11 +45,11 @@ function ViewSupportTickets() {
     if (inputValue.trim()) {
       axios
         .post(
-          `https://create-4.onrender.com/admin/auth/support-tickets/${ticketId}/messages`,
+          `https://create-1-opqy.onrender.com/admin/auth/support-tickets/${ticketId}/messages`,
           {
             text: inputValue,
             sender: "admin", // Sending message as support
-          } 
+          }
         )
         .then((response) => {
           setMessages(response.data);
@@ -71,34 +73,36 @@ function ViewSupportTickets() {
     setMessages((prevMessages) =>
       prevMessages.filter((msg) => msg.id !== messageId)
     );
-  
+
     // Send delete request to the server
     axios
       .delete(
-        `https://create-4.onrender.com/admin/auth/support-tickets/${ticketId}/messages/${messageId}`
+        `https://create-1-opqy.onrender.com/admin/auth/support-tickets/${ticketId}/messages/${messageId}`
       )
       .then(() => {
         // Emit the message deletion through socket to inform all clients
-        socket.emit('deleteMessage', ticketId, messageId);
-  
+        socket.emit("deleteMessage", ticketId, messageId);
+
         setContextMenu(null); // Close the context menu
       })
       .catch((error) => {
         console.error("Error unsending message:", error);
-  
+
         // Handle the error appropriately, or you can skip re-adding the message
         // in case of an error if you want silent failure.
-        setMessages((prevMessages) =>
-          prevMessages.filter((msg) => msg.id !== messageId) // No re-add here
+        setMessages(
+          (prevMessages) => prevMessages.filter((msg) => msg.id !== messageId) // No re-add here
         );
       });
   };
-  
 
   // Close the context menu if clicked outside of it
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target)) {
+      if (
+        contextMenuRef.current &&
+        !contextMenuRef.current.contains(e.target)
+      ) {
         setContextMenu(null); // Close the context menu
       }
     };
@@ -122,7 +126,9 @@ function ViewSupportTickets() {
         {messages.map((msg) => (
           <div
             key={msg.id} // Assuming each message has a unique `id`
-            className={`flex ${msg.sender === "admin" ? "justify-end" : "justify-start"}`}
+            className={`flex ${
+              msg.sender === "admin" ? "justify-end" : "justify-start"
+            }`}
             onContextMenu={(e) => handleContextMenu(e, msg._id, msg.sender)} // Pass sender to the handler
           >
             <div

@@ -6,7 +6,7 @@ export const login = async (data) => {
         console.log(data);
         
         const response = await API.post(`/mobile/auth/signIn`, data);
-        // console.log(response);
+        console.log(response);
         
         if (response.status === 200) {
             return { status: true, data: response.data.data }
