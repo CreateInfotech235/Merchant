@@ -12,6 +12,7 @@ import Partner1 from "../../assets_web/partner logo (1).jpg";
 import Partner2 from "../../assets_web/partner logo (2).jpg";
 
 import TomTomMap from "./TomTomMap";
+import Gotop from "../../Components_web/Gotop/Gotop";
 function Contact() {
   return (
     <>
@@ -55,124 +56,122 @@ function Contact() {
       </div>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24">
-        <div className="">
-          <h1 className="text-4xl capitalize text-center font-bold tracking-wide noto small">
-            Contact Us
-          </h1>
-          <div className="flex justify-center mt-3 items-center">
-            <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-            <img src={Setting} className="text-center" width={"70px"} alt="" />
-            <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-          </div>
-        </div>
+  {/* Title Section */}
+  <div>
+    <h1 className="text-4xl capitalize text-center font-bold tracking-wide noto small">
+      Contact Us
+    </h1>
+    <div className="flex justify-center mt-3 items-center">
+      <div className="line-left relative w-20 sm:w-36 h-[2px] bg-[#221F92] mx-3"></div>
+      <img src={Setting} className="text-center" width="40" sm:width="50" alt="" />
+      <div className="line-right w-20 sm:w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
+    </div>
+  </div>
 
-        <div className="flex justify-center items-center">
-          <div className="w-1/2 p-6">
-            {/* <img src={Imagess} alt="" width={"100%"} className="mt-5" /> */}
-            <TomTomMap />
-          </div>
-          <div className="w-1/2 p-6  rounded-lg">
-            <form className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  id="trackingId"
-                  name="trackingId"
-                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Enter your tracking ID"
-                />
-              </div>
-              <div>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Enter your email"
-                />
-              </div>
-              <div>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Enter your phone number"
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  id="zipCode"
-                  name="zipCode"
-                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Enter your zip code"
-                />
-              </div>
-              <div>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={3}
-                  className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Enter any additional notes"
-                ></textarea>
-              </div>
-              <div className="text-center">
-                <button
-                  type="submit"
-                  className="w-full bg-[#1D1D37] noto small text-white font-bold py-3 px-4 rounded-md hover:bg-[#3b3b6d] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Track Now
-                </button>
-              </div>
-            </form>
-          </div>
+  {/* Contact Form & Map Section */}
+  <div className="flex flex-wrap lg:flex-nowrap justify-center items-center mt-10">
+    <div className="w-full lg:w-1/2 p-4 lg:p-6">
+      <TomTomMap />
+    </div>
+    <div className="w-full lg:w-1/2 p-4 lg:p-6 rounded-lg">
+      <form className="space-y-4">
+        <div>
+          <input
+            type="text"
+            id="trackingId"
+            name="trackingId"
+            className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your tracking ID"
+          />
         </div>
-
-        <div className="flex justify-center items-center gap-6">
-          <div className="w-1/3 border p-6 rounded-lg">
-            <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
-              <img src={Mail} alt="" />
-            </div>
-            <h1 className="text-center text-xl font-bold mt-3">
-              createcourier456@gmail.com
-            </h1>
-          </div>
-          <div className="w-1/3 border p-6 rounded-lg">
-            <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
-              <img src={Call} alt="" />
-            </div>
-            <h1 className="text-center text-xl font-bold mt-3">
-              +44 78945 61232
-            </h1>
-          </div>
-          <div className="w-1/3 border p-6 rounded-lg">
-            <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
-              <img src={Location} alt="" />
-            </div>
-            <h1 className="text-center text-xl font-bold mt-3">
-              123, Anywhere, UK
-            </h1>
-          </div>
+        <div>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your email"
+          />
         </div>
-
-        <div className="mt-24">
-          <h1 className="text-4xl capitalize text-center font-bold tracking-wide noto small">
-            Our Partners
-          </h1>
-          <div className="flex justify-center mt-3 items-center">
-            <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-            <img src={Partner} className="text-center" width={"70px"} alt="" />
-            <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
-          </div>
-
-          <div className="flex justify-center items-center gap-6 mt-10">
-            <img src={Partner1} alt="" width={"150px"} />
-            <img src={Partner2} alt="" width={"150px"} />
-          </div>
+        <div>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your phone number"
+          />
         </div>
+        <div>
+          <input
+            type="text"
+            id="zipCode"
+            name="zipCode"
+            className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your zip code"
+          />
+        </div>
+        <div>
+          <textarea
+            id="message"
+            name="message"
+            rows={3}
+            className="mt-1 block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter any additional notes"
+          ></textarea>
+        </div>
+        <div className="text-center">
+          <button
+            type="submit"
+            className="w-full bg-[#1D1D37] noto small text-white font-bold py-3 px-4 rounded-md hover:bg-[#3b3b6d] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Track Now
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {/* Contact Info Section */}
+  <div className="flex flex-wrap justify-center gap-6 mt-10">
+    <div className="w-full md:w-1/3 border p-6 rounded-lg">
+      <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
+        <img src={Mail} alt="" />
       </div>
+      <h1 className="text-center text-sm md:text-xl font-bold mt-3">createcourier456@gmail.com</h1>
+    </div>
+    <div className="w-full md:w-1/3 border p-6 rounded-lg">
+      <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
+        <img src={Call} alt="" />
+      </div>
+      <h1 className="text-center text-xl font-bold mt-3">+44 78945 61232</h1>
+    </div>
+    <div className="w-full md:w-1/3 border p-6 rounded-lg">
+      <div className="w-20 h-20 bg-[#1D1D37] rounded-full flex justify-center items-center mx-auto">
+        <img src={Location} alt="" />
+      </div>
+      <h1 className="text-center text-xl font-bold mt-3">123, Anywhere, UK</h1>
+    </div>
+  </div>
+
+  {/* Partners Section */}
+  <div className="mt-24">
+    <h1 className="text-4xl capitalize text-center font-bold tracking-wide noto small">
+      Our Partners
+    </h1>
+    <div className="flex justify-center mt-3 items-center">
+      <div className="line-left relative w-20 sm:w-36 h-[2px] bg-[#221F92] mx-3"></div>
+      <img src={Partner} className="text-center" width="50" sm:width="70" alt="" />
+      <div className="line-right w-20 sm:w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
+    </div>
+
+    <div className="flex flex-wrap justify-center items-center gap-6 mt-10">
+      <img src={Partner1} alt="" className="w-32 md:w-40" />
+      <img src={Partner2} alt="" className="w-32 md:w-40" />
+    </div>
+  </div>
+</div>
+<Gotop />
     </>
   );
 }

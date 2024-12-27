@@ -35,16 +35,16 @@ function About() {
           {/* Text Content */}
           <div className="max-w-full lg:max-w-2xl xs:text-center lg:text-left">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-medium tracking-tight text-[#FF6600] leading-snug capitalize noto small">
-            Reliable Delivery, Trusted Service–Every Time.
+              Reliable Delivery, Trusted Service–Every Time.
             </h1>
             <h2 className="mt-4 md:mt-6 lg:mt-8 text-white text-base sm:text-lg md:text-xl lg:text-4xl font-bold">
-            our Trusted Partner in Fast and
-            Reliable Shipping.
+              our Trusted Partner in Fast and Reliable Shipping.
             </h2>
             <p className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
-            we are dedicated to providing reliable, fast, and secure delivery services 
-across the UK and beyond. With years of experience in the courier industry
- we pride ourselves on our commitment to customer satisfaction.
+              we are dedicated to providing reliable, fast, and secure delivery
+              services across the UK and beyond. With years of experience in the
+              courier industry we pride ourselves on our commitment to customer
+              satisfaction.
             </p>
             <div className="mt-6 sm:mt-8 md:mt-10 flex justify-center lg:justify-start">
               <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
@@ -67,7 +67,7 @@ across the UK and beyond. With years of experience in the courier industry
           </h1>
           <div className="flex justify-center mt-3 items-center">
             <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-            <img src={Setting} className="text-center" width={"70px"} alt="" />
+            <img src={Setting} className="text-center" width={"50px"} alt="" />
             <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
           </div>
         </div>
@@ -215,43 +215,45 @@ across the UK and beyond. With years of experience in the courier industry
         </div>
       </div> */}
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24 bg-[#1D1D37] rounded-lg p-10">
-        <div className="flex justify-center items-center">
-          <div className="w-1/3 border-r-4 border-[#FF6600]">
-            <h1 className="text-4xl mb-2 text-[#FF6600] capitalize font-bold tracking-wide noto small">
-              1500+
-            </h1>
-            <h3 className="text-2xl text-white capitalize font-bold tracking-wide noto small">
-              Project Completed
-            </h3>
-            <p className="text-lg text-[#D6D6D6] leading-relaxed">
-              Our project completion service ensures timely, reliable delivery
-              from start to finish.
-            </p>
-          </div>
-          <div className="w-1/3 border-r-4 border-[#FF6600] ml-4">
-            <h1 className="text-4xl mb-2 text-[#FF6600] capitalize font-bold tracking-wide noto small">
-              200+
-            </h1>
-            <h3 className="text-2xl text-white capitalize font-bold tracking-wide noto small">
-              Best Deliveryman's
-            </h3>
-            <p className="text-lg text-[#D6D6D6] leading-relaxed">
-              committed to providing the best service, ensuring every delivery
-              is handled with care and efficiency.
-            </p>
-          </div>
-          <div className="w-1/3 ml-4">
-            <h1 className="text-4xl mb-2 text-[#FF6600] capitalize font-bold tracking-wide noto small">
-              75+
-            </h1>
-            <h3 className="text-2xl text-white capitalize font-bold tracking-wide noto small">
-              International Awards
-            </h3>
-            <p className="text-lg text-[#D6D6D6] leading-relaxed">
-              committed to providing the best service, ensuring every delivery
-              is handled with care and efficiency.
-            </p>
+      <div className="mx-6">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 my-24 bg-[#1D1D37] rounded-lg p-10">
+          <div className="md:flex justify-center items-baseline">
+            <div className="md:w-1/3 w-full md:border-r-4 border-[#FF6600] md:mt-3">
+              <h1 className="text-4xl mb-2 text-[#FF6600] capitalize font-bold tracking-wide noto small">
+                1500+
+              </h1>
+              <h3 className="text-2xl text-white capitalize font-bold tracking-wide noto small">
+                Project Completed
+              </h3>
+              <p className="text-lg text-[#D6D6D6] leading-relaxed">
+                Our project completion service ensures timely, reliable delivery
+                from start to finish.
+              </p>
+            </div>
+            <div className="md:w-1/3 w-full md:border-r-4 border-[#FF6600] md:ml-4 md:mt-3">
+              <h1 className="text-4xl mb-2 text-[#FF6600] capitalize font-bold tracking-wide noto small">
+                200+
+              </h1>
+              <h3 className="text-2xl text-white capitalize font-bold tracking-wide noto small">
+                Best Deliveryman's
+              </h3>
+              <p className="text-lg text-[#D6D6D6] leading-relaxed">
+                committed to providing the best service, ensuring every delivery
+                is handled with care and efficiency.
+              </p>
+            </div>
+            <div className="md:w-1/3 w-full md:ml-4 md:mt-3">
+              <h1 className="text-4xl mb-2 text-[#FF6600] capitalize font-bold tracking-wide noto small">
+                75+
+              </h1>
+              <h3 className="text-2xl text-white capitalize font-bold tracking-wide noto small">
+                International Awards
+              </h3>
+              <p className="text-lg text-[#D6D6D6] leading-relaxed">
+                committed to providing the best service, ensuring every delivery
+                is handled with care and efficiency.
+              </p>
+            </div>
           </div>
         </div>
       </div>

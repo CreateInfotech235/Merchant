@@ -181,7 +181,9 @@ export const calculateDistancee = async (pickuplocation, deliverylocation) => {
     const destination = `${deliverylocation.latitude},${deliverylocation.longitude}`;
     const response = await API.post(`/mobile/auth/distance?origin=${origin}&destination=${destination}&apiKey=${apiKey}`);
     console.log(response);
-    return response;
+    if(response.status === 200){
+      return response.data;
+    }
   } catch (error) {
     console.error("Error fetching orders:", error);
     toast.error(error.message);

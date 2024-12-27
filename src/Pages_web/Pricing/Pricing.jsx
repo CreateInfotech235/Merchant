@@ -5,7 +5,7 @@ import tracking from "../../assets_web/Group (4).png";
 import bgImage from "../../assets_web/image (41).png";
 import effect from "../../assets_web/image (42).png";
 import HeavyBox from "../../assets_web/Pricing plans-amico 1.png";
-import Setting from "../../assets_web/Group 127.png";
+import Setting from "../../assets_web/1684798-200 1.png";
 
 import dubleCheckW from "../../assets_web/akar-icons_double-check (1).png";
 import dubleCheck from "../../assets_web/akar-icons_double-check.png";
@@ -126,19 +126,19 @@ function Pricing() {
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8 my-12 ">
         <div className="">
-          <h1 className="text-4xl capitalize text-center font-bold tracking-wide noto small">
-            Contact Us
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl capitalize text-center font-bold tracking-wide noto small">
+          Courier Pricing
           </h1>
           <div className="flex justify-center mt-3 items-center">
             <div className="line-left relative w-36 h-[2px] bg-[#221F92] mx-3"></div>
-            <img src={Setting} className="text-center" width={"70px"} alt="" />
+            <img src={Setting} className="text-center" width={"50px"} alt="" />
             <div className="line-right w-36 h-[2px] bg-[#221F92] mx-3 relative"></div>
           </div>
         </div>
       </div>
 
       {/* part 3 */}
-      <div className="mb-4  mx-auto max-w-7xl px-6 lg:px-8 my-2">
+      <div className="mb-4  mx-auto max-w-7xl lg:px-8 my-2">
         <div className="container mx-auto px-4">
           {/* Card Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

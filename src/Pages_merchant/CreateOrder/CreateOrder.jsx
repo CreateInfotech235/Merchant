@@ -290,7 +290,9 @@ const CreateOrder = () => {
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
     var deliverylocation = null;
-
+    var distanceKm = null;
+    var duration = null;
+    var distanceMiles = null;
     var pickuplocation =
       values.pickupDetails.location.latitude === null
         ? null
@@ -395,26 +397,31 @@ const CreateOrder = () => {
       }
     }
 
-    // if (
-    //   !values.distance &&
-    //   !values.duration &&
-    //   pickuplocation.latitude &&
-    //   pickuplocation.longitude &&
-    //   deliverylocation.latitude &&
-    //   deliverylocation.longitude
-    // ) {
-    //   console.log("Hello");
-    //   console.log(
-    //     pickuplocation.latitude,
-    //     pickuplocation.longitude,
-    //     deliverylocation.latitude,
-    //     deliverylocation.longitude
-    //   );
+    if (
+      !values.distance &&
+      !values.duration &&
+      pickuplocation.latitude &&
+      pickuplocation.longitude &&
+      deliverylocation.latitude &&
+      deliverylocation.longitude
+    ) {
+      console.log("Hello");
+      console.log(
+        pickuplocation.latitude,
+        pickuplocation.longitude,
+        deliverylocation.latitude,
+        deliverylocation.longitude
+      );
 
-    //   const distance = await calculateDistancee(pickuplocation, deliverylocation);
-    //   console.log(distance);
-    //   setFieldValue("distance", distance);
-      // console.log(distance);
+      const distance = await calculateDistancee(pickuplocation, deliverylocation);
+      console.log(distance.distance);
+      setFieldValue("distance", distance.distance.text);
+      setFieldValue("duration", distance.duration.text);
+      distanceKm = parseFloat(distance.distance.text.replace(/[^\d.]/g, ""));
+      distanceMiles = (distanceKm * 0.621371).toFixed(2); // Convert and round to 2 decimal places
+      distanceMiles = parseFloat(distanceMiles); // Ensure it's a number type
+      duration = distance.duration.text;
+      console.log(distance);
 
       // const apiKey = "AIzaSyBnWMbLVCkqKy2cHFAXnZqF2Ay-6T44Jzw";
       // const origin = `${pickuplocation.latitude},${pickuplocation.longitude}`;
@@ -449,7 +456,7 @@ const CreateOrder = () => {
       //     "Failed to fetch data from Google Maps API. Check console for details."
       //   );
       // }
-    // }
+    }
 
     // console.log(values);
 
@@ -473,7 +480,10 @@ const CreateOrder = () => {
           longitude: deliverylocation.longitude,
         },
       },
+      distance: distanceMiles,
+      duration: duration,
     };
+    console.log(payload);
 
     // Remove paymentCollectionRupees if cashOnDelivery is false
     if (values.cashOnDelivery === "false") {
@@ -886,7 +896,6 @@ const CreateOrder = () => {
                       Delivery Information
                     </h3>
                     {/* Delivery Details Fields */}
-                    {/* <div className="input-error mb-3"> */}
                     <label className="fw-thin p-0 pb-1 ">
                       Select Customer :
                     </label>
@@ -904,10 +913,9 @@ const CreateOrder = () => {
                       placeholder="Select Customer"
                       isClearable
                       filterOption={(option, inputValue) => {
-                        const data = option.data; // Access the original object from options
+                        const data = option.data;
                         const searchValue = inputValue.toLowerCase();
 
-                        // Match by name, email, or mobileNumber
                         return (
                           data.firstName.toLowerCase().includes(searchValue) ||
                           data.lastName.toLowerCase().includes(searchValue) ||
@@ -925,10 +933,6 @@ const CreateOrder = () => {
                               selectedOption.country || ""
                             }`
                           );
-                          // setFieldValue(
-                          //   "deliveryDetails.countryCode",
-                          //   selectedOption.countryCode || ""
-                          // );
                           setFieldValue(
                             "deliveryDetails.mobileNumber",
                             selectedOption.mobileNumber
@@ -950,10 +954,8 @@ const CreateOrder = () => {
                             selectedOption.firstName
                           );
                         } else {
-                          // Clear delivery details if no customer is selected
                           setFieldValue("deliveryDetails", {
                             address: "",
-                            // countryCode: "",
                             mobileNumber: "",
                             email: "",
                             description: "",
