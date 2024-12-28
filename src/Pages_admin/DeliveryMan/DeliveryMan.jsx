@@ -16,6 +16,7 @@ import {
 } from "../../Components_admin/Api/DeliveryMan";
 import "./DeliveryMan.css";
 import Loader from "../../Components_admin/Loader/Loader";
+import EditDeliveryManModal from "../EditDeliveryManModal/EditDeliveryManModal";
 
 const DeliveryMan = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -271,6 +272,12 @@ const DeliveryMan = () => {
           onDelete={confirmDelete}
           onHide={closeDeleteModal}
           text="Delivery Man"
+        />
+      )}
+      {showEditModal && (
+        <EditDeliveryManModal
+          deliveryBoy={selectedDeliveryMan}
+          onHide={closeEditModal}
         />
       )}
     </>

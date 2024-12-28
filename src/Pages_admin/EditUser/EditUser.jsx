@@ -3,180 +3,256 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
+import { Modal, Button, Form } from "react-bootstrap";
+import { updateProfileOfMerchant } from "../../Components_admin/Api/User";
 
-import "./EditUser.css";
-
-import { Link } from "react-router-dom";
-
-const EditUser = () => {
+const EditUser = ({ user, onHide }) => {
+  console.log('user',user)
+  const [show, setShow] = useState(false);
   const [phone, setPhone] = useState("");
+
+  const handleClose = () => {
+    setShow(false);
+    onHide();
+  };
+  const handleShow = () => setShow(true);
+
   const formik = useFormik({
     initialValues: {
-      name: "",
-      email: "",
-      username: "",
-      contactNumber: "",
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      contactNumber: user?.contactNumber,
+      status: user?.status,
+      isVerified: user?.isVerified,
+      address: {
+        street: user?.address?.street,
+        city: user?.address?.city,
+        country: user?.address?.country,
+        postalCode: user?.address?.postalCode,
+      },
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Name is required"),
+      firstName: Yup.string().required("First Name is required"),
+      lastName: Yup.string().required("Last Name is required"),
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
-      username: Yup.string().required("Username is required"),
       contactNumber: Yup.string()
         .matches(/^[0-9]+$/, "Must be only digits")
         .required("Contact number is required"),
+      status: Yup.string().required("Status is required"),
+      isVerified: Yup.boolean().required("Verification status is required"),
+      address: Yup.object().shape({
+        street: Yup.string().required("Street is required"),
+        city: Yup.string().required("City is required"),
+        country: Yup.string().required("Country is required"),
+        postalCode: Yup.string().required("Postal Code is required"),
+      }),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       // Handle form submission
-      // console.log("Form data:", values);
+      console.log("Form data:", values);
+
+      const response = await updateProfileOfMerchant(user?._id, values);
+      if (response.status) {
+        handleClose();
+      }
+
+
     },
   });
 
   return (
     <>
-      <div className="edit-user fluid-container W-100%">
-        <div className="row input-box .d-xxl-flex .flex-xxl-row .d-xl-flex .d-lg-flex .d-md-flex .d-sm-flex .d-flex .flex-column">
-          <div className="input-error col-xxl-4 col-xl-4 col-lg-5 w-xxl-50 col-md-6 col-sm-5 col-12">
-            <label
-              htmlFor="name"
-              class="form-label w-100"
-              style={{ color: "#999696" }}
-            >
-              Name
-              <input
-                type="text"
-                id="name"
-                className="form-control mt-3 w-25% h-100%"
-                placeholder="Name"
-                style={{ height: "4.5em" }}
-                {...formik.getFieldProps("name")}
-              />
-              {formik.touched.name && formik.errors.name ? (
-                <div className="error text-danger">
-                  {formik.errors.name}
-                </div>
-              ) : null}
-            </label>
-          </div>
-
-          <div className="input-error col-xxl-4 col-xl-4 col-lg-5 w-xxl-50 col-md-6 col-sm-5 col-12">
-            <label
-              htmlFor="email"
-              class="form-label w-100"
-              style={{ color: "#999696" }}
-            >
-              Email
-              <input
-                type="email"
-                id="email"
-                className="form-control mt-3"
-                placeholder="Email"
-                style={{ height: "4.5em" }}
-                {...formik.getFieldProps("email")}
-              />
-              {formik.touched.email && formik.errors.email ? (
-                <div className="error text-danger ">
-                  {formik.errors.email}
-                </div>
-              ) : null}
-            </label>
-          </div>
-        </div>
-
-        <div className="row input-box .d-xxl-flex .flex-xxl-row .d-xl-flex .d-lg-flex .d-md-flex .d-sm-flex .d-sm-flex">
-          <div className="input-error col-xxl-4  col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
-            <label
-              htmlFor="username"
-              class="form-label w-100"
-              style={{ color: "#999696" }}
-            >
-              Username
-              <input
-                type="text"
-                id="username"
-                className="form-control mt-3"
-                placeholder="Username"
-                style={{ height: "4.5em" }}
-                {...formik.getFieldProps("username")}
-              />
-              {formik.touched.username && formik.errors.username ? (
-                <div className="error text-danger">
-                  {formik.errors.username}
-                </div>
-              ) : null}
-            </label>
-          </div>
-
-          <div className="input-error col-xxl-4 col-xl-4 w-xxl-100  col-lg-5 col-md-6 col-sm-5 w-lg-50 m-2 w-md-50 col-12">
-            <label
-              htmlFor="contactNumber"
-              class="form-label ps-0 mb-0 w-100 "
-              style={{ color: "#999696" }}
-            >
-              {" "}
-              Contact Number
-            </label>
-          
-              <PhoneInput
-                country={"eg"}
-                enableSearch={true}
-                className="phoneInput"
-                value={phone}
-                onChange={(phone) => setPhone(phone)}
-                containerStyle={{
-                  border: "0px"
-      
-                }}
-                inputStyle={{
-                  background: "white",
-                  width:"100%",
-                       height: "4.5em"
-                }}
-                required
-            
-              />
-       
-            {formik.touched.contactNumber && formik.errors.contactNumber ? (
-              <div className="error text-danger ps-3">
-                {formik.errors.contactNumber}
+      <Modal show={true} onHide={onHide} centered size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title>Edit User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={formik.handleSubmit}>
+            <div className="row">
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="firstName">
+                  <Form.Label>First Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="First Name"
+                    {...formik.getFieldProps("firstName")}
+                    isInvalid={
+                      formik.touched.firstName && !!formik.errors.firstName
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.firstName}
+                  </Form.Control.Feedback>
+                </Form.Group>
               </div>
-            ) : null}
-          </div>
-        </div>
-        <button
-          style={{
-            outline: "none",
-            border: "none",
-            padding: "10px",
-            margin: "20px",
-            width: "150px",
-            borderRadius: "5px",
-            background: "#d65246",
-            color: "white",
-            margin: "30px 0px 0px 10px",
-          }}
-        >
-          Save
-        </button>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="lastName">
+                  <Form.Label>Last Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Last Name"
+                    {...formik.getFieldProps("lastName")}
+                    isInvalid={
+                      formik.touched.lastName && !!formik.errors.lastName
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.lastName}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="email">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Email"
+                    {...formik.getFieldProps("email")}
+                    isInvalid={formik.touched.email && !!formik.errors.email}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.email}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="contactNumber">
+                  <Form.Label>Contact Number</Form.Label>
+                  <Form.Control 
+                    type="text"
+                    placeholder="Contact Number"
+                    {...formik.getFieldProps("contactNumber")}
+                    isInvalid={
+                      formik.touched.contactNumber &&
+                      !!formik.errors.contactNumber
+                    }
+                  />
+                    <Form.Control.Feedback type="invalid">
+                    {formik.errors.contactNumber}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="status">
+                  <Form.Label>Status</Form.Label>
+                  <Form.Control
+                    as="select"
+                    {...formik.getFieldProps("status")}
+                    isInvalid={formik.touched.status && !!formik.errors.status}
+                  >
+                    <option value="" label="Select status" />
+                    <option value="ENABLE" label="Enabled" />
+                    <option value="DISABLE" label="Disabled" />
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.status}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="isVerified">
+                  <Form.Check
+                    type="checkbox"
+                    label="Verified"
+                    {...formik.getFieldProps("isVerified")}
+                    checked={formik.values.isVerified}
+                    isInvalid={
+                      formik.touched.isVerified && !!formik.errors.isVerified
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.isVerified}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="street">
+                  <Form.Label>Street</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Street"
+                    {...formik.getFieldProps("address.street")}
+                    isInvalid={
+                      formik.touched.address?.street &&
+                      !!formik.errors.address?.street
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.address?.street}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="city">
+                  <Form.Label>City</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="City"
+                    {...formik.getFieldProps("address.city")}
+                    isInvalid={
+                      formik.touched.address?.city &&
+                      !!formik.errors.address?.city
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.address?.city}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="country">
+                  <Form.Label>Country</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Country"
+                    {...formik.getFieldProps("address.country")}
+                    isInvalid={
+                      formik.touched.address?.country &&
+                      !!formik.errors.address?.country
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.address?.country}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3" controlId="postalCode">
+                  <Form.Label>Postal Code</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Postal Code"
+                    {...formik.getFieldProps("address.postalCode")}
+                    isInvalid={
+                      formik.touched.address?.postalCode &&
+                      !!formik.errors.address?.postalCode
+                    }
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {formik.errors.address?.postalCode}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </div>
+            </div>
 
-          <button
-            style={{
-              outline: "none",
-              border: "none",
-              padding: "10px",
-              margin: "20px",
-              width: "150px",
-              borderRadius: "5px",
-              background: "#FFF",
-              color: "#000",
-              margin: "30px 0px 0px 10px",
-            }}
-          >
-            Cancel
-          </button>
-     
-      </div>
+            <div className="d-flex justify-content-center">
+              <Button variant="primary" type="submit" className="me-2 w-50">
+                Save
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={handleClose}
+                className="w-50"
+              >
+                Cancel
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };

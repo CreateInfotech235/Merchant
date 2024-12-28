@@ -10,7 +10,8 @@ const AddUser = () => {
     const [cities, setCities] = useState([]);
 
     const initialValues = {
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         password: "",
         contactNumber: "",
@@ -35,7 +36,8 @@ const AddUser = () => {
     }, []);
 
     const validationSchema = Yup.object().shape({
-        name: Yup.string().required("Name is required"),
+        firstName: Yup.string().required("First name is required"),
+        lastName: Yup.string().required("Last name is required"),
         email: Yup.string().email("Invalid email format").required("Email is required"),
         password: Yup.string()
             .matches(
@@ -49,7 +51,6 @@ const AddUser = () => {
             street: Yup.string().required("Street address is required"),
             city: Yup.string().required("City is required"),
             postalCode: Yup.string()
-                .matches(/^\d{6}$/, "Postal code must be exactly 6 digits")
                 .required("Postal code is required"),
             country: Yup.string().required("Country is required"),
         }),
@@ -79,14 +80,24 @@ const AddUser = () => {
 
                             <Field
                                 type="text"
-                                name="name"
+                                name="firstName"
                                 className="form-control"
-                                placeholder="Name"
+                                placeholder="First Name"
                                 style={{ height: "4.5em", border: "1px solid #E6E6E6", borderRadius: "5px" }}
                             />
-                            <ErrorMessage name="name" component="div" className="error text-danger ps-2" />
+                            <ErrorMessage name="firstName" component="div" className="error text-danger ps-2" />
                         </div>
 
+                        <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3"> 
+                            <Field
+                                type="text"
+                                name="lastName"
+                                className="form-control"
+                                placeholder="Last Name"
+                                style={{ height: "4.5em", border: "1px solid #E6E6E6", borderRadius: "5px" }}
+                            />
+                            <ErrorMessage name="lastName" component="div" className="error text-danger ps-2" />
+                        </div>
                         {/* Email Field */}
 
                         <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">

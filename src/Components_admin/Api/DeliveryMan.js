@@ -171,3 +171,28 @@ export const deleteDeliveryBoy = async (id) => {
     return { status: false, message: error.message };
   }
 };
+
+export const updateDeliveryBoy = async (id, data) => {
+  try {
+    const response = await API.patch(
+      `/deliveryMan/updateDeliveryManProfile/${id}`,
+      data
+    );
+    // console.log("response", response);
+
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      return { status: true, data: response.data.data };
+    } else {
+      // console.log("API error", response.response.data.message);
+      toast.error(response.response.data.message || response.message);
+      return {
+        status: false,
+        message: response.response.data.message || response.message,
+      };
+    }
+  } catch (error) {
+    console.error("Error Add delivery boy:", error);
+    return { status: false, message: error.message };
+  }
+};

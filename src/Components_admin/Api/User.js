@@ -1,14 +1,31 @@
 import API from "./Api";
 import { toast } from "react-toastify";
 
-export const getAllUsers = async (page, pageLimit) => {
+export const getAllUsers = async (existss,page, pageLimit) => {
   try {
-    const response = await API.get(`/users/getAllUsers`);
-    // console.log('res',response)
+    const response = await API.get(`/users/getAllUsersFromAdmin?existss=${existss}`);
+    console.log('res',response)
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
       // console.log('API error', response.message)
+      return { status: false, message: response.message };
+    }
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    return { status: false, message: error.message };
+  }
+};
+
+export const updateProfileOfMerchant = async (id, data) => {
+  try {
+    const response = await API.post(`/users/updateProfileOfMerchant/${id}`, data);
+    console.log('res',response)
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      return { status: true, data: response.data.data };
+    } else {
+      toast.error(response.message);
       return { status: false, message: response.message };
     }
   } catch (error) {
