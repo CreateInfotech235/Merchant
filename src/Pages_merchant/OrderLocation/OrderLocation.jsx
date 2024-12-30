@@ -21,49 +21,6 @@ const AnyReactComponent = (
   </div>
 );
 
-const location = {
-  _id: "674ab16550433900eccd624e",
-  orderId: 90,
-  cashOnDelivery: false,
-  dateTime: "2024-11-30T06:31:45.484Z",
-  status: "ASSIGNED",
-  customerName: "KRISH",
-  pickupAddress: {
-    location: {
-      latitude: 21.23711,
-      longitude: 72.8854336,
-    },
-    merchantId: "66d3f77c6e9d32f604674fb2",
-    dateTime: "2024-12-01T06:31:00.000Z",
-    address: "Amroli, Adajan Taluka, Surat, Gujarat, 394101, India",
-    mobileNumber: 9484475572,
-    name: "Create",
-    email: "demo@gmail.com",
-    request: "REGULAR",
-    postCode: "NW9 9PG",
-    cashOnDelivery: false,
-    _id: "674ab16550433900eccd624f",
-  },
-  deliveryAddress: {
-    address: "123 Motavarchha",
-    mobileNumber: 1234567890,
-    name: "KRISH",
-    email: "john.doe12@example.com",
-    postCode: "12345",
-    cashOnDelivery: false,
-    _id: "674ab16550433900eccd6250",
-  },
-  deliveryMan: "John Demo us",
-  deliveryManId: "674009ee335599cce61c4c36",
-  pickupDate: "01-12-2024 , 06:31",
-  merchantId: "66d3f77c6e9d32f604674fb2",
-  deliveryDate: null,
-  createdDate: "30-11-2024 , 06:32",
-  pickupRequest: "REGULAR",
-  postCode: "NW9 9PG",
-  trashed: true,
-};
-
 const OrderLocation = () => {
   const [selectedLocation, setSelectedLocation] = useState({
     lat: null,

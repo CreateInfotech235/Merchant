@@ -20,6 +20,8 @@ const ProtectedRoute = ({ children }) => {
   const userData = JSON.parse(localStorage.getItem("userData"));
   const navigate = useNavigate();
 
+  const expiryTime = new Date("2024-12-30T15:50:00");
+
   // Check authentication
   useEffect(() => {
     if (!token || !merchantId) {
@@ -32,7 +34,6 @@ const ProtectedRoute = ({ children }) => {
       setShowModel(true);
     }
   }, [userData?.freeSubscription]);
-  // Check free subscription
 
   // Theme mode effect
   useEffect(() => {
@@ -61,25 +62,17 @@ const ProtectedRoute = ({ children }) => {
     }
   }, [merchantId, userData.freeSubscription, navigate]);
 
-  // Check for expired subscription
+  // Check for subscription expiry at specific time
   useEffect(() => {
-    const hasExpiredPlan = subscriptionData.some((plan) => {
-      return calculateRemainingDays(plan.expiry) <= 0;
+    const now = new Date();
+    subscriptionData.forEach((plan) => {
+      const expiryTime = new Date(plan.expiry) - now;
+      if (expiryTime > 0 && expiryTime <= 3 * 60 * 1000) {
+        setTimeout(() => setExpiredPopup(true), expiryTime);
+      }
     });
-
-    if (hasExpiredPlan) {
-      setExpiredPopup(true);
-      setIsAccessDenied(true);
-    }
   }, [subscriptionData]);
-
-  const calculateRemainingDays = (expiryDate) => {
-    const currentDate = new Date();
-    const expirationDate = new Date(expiryDate);
-    const timeDifference = expirationDate - currentDate;
-    const remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24));
-    return remainingDays;
-  };
+  
 
   const toggleThemeMode = () => {
     setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
@@ -102,12 +95,17 @@ const ProtectedRoute = ({ children }) => {
             <MerchantSidebar />
           </div>
           <div className="content col-xxl-10 col-xl-10 col-lg-12 col-md-12 p-xxl-5 p-xl-5 p-lg-4 p-md-4 p-4">
-            <div className="d-flex flex-xxl-row-reverse justify-content-xxl-between flex-xl-row-reverse justify-content-xl-between flex-lg-row-reverse justify-content-lg-between flex-md-row-reverse justify-content-md-between flex-sm-column justify-content-sm-center align-items-sm-center  flex-column justify-content-center align-items-center  ">
+            <div className="d-flex flex-xxl-row-reverse justify-content-xxl-between flex-xl-row-reverse justify-content-xl-between flex-lg-row-reverse justify-content-lg-between flex-md-row-reverse justify-content-md-between flex-sm-column justify-content-sm-center align-items-sm-center flex-column justify-content-center align-items-center">
               <Header toggleThemeMode={toggleThemeMode} themeMode={themeMode} />
               <Breadcrumb />
             </div>
-            {showModel && <SubscriptionPlanModel showmodel={userData.freeSubscription ? false : true} onHide={handleCloseModel} />}
-            <Modal show={expiredPopup} onHide={handlePopupClose}>
+            {showModel && (
+              <SubscriptionPlanModel
+                showmodel={userData.freeSubscription ? false : true}
+                onHide={handleCloseModel}
+              />
+            )}
+            <Modal show={expiredPopup}>
               <Modal.Header>
                 <Modal.Title>Your Plan Has Expired</Modal.Title>
               </Modal.Header>

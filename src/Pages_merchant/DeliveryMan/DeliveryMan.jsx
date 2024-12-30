@@ -13,6 +13,7 @@ import UpdateDeliveryBoyModal from "./UpdateDeliveryManModal";
 import DeliveryManInfoModal from "./DeliveryManInfoModal"; // Import the new modal
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
 import Loader from "../../Components_admin/Loader/Loader";
+import MapModal from "./MapModal";
 
 const DeliveryMan = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,8 +26,9 @@ const DeliveryMan = () => {
   const [showEditModal, setShowEditModal] = useState(false); // State for showing the edit modal
   const [showModal, setShowModal] = useState(false); // State for showing the edit modal
   const [showInfoModal, setShowInfoModal] = useState(false); // State for showing the view modal
+  const [location, setLocation] = useState(null); // State for location
   const [loading, setLoading] = useState(true);
-
+  const [showMapModal, setShowMapModal] = useState(false);
   const closeModel = () => setShowModel(false);
 
   const fetchDeliveryMen = async () => {
@@ -137,6 +139,17 @@ const DeliveryMan = () => {
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
+  const handleLocationClick = (coordinates) => {
+    console.log("Coordinates:", coordinates);
+    if (coordinates && coordinates[0] !== undefined && coordinates[1] !== undefined) {
+      setLocation(coordinates);
+      setShowMapModal(true);
+    }else{
+      alert("No coordinates found");
+    }
+  
+  };
+
   return (
     <>
       <div className="w-100">
@@ -234,7 +247,12 @@ const DeliveryMan = () => {
                     </td>
                     <td className="user-table1">
                       <div className="d-flex justify-content-center align-items-center">
-                        <button className="edit-btn">
+                        <button className="edit-btn"
+                        onClick={() => handleLocationClick([
+                          deliveryman.location?.coordinates[0],
+                          deliveryman.location?.coordinates[1],
+                        ])}
+                        >
                           <img src={locationimg} alt="Edit" className="mx-auto"/>
                         </button>
                         <button
@@ -293,6 +311,12 @@ const DeliveryMan = () => {
         <DeliveryManInfoModal
           deliveryBoy={selectedDeliveryMan}
           onHide={closeInfoModal}
+        />
+      )}
+      {showMapModal && (
+        <MapModal
+          location={location}
+          onHide={() => setShowMapModal(false)}
         />
       )}
     </>

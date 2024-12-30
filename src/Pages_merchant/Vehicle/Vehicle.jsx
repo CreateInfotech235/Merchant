@@ -66,7 +66,7 @@ const Vehicle = () => {
   const VehicleImage = (url) => {
     return (
       <img
-        src={`https://create-1-opqy.onrender.com/public/${url}`}
+        src={`http://localhost:8000/public/${url}`}
         onError={(e) => {
           e.target.src = vehicle1;
         }}
