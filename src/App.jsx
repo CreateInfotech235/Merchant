@@ -144,6 +144,7 @@ import ViewSupportTickets from "./Pages_admin/SupportTicket/ViewSupportTickets";
 import HomePage from "./Pages_admin/HomePage/HomePage";
 import Faqs from "./Pages_web/Faqs/Faqs";
 import PageNotFound from "./Pages_web/PageNotFound/PageNotFound";
+import TermsConditions from "./Components_web/Terms & Conditions/TermsConditions";
 
 
 function App() {
@@ -484,6 +485,14 @@ function App() {
           element={
             <Formate Login={islogin} useData={userData}>
               <Contact />
+            </Formate>
+          }
+        />
+        <Route
+          path="/terms-and-conditions"
+          element={
+            <Formate Login={islogin} useData={userData}>
+              <TermsConditions />
             </Formate>
           }
         />

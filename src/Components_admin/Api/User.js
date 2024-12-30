@@ -145,3 +145,21 @@ export const addUser = async (data) => {
     return { status: false, message: error.message };
   }
 };
+
+export const deleteUser = async (id) => {
+  try {
+    const response = await API.delete(`/users/deleteMerchant/${id}`);
+    console.log('response',response)
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      return { status: true, data: response.data.data };
+    } else {
+      toast.error(response.message);
+      return { status: false, message: response.message };
+    }
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { status: false, message: error.message };
+  }
+};
+

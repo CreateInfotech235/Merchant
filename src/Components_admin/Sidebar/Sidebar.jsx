@@ -194,7 +194,19 @@ const Sidebar = () => {
               </div>
             )}
           </li>
-          
+          <li className="my-2">
+            <Link to="/all-customer-admin" className="link">
+              <Button
+                className={`w-100 ${isActive("/all-customer-admin") ? "active" : ""}`}
+                onClick={() => setActiveTab(null)}
+              >
+                <span className="icon">
+                  <img src={customer} alt="country" />
+                </span>
+                Customer
+              </Button>
+            </Link>
+          </li>
           <li className="my-2">
             <Link to="/country" className="link">
               <Button
@@ -209,19 +221,7 @@ const Sidebar = () => {
             </Link>
           </li>
 
-          <li className="my-2">
-            <Link to="/all-customer-admin" className="link">
-              <Button
-                className={`w-100 ${isActive("/all-customer-admin") ? "active" : ""}`}
-                onClick={() => setActiveTab(null)}
-              >
-                <span className="icon">
-                  <img src={customer} alt="country" />
-                </span>
-                Customer
-              </Button>
-            </Link>
-          </li>
+         
 
           <li className="my-2">
             <Link to="/city" className="link">

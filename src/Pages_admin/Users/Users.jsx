@@ -183,12 +183,14 @@ import searchIcon from "../../assets_admin/search.png";
 import add from "../../assets_admin/add.png";
 import show from "../../assets_admin/show.png";
 import edit from "../../assets_admin/edit.png";
+import deleteimg from "../../assets_admin/deleteimg.png";
 import ViewUser from "../../Components_admin/ViewUser/ViewUser";
 import Pagination from "../../Components_admin/Pagination/Pagination";
-import { getAllUsers } from "../../Components_admin/Api/User"; // Fetch function
+import { deleteUser, getAllUsers } from "../../Components_admin/Api/User"; // Fetch function
 import UserInfoModal from "./UserInfoPopup";
 import Loader from "../../Components_admin/Loader/Loader";
 import EditUser from "../EditUser/EditUser";
+import DeleteModal from "../../Components_admin/DeleteModal";
 
 const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -199,6 +201,7 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Fetch users from API
   const fetchUsers = async () => {
@@ -260,6 +263,21 @@ const Users = () => {
     setSelectedUser(deliveryMan);
     setShowEditModal(true);
   };
+
+  const handleDeleteClick = (customer) => {
+    setSelectedUser(customer);
+    setShowDeleteModal(true);
+  };
+  const confirmDelete = async () => {
+    if (selectedUser) {
+      const response = await deleteUser(selectedUser._id);
+      if (response.status) {
+        fetchUsers();
+        closeDeleteModal();
+      }
+    }
+  };
+  const closeDeleteModal = () => setShowDeleteModal(false);
   const closeEditModal = () => {
     setShowEditModal(false);
     setSelectedUser(null);
@@ -373,6 +391,12 @@ const Users = () => {
                     >
                       <img src={edit} alt="Edit" className="mx-auto" />
                     </button>
+                    <button
+                        className="delete-btn ms-1 me-1"
+                        onClick={() => handleDeleteClick(user)}
+                      >
+                        <img src={deleteimg} alt="Delete" className="mx-auto" />
+                      </button>
                   </td>
                 </tr>
               ))
@@ -397,6 +421,13 @@ const Users = () => {
         <EditUser
           user={selectedUser}
           onHide={closeEditModal}
+        />
+      )}
+      {showDeleteModal && (
+        <DeleteModal
+          onDelete={confirmDelete}
+          onHide={closeDeleteModal}
+          text="User"
         />
       )}
     </div>

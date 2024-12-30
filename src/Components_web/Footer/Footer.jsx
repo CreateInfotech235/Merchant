@@ -1,5 +1,6 @@
 import React from "react";
 import HeaderLogo from "../../assets_web/logo-new.png";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -131,7 +132,9 @@ function Footer() {
 
         {/* Bottom Section */}
         <div className="border-t border-gray-300 mt-8 pt-4 text-center text-gray-600 text-xs md:text-sm">
+          <Link to="/terms-and-conditions">
           All rights Reserved © Your Company, {new Date().getFullYear()}
+          </Link>
         </div>
       </footer>
     </div>
