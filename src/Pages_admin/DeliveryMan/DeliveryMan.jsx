@@ -17,6 +17,7 @@ import {
 import "./DeliveryMan.css";
 import Loader from "../../Components_admin/Loader/Loader";
 import EditDeliveryManModal from "../EditDeliveryManModal/EditDeliveryManModal";
+import MapModal from "./MapModal";
 
 const DeliveryMan = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,16 +29,31 @@ const DeliveryMan = () => {
   const [selectedDeliveryMan, setSelectedDeliveryMan] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const closeDeleteModal = () => setShowDeleteModal(false);
 
   const fetchDeliveryMen = async () => {
-    const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
-    const res = await getAllDeliveryMan(currentPage, itemsPerPage, searchParam);
-    // console.log(res);
-    if (res.status) {
-      setDeliverymen(res.data.data);
-      setTotalPages(Math.ceil(res.data.totalDataCount / itemsPerPage));
+    setLoading(true);
+    try {
+      const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
+      const res = await getAllDeliveryMan(
+        currentPage,
+        itemsPerPage,
+        searchParam
+      );
+      console.log(res);
+      if (res.status) {
+        setDeliverymen(res.data.data);
+        setTotalPages(Math.ceil(res.data.totalDataCount / itemsPerPage));
+      }
+    } catch (error) {
+      console.error("Error fetching delivery men:", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,6 +126,22 @@ const DeliveryMan = () => {
       closeDeleteModal();
     }
   };
+
+  const handleLocationClick = (coordinates) => {
+    console.log("fdsgdsgbdsfhgb");
+
+    console.log("Coordinates:", coordinates);
+    if (
+      coordinates &&
+      coordinates[0] !== undefined &&
+      coordinates[1] !== undefined
+    ) {
+      setLocation(coordinates);
+      setShowMapModal(true);
+    } else {
+      alert("No coordinates found");
+    }
+  };
   const statusColors = {
     ENABLE: "purple",
     DISABLE: "red",
@@ -169,14 +201,21 @@ const DeliveryMan = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredDeliverymen.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan="10" className="text-center p-3">
+                  <td colSpan="11" className="text-center p-3">
                     <div className="d-flex justify-content-center">
                       <div className="mx-auto">
                         <Loader />
-                        No Data Found
                       </div>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredDeliverymen.length === 0 ? (
+                <tr>
+                  <td colSpan="11" className="text-center p-3">
+                    <div className="d-flex justify-content-center">
+                      <div className="mx-auto">No Data Found</div>
                     </div>
                   </td>
                 </tr>
@@ -214,7 +253,15 @@ const DeliveryMan = () => {
                     </td>
                     <td className="user-table1">
                       <div className="d-flex justify-content-center align-items-center">
-                        <button className="edit-btn">
+                        <button
+                          className="edit-btn"
+                          onClick={(deliveryman) =>
+                            handleLocationClick([
+                              deliveryman?.location?.coordinates[0],
+                              deliveryman?.location?.coordinates[1],
+                            ])
+                          }
+                        >
                           <img
                             src={locationimg}
                             alt="Edit"
@@ -279,6 +326,9 @@ const DeliveryMan = () => {
           deliveryBoy={selectedDeliveryMan}
           onHide={closeEditModal}
         />
+      )}
+      {showMapModal && (
+        <MapModal location={location} onHide={() => setShowMapModal(false)} />
       )}
     </>
   );

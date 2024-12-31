@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
-import API from "../../Components_merchant/Api/Api";
-import { getOrders } from "../../Components_merchant/Api/Order";
 import { getAllOrder } from "../../Components_admin/Api/Order";
+import deliveryloc from "../../assets_mercchant/deliveryloc.png";
+import pickup from "../../assets_mercchant/pickup.png";
 
 function MapWithMarker() {
   const mapContainerStyle = {
@@ -13,30 +13,38 @@ function MapWithMarker() {
   const [orders, setOrders] = useState([]);
   const [center, setCenter] = useState({
     lat: 40.7128,
-    lng: -74.0060,
+    lng: -74.006,
   });
+  const [locationType, setLocationType] = useState("delivery");
 
   const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
   const mapRef = useRef(null);
+  const markersRef = useRef([]); // Store markers
 
-  // Fetch orders data from the API
-  const fetchOrders = async () => {
+  const fetchOrders = async (type = "delivery") => {
     try {
-      const merchnatId = localStorage.getItem("merchnatId");
-      const response = await getAllOrder(null , 1, 1000000);
-      // console.log("response", response.data);
+      const response = await getAllOrder(null, 1, 1000000);
 
       if (response?.data) {
-        setOrders(response.data || []);
+        const filteredOrders = response.data.filter((order) => {
+          if (type === "pickup") {
+            return order.pickupAddress?.location;
+          }
+          return order.deliveryAddress?.location;
+        });
 
-        const firstOrder = response.data?.[0];
-        if (
-          firstOrder?.deliveryAddress?.location?.latitude &&
-          firstOrder?.deliveryAddress?.location?.longitude
-        ) {
+        setOrders(filteredOrders);
+
+        const firstOrder = filteredOrders?.[0];
+        if (firstOrder) {
+          const location =
+            type === "pickup"
+              ? firstOrder.pickupAddress.location
+              : firstOrder.deliveryAddress.location;
+
           setCenter({
-            lat: parseFloat(firstOrder.deliveryAddress.location.latitude),
-            lng: parseFloat(firstOrder.deliveryAddress.location.longitude),
+            lat: parseFloat(location.latitude),
+            lng: parseFloat(location.longitude),
           });
         }
       } else {
@@ -48,34 +56,34 @@ function MapWithMarker() {
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    fetchOrders(locationType);
+  }, [locationType]);
 
-  // Add markers to the map when orders data is updated
+  const clearMarkers = () => {
+    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current = [];
+  };
+
   useEffect(() => {
-    let retryCount = 0;
-    const maxRetries = 5;
-    const retryInterval = 1000;
-
     const addMarkers = () => {
       const map = mapRef.current;
 
       if (!map || !window.google) {
-        if (retryCount < maxRetries) {
-          retryCount++;
-          setTimeout(addMarkers, retryInterval);
-          return;
-        }
-        // console.log("Failed to load map after maximum retries");
         return;
       }
 
-      // Create markers for each order's delivery location
+      clearMarkers(); // Clear existing markers
+
       orders.forEach((order) => {
-        if (order.deliveryAddress?.location) {
+        const location =
+          locationType === "pickup"
+            ? order.pickupAddress?.location
+            : order.deliveryAddress?.location;
+
+        if (location) {
           const position = {
-            lat: parseFloat(order.deliveryAddress.location.latitude),
-            lng: parseFloat(order.deliveryAddress.location.longitude),
+            lat: parseFloat(location.latitude),
+            lng: parseFloat(location.longitude),
           };
 
           if (!isNaN(position.lat) && !isNaN(position.lng)) {
@@ -90,7 +98,11 @@ function MapWithMarker() {
                 <div>
                   <p>Order ID: ${order._id}</p>
                   <p>Status: ${order.status}</p>
-                  <p>Delivery Address: ${order.deliveryAddress.address}</p>
+                  <p>${locationType === "pickup" ? "Pickup" : "Delivery"} Address: ${
+                    locationType === "pickup"
+                      ? order.pickupAddress.address
+                      : order.deliveryAddress.address
+                  }</p>
                 </div>
               `,
             });
@@ -98,6 +110,8 @@ function MapWithMarker() {
             marker.addListener("click", () => {
               infoWindow.open(map, marker);
             });
+
+            markersRef.current.push(marker); // Store marker in ref
           }
         }
       });
@@ -106,15 +120,36 @@ function MapWithMarker() {
     if (orders.length > 0) {
       addMarkers();
     }
-  }, [orders]);
+  }, [orders, locationType]);
 
-  // Handler when the map is loaded
   const onMapLoad = (map) => {
     mapRef.current = map;
   };
 
   return (
     <div>
+      <div className="d-flex justify-content-end items-center">
+        <button
+          type="button"
+          className={`pickup-location p-1 border-0 text-light m-3 rounded-2 flex justify-center items-center ${
+            locationType === "pickup" ? "active" : ""
+          }`}
+          onClick={() => setLocationType("pickup")}
+        >
+          <img src={pickup} className="loc-img " alt="Pick Up Location" /> Pick
+          Up Location
+        </button>
+        <button
+          type="button"
+          className={`pickup-location p-1 border-0 text-light m-3 rounded-2 flex justify-center items-center ${
+            locationType === "delivery" ? "active" : ""
+          }`}
+          onClick={() => setLocationType("delivery")}
+        >
+          <img src={deliveryloc} className="loc-img" alt="Delivery Location" />{" "}
+          Delivery Location
+        </button>
+      </div>
       <LoadScript googleMapsApiKey={apiKey}>
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
@@ -122,7 +157,7 @@ function MapWithMarker() {
           zoom={10}
           onLoad={onMapLoad}
         >
-          {/* Markers will be added via useEffect */}
+          {/* Markers will be added dynamically */}
         </GoogleMap>
       </LoadScript>
     </div>

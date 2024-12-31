@@ -202,13 +202,20 @@ const Users = () => {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   // Fetch users from API
   const fetchUsers = async () => {
-    const response = await getAllUsers(null, currentPage, usersPerPage);
-    if (response.status) {
-      setUsers(response.data); // Set user data from API
-      setTotalPages(Math.ceil(response.total / usersPerPage)); // Ensure you handle total pages
+    setLoading(true);
+    try {
+      const response = await getAllUsers(null, currentPage, usersPerPage);
+      if (response.status) {
+        setUsers(response.data); // Set user data from API
+        setTotalPages(Math.ceil(response.total / usersPerPage)); // Ensure you handle total pages
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -238,26 +245,34 @@ const Users = () => {
 
   const handleAdminMerchant = async () => {
     // console.log("Admin Order");
-    const response = await getAllUsers(true, currentPage, usersPerPage);
-    console.log(response, "response");
-    if (response.status) {
-      setUsers(response.data);
-      // setFilteredOrders(response.data);
+    setLoading(true);
+    try {
+      const response = await getAllUsers(true, currentPage, usersPerPage);
+      if (response.status) {
+        setUsers(response.data);
+        // setFilteredOrders(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
     }
-
-    // setFilteredOrders(orders);
   };
 
   const handleMerchantUser = async () => {
     // console.log("Merchant Order");
-    const response = await getAllUsers(false, currentPage, usersPerPage);
-    console.log(response, "response");
-    if (response.status) {
-      setUsers(response.data);
-      // setFilteredOrders(response.data);
+    setLoading(true);
+    try {
+      const response = await getAllUsers(false, currentPage, usersPerPage);
+      if (response.status) {
+        setUsers(response.data);
+        // setFilteredOrders(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
     }
-
-    // setFilteredOrders(orders);
   };
   const handleEditClick = (deliveryMan) => {
     setSelectedUser(deliveryMan);
@@ -347,14 +362,21 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.length === 0 ? (
+            {loading ? (
               <tr>
-                <td colSpan="9" className="text-center p-3">
+                <td colSpan="11" className="text-center p-3">
                   <div className="d-flex justify-content-center">
                     <div className="mx-auto">
                       <Loader />
-                      No Data Found
                     </div>
+                  </div>
+                </td>
+              </tr>
+            ) : filteredUsers.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
                   </div>
                 </td>
               </tr>
@@ -392,11 +414,11 @@ const Users = () => {
                       <img src={edit} alt="Edit" className="mx-auto" />
                     </button>
                     <button
-                        className="delete-btn ms-1 me-1"
-                        onClick={() => handleDeleteClick(user)}
-                      >
-                        <img src={deleteimg} alt="Delete" className="mx-auto" />
-                      </button>
+                      className="delete-btn ms-1 me-1"
+                      onClick={() => handleDeleteClick(user)}
+                    >
+                      <img src={deleteimg} alt="Delete" className="mx-auto" />
+                    </button>
                   </td>
                 </tr>
               ))
@@ -417,11 +439,8 @@ const Users = () => {
           onHide={() => setIsInfoModalOpen(false)} // Close modal function
         />
       )}
-       {showEditModal && (
-        <EditUser
-          user={selectedUser}
-          onHide={closeEditModal}
-        />
+      {showEditModal && (
+        <EditUser user={selectedUser} onHide={closeEditModal} />
       )}
       {showDeleteModal && (
         <DeleteModal

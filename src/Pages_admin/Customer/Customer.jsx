@@ -6,7 +6,10 @@ import edit from "../../assets_admin/edit.png";
 import deleteimg from "../../assets_admin/deleteimg.png";
 import locationimg from "../../assets_admin/locationimg.png";
 import show from "../../assets_admin/show.png";
-import { deleteCustomer, getAllCustomers } from "../../Components_admin/Api/Admincustomer";
+import {
+  deleteCustomer,
+  getAllCustomers,
+} from "../../Components_admin/Api/Admincustomer";
 import CutomerInfoModal from "./CustomerInfoModal";
 import Loader from "../../Components_admin/Loader/Loader";
 import EditUser from "../EditUser/EditUser";
@@ -23,6 +26,7 @@ const Customers = () => {
   const [themeMode, setThemeMode] = useState("light");
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (themeMode === "dark") {
       document.body.classList.add("dark-mode");
@@ -37,23 +41,36 @@ const Customers = () => {
 
   const fetchCustomers = async () => {
     // console.log('🚀 ~ fetchCustomers ~ createdBy:', createdBy);
-    const response = await getAllCustomers(null);
-    console.log(response);
+    setLoading(true);
+    try {
+      const response = await getAllCustomers(null);
+      console.log(response);
 
-    if (response.status) {
-      setCustomers(response.data);
+      if (response.status) {
+        setCustomers(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchCustomersByStatus = async (createdBy) => {
     // console.log('🚀 ~ fetchCustomers ~ createdBy:', createdBy);
     console.log(createdBy);
+    setLoading(true);
+    try {
+      const response = await getAllCustomers(createdBy);
+      console.log(response);
 
-    const response = await getAllCustomers(createdBy);
-    console.log(response);
-
-    if (response.status) {
-      setCustomers(response.data);
+      if (response.status) {
+        setCustomers(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,7 +99,6 @@ const Customers = () => {
     }
   };
   const closeDeleteModal = () => setShowDeleteModal(false);
-
 
   const handleShowInfo = (customer) => {
     setSelectedCustomer(customer);
@@ -190,14 +206,21 @@ const Customers = () => {
             </tr>
           </thead>
           <tbody>
-            {!filteredCustomers || filteredCustomers.length === 0 ? (
+            {loading ? (
               <tr>
-                <td colSpan="9" className="text-center p-3">
+                <td colSpan="11" className="text-center p-3">
                   <div className="d-flex justify-content-center">
                     <div className="mx-auto">
                       <Loader />
-                      No Data Found
                     </div>
+                  </div>
+                </td>
+              </tr>
+            ) : filteredCustomers.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
                   </div>
                 </td>
               </tr>

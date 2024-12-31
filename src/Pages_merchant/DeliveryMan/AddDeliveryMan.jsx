@@ -21,6 +21,8 @@ const AddDeliveryBoy = () => {
     merchantId: merchnatId,
     postCode: "",
     address: "",
+    chargeMethod: "",
+    charge: "",
   };
 
   const validationSchema = Yup.object({
@@ -40,6 +42,8 @@ const AddDeliveryBoy = () => {
     // countryCode: Yup.string().required("Country code is required"),
     address: Yup.string().required("Address is required"),
     postCode: Yup.string().required("postCode is required"),
+    chargeMethod: Yup.string().required("Charge Method is required"),
+    charge: Yup.string().required("Charge is required"),
   });
 
   const onSubmit = async (values) => {
@@ -73,7 +77,7 @@ const AddDeliveryBoy = () => {
                       name="firstName"
                       className="form-control w-25% h-100%"
                       placeholder="First Name"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="firstName"
@@ -90,7 +94,7 @@ const AddDeliveryBoy = () => {
                       name="lastName"
                       className="form-control w-25% h-100%"
                       placeholder="Last Name"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="lastName"
@@ -108,7 +112,7 @@ const AddDeliveryBoy = () => {
                       name="email"
                       className="form-control w-25% h-100%"
                       placeholder="Email"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="email"
@@ -127,7 +131,10 @@ const AddDeliveryBoy = () => {
                           name="password"
                           className="form-control w-25% h-100%"
                           placeholder="Password"
-                          style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                          style={{
+                            height: "4.5em",
+                            border: "1px solid #E6E6E6",
+                          }}
                         />
                         <span
                           className="password-toggle-icon"
@@ -153,8 +160,6 @@ const AddDeliveryBoy = () => {
                 </div>
 
                 <div className="row input-box">
-                  
-
                   <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
                     <label className="w-100" style={{ color: "#999696" }}>
                       Contact No
@@ -164,7 +169,7 @@ const AddDeliveryBoy = () => {
                       name="contactNumber"
                       className="form-control w-25% h-100%"
                       placeholder="Contact No"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="contactNumber"
@@ -181,7 +186,7 @@ const AddDeliveryBoy = () => {
                       name="postCode"
                       className="form-control w-25% h-100%"
                       placeholder="Post Code"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="postCode"
@@ -202,7 +207,7 @@ const AddDeliveryBoy = () => {
                       name="address"
                       className="form-control w-25% h-100%"
                       placeholder="Address"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="address"
@@ -211,6 +216,46 @@ const AddDeliveryBoy = () => {
                     />
                   </div>
 
+                  <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
+                    <label className="w-100" style={{ color: "#999696" }}>
+                      Charge Method
+                    </label>
+                    <Field
+                      as="select"
+                      name="chargeMethod"
+                      className="form-control w-25% h-100%"
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+                    >
+                      <option value="" disabled>
+                        Select Charge Method
+                      </option>
+                      <option value="DISTANCE">Distance</option>
+                      <option value="TIME">Time</option>
+                    </Field>
+                    <ErrorMessage
+                      name="chargeMethod"
+                      component="div"
+                      className="error text-danger ps-2"
+                    />
+                  </div>
+
+                  <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
+                    <label className="w-100" style={{ color: "#999696" }}>
+                      Charge
+                    </label>
+                    <Field
+                      type="text"
+                      name="charge"
+                      className="form-control w-25% h-100%"
+                      placeholder="Charge per mile"
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+                    />
+                    <ErrorMessage
+                      name="charge"
+                      component="div"
+                      className="error text-danger ps-2"
+                    />
+                  </div>
                   {/* <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
                     <label className="w-100" style={{ color: "#999696" }}>
                       Country Code

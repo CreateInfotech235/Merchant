@@ -27,7 +27,7 @@ const AllOrder = () => {
   const [pickupLocation, setPickupLocation] = useState(null);
   const [deliveryLocation, setDeliveryLocation] = useState(null);
   const [location, setLocation] = useState(null);
-  
+  const [loading, setLoading] = useState(false);
   const handleShowModal = (order) => {
     setSelectedOrder(order);
     setShowModel(true);
@@ -45,33 +45,51 @@ const AllOrder = () => {
   const onHideDeleteModal = () => setShowDelModal(false);
 
   const fetchOrders = async () => {
-    const response = await getAllOrder(null , currentPage, ordersPerPage);
-    // console.log(response.data , "Data");
-    
+    setLoading(true);
+    try {
+      const response = await getAllOrder(null , currentPage, ordersPerPage);
+      // console.log(response.data , "Data");
+      
     if (response.status) {
       setOrders(response.data);
       setFilteredOrders(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleAdminOrder = async () => {
     // console.log("Admin Order");
-    const response = await getAllOrder(false, currentPage, ordersPerPage);
-    // console.log(response , "response");
+    setLoading(true);
+    try {
+      const response = await getAllOrder(false, currentPage, ordersPerPage);
+      // console.log(response , "response");
     if(response.status){
       setOrders(response.data);
       setFilteredOrders(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
     }
-    
-    // setFilteredOrders(orders);
   };
 
   const handleMerchantOrder = async () => {
-    // console.log("Merchant Order");
-    const response = await getAllOrder(true, currentPage, ordersPerPage);
-    // console.log(response , "response");
-    if(response.status){
-      setOrders(response.data);
-      setFilteredOrders(response.data);
+    setLoading(true);
+    try {
+      const response = await getAllOrder(true, currentPage, ordersPerPage);
+      // console.log(response , "response");
+      if(response.status){
+        setOrders(response.data);
+        setFilteredOrders(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
     }
     
 
@@ -241,16 +259,22 @@ const AllOrder = () => {
               </tr>
             </thead>
             <tbody>
-              {
-                filteredOrders.length === 0 ? (
+                {loading ? (
                   <tr>
                     <td colSpan="13" className="text-center p-3">
-                     <div className="d-flex justify-content-center">
-                      <div className="mx-auto">
-                      <Loader />
-                      No Data Found
+                      <div className="d-flex justify-content-center">
+                        <div className="mx-auto">
+                          <Loader />
+                        </div>
                       </div>
-                     </div>
+                    </td>
+                  </tr>
+                ) : filteredOrders.length === 0 ? (
+                  <tr>
+                    <td colSpan="11" className="text-center p-3">
+                      <div className="d-flex justify-content-center">
+                        <div className="mx-auto">No Data Found</div>
+                      </div>
                     </td>
                   </tr>
                 ) : (

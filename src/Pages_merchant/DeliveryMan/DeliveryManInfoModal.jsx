@@ -46,6 +46,20 @@ const DeliveryBoyInfoModal = ({ deliveryBoy, onHide }) => {
                             </label>
                             <span className="col-6 text-end text-sm py-2">{deliveryBoy.showDeliveryManNumber}</span>
                         </div>
+                        <div className="row mb-2">
+                            <label className="col-6 d-flex align-items-center text-sm">
+                                <FaIdCard className="me-2" />
+                                Charge Method:
+                            </label>
+                            <span className="col-6 text-end text-sm py-2">{deliveryBoy.chargeMethod}</span>
+                        </div>
+                        <div className="row mb-2">
+                            <label className="col-6 d-flex align-items-center text-sm">
+                                <FaIdCard className="me-2" />
+                                Charge:
+                            </label>
+                            <span className="col-6 text-end text-sm py-2">{deliveryBoy.charge}</span>
+                        </div>
                         
                     </div>
 

@@ -99,7 +99,7 @@ const CheckoutForm = ({ plans }) => {
     const {
       data: { clientSecret },
     } = await axios.post(
-      "https://create-1-opqy.onrender.com/create-payment-intent",
+      "http://localhost:8000/create-payment-intent",
       {
         amount,
         planId,

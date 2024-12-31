@@ -18,6 +18,8 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
     isVerified: deliveryBoy ? deliveryBoy.isVerified : false, // Added "isVerified"
     address: deliveryBoy ? deliveryBoy.address : "",
     postCode: deliveryBoy ? deliveryBoy.postCode : "",
+    chargeMethod: deliveryBoy ? deliveryBoy.chargeMethod : "",
+    charge: deliveryBoy ? deliveryBoy.charge : "",
   };
 
   const validationSchema = Yup.object({
@@ -30,7 +32,9 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
     isVerified: Yup.boolean().required("Verification status is required"), // Validate isVerified field
     address: Yup.string().required("Address is required"),
     postCode: Yup.string().required("Post code is required"),
-    });
+    chargeMethod: Yup.string().required("Charge Method is required"),
+    charge: Yup.string().required("Charge is required"),
+  });
 
   const onSubmit = async (values) => {
     const res = await updateDeliveryBoy(deliveryBoy._id, values);
@@ -111,11 +115,9 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
                     className="error text-danger"
                   />
                 </div>
-
               </div>
 
               <div className="row input-box">
-
                 <div className="col-md-6">
                   <label>Post Code</label>
                   <Field
@@ -131,50 +133,51 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
                   />
                 </div>
 
-                
                 <div className="input-error col-md-6">
-                <label className="fw-bold mb-2">Verified</label>
+                  <label className="fw-bold mb-2">Verified</label>
                   <div className="d-flex align-items-center">
-
-                  <div>
-                    <Field
-                      type="radio"
-                      name="isVerified"
-                      value="true"
-                      className="form-check-input"
-                      id="isVerified-yes"
-                      checked={formik.values.isVerified === true}
-                      style={{
-                        marginRight: "0.5em",
-                        height: "1.2em",
-                        width: "1.2em",
-                      }}
-                    />
-                    <label
-                      htmlFor="isVerified-yes"
-                      className="form-check-label"
-                    >
-                      Active
-                    </label>
-                  </div>
-                  <div>
-                    <Field
-                      type="radio"
-                      name="isVerified"
-                      value="false"
-                      className="form-check-input"
-                      style={{
-                        marginRight: "0.5em",
-                        height: "1.2em",
-                        width: "1.2em",
-                      }}
-                      id="isVerified-no"
-                      checked={formik.values.isVerified === false}
-                    />
-                    <label htmlFor="isVerified-no" className="form-check-label">
-                    Deactivate
-                    </label>
-                  </div>
+                    <div>
+                      <Field
+                        type="radio"
+                        name="isVerified"
+                        value="true"
+                        className="form-check-input"
+                        id="isVerified-yes"
+                        checked={formik.values.isVerified === true}
+                        style={{
+                          marginRight: "0.5em",
+                          height: "1.2em",
+                          width: "1.2em",
+                        }}
+                      />
+                      <label
+                        htmlFor="isVerified-yes"
+                        className="form-check-label"
+                      >
+                        Active
+                      </label>
+                    </div>
+                    <div>
+                      <Field
+                        type="radio"
+                        name="isVerified"
+                        value="false"
+                        className="form-check-input"
+                        style={{
+                          marginRight: "0.5em",
+                          height: "1.2em",
+                          width: "1.2em",
+                        }}
+                        id="isVerified-no"
+                        checked={formik.values.isVerified === false}
+                      />
+                      <label
+                        htmlFor="isVerified-no"
+                        className="form-check-label"
+                      >
+                        Deactivate
+                      </label>
+                    </div>
                   </div>
                   <ErrorMessage
                     name="isVerified"
@@ -185,7 +188,53 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
               </div>
 
               <div className="row input-box">
-                <div className="input-error col-md-6">
+
+                        
+              <div className="input-error col-xxl-6 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
+                <label className="w-100" style={{ color: "#999696" }}>
+                  Charge
+                </label>
+                <Field
+                  type="text"
+                  name="charge"
+                  className="form-control"
+                  placeholder="Charge per mile"
+                 
+                />
+                <ErrorMessage
+                  name="charge"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
+              </div>
+
+                
+                <div className="input-error col-xxl-6 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
+                <label className="w-100" style={{ color: "#999696" }}>
+                  Charge Method
+                </label>
+                <Field
+                  as="select"
+                  name="chargeMethod"
+                  className="form-control"
+                  // style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+                >
+                  <option value="" disabled>
+                    Select Charge Method
+                  </option>
+                  <option value="DISTANCE">Distance</option>
+                  <option value="TIME">Time</option>
+                </Field>
+                <ErrorMessage
+                  name="chargeMethod"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
+              </div>
+              </div>
+              
+              <div className="row input-box">
+              <div className="input-error col-md-12">
                   <label>Address</label>
                   <Field
                     as="textarea"
@@ -200,6 +249,7 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
                   />
                 </div>
               </div>
+
 
               <div className="d-flex justify-content-end">
                 <Button variant="secondary" onClick={onHide}>

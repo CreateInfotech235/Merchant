@@ -37,6 +37,7 @@ const DeliveryMan = () => {
       const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
       const res = await getDeliveryMan(currentPage, itemsPerPage, searchParam);
 
+      console.log(res , "res");
       if (res.status) {
         const trashedData = res.data
           .filter((data) => data.trashed === false)
@@ -194,6 +195,7 @@ const DeliveryMan = () => {
                 <th className="p-3 text-light">Email id</th>
                 <th className="p-3 text-light">Address</th>
                 <th className="p-3 text-light">Post Code</th>
+                <th className="p-3 text-light">Charge / Charge Method</th>
                 <th className="p-3 text-light">Status</th>
                 <th className="p-3 text-light">Verify</th>
                 <th className="p-3 text-light">Action</th>
@@ -234,6 +236,7 @@ const DeliveryMan = () => {
                     <td className="p-3">{deliveryman.email}</td>
                     <td className="p-3">{deliveryman.address}</td>
                     <td className="p-3">{deliveryman.postCode}</td>
+                    <td className="p-3">{`${deliveryman.charge} / ${deliveryman.chargeMethod}`}</td>
                     <td className="p-3">
                       <button className={getColorClass(deliveryman.status)}>
                         {deliveryman.status === 'ENABLE' ? 'ONLINE' : 'OFFLINE'}
