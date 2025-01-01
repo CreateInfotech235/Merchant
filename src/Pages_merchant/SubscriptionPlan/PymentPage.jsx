@@ -14,32 +14,28 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import { stripPayment } from "../../Components_merchant/Api/Subscription";
 
 // Set your publishable key here
-const stripePromise = loadStripe("your_stripe_publishable_key");
+const stripePromise = loadStripe(
+  "pk_test_51QcPPDQMthVbcTznGkwg818j3f4sDxSi2uK9C9475tEoQLhIMgJFVXjWF4rD68JxXYURkLS5hVXNJoSRRXt7FgLP002Z73572F"
+);
 
 const CheckoutForm = ({ plans }) => {
-  // console.log(plans);
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
   const [planId, setPlanId] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [duration, setDuration] = useState("1"); // Default to 1 month
+  const [duration, setDuration] = useState("1");
   const [expiryDate, setExpiryDate] = useState("");
+
   const stripe = useStripe();
   const elements = useElements();
   const location = useLocation();
 
-  const durationOptions = [
-    { value: "1", label: "1 Month" },
-    { value: "2", label: "2 Months" },
-    { value: "3", label: "3 Months" },
-    { value: "12", label: "1 Year" },
-  ];
-
   const calculateExpiryDate = (months) => {
     const date = new Date();
-    date.setMonth(date.getMonth() + parseInt(months, 10)); // Add selected months
+    date.setMonth(date.getMonth() + parseInt(months, 10));
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -47,7 +43,6 @@ const CheckoutForm = ({ plans }) => {
     });
   };
 
-  // Calculate total amount based on duration without discounts
   const calculateTotalAmount = () => {
     if (!selectedPlan) return 0;
     const months = parseInt(duration);
@@ -55,86 +50,78 @@ const CheckoutForm = ({ plans }) => {
   };
 
   useEffect(() => {
-    // Get planId from URL query parameters
     const searchParams = new URLSearchParams(location.search);
     const planFromUrl = searchParams.get("plan");
-    // console.log(planFromUrl);
     setPlanId(planFromUrl);
 
-    // Find and set the selected plan
-    if (planFromUrl && plans) {
-      const plan = plans.find((p) => p._id === planFromUrl);
-      // console.log(plan , "dsdsds");
-      if (!plan) {
-        setSelectedPlan(plans[0]); // Default to Team plan
-      } else {
-        setSelectedPlan(plan);
-      }
-    } else {
-      setSelectedPlan(plans[0]);
-    }
+    const plan = plans.find((p) => p._id === planFromUrl) || plans[0];
+    setSelectedPlan(plan);
   }, [location, plans]);
 
   useEffect(() => {
     if (selectedPlan && duration) {
-      // Calculate expiry date based on the selected plan and duration
-      setExpiryDate(
-        calculateExpiryDate(convertSecondsToMonths(selectedPlan.seconds))
-      );
+      const calculatedDate = calculateExpiryDate(duration);
+      setExpiryDate(calculatedDate);
     }
-  }, [duration, selectedPlan]);
+  }, [selectedPlan, duration]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    if (!stripe || !elements || !selectedPlan) {
+    if (!stripe || !elements || !selectedPlan) return;
+    console.log(elements);
+    
+    const card = elements.getElement(CardElement);
+    if (!card) {
+      setError("Card element not found.");
       return;
     }
 
-    const card = elements.getElement(CardElement);
     const amount = calculateTotalAmount();
-    // console.log(amount);
+    console.log(card);
 
-    // Call backend to create payment intent
-    const {
-      data: { clientSecret },
-    } = await axios.post(
-      "https://create-1-opqy.onrender.com/create-payment-intent",
-      {
-        amount,
-        planId,
-        duration,
-        expiryDate,
+    try {
+      // Call API to get client secret
+      const data = await stripPayment(amount, planId, duration, expiryDate);
+      console.log(data); // Log response to check for issues
+      const clientSecret = data.data.clientSecret;
+
+      if (!clientSecret) {
+        setError("Client secret not found.");
+        return;
       }
-    );
 
-    // Confirm the payment
-    const { error, paymentIntent } = await stripe.confirmCardPayment(
-      clientSecret,
-      {
-        payment_method: {
-          card: card,
-        },
+      // Confirm the payment using Stripe
+      const { error, paymentIntent } = await stripe.confirmPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: card, // Pass card here
+            // billing_details: { name: 'Customer Name' }, // Optionally add billing details
+          },
+        }
+      );
+
+      if (error) {
+        setError(error.message); // Display error message
+      } else if (paymentIntent.status === "succeeded") {
+        setSucceeded(true); // Payment successful
       }
-    );
-
-    if (error) {
-      setError(error.message);
-    } else if (paymentIntent.status === "succeeded") {
-      setSucceeded(true);
+    } catch (err) {
+      console.error(err);
+      setError("Payment failed. Please try again later.");
     }
   };
+
   const convertSecondsToMonths = (seconds) => {
     // Number of seconds in a day
     const secInDay = 24 * 60 * 60;
 
-    // Average days in a month (approx.)
+    // Average days in a month (approx. calculation)
     const daysInMonth = 30.44;
 
     // Convert seconds to months
     const months = seconds / secInDay / daysInMonth;
 
-    // If the result is less than 1, round it to 1
     return months < 1 ? 1 : Math.round(months);
   };
 
@@ -199,9 +186,9 @@ const CheckoutForm = ({ plans }) => {
                     }}
                   ></div>
                 </div>
-                <div style={{ width: "120px" }}></div>{" "}
-                {/* Spacer to balance the layout */}
+                <div style={{ width: "120px" }}></div>
               </div>
+
               {selectedPlan && (
                 <>
                   <div className="plan-header mb-4 text-center d-md-block d-flex flex-column align-items-center">
@@ -305,26 +292,6 @@ const CheckoutForm = ({ plans }) => {
                   }}
                 ></div>
               </div>
-
-              {/* <div className="form-group mb-3">
-                                <label htmlFor="duration" className="form-label">Select Duration:</label>
-                                <select
-                                    id="duration"
-                                    className="form-select"
-                                    value={duration}
-                                    onChange={(e) => setDuration(e.target.value)}
-                                    style={{
-                                        borderColor: '#221F92',
-                                        color: '#424770'
-                                    }}
-                                >
-                                    {durationOptions.map(option => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div> */}
 
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
@@ -444,7 +411,6 @@ const CheckoutForm = ({ plans }) => {
   );
 };
 
-// Update PropTypes validation
 CheckoutForm.propTypes = {
   plans: PropTypes.arrayOf(
     PropTypes.shape({
@@ -473,7 +439,6 @@ const PaymentPage = ({ plans }) => (
   </Elements>
 );
 
-// Add PropTypes validation for PaymentPage
 PaymentPage.propTypes = {
   plans: PropTypes.arrayOf(
     PropTypes.shape({

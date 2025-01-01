@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { SubscriptionInfo } from "../../Components_merchant/Api/Subscription";
 import { useNavigate} from "react-router-dom";
 import SubscriptionPlan1 from "./SubscriptionPlan1";
+import Loader from "../../Components_admin/Loader/Loader";
 
 function Subscriptionactiveplan({ plans }) {
     const [subcriptionData, setSubcriptionData] = useState([]);
@@ -98,8 +99,8 @@ function Subscriptionactiveplan({ plans }) {
                             </div>
                         ))
                     ) : (
-                        <div className="col-12 text-center">
-                            <h3 className="text-muted">No Active Subscription</h3>
+                        <div className="w-100 h-[300px] d-flex justify-content-center align-items-center">
+                           <Loader/>
                         </div>
                     )}
                 </div>

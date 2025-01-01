@@ -36,23 +36,6 @@ const OrderLocation = () => {
       
       <div className="delivery-man-location">
         <div style={{ height: "672px", width: "100%" }}>
-          {/* <GoogleMapReact
-            bootstrapURLKeys={{
-              key: "AIzaSyAZsykEn-ZvYj-i1ubEl3Ss4zdaWKCyGCg", // Replace with your actual Google Maps API key
-            }}
-            defaultCenter={{ lat: 59.95, lng: 30.33 }}
-            defaultZoom={11}
-            onClick={handleMapClick}
-          >
-            {selectedLocation.lat && selectedLocation.lng && (
-              <AnyReactComponent
-                lat={selectedLocation.lat}
-                lng={selectedLocation.lng}
-                text="Selected Location"
-              />
-            )}
-          </GoogleMapReact> */}
-
           <MapWithMarker address='dhara arcade mota varachha surat' />
         </div>
       </div>

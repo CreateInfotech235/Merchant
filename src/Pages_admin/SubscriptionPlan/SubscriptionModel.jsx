@@ -5,19 +5,21 @@ import * as Yup from "yup";
 import { manageSubscription } from "../../Components_admin/Api/Subscription";
 
 const SubscriptionModel = ({ onHide, types, subscription }) => {
-  // console.log(subscription);
+  console.log(subscription);
 
+
+  const convertSecondsToDays = (seconds) => {
+    return Math.floor(seconds / (24 * 60 * 60));
+  };
+
+  const days = convertSecondsToDays(subscription ? subscription.seconds : 0)
   const initialValues = {
-    ...(types === "Add"
-      ? {}
-      : { subscriptionId: subscription ? subscription._id : "" }),
+    subscriptionId: subscription ? subscription._id : "",
     type: subscription ? subscription.type : "",
     amount: subscription ? subscription.amount : "",
     discount: subscription ? subscription.discount : "",
     features: subscription ? subscription.features : [""],
-    ...(types === "Add"
-      ? { days: subscription ? subscription.seconds : "" }
-      : {}),
+    days: subscription ? days : "",
   };
 
   const validationSchema = Yup.object({
@@ -32,19 +34,16 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
     features: Yup.array()
       .of(Yup.string().required("Feature cannot be empty"))
       .required("At least one feature is required"),
-    ...(types === "Add" && {
-      days: Yup.number()
-        .typeError("Days must be a number")
-        .min(1, "Days must be at least 1")
-        .required("Days are required"),
-    }),
+    days: Yup.number()
+      .typeError("Days must be a number")
+      .min(1, "Days must be at least 1")
+      .required("Days are required"),
   });
-  
 
   const onSubmit = async (values) => {
     // console.log("Form Data:", values);
+    console.log(values, 'values');
     const response = await manageSubscription(values);
-     console.log(response); 
 
     if (response) {
       onHide();  // Close the modal after successful submission
@@ -52,10 +51,11 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
   };
 
   return (
-    <Modal show={true} onHide={() => { 
-      onHide(); 
-      formik.resetForm();  // Reset form when modal is closed
+    <Modal show={true} onHide={() => {
+      onHide();
+      formik.resetForm(); // Reset form on modal close
     }}>
+
       <ModalHeader closeButton>
         <h5>Subscription Details</h5>
       </ModalHeader>
@@ -115,9 +115,9 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
                   />
                 </div>
 
-                {types === "Add" ? <div className="input-error col-12">
+                <div className="input-error col-12">
                   <label style={{ color: "#999696" }}>
-                   Days
+                    Days
                   </label>
                   <Field
                     type="text"
@@ -130,7 +130,7 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
                     component="div"
                     className="text-danger"
                   />
-                </div> : null}
+                </div>
 
                 <div className="input-error col-12">
                   <div className="row my-2">
@@ -195,8 +195,8 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
                 <button
                   type="button"
                   className="btn btn-secondary m-3"
-                  onClick={() => { 
-                    onHide(); 
+                  onClick={() => {
+                    onHide();
                     formik.resetForm();  // Reset form on cancel
                   }}
                   style={{ width: "150px" }}

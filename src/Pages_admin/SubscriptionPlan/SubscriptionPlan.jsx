@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import SubscriptionModel from "./SubscriptionModel";
 import { getAllSubscription } from "../../Components_admin/Api/Subscription";
 import Loader from "../../Components_admin/Loader/Loader";
-import edit from "../../assets_admin/subscription-edit.svg"
-import check from "../../assets_admin/checkbox.svg"
 function SubscriptionPlan() {
   const [showModel, setShowModel] = useState(false);
   const [type, setType] = useState();
@@ -26,15 +24,17 @@ function SubscriptionPlan() {
   // console.log(subcriptionData);
 
   const handleShowModal = (data) => {
-    setType(type);
+    setType("Edit"); // Ensure the type is set explicitly
     setSelectedSubscription(data);
     setShowModel(true);
   };
-  const handleShowModal1 = (type) => {
-    setType(type);
-
+  
+  const handleShowModal1 = () => {
+    setType("Add");
+    setSelectedSubscription(null); // Clear previous subscription data
     setShowModel(true);
   };
+  
   const handleCloseModal = () => {
     // setSelectedOrder({});
     setShowModel(false);
@@ -87,35 +87,35 @@ function SubscriptionPlan() {
           {subcriptionData.map((el, i) => (
             <div
               key={i}
-              class="col-xxl-2 col-xl-3 col-lg-4 col-md-4  col-sm-6 col-12 p-3 rounded-4 m-3"
+              className="col-xxl-2 col-xl-3 col-lg-4 col-md-4  col-sm-6 col-12 p-3 rounded-4 m-3"
               style={{ background: "#CCD6B1", width: "330px" }}
             >
-              <div class="d-flex justify-content-end pb-5">
+              <div className="d-flex justify-content-end pb-5">
                 <button
                   className="bg-transparent border-0"
                   onClick={() => handleShowModal(el)}
                 >
-                  <img src={edit} />
+                  <img src="./src/assets_admin/subscription-edit.svg" />
                 </button>
               </div>
-              <h5 class="fw-bold text-center">{el.type}</h5>
-              <h1 class="fw-bold text-center">${el.amount}</h1>
-              <p class="fw-bold text-center">per agent per {convertSecondsToMonths(el.seconds)} Months</p>
+              <h5 className="fw-bold text-center">{el.type}</h5>
+              <h1 className="fw-bold text-center">${el.amount}</h1>
+              <p className="fw-bold text-center">per agent per {convertSecondsToMonths(el.seconds)} Months</p>
               {/* monthCalcuation */}
 
-              <div class="d-flex flex-column align-items-center p-3">
+              <div className="d-flex flex-column align-items-start p-3">
                 {el.features.map((features, i) => (
                   <div
                     key={i}
-                    class="d-flex align-items-center align-content-center "
+                      className="d-flex "
                   >
-                    <img src={check} class="pe-3" />{" "}
+                    <img src="./src/assets_admin/checkbox.svg" className="pe-3" />{" "}
                     <p>{features}</p>{" "}
                   </div>
                 ))}
               </div>
-              <div class="d-flex justify-content-center">
-                <button class="btn btn-primary m-4">purchase now</button>
+              <div className="d-flex justify-content-center">
+                  <button className="btn btn-primary m-4">purchase now</button>
               </div>
             </div>
           ))}

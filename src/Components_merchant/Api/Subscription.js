@@ -66,3 +66,33 @@ export const getAllSubscription = async (page, pageLimit) => {
     return { status: false, message: error.message };
   }
 };
+
+export const stripPayment = async (amount, planId , duration ,expiryDate) => {
+  try {
+    const data = {
+      amount : amount,
+      planId : planId , 
+      duration : duration,
+      expiryDate :expiryDate
+    }
+    console.log(data);
+    
+    const response = await API.post(`/mobile/subscription/create-payment-intent`, data);
+    console.log("response", response);
+
+    if (response.status === 200) {
+      return { status: true, data: response.data };
+    } else {
+      // console.log("API error", response.response.data.message);
+      toast.error(response.response.data.message || response.message);
+      return {
+        status: false,
+        message: response.response.data.message || response.message,
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    toast.error(error.message);
+    return { status: false, message: error.message };
+  }
+};
