@@ -11,9 +11,12 @@ import {
 import countryList from "react-select-country-list";
 import Select from "react-select";
 import { getAllCustomers } from "../../Components_merchant/Api/Customer";
-import { updateOrder } from "../../Components_merchant/Api/Order";
+import { calculateDistancee, updateOrder } from "../../Components_merchant/Api/Order";
+import { duration } from "@mui/material";
 
 const UpdateOrderModal = ({ onHide, Order }) => {
+  console.log(Order);
+  
   const navigate = useNavigate(); // Fixed duplicate navigate declaration
   const merchant = JSON.parse(localStorage.getItem("userData"));
   const [deliveryMan, setDeliveryMen] = useState([]);
@@ -125,6 +128,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       description: Order.deliveryAddress.description || "",
       postCode: Order.deliveryAddress.postCode || "",
     },
+    distance : Order.distance || "",
+    duration : Order.duration || "",
     cashOnDelivery: Order.cashOnDelivery || false,
   };
 
@@ -163,6 +168,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
     }),
+    distance : Yup.string().required("Required"),
+    duration : Yup.string().required("Required"),
   });
 
   const onSubmit = async (values, { setFieldValue }) => {
@@ -170,11 +177,14 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
     let deliverylocation = null;
     let pickuplocation = null;
+    var distanceKm = null;
+    var duration = null;
+    var distanceMiles = null;
 
     // Handle pickup location
     if (
-      !values.pickupDetails.location.latitude &&
-      !values.pickupDetails.location.longitude
+      values.pickupDetails.location.latitude &&
+      values.pickupDetails.location.longitude
     ) {
       if (values.pickupDetails.address) {
         try {
@@ -217,8 +227,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
 
     // Handle delivery location
     if (
-      !values.deliveryDetails.location.latitude &&
-      !values.deliveryDetails.location.longitude
+      values.deliveryDetails.location.latitude &&
+      values.deliveryDetails.location.longitude 
     ) {
       if (values.deliveryDetails.address) {
         try {
@@ -252,19 +262,57 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       deliverylocation = values.deliveryDetails.location;
     }
 
+    console.log(pickuplocation.latitude ,pickuplocation.longitude,deliverylocation.latitude ,deliverylocation.longitude , "sdfkgsdsfgsf" );
+    
+    if (
+      pickuplocation.latitude &&
+      pickuplocation.longitude &&
+      deliverylocation.latitude &&
+      deliverylocation.longitude
+    ) {
+      console.log("Hello");
+      console.log(
+        pickuplocation.latitude,
+        pickuplocation.longitude,
+        deliverylocation.latitude,
+        deliverylocation.longitude
+      );
+
+      const distance = await calculateDistancee(pickuplocation, deliverylocation);
+      console.log(distance.distance);
+      setFieldValue("distance", distance.distance.text);
+      setFieldValue("duration", distance.duration.text);
+      distanceKm = parseFloat(distance.distance.text.replace(/[^\d.]/g, ""));
+      distanceMiles = (distanceKm * 0.621371).toFixed(2); // Convert and round to 2 decimal places
+      distanceMiles = parseFloat(distanceMiles); // Ensure it's a number type
+      duration = distance.duration.text;
+      console.log(distance);
+    }
+
+
     const payload = {
       ...values,
       dateTime: timestamp,
       pickupDetails: {
         ...values.pickupDetails,
         dateTime: pictimestamp,
-        location: pickuplocation,
+        location: {
+          latitude: pickuplocation.latitude,
+          longitude: pickuplocation.longitude,
+        },
       },
       deliveryDetails: {
         ...values.deliveryDetails,
-        location: deliverylocation,
+
+        location: {
+          latitude: deliverylocation.latitude,
+          longitude: deliverylocation.longitude,
+        },
       },
+      distance: distanceMiles,
+      duration: duration,
     };
+    console.log(payload); 
 
     if (!values.cashOnDelivery) {
       delete payload.paymentCollectionRupees;

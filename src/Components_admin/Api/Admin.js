@@ -43,3 +43,22 @@ export const updateAdminProfile = async (data) => {
     return { status: false, message: error.message };
   }
 };
+
+export const TotalCollection = async (data) => {
+  //   console.log("Update Admin Profile data", data);
+  try {
+    const response = await API.get(`/getPaymentData/getPaymentData`);
+    // console.log("Update Admin Profile response", response);
+
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      return { status: true, data: response.data.data };
+    } else {
+      toast.error(response.message);
+      return { status: false, message: response.message };
+    }
+  } catch (error) {
+    // console.log(error);
+    return { status: false, message: error.message };
+  }
+};

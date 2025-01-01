@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import SubscriptionModel from "./SubscriptionModel";
 import { getAllSubscription } from "../../Components_admin/Api/Subscription";
 import Loader from "../../Components_admin/Loader/Loader";
+import edit from "../../assets_admin/subscription-edit.svg"
+import check from "../../assets_admin/checkbox.svg"
 function SubscriptionPlan() {
   const [showModel, setShowModel] = useState(false);
   const [type, setType] = useState();
@@ -93,7 +95,7 @@ function SubscriptionPlan() {
                   className="bg-transparent border-0"
                   onClick={() => handleShowModal(el)}
                 >
-                  <img src="./src/assets_admin/subscription-edit.svg" />
+                  <img src={edit} />
                 </button>
               </div>
               <h5 class="fw-bold text-center">{el.type}</h5>
@@ -107,7 +109,7 @@ function SubscriptionPlan() {
                     key={i}
                     class="d-flex align-items-center align-content-center "
                   >
-                    <img src="./src/assets_admin/checkbox.svg" class="pe-3" />{" "}
+                    <img src={check} class="pe-3" />{" "}
                     <p>{features}</p>{" "}
                   </div>
                 ))}

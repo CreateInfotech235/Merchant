@@ -40,7 +40,7 @@ export const getAllPendingSubscription = async (page, pageLimit) => {
 export const manageSubscription = async (data) => {
   try {
     const response = await API.post("/subscriptions/manage", data);
-    // console.log(response);
+    console.log(response);
 
     if (response.status === 200) {
       toast.success("Subscription updated successfully");

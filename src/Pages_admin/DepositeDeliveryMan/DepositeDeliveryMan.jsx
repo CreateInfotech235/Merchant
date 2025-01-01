@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import add from "../../assets_admin/add.png";
 import edit from "../../assets_admin/edit.png";
@@ -7,8 +7,7 @@ import show from "../../assets_admin/show.png";
 import locationimg from "../../assets_admin/locationimg.png";
 import DisableUser from "../../Components_admin/DisableUser/DisableUser";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
-import searchIcon from '../../assets_admin/search.png'
-
+import searchIcon from "../../assets_admin/search.png";
 
 const DepositeDeliveryMan = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,6 +16,12 @@ const DepositeDeliveryMan = () => {
   const [showModel, setShowModel] = useState(false);
 
   const closeModel = () => setShowModel(false);
+  // const fetchTotalCollection = await () => {
+  //   // const response = await 
+  // }
+  useEffect(()=>{
+    fetchTotalCollection()
+  },[])
 
   // Sample data for deliverymen
   const deliverymen = [
@@ -29,7 +34,8 @@ const DepositeDeliveryMan = () => {
       city: "Ahmedabad",
       registerDate: "14May2024 | 03:42 PM",
       status: "Enable",
-    },{
+    },
+    {
       id: 1,
       name: "John Doe",
       contactNumber: "+91 5632 2157",
@@ -126,13 +132,18 @@ const DepositeDeliveryMan = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredDeliverymen.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredDeliverymen.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
   const totalPages = Math.ceil(filteredDeliverymen.length / itemsPerPage);
 
   // Function to handle page click
   const handleClick = (event) => {
     setCurrentPage(Number(event.target.id));
   };
+
+
 
   // Function to render pagination numbers
   const renderPageNumbers = () => {
@@ -158,31 +169,34 @@ const DepositeDeliveryMan = () => {
         <div className="d-flex justify-content-between py-3">
           <button className="delete">Delete</button>
           <Link to="/add-deliveryman">
-            <button type="button" className="btn text-light" style={{ background: "#D65246" }}>
+            <button
+              type="button"
+              className="btn text-light"
+              style={{ background: "#D65246" }}
+            >
               <img src={add} alt="Add" />
               Add Delivery Man
             </button>
           </Link>
         </div>
         <div className="search-container mb-3">
-        <input
-                type="search"
-                className="search-btn rounded-start-4 p-3"
-                placeholder="Search document"
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-               <button className="search-img rounded-end-4 border-0">
-                <img src={searchIcon} className="search" alt="search icon" />
-              </button>
-          
+          <input
+            type="search"
+            className="search-btn rounded-start-4 p-3"
+            placeholder="Search document"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <button className="search-img rounded-end-4 border-0">
+            <img src={searchIcon} className="search" alt="search icon" />
+          </button>
         </div>
 
-        
-      
-
         <div className="table-responsive">
-          <table className="table-borderless w-100 text-center bg-light" style={{ fontSize: "10px" }}>
+          <table
+            className="table-borderless w-100 text-center bg-light"
+            style={{ fontSize: "10px" }}
+          >
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
                 <th className="p-3"></th>
@@ -210,7 +224,10 @@ const DepositeDeliveryMan = () => {
                   <td className="p-3">{deliveryman.city}</td>
                   <td className="p-3">{deliveryman.registerDate}</td>
                   <td className="p-3">
-                    <button className="enable-btn" onClick={() => setShowModel(true)}>
+                    <button
+                      className="enable-btn"
+                      onClick={() => setShowModel(true)}
+                    >
                       {deliveryman.status}
                     </button>
                     {showModel && <DisableUser closeModel={closeModel} />}
@@ -228,7 +245,10 @@ const DepositeDeliveryMan = () => {
                           <img src={edit} alt="Edit" />
                         </button>
                       </Link>
-                      <button className="delete-btn" onClick={() => setShowModel(true)}>
+                      <button
+                        className="delete-btn"
+                        onClick={() => setShowModel(true)}
+                      >
                         <img src={deleteimg} alt="Delete" />
                       </button>
                       {showModel && <DeleteUser closeModel={closeModel} />}
@@ -253,4 +273,4 @@ const DepositeDeliveryMan = () => {
   );
 };
 
-export default DepositeDeliveryMan
+export default DepositeDeliveryMan;

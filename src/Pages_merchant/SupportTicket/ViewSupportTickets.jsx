@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:8000"); // Connect to backend server
+const socket = io("https://create-1-opqy.onrender.com"); // Connect to backend server
 
 function ViewSupportTickets() {
   const [messages, setMessages] = useState([]);
@@ -25,7 +25,7 @@ function ViewSupportTickets() {
     // Fetch messages for the selected ticket
     axios
       .get(
-        `http://localhost:8000/mobile/auth/support-tickets/${ticketId}/messages`
+        `https://create-1-opqy.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`
       )
       .then((response) => setMessages(response.data));
 
@@ -51,7 +51,7 @@ function ViewSupportTickets() {
       // Send message to the server
       axios
         .post(
-          `http://localhost:8000/mobile/auth/support-tickets/${ticketId}/messages`,
+          `https://create-1-opqy.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`,
           message
         )
         .then(() => {
@@ -84,7 +84,7 @@ function ViewSupportTickets() {
     // Send delete request to the server
     axios
       .delete(
-        `http://localhost:8000/mobile/auth/support-tickets/${ticketId}/messages/${messageId}`
+        `https://create-1-opqy.onrender.com/mobile/auth/support-tickets/${ticketId}/messages/${messageId}`
       )
       .then(() => {
         // Emit the message deletion through socket to inform all clients

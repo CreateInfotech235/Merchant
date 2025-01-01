@@ -422,40 +422,6 @@ const CreateOrder = () => {
       distanceMiles = parseFloat(distanceMiles); // Ensure it's a number type
       duration = distance.duration.text;
       console.log(distance);
-
-      // const apiKey = "AIzaSyBnWMbLVCkqKy2cHFAXnZqF2Ay-6T44Jzw";
-      // const origin = `${pickuplocation.latitude},${pickuplocation.longitude}`;
-      // const destination = `${deliverylocation.latitude},${deliverylocation.longitude}`;
-      // const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}`;
-      // console.log(url);
-      // try {
-      //   const response = await fetch(url);
-      //   console.log(response);
-      //   if (!response.ok) {
-      //     throw new Error(`HTTP error! Status: ${response.status}`);
-      //   }
-      //   const data = await response.json();
-      //   console.log(data);
-      //   if (data.status === "OK") {
-      //     const element = data.rows[0].elements[0];
-      //     console.log(element);
-      //     if (element.status === "OK") {
-      //       setFieldValue("distance", element.distance.text); // Distance (e.g., "12.4 km")
-      //       setFieldValue("duration", element.duration.text); // Duration (e.g., "25 mins")
-      //     } else {
-      //       alert("No route found between locations.");
-      //     }
-      //   } else {
-      //     alert(
-      //       `Error fetching data from Google Maps API: ${data.error_message}`
-      //     );
-      //   }
-      // } catch (error) {
-      //   console.error("Error:", error);
-      //   alert(
-      //     "Failed to fetch data from Google Maps API. Check console for details."
-      //   );
-      // }
     }
 
     // console.log(values);

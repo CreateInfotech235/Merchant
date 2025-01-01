@@ -206,7 +206,7 @@ function Mainbody() {
               </p>
               <div className="mt-6 sm:mt-8">
                 <button className="bg-[#FF6600] hover:bg-[#e65500] transition-colors text-white px-6 py-3 rounded-md">
-                  Get Started
+                  Chnage !@#
                   <span className="ml-2">&rarr;</span>
                 </button>
               </div>

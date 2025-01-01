@@ -195,6 +195,7 @@ const DeliveryMan = () => {
                 <th className="p-3 text-light">Email id</th>
                 <th className="p-3 text-light">Address</th>
                 <th className="p-3 text-light">Post Code</th>
+                <th className="p-3 text-light">Charge / Charge method</th>
                 <th className="p-3 text-light">Status</th>
                 <th className="p-3 text-light">Verify</th>
                 <th className="p-3 text-light">Action</th>
@@ -241,6 +242,7 @@ const DeliveryMan = () => {
                         {deliveryman.status === "ENABLE" ? "ONLINE" : "OFFLINE"}
                       </button>
                     </td>
+                    <td className="p-3">{`${deliveryman?.charge} / ${deliveryman?.chargeMethod}`}</td>
                     <td className="user-table1">
                       <button
                         className={`enable-btn ${

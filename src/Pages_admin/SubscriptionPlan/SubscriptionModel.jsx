@@ -44,6 +44,7 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
   const onSubmit = async (values) => {
     // console.log("Form Data:", values);
     const response = await manageSubscription(values);
+     console.log(response); 
 
     if (response) {
       onHide();  // Close the modal after successful submission
