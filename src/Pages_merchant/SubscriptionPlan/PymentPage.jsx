@@ -69,7 +69,7 @@ const CheckoutForm = ({ plans }) => {
     event.preventDefault();
     if (!stripe || !elements || !selectedPlan) return;
     console.log(elements);
-    
+
     const card = elements.getElement(CardElement);
     if (!card) {
       setError("Card element not found.");
@@ -115,13 +115,10 @@ const CheckoutForm = ({ plans }) => {
   const convertSecondsToMonths = (seconds) => {
     // Number of seconds in a day
     const secInDay = 24 * 60 * 60;
-
     // Average days in a month (approx. calculation)
     const daysInMonth = 30.44;
-
     // Convert seconds to months
     const months = seconds / secInDay / daysInMonth;
-
     return months < 1 ? 1 : Math.round(months);
   };
 

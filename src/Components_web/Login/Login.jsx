@@ -8,15 +8,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../Components_merchant/Api/Auth";
 import loginImage from "../../assets_web/Computer login-amico 1.png";
 import { FaLock } from "react-icons/fa";
+import { forgotPassword } from "../Api/Webapi";
 
 const Login = ({ Login, setLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
-  const initialValues = {
+  const [initialValues, setInitialValues] = useState({
     email: "demo@gmail.com",
     password: "demoDEMO@1121",
     personType: "CUSTOMER",
+  });
+
+  const handleChange = (e) => {
+    console.log(e.target.value, e.target.name);
+    setInitialValues({ ...initialValues, [e.target.name]: e.target.value });
+    console.log(initialValues);
   };
 
   const validationSchema = Yup.object({
@@ -33,7 +39,7 @@ const Login = ({ Login, setLogin }) => {
 
   const onSubmit = async (values, { setSubmitting, setErrors }) => {
     setSubmitting(true);
-    const response = await login(values);
+    const response = await login(initialValues);
 
     if (response.status) {
       localStorage.setItem("merchnatId", response.data.userData._id);
@@ -54,6 +60,7 @@ const Login = ({ Login, setLogin }) => {
     }
     setSubmitting(false);
   };
+
 
   return (
     <>
@@ -202,6 +209,8 @@ const Login = ({ Login, setLogin }) => {
                         type="email"
                         name="email"
                         id="email"
+                        value={initialValues.email}
+                        onChange={handleChange}
                         placeholder="Enter Your Email"
                         className="w-full pl-10 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
                       />
@@ -214,40 +223,56 @@ const Login = ({ Login, setLogin }) => {
                   </div>
 
                   {/* Password Input */}
-                  <div>
-                    <label
-                      htmlFor="password"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Password
-                    </label>
-                    <div className="relative">
-                      {/* <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                  <div className=" mt-0">
+
+                    <div>
+                      <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Password
+                      </label>
+                      <div className="relative">
+                        {/* <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                         <FaLock className="text-gray-400" />
                       </span> */}
-                      <Field
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        id="password"
-                        placeholder="Password"
-                        className="w-full py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                      />
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <FaEye className="text-gray-400" />
-                        ) : (
-                          <FaEyeSlash className="text-gray-400" />
+                        <Field
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          id="password"
+                          value={initialValues.password}
+                          onChange={handleChange}
+                          placeholder="Password"
+                          className="w-full py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
+                        />
+                        <button
+                          type="button"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <FaEye className="text-gray-400" />
+                          ) : (
+                            <FaEyeSlash className="text-gray-400" />
+                          )}
+                        </button>
+                        {errors.password && touched.password && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.password}
+                          </p>
                         )}
-                      </button>
-                      {errors.password && touched.password && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.password}
-                        </p>
-                      )}
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-end mt-0 ">
+                      <Link
+                        to="/forgot-password"
+                        state={{ email: initialValues.email }}
+                        className="block text-[14px] cursor-pointer font-medium text-[#221F92] hover:text-[#1a1873]"
+                      >
+                        <label htmlFor="personType" className="block text-[14px] cursor-pointer font-medium text-[#221F92] hover:text-[#1a1873]">
+                          Forgot Password
+                        </label>
+                      </Link>
                     </div>
                   </div>
 
@@ -274,7 +299,7 @@ const Login = ({ Login, setLogin }) => {
             </Formik>
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 };

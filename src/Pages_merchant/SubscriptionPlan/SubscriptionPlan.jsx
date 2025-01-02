@@ -1,13 +1,5 @@
-
-
-
 const SubscriptionPlan = () => {
-
-  return (
-    <>
-   
-    </>
-  );
+  return <></>;
 };
 
 export default SubscriptionPlan;

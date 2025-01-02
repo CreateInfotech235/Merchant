@@ -20,6 +20,7 @@ const CreateOrder = () => {
   const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [currentLocation, setCurrentLocation] = useState(null);
+  const [isOrderCreated, setIsOrderCreated] = useState(false);
   const merchant = JSON.parse(localStorage.getItem("userData"));
   // console.log("merchant", merchant);
 
@@ -287,6 +288,7 @@ const CreateOrder = () => {
   const options = useMemo(() => countryList().getData(), []);
 
   const onSubmit = async (values, { setFieldValue }) => {
+    setIsOrderCreated(true);
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
     var deliverylocation = null;
@@ -337,10 +339,10 @@ const CreateOrder = () => {
           };
 
           // Set the address and coordinates to the form
-          setFieldValue("pickupDetails.address", formattedAddress);
+          // setFieldValue("pickupDetails.address", formattedAddress);
           setFieldValue("pickupDetails.location.latitude", lat);
           setFieldValue("pickupDetails.location.longitude", lng);
-          setFieldValue("pickupDetails.postCode", postalCode);
+          // setFieldValue("pickupDetails.postCode", postalCode);
         } else {
           alert("Address not found. Please try again.");
         }
@@ -356,6 +358,8 @@ const CreateOrder = () => {
       if (values.pickupDetails.address) {
         // Fetch the coordinates using geocoding
         const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
+        console.log(values.deliveryDetails.address , "Delivery add");
+        
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
             values.deliveryDetails.address
@@ -385,7 +389,7 @@ const CreateOrder = () => {
           };
 
           // Set the address and coordinates to the form
-          setFieldValue("deliveryDetails.address", formattedAddress);
+          // setFieldValue("deliveryDetails.address", formattedAddress);
           setFieldValue("deliveryDetails.location.latitude", lat);
           setFieldValue("deliveryDetails.location.longitude", lng);
           // setFieldValue("deliveryDetails.postCode", postalCode);
@@ -458,6 +462,8 @@ const CreateOrder = () => {
 
     const res = await createOrder(payload);
     console.log(res);
+
+    setIsLoading(false);
 
     if (res.status) {
       naviagte("/all-order");
@@ -1101,8 +1107,9 @@ const CreateOrder = () => {
                     type="submit"
                     className="btn btn-primary mt-3"
                     style={{ height: "4.5em" }}
+                    disabled={isOrderCreated}
                   >
-                    Create Order
+                    {isOrderCreated ? "Order creating..." : "Create Order"}
                   </button>
                 </div>
               </Form>

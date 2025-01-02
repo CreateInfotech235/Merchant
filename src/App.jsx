@@ -145,6 +145,8 @@ import HomePage from "./Pages_admin/HomePage/HomePage";
 import Faqs from "./Pages_web/Faqs/Faqs";
 import PageNotFound from "./Pages_web/PageNotFound/PageNotFound";
 import TermsConditions from "./Components_web/Terms & Conditions/TermsConditions";
+import ForgotPassword from "./Components_web/forgot-password/forgot-password";
+import AdminForgotPassword from "./Components_admin/admin-forgot-password/admin-forgot-password";
 
 
 function App() {
@@ -464,6 +466,7 @@ function App() {
         />
         <Route path="/login" element={<LoginWeb Login={islogin} setLogin={setIslogin}/>} />
         <Route path="/register" element={<SignupWeb />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
           path="/tracking"
           element={
@@ -507,6 +510,15 @@ function App() {
             </UnprotectedRouteAdmin>
           }
         />
+             <Route
+          path="/admin-forgot-password"
+          element={
+            <UnprotectedRouteAdmin>
+              <AdminForgotPassword />
+            </UnprotectedRouteAdmin>
+          }
+        />
+
 
         <Route
           path="/dashboard"

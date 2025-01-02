@@ -9,53 +9,53 @@ function SubscriptionActive() {
   const plans = [
     {
       _id: "1",
-      name: 'Team',
+      name: "Team",
       price: 99,
-      period: 'Per month',
+      period: "Per month",
       features: {
-        websites: '10',
-        storage: '500 GB',
-        database: '15',
+        websites: "10",
+        storage: "500 GB",
+        database: "15",
         bandwidth: true,
         ssd: false,
         vcpus: false,
         wordpress: false,
-        speed: false
-      }
+        speed: false,
+      },
     },
     {
       _id: "2",
-      name: 'Popular',
+      name: "Popular",
       price: 150,
-      period: 'For six month',
+      period: "For six month",
       popular: true,
       features: {
-        websites: '50',
-        storage: '1 TB',
-        database: 'Unlimited',
+        websites: "50",
+        storage: "1 TB",
+        database: "Unlimited",
         bandwidth: true,
         ssd: true,
         vcpus: true,
         wordpress: true,
-        speed: true
-      }
+        speed: true,
+      },
     },
     {
       _id: "3",
-      name: 'Enterprise',
+      name: "Enterprise",
       price: 490,
-      period: 'For one month',
+      period: "For one month",
       features: {
-        websites: 'Unlimited',
-        storage: 'Unlimited',
-        database: 'Unlimited',
+        websites: "Unlimited",
+        storage: "Unlimited",
+        database: "Unlimited",
         bandwidth: true,
         ssd: true,
         vcpus: true,
         wordpress: true,
-        speed: true
-      }
-    }
+        speed: true,
+      },
+    },
   ];
   const [subscriptionData, setSubscriptionData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,18 +81,20 @@ function SubscriptionActive() {
     fetchSubscriptions();
   }, []);
 
-
   return (
     <>
       <Routes>
-        <Route path="/" element={<Subscriptionactiveplan plans={subscriptionData} />} />
-        <Route path="/payment" element={<PaymentPage plans={subscriptionData} />} />
-      </Routes >
+        <Route
+          path="/"
+          element={<Subscriptionactiveplan plans={subscriptionData} />}
+        />
+        <Route
+          path="/payment"
+          element={<PaymentPage plans={subscriptionData} />}
+        />
+      </Routes>
     </>
   );
 }
 
 export default SubscriptionActive;
-
-
-

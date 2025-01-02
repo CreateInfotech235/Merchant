@@ -5,20 +5,6 @@ import { getAllSubscription } from "../../Components_merchant/Api/Subscription";
 
 const SubscriptionPlan1 = ({ plans }) => {
 
-  // console.log(plans);
-  
-  
-  
-  const featureLabels = {
-    websites: 'Website number',
-    storage: 'Server storage',
-    database: 'Database', 
-    bandwidth: 'Unmetered Bandwidth',
-    ssd: 'SSD Disk',
-    vcpus: 'VCPUS Fontworld',
-    wordpress: 'WordPress install',
-    speed: 'Server speed'
-  };
   const convertSecondsToMonths = (seconds) => {
     // Number of seconds in a day
     const secInDay = 24 * 60 * 60;

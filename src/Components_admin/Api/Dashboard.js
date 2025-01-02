@@ -7,7 +7,7 @@ export const getCounts = async () => {
       return { status: true, data: response.data.data };
     } else {
       // console.log('API error', response.message)
-      return { status: false, message: response.message };
+      return { status: false, message: response.response.data.message };
     }
   } catch (error) {
     console.error("Error fetching cities:", error);

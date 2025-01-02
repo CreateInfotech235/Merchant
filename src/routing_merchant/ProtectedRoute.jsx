@@ -28,7 +28,7 @@ const ProtectedRoute = ({ children }) => {
       navigate("/login");
     }
   }, [token, merchantId, navigate]);
-  
+
   useEffect(() => {
     if (userData.freeSubscription === false) {
       setShowModel(true);
@@ -48,12 +48,27 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     const fetchSubscriptionInfo = async (id) => {
       const response = await SubscriptionInfo(id);
+      console.log(response);
+
+      if (response.message === "Token is invalid") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("merchantId");
+        localStorage.removeItem("userData");
+        // setIsProfileMenuOpen(false);
+        // navigate("/");
+        navigate("/");
+        window.location.reload();
+      }
+
       if (response.message === "Your subcription is expired") {
         if (!window.location.pathname.includes("/subscription-active")) {
           navigate("/subscription-active");
         }
       }
-      localStorage.setItem('SubscriptionId', response.data[0].subcriptionId._id);
+      localStorage.setItem(
+        "SubscriptionId",
+        response.data[0].subcriptionId._id
+      );
       setSubscriptionData(response.data);
     };
 
@@ -72,7 +87,6 @@ const ProtectedRoute = ({ children }) => {
       }
     });
   }, [subscriptionData]);
-  
 
   const toggleThemeMode = () => {
     setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));

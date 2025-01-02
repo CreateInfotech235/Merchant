@@ -12,6 +12,8 @@ const ProtectedRoute = ({ children }) => {
   //   const userData = JSON.parse(localStorage.getItem("userData"));
   const navigate = useNavigate();
 
+  
+
   // Check authentication
   useEffect(() => {
     if (!token) {

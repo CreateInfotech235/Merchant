@@ -11,12 +11,15 @@ import {
 import countryList from "react-select-country-list";
 import Select from "react-select";
 import { getAllCustomers } from "../../Components_merchant/Api/Customer";
-import { calculateDistancee, updateOrder } from "../../Components_merchant/Api/Order";
+import {
+  calculateDistancee,
+  updateOrder,
+} from "../../Components_merchant/Api/Order";
 import { duration } from "@mui/material";
 
 const UpdateOrderModal = ({ onHide, Order }) => {
   console.log(Order);
-  
+
   const navigate = useNavigate(); // Fixed duplicate navigate declaration
   const merchant = JSON.parse(localStorage.getItem("userData"));
   const [deliveryMan, setDeliveryMen] = useState([]);
@@ -27,6 +30,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [customerId, setCustomerId] = useState(null);
   const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
+  const [isUpdate, setIsUpdate] = useState(false);
 
   useEffect(() => {
     const selectedCustomer = customer.find(
@@ -128,8 +132,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       description: Order.deliveryAddress.description || "",
       postCode: Order.deliveryAddress.postCode || "",
     },
-    distance : Order.distance || "",
-    duration : Order.duration || "",
+    distance: Order.distance || "",
+    duration: Order.duration || "",
     cashOnDelivery: Order.cashOnDelivery || false,
   };
 
@@ -168,11 +172,12 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
     }),
-    distance : Yup.string().required("Required"),
-    duration : Yup.string().required("Required"),
+    distance: Yup.string().required("Required"),
+    duration: Yup.string().required("Required"),
   });
 
   const onSubmit = async (values, { setFieldValue }) => {
+    setIsUpdate(true);
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
     let deliverylocation = null;
@@ -186,6 +191,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       values.pickupDetails.location.latitude &&
       values.pickupDetails.location.longitude
     ) {
+      console.log("Enter in PickUp");
+
       if (values.pickupDetails.address) {
         try {
           const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
@@ -207,10 +214,10 @@ const UpdateOrderModal = ({ onHide, Order }) => {
               : "";
 
             pickuplocation = { latitude: lat, longitude: lng };
-            setFieldValue("pickupDetails.address", formattedAddress);
+            // setFieldValue("pickupDetails.address", formattedAddress);
             setFieldValue("pickupDetails.location.latitude", lat);
             setFieldValue("pickupDetails.location.longitude", lng);
-            setFieldValue("pickupDetails.postCode", postalCode);
+            // setFieldValue("pickupDetails.postCode", postalCode);
           } else {
             alert("Pickup address not found. Please try again.");
             return;
@@ -228,8 +235,10 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     // Handle delivery location
     if (
       values.deliveryDetails.location.latitude &&
-      values.deliveryDetails.location.longitude 
+      values.deliveryDetails.location.longitude
     ) {
+      console.log("Enter in Delivery");
+
       if (values.deliveryDetails.address) {
         try {
           const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
@@ -239,13 +248,14 @@ const UpdateOrderModal = ({ onHide, Order }) => {
             )}&key=${apiKey}`
           );
           const data = await response.json();
+          console.log(data, "Locationn");
 
           if (data.results && data.results.length > 0) {
             const { lat, lng } = data.results[0].geometry.location;
             const formattedAddress = data.results[0]?.formatted_address;
 
             deliverylocation = { latitude: lat, longitude: lng };
-            setFieldValue("deliveryDetails.address", formattedAddress);
+            // setFieldValue("deliveryDetails.address", formattedAddress);
             setFieldValue("deliveryDetails.location.latitude", lat);
             setFieldValue("deliveryDetails.location.longitude", lng);
           } else {
@@ -262,8 +272,14 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       deliverylocation = values.deliveryDetails.location;
     }
 
-    console.log(pickuplocation.latitude ,pickuplocation.longitude,deliverylocation.latitude ,deliverylocation.longitude , "sdfkgsdsfgsf" );
-    
+    console.log(
+      pickuplocation.latitude,
+      pickuplocation.longitude,
+      deliverylocation.latitude,
+      deliverylocation.longitude,
+      "sdfkgsdsfgsf"
+    );
+
     if (
       pickuplocation.latitude &&
       pickuplocation.longitude &&
@@ -278,7 +294,10 @@ const UpdateOrderModal = ({ onHide, Order }) => {
         deliverylocation.longitude
       );
 
-      const distance = await calculateDistancee(pickuplocation, deliverylocation);
+      const distance = await calculateDistancee(
+        pickuplocation,
+        deliverylocation
+      );
       console.log(distance.distance);
       setFieldValue("distance", distance.distance.text);
       setFieldValue("duration", distance.duration.text);
@@ -288,7 +307,6 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       duration = distance.duration.text;
       console.log(distance);
     }
-
 
     const payload = {
       ...values,
@@ -312,7 +330,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
       distance: distanceMiles,
       duration: duration,
     };
-    console.log(payload); 
+    console.log(payload);
 
     if (!values.cashOnDelivery) {
       delete payload.paymentCollectionRupees;
@@ -327,6 +345,8 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     } catch (error) {
       console.error("Error updating order:", error);
       alert("Failed to update order");
+    } finally {
+      setIsUpdate(false);
     }
   };
 
@@ -422,7 +442,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     />
                   </div>
 
-                  {formik.values.cashOnDelivery === true && (
+                  {formik.values.cashOnDelivery == "true" && (
                     <div
                       key={"paymentCollectionRupees"}
                       className="input-error col-12 col-sm-6 mb-3"
@@ -458,14 +478,14 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         <Field
                           type="radio"
                           name="cashOnDelivery"
-                          value="true"
+                          value={true}
                           className="form-check-input"
                           style={{
                             marginRight: "0.5em",
                             height: "1.2em",
                             width: "1.2em",
                           }}
-                          checked={formik.values.cashOnDelivery === true}
+                          checked={formik.values.cashOnDelivery == "true"}
                         />
                         Yes
                       </label>
@@ -474,14 +494,14 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         <Field
                           type="radio"
                           name="cashOnDelivery"
-                          value="false"
+                          value={false}
                           className="form-check-input"
                           style={{
                             marginRight: "0.5em",
                             height: "1.2em",
                             width: "1.2em",
                           }}
-                          checked={formik.values.cashOnDelivery === false}
+                          checked={formik.values.cashOnDelivery == "false"}
                         />
                         No
                       </label>
@@ -884,8 +904,9 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                     type="submit"
                     className="btn btn-primary mt-3"
                     style={{ height: "4.5em" }}
+                    disabled={isUpdate}
                   >
-                    Update Order
+                    {isUpdate ? "Order Updating..." : "Update Order"}
                   </button>
                 </div>
               </Form>
