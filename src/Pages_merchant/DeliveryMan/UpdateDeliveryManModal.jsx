@@ -8,7 +8,8 @@ import countryList from "react-select-country-list";
 
 const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
   const navigate = useNavigate();
-  // console.log(deliveryBoy);
+  const [isUpdate, setisUpdate] = useState(false);
+  console.log(deliveryBoy);
 
   const initialValues = {
     firstName: deliveryBoy ? deliveryBoy.firstName : "",
@@ -20,6 +21,10 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
     postCode: deliveryBoy ? deliveryBoy.postCode : "",
     chargeMethod: deliveryBoy ? deliveryBoy.chargeMethod : "",
     charge: deliveryBoy ? deliveryBoy.charge : "",
+    defaultLocation: {
+      latitude: deliveryBoy.location.coordinates[1],
+      longitude: deliveryBoy.location.coordinates[0],
+    },
   };
 
   const validationSchema = Yup.object({
@@ -36,13 +41,76 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
     charge: Yup.string().required("Charge is required"),
   });
 
-  const onSubmit = async (values) => {
-    const res = await updateDeliveryBoy(deliveryBoy._id, values);
-    if (res.status) {
-      onHide();
+  const onSubmit = async (values, { setFieldValue }) => {
+    setisUpdate(true);
+    console.log(values);
+  
+    let defaultLocationData = null;
+  
+    if (deliveryBoy.location.coordinates[1] && deliveryBoy.location.coordinates[0]) {
+      if (deliveryBoy.address) {
+        try {
+          const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+              values.address
+            )}&key=${apiKey}`
+          );
+          const data = await response.json();
+  
+          if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry.location;
+            const postalCodeComponent = data.results[0].address_components.find(
+              (component) => component.types.includes("postal_code")
+            );
+  
+            defaultLocationData = {
+              latitude: lat,
+              longitude: lng,
+            };
+  
+            console.log(lat , lng);
+            
+            // Update form fields
+            setFieldValue("defaultLocation.latitude", lat);
+            setFieldValue("defaultLocation.longitude", lng);
+          } else {
+            alert("Address not found. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error fetching geocode data:", error);
+          alert("An error occurred while processing the address. Please try again.");
+        }
+      } else {
+        alert("Please enter an address.");
+      }
     }
-  };
+    console.log(defaultLocationData);
+    
+    // Use defaultLocationData if it's set; otherwise, fallback to the existing values
+    const payload = {
+      ...values,
+      defaultLocation: {
+        latitude: defaultLocationData?.latitude || values.defaultLocation.latitude,
+        longitude: defaultLocationData?.longitude || values.defaultLocation.longitude,
+      },
+    };
+  
+    console.log(payload);
+  
 
+    try {
+      const res = await updateDeliveryBoy(deliveryBoy._id, payload);
+      if (res.status) {
+        onHide();
+      }
+    } catch (error) {
+      console.error("Error updating delivery boy:", error);
+      alert("An error occurred while updating the delivery boy. Please try again.");
+    }
+  
+    setisUpdate(false);
+  };
   return (
     <Modal show={true} onHide={onHide} size="xl">
       <Modal.Header closeButton>
@@ -256,7 +324,7 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
                   Cancel
                 </Button>
                 <Button type="submit" className="btn btn-primary ms-3">
-                  Save Changes
+                  {isUpdate ? "DeliveyMan Updating..." : "Update DeliveyMan"}
                 </Button>
               </div>
             </Form>

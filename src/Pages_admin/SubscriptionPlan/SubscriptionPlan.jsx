@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import SubscriptionModel from "./SubscriptionModel";
 import { getAllSubscription } from "../../Components_admin/Api/Subscription";
 import Loader from "../../Components_admin/Loader/Loader";
-import edit from '../../assets_admin/subscription-edit.svg'
-import check from '../../assets_admin/checkbox.svg'
+import edit from "../../assets_admin/subscription-edit.svg";
+import check from "../../assets_admin/checkbox.svg";
 function SubscriptionPlan() {
   const [showModel, setShowModel] = useState(false);
   const [type, setType] = useState();
@@ -71,7 +71,7 @@ function SubscriptionPlan() {
   };
 
   return (
-    <div className="w-100 h-[calc(100vh-187px)]">
+    <div className="w-100 min-h-[calc(100vh-187px)]">
       <div className="w-100 d-flex justify-content-end ">
         <button
           className="p-2 rounded bg-[#253A71] text-white"
@@ -89,11 +89,17 @@ function SubscriptionPlan() {
           {loading && <Loader />}
           <div className="subscription  d-flex fluid-container W-100   align-items-center;">
             <div className="row justify-content-center w-100 ">
-            {subcriptionData.map((el, i) => (
+              {subcriptionData.map((el, i) => (
                 <div
                   key={i}
                   className="col-xxl-2 col-xl-3 col-lg-4 col-md-4  col-sm-6 col-12 p-3 rounded-4 m-3 "
-                  style={{ background: "#CCD6B1", width: "330px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                  style={{
+                    background: "#CCD6B1",
+                    width: "330px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
                 >
                   <div>
                     <div className="d-flex justify-content-end pb-5">
@@ -106,25 +112,24 @@ function SubscriptionPlan() {
                     </div>
                     <h5 className="fw-bold text-center">{el.type}</h5>
                     <h1 className="fw-bold text-center">${el.amount}</h1>
-                    <p className="fw-bold text-center">per {convertSecondsToMonths(el.seconds)} Months</p>
+                    <p className="fw-bold text-center">
+                      per {convertSecondsToMonths(el.seconds)} Months
+                    </p>
                     {/* monthCalcuation */}
 
                     <div className="d-flex flex-column align-items-start p-3">
                       {el.features.map((features, i) => (
-                        <div
-                          key={i}
-                          className="d-flex "
-                        >
-                          <img src={check} className="pe-3" />{" "}
-                          <p>{features}</p>{" "}
+                        <div key={i} className="d-flex ">
+                          <img src={check} className="pe-3" /> <p>{features}</p>{" "}
                         </div>
                       ))}
                     </div>
                   </div>
 
-
                   <div className="d-flex justify-content-center">
-                    <button className="btn btn-primary m-4">purchase now</button>
+                    <button className="btn btn-primary m-4">
+                      purchase now
+                    </button>
                   </div>
                 </div>
               ))}

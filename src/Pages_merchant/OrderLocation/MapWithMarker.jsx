@@ -6,7 +6,7 @@ import { getOrders } from "../../Components_merchant/Api/Order";
 function MapWithMarker() {
   const mapContainerStyle = {
     width: "100%",
-    height: "400px",
+    height: "100vh",
   };
 
   const [orders, setOrders] = useState([]);

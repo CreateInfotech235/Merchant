@@ -47,12 +47,12 @@ const AllOrder = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await getAllOrder(null , currentPage, ordersPerPage);
+      const response = await getAllOrder(null, currentPage, ordersPerPage);
       // console.log(response.data , "Data");
-      
-    if (response.status) {
-      setOrders(response.data);
-      setFilteredOrders(response.data);
+
+      if (response.status) {
+        setOrders(response.data);
+        setFilteredOrders(response.data);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -66,9 +66,9 @@ const AllOrder = () => {
     try {
       const response = await getAllOrder(false, currentPage, ordersPerPage);
       // console.log(response , "response");
-    if(response.status){
-      setOrders(response.data);
-      setFilteredOrders(response.data);
+      if (response.status) {
+        setOrders(response.data);
+        setFilteredOrders(response.data);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -82,7 +82,7 @@ const AllOrder = () => {
     try {
       const response = await getAllOrder(true, currentPage, ordersPerPage);
       // console.log(response , "response");
-      if(response.status){
+      if (response.status) {
         setOrders(response.data);
         setFilteredOrders(response.data);
       }
@@ -91,7 +91,6 @@ const AllOrder = () => {
     } finally {
       setLoading(false);
     }
-    
 
     // setFilteredOrders(orders);
   };
@@ -106,31 +105,30 @@ const AllOrder = () => {
 
   const filterOrders = (query) => {
     if (!query) {
-        setFilteredOrders(orders);
-        return;
+      setFilteredOrders(orders);
+      return;
     }
 
     const lowercasedQuery = query.toLowerCase();
     const filteredData = orders.filter((order) => {
-        // Ensure each property is a string before using toLowerCase
-        const orderId = String(order.orderId || ""); // Fallback to empty string
-        const customerName = String(order.customerName || "");
-        const pickupAddress = String(order.pickupAddress || "");
-        const deliveryAddress = String(order.deliveryAddress || "");
-        const status = String(order.status || "");
+      // Ensure each property is a string before using toLowerCase
+      const orderId = String(order.orderId || ""); // Fallback to empty string
+      const customerName = String(order.customerName || "");
+      const pickupAddress = String(order.pickupAddress || "");
+      const deliveryAddress = String(order.deliveryAddress || "");
+      const status = String(order.status || "");
 
-        return (
-            orderId.toLowerCase().includes(lowercasedQuery) ||
-            customerName.toLowerCase().includes(lowercasedQuery) ||
-            pickupAddress.toLowerCase().includes(lowercasedQuery) ||
-            deliveryAddress.toLowerCase().includes(lowercasedQuery) ||
-            status.toLowerCase().includes(lowercasedQuery)
-        );
+      return (
+        orderId.toLowerCase().includes(lowercasedQuery) ||
+        customerName.toLowerCase().includes(lowercasedQuery) ||
+        pickupAddress.toLowerCase().includes(lowercasedQuery) ||
+        deliveryAddress.toLowerCase().includes(lowercasedQuery) ||
+        status.toLowerCase().includes(lowercasedQuery)
+      );
     });
 
     setFilteredOrders(filteredData);
-};
-
+  };
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -147,7 +145,7 @@ const AllOrder = () => {
   };
   const statusColors = {
     CREATED: "gray",
-    ASSIGNED: "blue", 
+    ASSIGNED: "blue",
     ACCEPTED: "green",
     CANCELLED: "red",
     UNASSIGNED: "red",
@@ -158,29 +156,42 @@ const AllOrder = () => {
   };
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
-  const hadleTrackOrder = async(id, deliveryLocation , pickupLocation , status) => {
+  const hadleTrackOrder = async (
+    id,
+    deliveryLocation,
+    pickupLocation,
+    status
+  ) => {
     // console.log("deliveryLocation", deliveryLocation);
     // console.log("pickupLocation", pickupLocation);
     // console.log("status", status);
     try {
       if (status) {
-        setStatus(status)
+        setStatus(status);
       }
-      if (pickupLocation && pickupLocation.latitude && pickupLocation.longitude) {
+      if (
+        pickupLocation &&
+        pickupLocation.latitude &&
+        pickupLocation.longitude
+      ) {
         setPickupLocation({
-          lat : pickupLocation.latitude,
-          lng : pickupLocation.longitude
-        })
+          lat: pickupLocation.latitude,
+          lng: pickupLocation.longitude,
+        });
       }
-      if(deliveryLocation && deliveryLocation.latitude && deliveryLocation.longitude) {
+      if (
+        deliveryLocation &&
+        deliveryLocation.latitude &&
+        deliveryLocation.longitude
+      ) {
         setDeliveryLocation({
           lat: deliveryLocation.latitude,
-          lng: deliveryLocation.longitude
+          lng: deliveryLocation.longitude,
         });
       }
 
       const response = await getDeliveryManLocationByOrder(id);
-      
+
       if (response?.data?.data?.[0]?.location) {
         const { latitude, longitude } = response.data.data[0].location;
         if (latitude && longitude) {
@@ -192,12 +203,11 @@ const AllOrder = () => {
       console.error("Error tracking order:", error);
     }
   };
-  
 
   return (
     <>
       <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between d-lg-flex justify-content-lg-between d-md-flex justify-content-md-between d-sm-flex justify-content-sm-center d-flex flex-column flex-xxl-row flex-xl-row flex-lg-row flex-md-row flex-sm-column align-items-center nav-bar pb-3">
-         <div className={`navbar`}>
+        <div className={`navbar`}>
           <div className="navbar-options d-flex my-2 col-12">
             <input
               type="search"
@@ -213,11 +223,21 @@ const AllOrder = () => {
         </div>
       </div>
 
-      <div className="w-100 h-[calc(100vh-187px)]">
+      <div className="w-100 min-h-[calc(100vh-187px)]">
         <div className="d-flex justify-content-between py-3">
           <div className="d-flex gap-3">
-            <button className="btn btn-primary" onClick={() => handleAdminOrder()}>Admin Orders</button>
-            <button className="btn btn-secondary" onClick={() => handleMerchantOrder()}>Merchant Orders</button>
+            <button
+              className="btn btn-primary"
+              onClick={() => handleAdminOrder()}
+            >
+              Admin Orders
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => handleMerchantOrder()}
+            >
+              Merchant Orders
+            </button>
           </div>
           <button
             type="button"
@@ -226,7 +246,12 @@ const AllOrder = () => {
           >
             <Link
               to="/create-order-admin"
-              style={{ textDecoration: "none", color: "white" , display: "flex", alignItems: "center" }}
+              style={{
+                textDecoration: "none",
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+              }}
             >
               <img src={add} alt="Add" className="me-2" />
               Add Order
@@ -259,91 +284,129 @@ const AllOrder = () => {
               </tr>
             </thead>
             <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="13" className="text-center p-3">
-                      <div className="d-flex justify-content-center">
-                        <div className="mx-auto">
-                          <Loader />
-                        </div>
+              {loading ? (
+                <tr>
+                  <td colSpan="13" className="text-center p-3">
+                    <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                        <Loader />
                       </div>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="11" className="text-center p-3">
+                    <div className="d-flex justify-content-center">
+                      <div className="mx-auto">No Data Found</div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredOrders.map((order, index) => (
+                  <tr key={index} className="country-row">
+                    <td className="city-data">
+                      <input type="checkbox" />
                     </td>
-                  </tr>
-                ) : filteredOrders.length === 0 ? (
-                  <tr>
-                    <td colSpan="11" className="text-center p-3">
-                      <div className="d-flex justify-content-center">
-                        <div className="mx-auto">No Data Found</div>
-                      </div>
+                    <td className="p-3 text-primary">
+                      {order?.showOrderNumber ?? "-"}
                     </td>
-                  </tr>
-                ) : (
-                  filteredOrders.map((order, index) => (
-                    <tr key={index} className="country-row">
-                      <td className="city-data">
-                        <input type="checkbox" />
-                      </td>
-                      <td className="p-3 text-primary">{order?.showOrderNumber ?? '-'}</td>
-                      <td className="p-3">{order.merchantName || "-"}</td>
-                      <td className="p-3">{order.customerName}</td>
-                      <td className="p-3">{order.pickupAddress.address}</td>
-                      <td className="p-3">{order.deliveryAddress.address}</td>
-                      <td className="p-3">{order.deliveryMan || "-"}</td>
-                      <td className="p-3">{order.createdDate}</td>  
-                      <td className="p-3">{order.pickupDate || "-"}</td>
-                      <td className="p-3">{order.deliveryDate || "-"}</td>
-                      <td className="p-3 fw-bold">{order.invoice || '-'}</td>
-                      <td className="p-3">
-                        <button className={`${getColorClass(order.status)} mx-2`}>
-                          {order.status}
-                        </button>
-                      </td>
-                      {/* <td className="city-data">Assign</td> */}
-                      <td className="city-data">
-                        <button className="delete-btn me-1" onClick={() => setShowDelModal(true)}>
-                          <img src={deleteimg} alt="Delete" className="mx-auto"   />
-                        </button>
-                        <button className="show-btn" onClick={() => handleShowModal(order)}>
-                          <img src={show} alt="Show" className="mx-auto" />
-                        </button>
-                      </td>
-                      <td className="city-data">
-                        <button 
+                    <td className="p-3">{order.merchantName || "-"}</td>
+                    <td className="p-3">{order.customerName}</td>
+                    <td className="p-3">{order.pickupAddress.address}</td>
+                    <td className="p-3">{order.deliveryAddress.address}</td>
+                    <td className="p-3">{order.deliveryMan || "-"}</td>
+                    <td className="p-3">{order.createdDate}</td>
+                    <td className="p-3">{order.pickupDate || "-"}</td>
+                    <td className="p-3">{order.deliveryDate || "-"}</td>
+                    <td className="p-3 fw-bold">{order.invoice || "-"}</td>
+                    <td className="p-3">
+                      <button className={`${getColorClass(order.status)} mx-2`}>
+                        {order.status}
+                      </button>
+                    </td>
+                    {/* <td className="city-data">Assign</td> */}
+                    <td className="city-data">
+                      <button
+                        className="delete-btn me-1"
+                        onClick={() => setShowDelModal(true)}
+                      >
+                        <img src={deleteimg} alt="Delete" className="mx-auto" />
+                      </button>
+                      <button
+                        className="show-btn"
+                        onClick={() => handleShowModal(order)}
+                      >
+                        <img src={show} alt="Show" className="mx-auto" />
+                      </button>
+                    </td>
+                    <td className="city-data">
+                      <button
                         className="delete-btn"
                         onClick={() => {
-                          if (["ACCEPTED", "ASSIGNED", "CANCELLED", "DELIVERED", "CREATED"].includes(order.status)) {
-                            alert("You are not able to track. Tracking starts from the status 'Arrived' to 'Delivered'.");
+                          if (
+                            [
+                              "ACCEPTED",
+                              "ASSIGNED",
+                              "CANCELLED",
+                              "DELIVERED",
+                              "CREATED",
+                            ].includes(order.status)
+                          ) {
+                            alert(
+                              "You are not able to track. Tracking starts from the status 'Arrived' to 'Delivered'."
+                            );
                           } else {
-                            hadleTrackOrder(order.deliveryManId, order.deliveryAddress.location, order.pickupAddress.location, order.status);
+                            hadleTrackOrder(
+                              order.deliveryManId,
+                              order.deliveryAddress.location,
+                              order.pickupAddress.location,
+                              order.status
+                            );
                           }
                         }}
-                    
-                        >
-                          <img src={tracking} alt="Tracking" className="mx-auto"/>
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                      >
+                        <img
+                          src={tracking}
+                          alt="Tracking"
+                          className="mx-auto"
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-        {showModel && <OrderModal onHide={handleCloseModal} Order={selectedOrder} />}
-        {showDelModal && <DeleteModal onHide={onHideDeleteModal} onDelete={onDelete} text='order' />}
+        {showModel && (
+          <OrderModal onHide={handleCloseModal} Order={selectedOrder} />
+        )}
+        {showDelModal && (
+          <DeleteModal
+            onHide={onHideDeleteModal}
+            onDelete={onDelete}
+            text="order"
+          />
+        )}
         {showMapModal && location && (
-        <MapModal 
-          location={location} 
-          deliveryLocation={deliveryLocation} 
-          pickupLocation={pickupLocation}
-          status={status}
-          onHide={() => {
-            setShowMapModal(false);
-            setLocation(null);
-            setDeliveryLocation(null);
-          }} 
+          <MapModal
+            location={location}
+            deliveryLocation={deliveryLocation}
+            pickupLocation={pickupLocation}
+            status={status}
+            onHide={() => {
+              setShowMapModal(false);
+              setLocation(null);
+              setDeliveryLocation(null);
+            }}
+          />
+        )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handleClick={handleClick}
         />
-      )}
-        <Pagination currentPage={currentPage} totalPages={totalPages} handleClick={handleClick} />
       </div>
     </>
   );

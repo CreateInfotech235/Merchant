@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "../../Components_admin/Sidebar/Sidebar";
 import Breadcrumb from "../../Components_admin/Breadcrumb/Breadcrumb";
 import Header from "../../Components_admin/Header/Header";
+import { getCounts } from "../../Components_admin/Api/Dashboard";
 
 const ProtectedRoute = ({ children }) => {
   const [themeMode, setThemeMode] = useState("light");
@@ -20,6 +21,20 @@ const ProtectedRoute = ({ children }) => {
       navigate("/admin-login");
     }
   }, [token, navigate]);
+  useEffect(()=>{
+    const fetchData = async () => {
+      const response = await getCounts()
+
+      console.log(response);
+      if(response.message === "Unauthorized user, Token is invalid"){
+        localStorage.removeItem("accessTokenForAdmin")
+        localStorage.removeItem("refreshTokenForAdmin")
+        navigate("/admin-login");
+        
+      }
+    }
+    fetchData()
+  },[])
 
   // Check free subscription
 

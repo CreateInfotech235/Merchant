@@ -10,7 +10,7 @@ import DisableUser from "../../Components_admin/DisableUser/DisableUser";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import Pagination from "../../Components_admin/Pagination/Pagination";
 import { getScbscriptionUsers } from "../../Components_admin/Api/User"; // Fetch function
-import UnsubscriptionUserPopup from '../UnsubscribedMerchant/UnSubsctibedMerchnatPopup'
+import UnsubscriptionUserPopup from "../UnsubscribedMerchant/UnSubsctibedMerchnatPopup";
 import Loader from "../../Components_admin/Loader/Loader";
 
 const SubscribedMerchnat = () => {
@@ -24,6 +24,7 @@ const SubscribedMerchnat = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDisableModalOpen, setIsDisableModalOpen] = useState(false);
   const [themeMode, setThemeMode] = useState("light");
+  const [isLoader, setIsLoader] = useState(false);
 
   useEffect(() => {
     // Update body class based on themeMode
@@ -40,12 +41,21 @@ const SubscribedMerchnat = () => {
 
   // Fetch users from API
   const fetchUsers = async () => {
-    const response = await getScbscriptionUsers(currentPage, usersPerPage);
-    // console.log(response);
-    
-    if (response.status) {
-      setUsers(response.data[0].data); // Set user data from API
-      setTotalPages(Math.ceil(response.data[0].totalDataCount / usersPerPage));
+    setIsLoader(true);
+    try {
+      const response = await getScbscriptionUsers(currentPage, usersPerPage);
+      // console.log(response);
+
+      if (response.status) {
+        setUsers(response.data[0].data); // Set user data from API
+        setTotalPages(
+          Math.ceil(response.data[0].totalDataCount / usersPerPage)
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoader(false);
     }
   };
 
@@ -101,10 +111,8 @@ const SubscribedMerchnat = () => {
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
-
   return (
-    <div className="h-[calc(100vh-187px)]">
-      
+    <div className="min-h-[calc(100vh-187px)]">
       <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
         <div className="navbar">
           <div className="navbar-options d-flex">
@@ -122,7 +130,10 @@ const SubscribedMerchnat = () => {
         </div>
         <div>
           <Link to="/add-user">
-            <button className="btn text-white d-flex align-items-center" style={{ background: "#D65246" }}>
+            <button
+              className="btn text-white d-flex align-items-center"
+              style={{ background: "#D65246" }}
+            >
               <img src={add} className="pe-2" alt="Add" />
               Add User
             </button>
@@ -131,7 +142,10 @@ const SubscribedMerchnat = () => {
       </div>
 
       <div className="table-responsive">
-        <table className="table-borderless w-100 text-center bg-light" style={{ fontSize: "12px" }}>
+        <table
+          className="table-borderless w-100 text-center bg-light"
+          style={{ fontSize: "12px" }}
+        >
           <thead className="text-light" style={{ background: "#253A71" }}>
             <tr>
               <th className="p-3">User ID</th>
@@ -147,15 +161,22 @@ const SubscribedMerchnat = () => {
             </tr>
           </thead>
           <tbody>
-            {currentUsers.length === 0 ? (
+            {isLoader  ? (
               <tr>
-                <td colSpan="9" className="text-center p-3">
-                <div className="d-flex justify-content-center">
-                      <div className="mx-auto">
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">
                       <Loader />
-                      No Data Found
-                      </div>
-                     </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ) : currentUsers.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -166,15 +187,20 @@ const SubscribedMerchnat = () => {
                   <td className="p-3">{user.lastName}</td>
                   <td className="p-3">{user.contactNumber}</td>
                   <td className="p-3">{user.email}</td>
-                  <td className="p-3">{user?.address?.country ?? '-'}</td>
+                  <td className="p-3">{user?.address?.country ?? "-"}</td>
                   <td className="p-3">{user?.address?.city || "N/A"}</td>
-                  <td className="p-3">{new Date(user.registerDate).toLocaleString()}</td>
+                  <td className="p-3">
+                    {new Date(user.registerDate).toLocaleString()}
+                  </td>
                   <td className="p-3 text-[12px]">
-                  <button className={`enable-btn ${user.status === 'ENABLE' ? 'green' : 'red'}`}>
-                        {user.status === 'ENABLE' ? "ACTIVE" : "INACTIVE"}
-                      </button>
-                      
-                      </td>
+                    <button
+                      className={`enable-btn ${
+                        user.status === "ENABLE" ? "green" : "red"
+                      }`}
+                    >
+                      {user.status === "ENABLE" ? "ACTIVE" : "INACTIVE"}
+                    </button>
+                  </td>
                   <td className="table-head2">
                     <div className="d-flex align-items-center justify-content-center">
                       {/* <button className="edit-btn m-2" onClick={() => handleEditUser(user)}>
@@ -183,7 +209,10 @@ const SubscribedMerchnat = () => {
                       {/* <button className="delete-btn" onClick={() => setIsDeleteModalOpen(true)}>
                         <img src={deleteimg} alt="Delete" />
                       </button> */}
-                      <button className="show-btn m-2" onClick={() => handleShowInfo(user)}>
+                      <button
+                        className="show-btn m-2"
+                        onClick={() => handleShowInfo(user)}
+                      >
                         <img src={show} alt="Show" className="mx-auto" />
                       </button>
                     </div>
@@ -194,14 +223,18 @@ const SubscribedMerchnat = () => {
           </tbody>
         </table>
       </div>
-      {isInfoModalOpen &&
+      {isInfoModalOpen && (
         <UnsubscriptionUserPopup
           user={selectedUser}
           onHide={() => setIsInfoModalOpen(false)}
         />
-      }
+      )}
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} handleClick={handleClick} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handleClick={handleClick}
+      />
     </div>
   );
 };

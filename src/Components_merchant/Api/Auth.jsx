@@ -25,7 +25,7 @@ export const sendOtp = async (data) => {
         console.log('abcd', response);
         
         if (response.status === 200) {
-            toast.success('OTP send to your email/contact no, Please check it')
+            toast.success('OTP send to your email Please check it')
             return { status: true, data: response.data.data }
         } else {
             return { status: false, message: response.response.data.message }

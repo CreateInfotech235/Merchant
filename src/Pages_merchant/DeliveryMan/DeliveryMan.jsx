@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import add from "../../assets_mercchant/add.png";
 import edit from "../../assets_mercchant/edit.png";
 import deleteimg from "../../assets_mercchant/deleteimg.png";
-import './DeliveryMan.css'
+import "./DeliveryMan.css";
 import show from "../../assets_mercchant/show.png";
 import locationimg from "../../assets_mercchant/locationimg.png";
 import searchIcon from "../../assets_mercchant/search.png";
@@ -37,22 +37,21 @@ const DeliveryMan = () => {
       const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
       const res = await getDeliveryMan(currentPage, itemsPerPage, searchParam);
 
-      console.log(res , "res");
+      console.log(res, "res");
       if (res.status) {
         const trashedData = res.data
           .filter((data) => data.trashed === false)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      
+
         const sortedDeliveryMen = res.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-      
+
         setDeliverymen(trashedData);
-      
+
         // If you want to set trashed data somewhere, you can also handle it
         // setTrashedDeliverymen(trashedData);
       }
-      
     } catch (err) {
       console.error("Error fetching delivery men:", err);
     } finally {
@@ -62,7 +61,7 @@ const DeliveryMan = () => {
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [currentPage,showModal, searchTerm]); // Fetch data when page or search term changes
+  }, [currentPage, showModal, searchTerm]); // Fetch data when page or search term changes
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -93,11 +92,11 @@ const DeliveryMan = () => {
   const indexOfFirstDeliveryMan = indexOfLastDeliveryMan - itemsPerPage;
   const currentDeliveryMen = filteredDeliverymen.slice(
     indexOfFirstDeliveryMan,
-    indexOfLastDeliveryMan,
+    indexOfLastDeliveryMan
   );
 
   console.log("currentDeliveryMen", currentDeliveryMen);
-  
+
   const handleDeleteClick = (deliveryMan) => {
     setSelectedDeliveryMan(deliveryMan._id);
     setShowModal(true);
@@ -142,13 +141,16 @@ const DeliveryMan = () => {
 
   const handleLocationClick = (coordinates) => {
     console.log("Coordinates:", coordinates);
-    if (coordinates && coordinates[0] !== undefined && coordinates[1] !== undefined) {
+    if (
+      coordinates &&
+      coordinates[0] !== undefined &&
+      coordinates[1] !== undefined
+    ) {
       setLocation(coordinates);
       setShowMapModal(true);
-    }else{
+    } else {
       alert("No coordinates found");
     }
-  
   };
 
   return (
@@ -202,86 +204,122 @@ const DeliveryMan = () => {
               </tr>
             </thead>
             <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="11" className="text-center p-3">
-                  <div className="d-flex justify-content-center">
-                    <div className="mx-auto">
-                      <Loader />
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            ) : currentDeliveryMen.length === 0 ? (
-              <tr>
-                <td colSpan="11" className="text-center p-3">
-                  <div className="d-flex justify-content-center">
-                    <div className="mx-auto">No Data Found</div>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-                currentDeliveryMen.map((deliveryman) => (
-                  deliveryman.trashed === false ? (
-                  <tr key={deliveryman._id}>
-                    <td className="user-table1">
-                      <input type="checkbox" />
-                    </td>
-                    <td className="p-3">{deliveryman?.showDeliveryManNumber ?? "-"}</td>
-                    <td className="p-3">{deliveryman?.firstName ?? "-"}</td>
-                    <td className="p-3">{deliveryman?.lastName ?? "-"}</td>
-                    <td className="p-3">
-                      {deliveryman.countryCode} {deliveryman.contactNumber}
-                    </td>
-                    <td className="p-3">{deliveryman.email}</td>
-                    <td className="p-3">{deliveryman.address}</td>
-                    <td className="p-3">{deliveryman.postCode}</td>
-                    <td className="p-3">{`${deliveryman.charge} / ${deliveryman.chargeMethod}`}</td>
-                    <td className="p-3">
-                      <button className={getColorClass(deliveryman.status)}>
-                        {deliveryman.status === 'ENABLE' ? 'ONLINE' : 'OFFLINE'}
-                      </button> 
-                    </td>
-                    <td className="user-table1">
-                      <button className={`enable-btn ${deliveryman.isVerified ? 'green' : 'red'}`}>
-                        {deliveryman.isVerified ? "ACTIVE" : "INACTIVE"}
-                      </button>
-                      {/* <input type="checkb ox" checked={deliveryman.isVerified} /> */}
-                    </td>
-                    <td className="user-table1">
-                      <div className="d-flex justify-content-center align-items-center">
-                        <button className="edit-btn"
-                        onClick={() => handleLocationClick([
-                          deliveryman.location?.coordinates[0],
-                          deliveryman.location?.coordinates[1],
-                        ])}
-                        >
-                          <img src={locationimg} alt="Edit" className="mx-auto"/>
-                        </button>
-                        <button
-                          className="edit-btn ms-1"
-                          onClick={() => handleEditClick(deliveryman)}
-                        >
-                          <img src={edit} alt="Edit" className="mx-auto"/>
-                        </button>
-                        <button
-                          className="delete-btn ms-1"
-                          onClick={() => handleDeleteClick(deliveryman)}
-                        >
-                          <img src={deleteimg} alt="Delete" className="mx-auto"/>
-                        </button>
-
-                        <button
-                          className="show-btn ms-1"
-                          onClick={() => handleViewClick(deliveryman)}
-                        >
-                          <img src={show} alt="Show" className="mx-auto" />
-                        </button>
+              {loading ? (
+                <tr>
+                  <td colSpan="11" className="text-center p-3">
+                    <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                        <Loader />
                       </div>
-                    </td>
-                  </tr>
-                  ) :null
-                ))
+                    </div>
+                  </td>
+                </tr>
+              ) : currentDeliveryMen.length === 0 ? (
+                <tr>
+                  <td colSpan="11" className="text-center p-3">
+                    <div className="d-flex justify-content-center">
+                      <div className="mx-auto">No Data Found</div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                currentDeliveryMen.map((deliveryman) =>
+                  deliveryman.trashed === false ? (
+                    <tr key={deliveryman._id}>
+                      <td className="user-table1">
+                        <input type="checkbox" />
+                      </td>
+                      <td className="p-3">
+                        {deliveryman?.showDeliveryManNumber ?? "-"}
+                      </td>
+                      <td className="p-3">{deliveryman?.firstName ?? "-"}</td>
+                      <td className="p-3">{deliveryman?.lastName ?? "-"}</td>
+                      <td className="p-3">
+                        {deliveryman.countryCode} {deliveryman.contactNumber}
+                      </td>
+                      <td className="p-3">{deliveryman.email}</td>
+                      <td className="p-3">{deliveryman.address}</td>
+                      <td className="p-3">{deliveryman.postCode}</td>
+                      <td className="p-3">{`${deliveryman.charge} / ${deliveryman.chargeMethod}`}</td>
+                      <td className="p-3">
+                        <button className={getColorClass(deliveryman.status)}>
+                          {deliveryman.status === "ENABLE"
+                            ? "ONLINE"
+                            : "OFFLINE"}
+                        </button>
+                      </td>
+                      <td className="user-table1">
+                        <button
+                          className={`enable-btn ${
+                            deliveryman.isVerified ? "green" : "red"
+                          }`}
+                        >
+                          {deliveryman.isVerified ? "ACTIVE" : "INACTIVE"}
+                        </button>
+                        {/* <input type="checkb ox" checked={deliveryman.isVerified} /> */}
+                      </td>
+                      <td className="user-table1">
+                        <div className="d-flex justify-content-center align-items-center">
+                          <button
+                            className="edit-btn"
+                            // onClick={() => handleLocationClick([
+                            //   deliveryman.location?.coordinates[0],
+                            //   deliveryman.location?.coordinates[1],
+                            // ])}
+
+                            onClick={() =>
+                              handleLocationClick(
+                                deliveryman.location?.coordinates?.length === 2
+                                  ? [
+                                      deliveryman.location.coordinates[0],
+                                      deliveryman.location.coordinates[1],
+                                    ]
+                                  : deliveryman.defaultLocation?.coordinates
+                                      ?.length === 2
+                                  ? [
+                                      deliveryman.defaultLocation
+                                        .coordinates[0],
+                                      deliveryman.defaultLocation
+                                        .coordinates[1],
+                                    ]
+                                  : null
+                              )
+                            }
+                          >
+                            <img
+                              src={locationimg}
+                              alt="Edit"
+                              className="mx-auto"
+                            />
+                          </button>
+                          <button
+                            className="edit-btn ms-1"
+                            onClick={() => handleEditClick(deliveryman)}
+                          >
+                            <img src={edit} alt="Edit" className="mx-auto" />
+                          </button>
+                          <button
+                            className="delete-btn ms-1"
+                            onClick={() => handleDeleteClick(deliveryman)}
+                          >
+                            <img
+                              src={deleteimg}
+                              alt="Delete"
+                              className="mx-auto"
+                            />
+                          </button>
+
+                          <button
+                            className="show-btn ms-1"
+                            onClick={() => handleViewClick(deliveryman)}
+                          >
+                            <img src={show} alt="Show" className="mx-auto" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : null
+                )
               )}
             </tbody>
           </table>
@@ -317,10 +355,7 @@ const DeliveryMan = () => {
         />
       )}
       {showMapModal && (
-        <MapModal
-          location={location}
-          onHide={() => setShowMapModal(false)}
-        />
+        <MapModal location={location} onHide={() => setShowMapModal(false)} />
       )}
     </>
   );

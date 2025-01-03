@@ -10,8 +10,7 @@ import {
 } from "../../Components_merchant/Api/SupportTicket";
 import { Link } from "react-router-dom";
 import show from "../../assets_admin/show.png";
-
-
+import Loader from "../../Components_admin/Loader/Loader";
 
 const SupportTicket = () => {
   const [userData, setUserData] = useState({ name: "", userid: "" });
@@ -21,8 +20,7 @@ const SupportTicket = () => {
   const [listofproblem, setlistofproblem] = useState([]);
   const [isUpdate, setIsUpdate] = useState("");
   const [currentTicket, setCurrentTicket] = useState(null);
-    const [selectedTicketId, setSelectedTicketId] = useState(null);
-  
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
 
   const merchnatId = localStorage.getItem("merchnatId");
   // console.log(merchnatId);
@@ -38,12 +36,14 @@ const SupportTicket = () => {
   };
 
   const getSupportTicketapi = async () => {
+    setLoading(true);
     try {
       const response = await getSupportTicket();
       setlistofproblem(response?.data?.data || []);
     } catch (error) {
       console.error("Failed to fetch support tickets:", error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -59,8 +59,15 @@ const SupportTicket = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getadmindatafromapi();
-      await getSupportTicketapi();
+      setLoading(true);
+      try {
+        await getadmindatafromapi();
+        await getSupportTicketapi();
+      } catch (error) {
+        console.error("Failed to fetch admin data:", error);
+      }finally{
+        setLoading(false);
+      }
     };
 
     fetchData();
@@ -259,60 +266,85 @@ const SupportTicket = () => {
             </tr>
           </thead>
           <tbody>
-            {listofproblem.map((ticket, index) => (
-              <tr key={ticket._id}>
-                <td className="px-4 py-2 border">{index + 1}</td>
-                <td className="px-4 py-2 border">
-                  {formatDate(ticket.createdAt)}
-                </td>
-                <td className="px-4 py-2 border">{ticket.subject}</td>
-                <td className="px-4 py-2 border">{ticket.problem}</td>
-                <td className="px-4 py-2 border">
-                  {ticket.adminId ? ticket.adminId.name : "No admin assigned"}
-                </td>
-                <td className="px-4 py-2 border">
-                  <div className="flex justify-center items-center">
-                    <div
-                      style={{
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "50%",
-                        backgroundColor: ticket.problemSolved ? "green" : "red",
-                      }}
-                    ></div>
-                    <div className="ml-[10px]">
-                      {ticket.problemSolved ? "Solved" : "Unresolved"}
+            {loading ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">
+                      <Loader />
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-2 border">
-                  <button
-                    onClick={() => handleDelete(ticket._id)}
-                    className="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-red-600 rounded-lg hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </td>
-                <td className="px-4 py-2 border">
-                  <button
-                    onClick={() => handleUpdate(ticket)}
-                    className="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-                  >
-                    Update
-                  </button>
-                </td>
-                <td className="px-4 py-2 border">
-                  <Link to="/view-tickets-merchant" state={{ ticketId: ticket._id }}>
-                    <button
-                      onClick={() => setSelectedTicketId(ticket._id)}
-                      className="show-btn "
-                    >
-                      <img src={show} alt="Show" className="mx-auto" />
-                    </button>
-                  </Link>
+              </tr>
+            ) : listofproblem.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
+                  </div>
                 </td>
               </tr>
-            ))}
+            ) : (
+              listofproblem.map((ticket, index) => (
+                <tr key={ticket._id}>
+                  <td className="px-4 py-2 border">{index + 1}</td>
+                  <td className="px-4 py-2 border">
+                    {formatDate(ticket.createdAt)}
+                  </td>
+                  <td className="px-4 py-2 border">{ticket.subject}</td>
+                  <td className="px-4 py-2 border">{ticket.problem}</td>
+                  <td className="px-4 py-2 border">
+                    {ticket.adminId ? ticket.adminId.name : "No admin assigned"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    <div className="flex justify-center items-center">
+                      <div
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "50%",
+                          backgroundColor: ticket.problemSolved
+                            ? "green"
+                            : "red",
+                        }}
+                      ></div>
+                      <div className="ml-[10px]">
+                        {ticket.problemSolved ? "Solved" : "Unresolved"}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2 border">
+                    <button
+                      onClick={() => handleDelete(ticket._id)}
+                      className="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-red-600 rounded-lg hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                  <td className="px-4 py-2 border">
+                    <button
+                      onClick={() => handleUpdate(ticket)}
+                      className="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                    >
+                      Update
+                    </button>
+                  </td>
+                  <td className="px-4 py-2 border">
+                    <Link
+                      to="/view-tickets-merchant"
+                      state={{ ticketId: ticket._id }}
+                    >
+                      <button
+                        onClick={() => setSelectedTicketId(ticket._id)}
+                        className="show-btn "
+                      >
+                        <img src={show} alt="Show" className="mx-auto" />
+                      </button>
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

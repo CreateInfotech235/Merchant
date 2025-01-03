@@ -30,7 +30,6 @@ import Pickedorders from "../../assets_mercchant/Picked orders.png";
 import DeliveryMan from "../../assets_mercchant/DeliveryMan.png";
 import Loader from "../../Components_admin/Loader/Loader";
 
-
 const MerchantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [counts, setCounts] = useState({});
@@ -40,17 +39,13 @@ const MerchantDashboard = () => {
   const [Error, setError] = useState(null);
 
   const fetchCount = async () => {
-    setLoading(true)
+    setLoading(true);
     const res = await getCounts();
-    if(res.status){
+    if (res.status) {
       setCounts(res.data);
-      setLoading(false)
+      setLoading(false);
     }
-
   };
-
-
-
 
   // const fetchSubscriptionInfo = async (id) => {
   //   const response = await SubscriptionInfo(id);
@@ -101,7 +96,7 @@ const MerchantDashboard = () => {
   }; // Function to close the modal
 
   return (
-    <div className="h-[calc(100vh-187px)]">
+    <div className="min-h-[calc(100vh-187px)]">
       <Modal show={showModal} centered>
         <Modal.Header>
           <Modal.Title>Welcome to Your Dashboard</Modal.Title>
@@ -128,23 +123,30 @@ const MerchantDashboard = () => {
 
       <div className="d-xxl-flex justify-content-xxl-end d-xl-flex justify-content-xl-end d-lg-flex justify-content-lg-end d-md-flex justify-content-center align-items-center justify-content-md-between d-sm-flex  flex-sm-column  flex-column  flex-lg-row  flex-md-row   flex-xl-row align-items-center"></div>
       <div className="container-fluid">
-      {loading ? (
-        <div className="position-absolute top-50 start-50 translate-middle">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          {loading && <Loader />}
-     
-        <div
-          className="dashboard row pt-3 h-100 w-120"
-          style={{ marginLeft: "-10px" }}
-        >
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={Totalorders} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[calc(100vh-187px)]">
+            <Loader />
+          </div>
+        ) : (
+          <>
+            {loading && (
+              <div className="flex justify-center items-center min-h-[calc(100vh-187px)]">
+                <Loader />
+              </div>
+            )}
+            <div
+              className="dashboard row pt-3 h-100 w-120"
+              style={{ marginLeft: "-10px" }}
+            >
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={Totalorders}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-5 pb-2"
@@ -156,17 +158,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.totalOrders || 0}
+                  </h5>
+                  <p className="box-para">Total orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">{counts.totalOrders || 0}</h5>
-              <p className="box-para">Total orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={Acceptedorders} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={Acceptedorders}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -178,19 +186,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.acceptedOrders || 0}
+                  </h5>
+                  <p className="box-para">Accepted orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">
-                {counts.acceptedOrders || 0}
-              </h5>
-              <p className="box-para">Accepted orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={Arrivedorders} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={Arrivedorders}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -202,19 +214,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.arrivedOrders || 0}
+                  </h5>
+                  <p className="box-para">Arrived orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">
-                {counts.arrivedOrders || 0}
-              </h5>
-              <p className="box-para">Arrived orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={Assignedorders} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={Assignedorders}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -226,19 +242,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.assignedOrders || 0}
+                  </h5>
+                  <p className="box-para">Assigned orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">
-                {counts.assignedOrders || 0}
-              </h5>
-              <p className="box-para">Assigned orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={Cancelledorders} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={Cancelledorders}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -250,19 +270,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.cancelledOrders || 0}
+                  </h5>
+                  <p className="box-para">Cancelled orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">
-                {counts.cancelledOrders || 0}
-              </h5>
-              <p className="box-para">Cancelled orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={Createdorders} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={Createdorders}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -274,19 +298,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.createdOrders || 0}
+                  </h5>
+                  <p className="box-para">Created orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">
-                {counts.createdOrders || 0}
-              </h5>
-              <p className="box-para">Created orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={totalorder} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={totalorder}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -298,19 +326,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.deliveredOrders || 0}
+                  </h5>
+                  <p className="box-para">Delivered orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">
-                {counts.deliveredOrders || 0}
-              </h5>
-              <p className="box-para">Delivered orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={Departedorders} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={Departedorders}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -322,19 +354,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.departedOrders || 0}
+                  </h5>
+                  <p className="box-para">Departed orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">
-                {counts.departedOrders || 0}
-              </h5>
-              <p className="box-para">Departed orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={Pickedorders} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={Pickedorders}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -346,19 +382,23 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.pickedOrders || 0}
+                  </h5>
+                  <p className="box-para">Picked orders</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">
-                {counts.pickedOrders || 0}
-              </h5>
-              <p className="box-para">Picked orders</p>
-            </div>
-          </div>
 
-          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-            <div className="box rounded-2 p-4">
-              <div className="d-flex align-items-center justify-content-between pb-4">
-                <img src={DeliveryMan} alt="Total Order" style={{ width: "55px" }} />
-                {/* <img
+              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+                <div className="box rounded-2 p-4">
+                  <div className="d-flex align-items-center justify-content-between pb-4">
+                    <img
+                      src={DeliveryMan}
+                      alt="Total Order"
+                      style={{ width: "55px" }}
+                    />
+                    {/* <img
                   src={arrow}
                   alt="Total Order"
                   className="pe-2 ps-2 pb-2"
@@ -370,26 +410,29 @@ const MerchantDashboard = () => {
                     +$56k today
                   </span>
                 </p> */}
+                  </div>
+                  <h5 className="box-heading fw-bold">
+                    {counts.deliveryMan || 0}
+                  </h5>
+                  <p className="box-para">DeliveryMan</p>
+                </div>
               </div>
-              <h5 className="box-heading fw-bold">{counts.deliveryMan || 0}</h5>
-              <p className="box-para">DeliveryMan</p>
             </div>
-          </div>
 
-        </div>
+            <div className="mt-4">
+              <Example />
+              <div className="m-5"></div>
+              <OrderCountsChart />
+            </div>
 
-        <div className="mt-4">
-          <Example />
-          <div className="m-5"></div>
-          <OrderCountsChart />
-        </div>
-
-        <div className="my-4">
-          <h2 className="font-bold text-[30px] mb-4 underline">Recent Order</h2>
-          <RecentOrder />
-        </div>
-      </>
-      )}
+            <div className="my-4">
+              <h2 className="font-bold text-[30px] mb-4 underline">
+                Recent Order
+              </h2>
+              <RecentOrder />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

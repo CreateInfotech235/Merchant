@@ -400,7 +400,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                       className="w-full h-[4.5em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="" className="text-gray-500">
-                        Select Delivery Man
+                      {isLoading ? "Loading..." : "Select Delivery Man"}
                       </option>
                       {deliveryMan.map((data, index) => {
                         if (lengthofdeliverymen === index) {
@@ -731,7 +731,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                             }}
                           >
                             <option value="" disabled selected>
-                              Select Customer
+                            {isLoading ? "Loading..." : "Select Customer"}
                             </option>
                             {customer.map((cust) => (
                               <option key={cust._id} value={cust._id}>

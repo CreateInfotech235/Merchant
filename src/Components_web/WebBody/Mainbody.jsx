@@ -191,7 +191,7 @@ function Mainbody() {
           ></div>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row justify-between items-center">
             {/* Left Content */}
-            <div className="w-full lg:w-1/2 text-center md:text-left">
+            <div className="w-full lg:w-1/2 md:text-left">
               <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-medium tracking-tight text-[#FF6600] leading-tight capitalize">
                 Welcome To Create Courier
               </h1>
@@ -206,7 +206,7 @@ function Mainbody() {
               </p>
               <div className="mt-6 sm:mt-8">
                 <button className="bg-[#FF6600] hover:bg-[#e65500] transition-colors text-white px-6 py-3 rounded-md">
-                  Chnage !@#
+                  Get Started
                   <span className="ml-2">&rarr;</span>
                 </button>
               </div>

@@ -9,6 +9,7 @@ import { updateCustomer } from "../../Components_merchant/Api/Customer";
 
 const UpdateCustomerModel = ({ onHide, customer }) => {
   // console.log("customer", customer);
+  const [isUpdate, setisUpdate] = useState(false);
 
   const navigate = useNavigate();
 
@@ -40,11 +41,12 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
 
   const onSubmit = async (values) => {
     // console.log(values);
-    
+    setisUpdate(true)
     const res = await updateCustomer(customer._id, values);
     if (res.status) {
       onHide();
     }
+    setisUpdate(false)
   };
 
   return (
@@ -196,7 +198,8 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
                   Cancel
                 </Button>
                 <Button type="submit" className="btn btn-primary ms-3">
-                  Save Changes
+                 
+                  {isUpdate ? "Customer Updating..." : "Update Customer"}
                 </Button>
               </div>
             </Form>

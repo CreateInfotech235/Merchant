@@ -34,8 +34,7 @@ const Dashboard = () => {
   const [themeMode, setThemeMode] = useState("light");
   const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(false);
-  const [order, setOrder] = useState([])
-
+  const [order, setOrder] = useState([]);
 
   const fetchCount = async () => {
     setLoading(true);
@@ -53,20 +52,20 @@ const Dashboard = () => {
   }, [themeMode]);
 
   const fetchOrder = async () => {
-    const response = await getAllOrder()
+    const response = await getAllOrder();
     // console.log(response, "Oder");
     if (response.status) {
-      const fetchTenOrder = response.data.slice(0, 10)
-      setOrder(fetchTenOrder)
+      const fetchTenOrder = response.data.slice(0, 10);
+      setOrder(fetchTenOrder);
     }
-  }
+  };
   useEffect(() => {
     fetchCount();
-    fetchOrder()
+    fetchOrder();
   }, []);
 
   return (
-    <div className="position-relative h-[calc(100vh-187px)]">
+    <div className="position-relative min-h-[calc(100vh-187px)]">
       {loading ? (
         <div className="position-absolute top-50 start-50 translate-middle">
           <Loader />
@@ -103,7 +102,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Totalorderss} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Totalorderss}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -127,7 +130,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Acceptedorders} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Acceptedorders}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -151,7 +158,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Arrivedorders} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Arrivedorders}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -175,7 +186,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Assignedorders} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Assignedorders}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -199,7 +214,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Cancelledorders} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Cancelledorders}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -223,7 +242,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Createdorders} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Createdorders}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -247,7 +270,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Delivered} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Delivered}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -271,7 +298,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Departedorders} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Departedorders}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -295,7 +326,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Pickedorders} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Pickedorders}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -319,7 +354,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={DeliveryMan} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={DeliveryMan}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -343,7 +382,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={Subscribe} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={Subscribe}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -367,7 +410,11 @@ const Dashboard = () => {
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img style={{ width: "55px" }} src={UnSubscribe} alt="Total Order" />
+                    <img
+                      style={{ width: "55px" }}
+                      src={UnSubscribe}
+                      alt="Total Order"
+                    />
                     {/* <img
                   src={arrow}
                   alt="Total Order"
@@ -421,11 +468,18 @@ const Dashboard = () => {
           <div className="container-fluid">
             <div className="recent-order row align-items-center pt-3 w-120 h-100">
               {order.map((order, i) => (
-                <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 " key={i}>
+                <div
+                  className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 mb-3 "
+                  key={i}
+                >
                   <div className="border-box rounded-2 p-2">
                     <div className="d-flex p-2">
                       <div className="d-flex flex-row align-items-center justify-content-between ">
-                        <img src={Shopping_bag} alt="Total Order" className="pe-2" />
+                        <img
+                          src={Shopping_bag}
+                          alt="Total Order"
+                          className="pe-2"
+                        />
                       </div>
 
                       <table
@@ -435,7 +489,7 @@ const Dashboard = () => {
                         <thead>
                           <tr>
                             <td className="fw-bold">Name:</td>
-                          <td className="text-end">{order.customerName}</td>
+                            <td className="text-end">{order.customerName}</td>
                           </tr>
                         </thead>
                         <tbody>
@@ -471,7 +525,7 @@ const Dashboard = () => {
                               className="border-0 text-white rounded-1 ps-1 pe-1 "
                               style={{ background: "#976CDD", fontSize: "8px" }}
                             >
-                                {order.status}
+                              {order.status}
                             </button>
                           </td>
                         </tr>
@@ -479,7 +533,6 @@ const Dashboard = () => {
                     </table>
                   </div>
                 </div>
-
               ))}
             </div>
           </div>

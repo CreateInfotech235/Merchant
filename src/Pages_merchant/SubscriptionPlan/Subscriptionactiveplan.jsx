@@ -39,7 +39,7 @@ function Subscriptionactiveplan({ plans }) {
 
   return (
     <>
-      <div className="container py-5">
+      <div className="container py-5 min-min-h-[calc(100vh-187px)]">
         <div className="text-center mb-5">
           <h2 className="display-4 fw-bold">Your Active Subscription</h2>
           <div
@@ -48,7 +48,7 @@ function Subscriptionactiveplan({ plans }) {
           ></div>
         </div>
 
-        <div className="row justify-content-center">
+        <div className="row justify-content-center ">
           {subcriptionData && subcriptionData.length > 0 ? (
             subcriptionData.map((el, i) => (
               <div key={i} className="col-lg-10 mb-4">

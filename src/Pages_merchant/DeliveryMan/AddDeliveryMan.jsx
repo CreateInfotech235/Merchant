@@ -23,6 +23,14 @@ const AddDeliveryBoy = () => {
     address: "",
     chargeMethod: "",
     charge: "",
+    location: {
+      latitude: "",
+      longitude: "",
+    },
+    defaultLocation: {
+      latitude: "",
+      longitude: "",
+    },
   };
 
   const validationSchema = Yup.object({
@@ -46,9 +54,76 @@ const AddDeliveryBoy = () => {
     charge: Yup.string().required("Charge is required"),
   });
 
-  const onSubmit = async (values) => {
-    // console.log(values);
-    const res = await addDeliveryBoy(values);
+  const onSubmit = async (values, { setFieldValue }) => {
+    var locationData = null;
+    var defaultLocationData = null;
+
+    if (!values.location.latitude && !values.location.longitude) {
+      // console.log('Helo');
+      if (values.address) {
+        // Fetch the coordinates using geocoding
+        const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
+        console.log(values.address, "Delivery add");
+
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+            values.address
+          )}&key=${apiKey}`
+        );
+        const data = await response.json();
+        console.log(data);
+        // console.log(setFieldValue);
+
+        if (data.results && data.results.length > 0) {
+          const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
+          const formattedAddress =
+            (await data.results[0]?.formatted_address) ||
+            "Unable to fetch address";
+
+          // console.log(formattedAddress, lat, lng);
+          const postalCodeComponent = data.results[0].address_components.find(
+            (component) => component.types.includes("postal_code")
+          );
+          const postalCode = (await postalCodeComponent)
+            ? postalCodeComponent.long_name
+            : "";
+
+          locationData = {
+            latitude: lat,
+            longitude: lng,
+          };
+          defaultLocationData = {
+            latitude: lat,
+            longitude: lng,
+          };
+
+          // Set the address and coordinates to the form
+          // setFieldValue("deliveryDetails.address", formattedAddress);
+          setFieldValue("location.latitude", lat);
+          setFieldValue("location.longitude", lng);
+          // setFieldValue("deliveryDetails.postCode", postalCode);
+        } else {
+          alert("Address not found. Please try again.");
+        }
+      } else {
+        alert("Please enter an address.");
+      }
+    }
+    console.log(values);
+
+    const payload = {
+      ...values,
+      location: {
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
+      },
+      defaultLocation: {
+        latitude: defaultLocationData.latitude,
+        longitude: defaultLocationData.longitude,
+      },
+    };
+
+    const res = await addDeliveryBoy(payload);
     if (res.status) {
       navigate("/delivery-man");
     }
@@ -256,31 +331,6 @@ const AddDeliveryBoy = () => {
                       className="error text-danger ps-2"
                     />
                   </div>
-                  {/* <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
-                    <label className="w-100" style={{ color: "#999696" }}>
-                      Country Code
-                    </label>
-                    <Field
-                      as="select"
-                      name="countryCode"
-                      className="form-select w-25% h-100%"
-                      value={formik.values.countryCode}
-                      onChange={formik.handleChange}
-                      style={{ height: "4.5em" }}
-                    >
-                      <option value="" label="Select country code" />
-                      {options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </Field>
-                    <ErrorMessage
-                      name="countryCode"
-                      component="div"
-                      className="error text-danger ps-2"
-                    />
-                  </div> */}
                 </div>
 
                 <br />

@@ -57,6 +57,7 @@ const AddUser = () => {
   };
 
   return (
+    <div className="min-h-[calc(100vh-187px)]">
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
@@ -252,6 +253,7 @@ const AddUser = () => {
         </Form>
       )}
     </Formik>
+    </div>
   );
 };
 

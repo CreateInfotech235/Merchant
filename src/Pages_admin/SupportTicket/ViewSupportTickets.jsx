@@ -116,7 +116,7 @@ function ViewSupportTickets() {
   }, [contextMenu]);
 
   return (
-    <div className="h-[calc(100vh-187px)] flex flex-col  border rounded bg-white">
+    <div className="min-h-[calc(100vh-187px)] flex flex-col  border rounded bg-white">
       <div className="bg-blue-600 text-white p-2 text-center font-semibold">
         Chat with User
       </div>

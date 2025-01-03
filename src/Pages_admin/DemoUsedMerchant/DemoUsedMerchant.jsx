@@ -30,6 +30,7 @@ const DemoUsedMerchant = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deliverymen, setDeliverymen] = useState([]);
   const [selectedDeliveryman, setSelectedDeliveryman] = useState(null);
+  const [isLoader, setIsLoader] = useState(false);
 
   const closeModel = () => {
     setShowModel(false);
@@ -39,9 +40,16 @@ const DemoUsedMerchant = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await exportFreeSubscription();
-      // console.log(response.data.data);
-      setDeliverymen(response.data.data);
+      setIsLoader(true);
+      try {
+        const response = await exportFreeSubscription();
+        // console.log(response.data.data);
+        setDeliverymen(response.data.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoader(false);
+      }
     };
     fetchData();
   }, []);
@@ -104,7 +112,7 @@ const DemoUsedMerchant = () => {
 
   return (
     <>
-      <div className="w-100 h-[calc(100vh-187px)]">
+      <div className="w-100 min-h-[calc(100vh-187px)]">
         <div className="fluid-container">
           <div className="navbar">
             <div className="navbar-options d-flex my-2 col-12">
@@ -137,14 +145,21 @@ const DemoUsedMerchant = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.length === 0 ? (
+                {isLoader ? (
                   <tr>
-                    <td colSpan="9" className="text-center p-3">
+                    <td colSpan="11" className="text-center p-3">
                       <div className="d-flex justify-content-center">
                         <div className="mx-auto">
                           <Loader />
-                          No Data Found
                         </div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : currentItems.length === 0 ? (
+                  <tr>
+                    <td colSpan="11" className="text-center p-3">
+                      <div className="d-flex justify-content-center">
+                        <div className="mx-auto">No Data Found</div>
                       </div>
                     </td>
                   </tr>
@@ -177,7 +192,9 @@ const DemoUsedMerchant = () => {
                             deliveryman.status === "ENABLE" ? "green" : "red"
                           }`}
                         >
-                          {deliveryman.status === "ENABLE" ? "ACTIVE" : "INACTIVE"}
+                          {deliveryman.status === "ENABLE"
+                            ? "ACTIVE"
+                            : "INACTIVE"}
                         </button>
                       </td>
                       <td className="table-head2 text-[12px]">

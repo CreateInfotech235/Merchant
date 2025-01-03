@@ -674,7 +674,7 @@ function App() {
           }
         />
         <Route
-          path="/delivery-man-location"
+          path="/delivery-man-location-admin"
           element={
             <ProtectedRouteAdmin>
               <DeliveryManLocationAdmin />

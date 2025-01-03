@@ -26,6 +26,7 @@ const Users = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDisableModalOpen, setIsDisableModalOpen] = useState(false);
   const [themeMode, setThemeMode] = useState("light");
+  const [isLoader, setIsLoader] = useState(false);
 
   useEffect(() => {
     // Update body class based on themeMode
@@ -42,12 +43,21 @@ const Users = () => {
 
   // Fetch users from API
   const fetchUsers = async () => {
-    const response = await getUnScbscriptionUsers(currentPage, 2000);
-    // console.log(response.data[0]);
-    
-    if (response.status) {
-      setUsers(response.data[0].data); // Set user data from API
-      setTotalPages(Math.ceil(response.data[0].totalDataCount / usersPerPage));
+    setIsLoader(true);
+    try {
+      const response = await getUnScbscriptionUsers(currentPage, 2000);
+      // console.log(response.data[0]);
+
+      if (response.status) {
+        setUsers(response.data[0].data); // Set user data from API
+        setTotalPages(
+          Math.ceil(response.data[0].totalDataCount / usersPerPage)
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoader(false);
     }
   };
 
@@ -101,25 +111,23 @@ const Users = () => {
     DISABLE: "red",
   };
 
-  const handleMail = async(user) => {
-    const data ={
-      email : user.email,
-      contactNumber : user.contactNumber,
-      subject : 'We Miss You! Reactivate Your Subscription Today',
-      messageSend : 'We noticed that you haven’t logged into your account for a while, and your subscription is still inactive. We’d love to have you back and help you make the most of our services.Reactivating your subscription is quick and easy. Simply log in to your account and activate your plan to regain access to all the features you love.If you have any questions or need assistance, our support team is always here to help.',
-      personType: 'ADMIN'
-    }
-    const response = await PostEmail(data)
+  const handleMail = async (user) => {
+    const data = {
+      email: user.email,
+      contactNumber: user.contactNumber,
+      subject: "We Miss You! Reactivate Your Subscription Today",
+      messageSend:
+        "We noticed that you haven’t logged into your account for a while, and your subscription is still inactive. We’d love to have you back and help you make the most of our services.Reactivating your subscription is quick and easy. Simply log in to your account and activate your plan to regain access to all the features you love.If you have any questions or need assistance, our support team is always here to help.",
+      personType: "ADMIN",
+    };
+    const response = await PostEmail(data);
     // console.log(response);
-    
-    
-  }
+  };
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
-
   return (
-    <div className="h-[calc(100vh-187px)]">
+    <div className="min-h-[calc(100vh-187px)]">
       <div className="d-flex justify-content-end align-items-center">
         {/* <button onClick={toggleThemeMode} className="btn btn-dark">
           Toggle {themeMode === "light" ? "Dark" : "Light"} Mode
@@ -173,14 +181,21 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {currentUsers.length === 0 ? (
+            {isLoader ? (
               <tr>
-                <td colSpan="9" className="text-center p-3">
+                <td colSpan="11" className="text-center p-3">
                   <div className="d-flex justify-content-center">
                     <div className="mx-auto">
                       <Loader />
-                      No Data Found
                     </div>
+                  </div>
+                </td>
+              </tr>
+            ) : currentUsers.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center p-3">
+                  <div className="d-flex justify-content-center">
+                    <div className="mx-auto">No Data Found</div>
                   </div>
                 </td>
               </tr>
@@ -188,8 +203,8 @@ const Users = () => {
               currentUsers.map((user, index) => (
                 <tr key={index}>
                   <td className="p-3">{index + 1}</td>
-                  <td className="p-3">{user?.firstName ?? '-'}</td>
-                  <td className="p-3">{user?.lastName ?? '-'}</td>
+                  <td className="p-3">{user?.firstName ?? "-"}</td>
+                  <td className="p-3">{user?.lastName ?? "-"}</td>
                   <td className="p-3">{user.contactNumber}</td>
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">{user?.address?.country}</td>
@@ -198,9 +213,13 @@ const Users = () => {
                     {new Date(user.registerDate).toLocaleString()}
                   </td>
                   <td className="p-3">
-                  <button className={`enable-btn ${user.status === 'ENABLE' ? 'green' : 'red'}`}>
-                        {user.status === 'ENABLE' ? "ACTIVE" : "INACTIVE"}
-                      </button>
+                    <button
+                      className={`enable-btn ${
+                        user.status === "ENABLE" ? "green" : "red"
+                      }`}
+                    >
+                      {user.status === "ENABLE" ? "ACTIVE" : "INACTIVE"}
+                    </button>
                   </td>
                   <td className="table-head2">
                     <div className="d-flex align-items-center justify-content-center">
