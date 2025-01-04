@@ -102,6 +102,8 @@ const DeliveryMan = () => {
     setShowModal(true);
   };
   const handleEditClick = (deliveryMan) => {
+    console.log(deliveryMan);
+    
     setSelectedDeliveryMan(deliveryMan);
     setShowEditModal(true);
   };

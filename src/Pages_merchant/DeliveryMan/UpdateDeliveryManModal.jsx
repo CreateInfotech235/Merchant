@@ -46,8 +46,9 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
     console.log(values);
   
     let defaultLocationData = null;
-  
-    if (deliveryBoy.location.coordinates[1] && deliveryBoy.location.coordinates[0]) {
+    console.log(deliveryBoy.location.coordinates[1] , deliveryBoy.location.coordinates[0]);
+    
+    if (deliveryBoy.location.coordinates[1] && deliveryBoy.location.coordinates[0] || !deliveryBoy.location.coordinates[1] && !deliveryBoy.location.coordinates[0]) {
       if (deliveryBoy.address) {
         try {
           const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
@@ -56,6 +57,8 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
               values.address
             )}&key=${apiKey}`
           );
+          console.log(response, "sdsd");
+          
           const data = await response.json();
   
           if (data.results && data.results.length > 0) {
