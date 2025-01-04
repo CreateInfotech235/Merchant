@@ -267,24 +267,7 @@ const DeliveryMan = () => {
                             //   deliveryman.location?.coordinates[1],
                             // ])}
 
-                            onClick={() =>
-                              handleLocationClick(
-                                deliveryman.location?.coordinates?.length === 2
-                                  ? [
-                                      deliveryman.location.coordinates[0],
-                                      deliveryman.location.coordinates[1],
-                                    ]
-                                  : deliveryman.defaultLocation?.coordinates
-                                      ?.length === 2
-                                  ? [
-                                      deliveryman.defaultLocation
-                                        .coordinates[0],
-                                      deliveryman.defaultLocation
-                                        .coordinates[1],
-                                    ]
-                                  : null
-                              )
-                            }
+                            onClick={() => handleLocationClick(deliveryman._id)}
                           >
                             <img
                               src={locationimg}
