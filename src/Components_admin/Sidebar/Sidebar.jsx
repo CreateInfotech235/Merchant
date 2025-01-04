@@ -22,6 +22,7 @@ import invoice1 from "../../assets_admin/invoice1.svg";
 import delivery from "../../assets_admin/delivery.svg";
 import deposite from "../../assets_admin/deposite.svg";
 import customer from "../../assets_admin/customer.png";
+import Location from "../../assets_admin/location (1).png";
 
 
 const Sidebar = () => {
@@ -204,6 +205,19 @@ const Sidebar = () => {
                   <img src={customer} alt="country" />
                 </span>
                 Customer
+              </Button>
+            </Link>
+          </li>
+          <li className="my-2">
+            <Link to="/map-setting" className="link">
+              <Button
+                className={`w-100 ${isActive("/map-setting") ? "active" : ""}`}
+                onClick={() => setActiveTab(null)}
+              >
+                <span className="icon">
+                  <img src={Location} alt="Map" />
+                </span>
+                Map Setting
               </Button>
             </Link>
           </li>

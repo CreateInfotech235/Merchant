@@ -90,7 +90,7 @@ const MapModal = ({ location, onHide }) => {
       const [lng, lat] = deliveryManLocations || [0, 0];
       const map = new window.google.maps.Map(el, {
         center: { lat, lng },
-        zoom: 18,
+        zoom: 19,
       });
       mapRef.current = map;
       if (deliveryManLocations && deliveryManLocations.length === 2) {

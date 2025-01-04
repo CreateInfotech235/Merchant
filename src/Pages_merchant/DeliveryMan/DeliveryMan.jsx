@@ -5,7 +5,7 @@ import edit from "../../assets_mercchant/edit.png";
 import deleteimg from "../../assets_mercchant/deleteimg.png";
 import "./DeliveryMan.css";
 import show from "../../assets_mercchant/show.png";
-import locationimg from "../../assets_mercchant/locationimg.png";
+import locationimg from "../../assets_mercchant/delivery-bike.png";
 import searchIcon from "../../assets_mercchant/search.png";
 import Pagination from "../../Components_merchant/Pagination/Pagination";
 import { getDeliveryMan } from "../../Components_merchant/Api/DeliveryMan";
@@ -61,7 +61,7 @@ const DeliveryMan = () => {
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [currentPage, showModal, searchTerm]); // Fetch data when page or search term changes
+  }, [currentPage, showModal, showEditModal, searchTerm]); // Fetch data when page or search term changes
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -202,6 +202,7 @@ const DeliveryMan = () => {
                 <th className="p-3 text-light">Charge / Charge Method</th>
                 <th className="p-3 text-light">Status</th>
                 <th className="p-3 text-light">Verify</th>
+                <th className="p-3 text-light">Track Location</th>
                 <th className="p-3 text-light">Action</th>
               </tr>
             </thead>
@@ -261,8 +262,7 @@ const DeliveryMan = () => {
                         {/* <input type="checkb ox" checked={deliveryman.isVerified} /> */}
                       </td>
                       <td className="user-table1">
-                        <div className="d-flex justify-content-center align-items-center">
-                          <button
+                      <button
                             className="edit-btn"
                             // onClick={() => handleLocationClick([
                             //   deliveryman.location?.coordinates[0],
@@ -273,10 +273,14 @@ const DeliveryMan = () => {
                           >
                             <img
                               src={locationimg}
-                              alt="Edit"
-                              className="mx-auto"
+                              alt="Location"
+                              className="mx-auto "
                             />
                           </button>
+                      </td>
+                      <td className="user-table1">
+                        <div className="d-flex justify-content-center align-items-center">
+                          
                           <button
                             className="edit-btn ms-1"
                             onClick={() => handleEditClick(deliveryman)}

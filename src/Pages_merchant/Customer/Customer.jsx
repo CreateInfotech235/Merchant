@@ -66,7 +66,7 @@ const Customers = () => {
 
   useEffect(() => {
     fetchCustomers();
-  }, [showModel]);
+  }, [showModel , showEditModal]);
   const filteredCustomers = customers.filter((customer) => {
     const query = searchQuery.toLowerCase();
     return (
