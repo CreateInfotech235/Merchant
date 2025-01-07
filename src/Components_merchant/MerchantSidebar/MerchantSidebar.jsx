@@ -41,7 +41,7 @@ const MerchantSidebar = () => {
       num: 1,
     },
     {
-      path: ["/create-order", "/all-order", "/order-location", "/trashed-order", "/invoice-format"],
+      path: ["/create-order", "/multi-orders", "/all-order", "/order-location", "/trashed-order", "/invoice-format"],
       num: 2,
     },
     {
@@ -158,6 +158,9 @@ const MerchantSidebar = () => {
                 <ul className="submenu">
                   <li className={currentPath === "/create-order" ? "active" : ""}>
                     <Link to="/create-order" onClick={() => setSidebarVisible(false)}>Create Order</Link>
+                  </li>
+                  <li className={currentPath === "/multi-orders" ? "active" : ""}>
+                    <Link to="/multi-orders" onClick={() => setSidebarVisible(false)}>Multi Orders</Link>
                   </li>
                   <li className={currentPath === "/all-order" ? "active" : ""}>
                     <Link to="/all-order" onClick={() => setSidebarVisible(false)}>All Orders</Link>

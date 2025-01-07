@@ -22,20 +22,17 @@ function Login() {
     setError("");
 
     try {
-      const response = await fetch(
-        "https://create-courier-8.onrender.com/admin/auth/signIn",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            accept: "*/*",
-          },
-          body: JSON.stringify({
-            email: username,
-            password: password,
-          }),
-        }
-      );
+      const response = await fetch("https://create-courier-8.onrender.com/admin/auth/signIn", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+        },
+        body: JSON.stringify({
+          email: username,
+          password: password,
+        }),
+      });
 
       const data = await response.json();
 

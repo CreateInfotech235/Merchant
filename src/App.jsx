@@ -148,6 +148,7 @@ import TermsConditions from "./Components_web/Terms & Conditions/TermsConditions
 import ForgotPassword from "./Components_web/forgot-password/forgot-password";
 import AdminForgotPassword from "./Components_admin/admin-forgot-password/admin-forgot-password";
 import MapSetting from "./Pages_admin/MapSetting/MapSetting";
+import MultiOrders from "./Pages_merchant/CreateOrder/multiorders";
 
 
 function App() {
@@ -241,6 +242,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CreateOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/multi-orders"
+          element={
+            <ProtectedRoute>
+              <MultiOrders />
             </ProtectedRoute>
           }
         />
