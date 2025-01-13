@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as Yup from "yup";
 import "./CreateOrder.css";
 import { useNavigate } from "react-router-dom";
-import { calculateDistancee, createOrder } from "../../Components_merchant/Api/Order";
+import { calculateDistancee, createOrder, createOrderMulti } from "../../Components_merchant/Api/Order";
 import {
   getDeliveryMan,
   getAllDeliveryMans,
@@ -12,7 +12,8 @@ import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import { Spinner } from "react-bootstrap";
 import Select from "react-select";
 import { getMapApi } from "../../Components_admin/Api/MapApi";
-// import data from "./data.json";
+import { toast } from "react-toastify";
+
 const MultiOrders = () => {
   const naviagte = useNavigate();
 
@@ -24,8 +25,12 @@ const MultiOrders = () => {
   const [isOrderCreated, setIsOrderCreated] = useState(false);
   const merchant = JSON.parse(localStorage.getItem("userData"));
   const [initialValues, setInitialValues] = useState({});
-
-  console.log("initialValues", initialValues);
+  const [newarrayoflocation, setNewarrayoflocation] = useState([]);
+  // const [isSubmit, setIsSubmit] = useState(false);
+  useEffect(() => {
+    console.log("initialValues", initialValues);
+    console.log("newarrayoflocation", newarrayoflocation);
+  }, [initialValues, newarrayoflocation]);
 
   useEffect(() => {
     // Get current location
@@ -43,6 +48,28 @@ const MultiOrders = () => {
       );
     }
 
+
+
+    // function calculateDistanceandtimeandset (pickupLocation, deliveryLocation, index)  {
+    //   console.log("enter calculateDistanceandtimeandset");
+    //   const distance = calculateDistancee(pickupLocation, deliveryLocation);
+    //   const duration = await calculateDistancee(pickupLocation, deliveryLocation);
+    //   // setNewarrayoflocation(prev => [...prev, { distance, duration, index }]);
+    // }
+
+
+    // const calculateDistanceandtimeandset = async (pickupLocation, deliveryLocation, index) => {
+    //   // const distance = calculateDistancee(pickupLocation, deliveryLocation);
+    //   console.log("enter calculateDistanceandtimeandset");
+
+    //   const duration = await calculateDistancee(pickupLocation, deliveryLocation);
+    //   console.log("duration", duration);
+
+    //   // setNewarrayoflocation(prev => [...prev, { distance, duration, index }]);
+    // }
+
+
+
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
       const deliveryMans = await getAllDeliveryMans();
@@ -54,7 +81,6 @@ const MultiOrders = () => {
           deliveryManRes.data?.filter((man) => man.status !== "DISABLE") || [];
         const formattedAdminDeliveryMen =
           deliveryMans.data?.map((man) => ({
-
             ...man,
             firstName: man.firstName || man.name?.split(" ")[0] || undefined,
             lastName:
@@ -62,15 +88,11 @@ const MultiOrders = () => {
               man.name?.split(" ").slice(1).join(" ") ||
               undefined,
             _id: man._id,
-
-
             email: man.email,
             contactNumber: man.contactNumber,
             status: man.status || "ENABLE",
           })) || [];
-        // console.log("formattedAdminDeliveryMen", formattedAdminDeliveryMen);
 
-        // Combine both arrays and remove duplicates by _id and email
         setLengthofdeliverymen(activeDeliveryMen.length);
         const mergedDeliveryMen = [
           ...activeDeliveryMen,
@@ -85,7 +107,6 @@ const MultiOrders = () => {
           return acc;
         }, []);
 
-        // console.log("mergedDeliveryMen", mergedDeliveryMen);
         setDeliveryMen(mergedDeliveryMen);
       }
       if (customerRes?.status) setCustomer(customerRes?.data || []);
@@ -94,21 +115,20 @@ const MultiOrders = () => {
 
     fetchData();
   }, []);
-
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c; // Distance in km
     return d.toFixed(2);
-  };
+  }
 
   const deg2rad = (deg) => {
     return deg * (Math.PI / 180);
@@ -227,7 +247,7 @@ const MultiOrders = () => {
           deliveryDetails: [{
             subOrderId: 1,
             parcelsCount: 1,
-            paymentCollectionRupees: "",
+            paymentCollectionRupees: 0,
             location: {
               latitude: null, // Initialize with null or undefined
               longitude: null, // Empty array or [longitude, latitude]
@@ -261,30 +281,26 @@ const MultiOrders = () => {
 
 
   const validationSchema = Yup.object().shape({
-
-    dateTime: Yup.string().required("Required"),
-    deliveryManId: Yup.string().required("Required"),
+    dateTime: Yup.date().required("Required"),
+    deliveryManId: Yup.string().required("Required Delivery Man"),
     pickupDetails: Yup.object().shape({
-
-
-      dateTime: Yup.string().required("Required"),
-      address: Yup.string().required("Required"),
-      mobileNumber: Yup.number().required("Required"),
-      email: Yup.string().email("Invalid email").required("Required"),
+      dateTime: Yup.date().required("Required Pickup Date & Time"),
+      address: Yup.string().required("Required Pickup Address"),
+      mobileNumber: Yup.string().required("Required Pickup Contact Number"),
+      email: Yup.string().email("Invalid email").required("Required Pickup Email"),
       description: Yup.string(),
-      postCode: Yup.string().required("Required"),
-
+      postCode: Yup.string().required("Required Pickup Postcode"),
     }),
-    deliveryDetails: Yup.object().shape([
-      {
-        address: Yup.string().required("Required"),
-        name: Yup.string().required("Required"),
-        mobileNumber: Yup.number().required("Required"),
-        email: Yup.string().email("Invalid email").required("Required"),
+    deliveryDetails: Yup.array().of(
+      Yup.object().shape({
+        address: Yup.string().required("Required Delivery Address"),
+        name: Yup.string().required("Required Delivery Name"),
+        mobileNumber: Yup.string().required("Required Delivery Contact Number"),
+        email: Yup.string().email("Invalid email").required("Required Delivery Email"),
         description: Yup.string(),
-        postCode: Yup.string().required("Required"),
+        postCode: Yup.string().required("Required Delivery Postcode"),
         parcelsCount: Yup.number()
-          .required("Required")
+          .required("Required Delivery Parcel Count")
           .positive("Must be positive")
           .min(1),
         paymentCollectionRupees: Yup.string().test(
@@ -298,24 +314,24 @@ const MultiOrders = () => {
             return true;
           }
         ),
-      }
-    ])
+      })
+    )
   });
 
-  const onSubmit = async (values, { setFieldValue }) => {
-    console.log("values", values);
-    setIsOrderCreated(true);
+  const calculateDistanceeinMiles = (value) => {
+    console.log("value", value);
+    return ((parseFloat(value.distance.text.replace(/[^\d.]/g, "")) * 0.621371).toFixed(2));
+  }
 
-    // Step 1: Get the timestamps for dateTime and pickupDetails.dateTime
+
+
+
+  const onSubmit = async (values, { setFieldValue }) => {
+    setIsOrderCreated(true);
+    console.log("values", values);
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
-
-    // Step 2: Initialize locations and distance variables
-    let deliverylocation = null;
-    let distanceKm = null;
-    let duration = null;
-    let distanceMiles = null;
-
+    const arrayoferror = []
     let pickuplocation =
       values.pickupDetails.location.latitude === null
         ? null
@@ -323,130 +339,149 @@ const MultiOrders = () => {
           latitude: values.pickupDetails.location.latitude,
           longitude: values.pickupDetails.location.longitude,
         };
+    let deliverylocations = []
 
-    // Step 3: Handle Pickup Location
-    if (
-      !values.pickupDetails.location.latitude &&
-      !values.pickupDetails.location.longitude
-    ) {
-      if (values.pickupDetails.address) {
-        const mapApi = await getMapApi();
-        const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
+    const arrayofaddress = values.deliveryDetails.map((delivery, index) => {
+      return delivery.address;
+    })
+    const distancesAndDurations = []
+    // const deliverylocations =[]
 
+
+
+    // get pickup location from address
+    if (values.pickupDetails.address) {
+      console.log("pickupDetails.address", values.pickupDetails.address);
+
+      const mapApi = await getMapApi();
+      const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
+
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          values.pickupDetails.address
+        )}&key=${apiKey}`
+      );
+
+      const data = await response.json();
+      console.log("pickupdata", data);
+      if (data.results && data.results.length > 0) {
+        console.log("pickupdata", data);
+        const { lat, lng } = data.results[0].geometry.location;
+        pickuplocation = { latitude: lat, longitude: lng };
+        console.log("pickuplocation", pickuplocation);
+        setInitialValues(prev => ({
+          ...prev,
+          pickupDetails: {
+            ...prev.pickupDetails,
+            location: { latitude: lat, longitude: lng }
+          }
+        }));
+        // setFieldValue("pickupDetails.location.latitude", lat);
+        // setFieldValue("pickupDetails.location.longitude", lng);
+      } else {
+        toast.error("Pickup address not found. Please try again.");
+        setIsOrderCreated(false);
+        return;
+      }
+    } else {
+      toast.error("Please enter a pickup address.");
+      setIsOrderCreated(false);
+      return;
+    }
+
+    // Handle Delivery Locations
+    const mapApi = await getMapApi();
+    const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
+
+    if (arrayofaddress) {
+
+
+
+      for (let index = 0; index < arrayofaddress.length; index++) {
+        const address = arrayofaddress[index];
+        console.log("address", address);
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            values.pickupDetails.address
+            address
           )}&key=${apiKey}`
         );
-
         const data = await response.json();
-
         if (data.results && data.results.length > 0) {
-          const { lat, lng } = data.results[0].geometry.location;
-          const formattedAddress = data.results[0]?.formatted_address || "Unable to fetch address";
-          const postalCodeComponent = data.results[0].address_components.find((component) => component.types.includes("postal_code"));
-          const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
-
-          pickuplocation = { latitude: lat, longitude: lng };
-
-          // Update form values
-          setFieldValue("pickupDetails.location.latitude", lat);
-          setFieldValue("pickupDetails.location.longitude", lng);
+          console.log("data", data);
+          if (data.status !== "ZERO_RESULTS") {   
+            const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
+            distancesAndDurations.push(await calculateDistancee(pickuplocation, deliverylocation))
+            deliverylocations.push(deliverylocation)
+          } else {
+            console.log("data", data);
+            arrayoferror.push(`in order ${index + 1} delivery address (${address}) not found. Please try again.`);
+          }
         } else {
-          alert("Pickup address not found. Please try again.");
+          arrayoferror.push(`in order ${index + 1} delivery address (${address}) not found. Please try again.`);
         }
-      } else {
-        alert("Please enter a pickup address.");
+
       }
-    }
 
-    // Step 4: Handle Delivery Location
-    if (
-      !values.deliveryDetails.location.latitude &&
-      !values.deliveryDetails.location.longitude
-    ) {
-      if (values.deliveryDetails.address) {
-        const mapApi = await getMapApi();
-        const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
-
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            values.deliveryDetails.address
-          )}&key=${apiKey}`
-        );
-
-        const data = await response.json();
-
-        if (data.results && data.results.length > 0) {
-          const { lat, lng } = data.results[0].geometry.location;
-          const formattedAddress = data.results[0]?.formatted_address || "Unable to fetch address";
-          const postalCodeComponent = data.results[0].address_components.find((component) => component.types.includes("postal_code"));
-          const postalCode = postalCodeComponent ? postalCodeComponent.long_name : "";
-
-          deliverylocation = { latitude: lat, longitude: lng };
-
-          // Update form values
-          setFieldValue("deliveryDetails.location.latitude", lat);
-          setFieldValue("deliveryDetails.location.longitude", lng);
-        } else {
-          alert("Delivery address not found. Please try again.");
-        }
-      } else {
-        alert("Please enter a delivery address.");
+      if (arrayoferror.length > 0) {
+        console.log("arrayoferror", arrayoferror);
+        toast.error(arrayoferror.join("\n"));
+        setIsOrderCreated(false);
+        return;
       }
-    }
 
-    // Step 5: Calculate Distance if Pickup and Delivery locations are available
-    if (
-      pickuplocation?.latitude &&
-      pickuplocation?.longitude &&
-      deliverylocation?.latitude &&
-      deliverylocation?.longitude
-    ) {
-      const distance = await calculateDistancee(pickuplocation, deliverylocation);
-      setFieldValue("distance", distance.distance.text);
-      setFieldValue("duration", distance.duration.text);
-      distanceKm = parseFloat(distance.distance.text.replace(/[^\d.]/g, ""));
-      distanceMiles = (distanceKm * 0.621371).toFixed(2); // Convert km to miles
-      duration = distance.duration.text;
-    }
 
-    // Step 6: Construct the payload for the order
-    const payload = {
-      ...values,
-      dateTime: timestamp,
-      pickupDetails: {
-        ...values.pickupDetails,
-        dateTime: pictimestamp,
-        location: {
-          latitude: pickuplocation?.latitude,
-          longitude: pickuplocation?.longitude,
+
+
+      var payload = {
+        dateTime: timestamp,
+        deliveryManId: initialValues.deliveryManId,
+        pickupDetails: {
+          ...initialValues.pickupDetails,
+          dateTime: pictimestamp,
+          location: {
+            latitude: pickuplocation.latitude,
+            longitude: pickuplocation.longitude
+          }
         },
-      },
-      deliveryDetails: values.deliveryDetails.map((delivery) => ({
-        ...delivery,
-        location: {
-          latitude: deliverylocation?.latitude,
-          longitude: deliverylocation?.longitude,
-        },
-        distance: distanceMiles,
-        duration: duration,
-      })),
-    };
+        merchant: merchant._id,
+        deliveryDetails: initialValues.deliveryDetails.map((delivery, index) => ({
+          address: delivery.address,
+          cashOnDelivery: delivery.cashOnDelivery,
+          description: delivery.description,
+          email: delivery.email,
+          mobileNumber: delivery.mobileNumber,
+          name: delivery.name,
+          parcelsCount: delivery.parcelsCount,
+          postCode: delivery.postCode,
+          subOrderId: delivery.subOrderId,
+          paymentCollectionRupees: delivery.paymentCollectionRupees,
+          distance: calculateDistanceeinMiles(distancesAndDurations[index]),
+          duration: distancesAndDurations[index]?.duration.text,
+          location: {
+            latitude: deliverylocations[index]?.latitude,
+            longitude: deliverylocations[index]?.longitude
+          }
+        }))
+      };
+      console.log("payload", payload);
 
-    // Step 7: Remove paymentCollectionRupees if cashOnDelivery is false
-    if (values.cashOnDelivery === "false") {
-      delete payload.paymentCollectionRupees;
+      const res1 = await createOrderMulti(payload);
+      console.log("res1", res1);
+      if (res1.status) {
+        console.log("res1", res1);
+        naviagte("/all-multi-order");
+      }
+      return;
+    } else {
+      toast.error("Please enter delivery address");
+      setIsOrderCreated(false);
     }
 
-    // Step 8: Call the API to create the order
-    const res = await createOrder(payload);
-    setIsLoading(false);
-
-    // Step 9: Navigate based on the result
-    if (res.status) {
-      naviagte("/all-order");
+    if (arrayoferror.length > 0) {
+      toast.error(arrayoferror.join("\n"));
+      setIsOrderCreated(false);
     }
+    setIsOrderCreated(false);
   };
 
   return (
@@ -549,7 +584,7 @@ const MultiOrders = () => {
                             width: "w-100",
                             borderRadius: "0 5px 5px 0",
                             marginTop: "1.8em",
-                            lineHeight: "1" 
+                            lineHeight: "1"
                           }}
                           onClick={() => getCurrentLocation(setFieldValue)}
                         >
@@ -588,7 +623,7 @@ const MultiOrders = () => {
                         Pickup Contact Number :
                       </label>
                       <Field
-                        type="number"
+                        type="text"
                         name="pickupDetails.mobileNumber"
                         className="form-control"
                         placeholder="Pickup Contact Number"
@@ -673,7 +708,7 @@ const MultiOrders = () => {
                     </div>
                   </div>
                   {/* Delivery Information */}
-                  <div className="col-12 col-lg-12 ">
+                  <div className="col-12 col-lg-12 mt-2">
                     <h3 className="fw-bold text-4xl pb-1 text-center">
                       Delivery Information
                     </h3>
@@ -761,14 +796,14 @@ const MultiOrders = () => {
                         })}
                       </Field>
                       <ErrorMessage
-                        name={`deliveryDetails.deliveryManId`}
+                        name={`deliveryManId`}
                         component="div"
                         className="error text-danger ps-2"
                       />
                     </div>
                     {
                       values.deliveryDetails.map((data, index) => (
-                        <div className="row shadow  rounded-md mt-2" key={index}>
+                        <div className={`row shadow  rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index}>
 
                           <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
                             <div>
@@ -791,7 +826,7 @@ const MultiOrders = () => {
                             </div>
                           </div>
 
-                          <div className="input-error mb-1 col-4">
+                          <div className="input-error mb-1 col-4 ">
                             <label className="fw-thin p-0 pb-1 ">
                               Select Customer :
                             </label>
@@ -800,7 +835,7 @@ const MultiOrders = () => {
                               className="form-control mb-1 p-0"
 
                               styles={{
-                                control: (base) => ({ ...base, padding: "15px" }),
+                                control: (base) => ({ ...base, height: "3em" }),
                               }}
                               options={customer.map((cust) => ({
                                 value: cust._id,
@@ -983,7 +1018,7 @@ const MultiOrders = () => {
                             </div>
                           )}
 
-                     
+
                           <div className="input-error mb-1 col-4">
                             <label className="fw-thin p-0 pb-1 ">
                               Customer Name :
@@ -1050,7 +1085,7 @@ const MultiOrders = () => {
                               Delivery Contact Number :
                             </label>
                             <Field
-                              type="number"
+                              type="text"
                               name={`deliveryDetails.${index}.mobileNumber`}
                               className="form-control"
                               placeholder="Delivery Contact Number"
@@ -1144,7 +1179,7 @@ const MultiOrders = () => {
                               style={{
                                 border: "1px solid #E6E6E6",
                                 borderRadius: "5px",
-                                 height: "3em"
+                                height: "3em"
                               }}
                             />
                             <ErrorMessage
@@ -1157,27 +1192,56 @@ const MultiOrders = () => {
                         </div>
                       ))}
 
-                    <button className="btn btn-primary mt-3" onClick={() => {
-                      setInitialValues(prev => ({
-                        ...prev,
-                        deliveryDetails: [...prev.deliveryDetails, {
-                          subOrderId: prev.deliveryDetails.length + 1,
-                          address: "",
-                          cashOnDelivery: "false",
-                          description: "",
-                          distance: "",
-                          duration: "",
-                          email: "",
-                          mobileNumber: "",
-                          name: "",
-                          parcelsCount: 1,
-                          paymentCollectionRupees: "",
-                          postCode: "",
-                        }]
-                      }))
-                    }}>
-                      + Add Delivery Information
-                    </button>
+                    <div className="d-flex justify-content-between mt-2">
+
+                      <button className="btn btn-primary mt-3" type="button" onClick={() => {
+                        setInitialValues(prev => ({
+                          ...prev,
+                          deliveryDetails: [...prev.deliveryDetails, {
+                            subOrderId: prev.deliveryDetails.length + 1,
+                            address: "",
+                            cashOnDelivery: "false",
+                            description: "",
+                            distance: "",
+                            duration: "",
+                            email: "",
+                            mobileNumber: "",
+                            location: {
+                              latitude: null, // Initialize with null or undefined
+                              longitude: null, // Empty array or [longitude, latitude]
+                            },
+                            name: "",
+                            parcelsCount: 1,
+                            paymentCollectionRupees: 0,
+                            postCode: "",
+                          }]
+                        }))
+                      }}>
+                        + Add Delivery Information
+                      </button>
+
+                      {/* Submit Button */}
+                      <div className="d-flex justify-content-end">
+                        <button
+                          type="submit"
+                          className="btn btn-secondary mt-1 me-4"
+                          onClick={() => naviagte("/all-multi-order")}
+                          style={{ height: "3em" }}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn btn-primary mt-1"
+                          style={{ height: "3em" }}
+                          disabled={isOrderCreated}
+                        >
+                          {isOrderCreated ? "Order creating..." : "Create Order"}
+                        </button>
+                      </div>
+                    </div>
+
+
                   </div>
                 </div>
 
@@ -1187,25 +1251,6 @@ const MultiOrders = () => {
 
 
 
-                {/* Submit Button */}
-                <div className="d-flex justify-content-end">
-                  <button
-                    type="submit"
-                    className="btn btn-secondary mt-3 me-4"
-                    onClick={() => naviagte("/all-order")}
-                    style={{ height: "3em" }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary mt-3"
-                    style={{ height: "3em" }}
-                    disabled={isOrderCreated}
-                  >
-                    {isOrderCreated ? "Order creating..." : "Create Order"}
-                  </button>
-                </div>
               </Form>
             );
           }}

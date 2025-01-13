@@ -13,6 +13,7 @@ import Partner2 from "../../assets_web/partner logo (2).jpg";
 
 import TomTomMap from "./TomTomMap";
 import Gotop from "../../Components_web/Gotop/Gotop";
+import { Link } from "react-router-dom";
 function Contact() {
   return (
     <>
@@ -42,10 +43,12 @@ function Contact() {
               tracking a parcel
             </p>
             <div className="mt-6 sm:mt-8 md:mt-10 flex justify-center lg:justify-start">
-              <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
-                Get Started
-                <span className="ml-2">&rarr;</span>
-              </button>
+              <Link to="/about">
+                <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
+                  Get Started
+                  <span className="ml-2">&rarr;</span>
+                </button>
+              </Link>
             </div>
           </div>
           {/* Image Content */}

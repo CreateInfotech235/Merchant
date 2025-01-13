@@ -4,7 +4,7 @@ import add from "../../assets_admin/add.png";
 import edit from "../../assets_admin/edit.png";
 import deleteimg from "../../assets_admin/deleteimg.png";
 import show from "../../assets_admin/show.png";
-import locationimg from "../../assets_admin/locationimg.png";
+import locationimg from "../../assets_admin/delivery-bike.png";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import searchIcon from "../../assets_admin/search.png";
 import Pagination from "../../Components_admin/Pagination/Pagination";
@@ -128,8 +128,6 @@ const DeliveryMan = () => {
   };
 
   const handleLocationClick = (coordinates) => {
-    console.log("fdsgdsgbdsfhgb");
-
     console.log("Coordinates:", coordinates);
     if (
       coordinates &&
@@ -257,17 +255,17 @@ const DeliveryMan = () => {
                       <div className="d-flex justify-content-center align-items-center">
                         <button
                           className="edit-btn"
-                          onClick={(deliveryman) =>
-                            handleLocationClick([
-                              deliveryman?.location?.coordinates[0],
-                              deliveryman?.location?.coordinates[1],
-                            ])
-                          }
+                          // onClick={() => handleLocationClick([
+                          //   deliveryman.location?.coordinates[0],
+                          //   deliveryman.location?.coordinates[1],
+                          // ])}
+
+                          onClick={() => handleLocationClick(deliveryman._id)}
                         >
                           <img
                             src={locationimg}
-                            alt="Edit"
-                            className="mx-auto"
+                            alt="Location"
+                            className="mx-auto "
                           />
                         </button>
                         <button

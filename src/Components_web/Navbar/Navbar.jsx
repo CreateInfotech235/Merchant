@@ -12,6 +12,7 @@ import {
   FaLinkedin,
   FaYoutubeSquare,
 } from "react-icons/fa";
+import { BsTelephone } from "react-icons/bs";
 import { FaSquareXTwitter } from "react-icons/fa6";
 function Navbar({ Login, userData }) {
   const location = useLocation();
@@ -63,12 +64,12 @@ function Navbar({ Login, userData }) {
               <ul className="flex flex-wrap items-center justify-center  gap-x-4 gap-y-2">
                 <li>
                   <p className="text-[12px] flex items-center gap-1 font-light">
-                    <CiClock2 fontSize={17} /> 09:30 AM - 06:30 PM
+                    <BsTelephone  fontSize={17} /> 0208 049 5522
                   </p>
                 </li>
                 <li>
                   <p className="text-[12px] flex items-center gap-1 font-light">
-                    <CiMail fontSize={17} /> createcouirer456@gmail.com
+                    <CiMail fontSize={17} /> info@createcourier.com
                   </p>
                 </li>
               </ul>

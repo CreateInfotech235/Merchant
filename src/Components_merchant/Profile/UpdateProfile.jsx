@@ -28,7 +28,7 @@ const UpdateProfile = () => {
       country: Yup.string().required("Country is required"),
     }).required("Address is required"),
     medicalCertificate: Yup.string().required("Medical Certificate is required"),
-    image: Yup.string().required("Profile image is required"),
+    // image: Yup.string().required("Profile image is required"),
   });
 
   const initialValues = {

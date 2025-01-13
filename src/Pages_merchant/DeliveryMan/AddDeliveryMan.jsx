@@ -240,7 +240,7 @@ const AddDeliveryBoy = () => {
                       Contact No
                     </label>
                     <Field
-                      type="number"
+                      type="text"
                       name="contactNumber"
                       className="form-control w-25% h-100%"
                       placeholder="Contact No"

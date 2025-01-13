@@ -14,7 +14,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
   const [show, setShow] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-
+  const [userData, setUserData] = useState(null);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const navigate = useNavigate();
@@ -118,6 +118,12 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
     fetchNotifications();
   }, []);
 
+  useEffect(()=>{
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    setUserData(userData.image)
+    
+
+  },[])
   return (
     <div className="d-flex justify-content-between align-items-center nav-bar pb-xxl-3 pb-xl-3 pb-lg-3 pb-md-3 pb-sm-3 pb-0">
       <div className="profile">
@@ -212,10 +218,10 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
 
           <div className="navbar-option p-2 position-relative">
             <img
-              src={profileIcon}
+              src={userData ? userData : profileIcon}
               alt="User Profile"
               onClick={handleProfileClick}
-              className="profile-icon"
+              className="profile-icon w-6 h-6 rounded-full"
               ref={profileIconRef}
             />
 

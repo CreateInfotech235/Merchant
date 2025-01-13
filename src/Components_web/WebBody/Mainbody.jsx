@@ -36,6 +36,7 @@ import Group_3 from "../../assets_web/Group-(3).png";
 import Gotop from "../Gotop/Gotop";
 import { getWebHome } from "../Api/Webapi";
 import SliderForWeb from "./SliderForWeb";
+import { Link } from "react-router-dom";
 const servicesdata = [
   {
     service: "Timely Delivery",
@@ -205,10 +206,12 @@ function Mainbody() {
                 with tracking options for peace of mind.
               </p>
               <div className="mt-6 sm:mt-8">
+               <Link to="/about">
                 <button className="bg-[#FF6600] hover:bg-[#e65500] transition-colors text-white px-6 py-3 rounded-md">
                   Get Started
                   <span className="ml-2">&rarr;</span>
                 </button>
+                </Link>
               </div>
             </div>
 

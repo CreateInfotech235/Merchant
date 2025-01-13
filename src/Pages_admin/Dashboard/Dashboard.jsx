@@ -121,7 +121,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.totalOrders || 0}
+                    {counts?.totalOrders || 0}
                   </h5>
                   <p className="box-para">Total orders</p>
                 </div>

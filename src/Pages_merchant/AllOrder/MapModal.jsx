@@ -81,7 +81,10 @@ const MapModal = ({
       });
 
       const directionsService = new window.google.maps.DirectionsService();
-      const directionsRenderer = new window.google.maps.DirectionsRenderer();
+      const directionsRenderer = new window.google.maps.DirectionsRenderer({
+        suppressMarkers: true, // Suppress default A and B markers
+      });
+
       directionsRenderer.setMap(map);
 
       const request = {
@@ -93,6 +96,28 @@ const MapModal = ({
       directionsService.route(request, (result, status) => {
         if (status === window.google.maps.DirectionsStatus.OK) {
           directionsRenderer.setDirections(result);
+
+          // Add custom start marker
+          new window.google.maps.Marker({
+            position: result.routes[0].legs[0].start_location,
+            map: map,
+            icon: {
+              url: "path/to/start-icon.png", // Replace with your custom icon URL
+              scaledSize: new window.google.maps.Size(32, 32), // Adjust size
+            },
+            title: "Start Location", // Optional tooltip
+          });
+
+          // Add custom end marker
+          new window.google.maps.Marker({
+            position: result.routes[0].legs[0].end_location,
+            map: map,
+            icon: {
+              url: "path/to/end-icon.png", // Replace with your custom icon URL
+              scaledSize: new window.google.maps.Size(32, 32), // Adjust size
+            },
+            title: "Destination", // Optional tooltip
+          });
         } else {
           console.error("Directions request failed:", status);
         }

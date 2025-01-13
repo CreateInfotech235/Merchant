@@ -159,15 +159,16 @@ const UpdateOrderModal = ({ onHide, Order }) => {
     pickupDetails: Yup.object().shape({
       dateTime: Yup.string().required("Required"),
       address: Yup.string().required("Required"),
-      mobileNumber: Yup.number().required("Required"),
+      mobileNumber: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email").required("Required"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
     }),
     deliveryDetails: Yup.object().shape({
+      
       address: Yup.string().required("Required"),
       name: Yup.string().required("Required"),
-      mobileNumber: Yup.number().required("Required"),
+      mobileNumber: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email").required("Required"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
@@ -598,7 +599,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         Pickup Contact Number :
                       </label>
                       <Field
-                        type="number"
+                        type="text"
                         name="pickupDetails.mobileNumber"
                         className="form-control"
                         placeholder="Pickup contact number"
@@ -808,7 +809,7 @@ const UpdateOrderModal = ({ onHide, Order }) => {
                         Delivery Contact Number :
                       </label>
                       <Field
-                        type="number"
+                        type="text"
                         name="deliveryDetails.mobileNumber"
                         className="form-control"
                         placeholder="Delivery contact number"

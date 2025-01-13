@@ -3,7 +3,7 @@ import "./Sidebar.css";
 import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets_admin/logo copy.png";
+import logo from "../../assets_admin/logo-new.png";
 import dashboard from "../../assets_admin/dashboard.svg";
 import subcription from "../../assets_admin/subcription.svg";
 import order from "../../assets_admin/order.svg";

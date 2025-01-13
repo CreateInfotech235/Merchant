@@ -4,7 +4,7 @@ import add from "../../assets_admin/add.png";
 import edit from "../../assets_admin/edit.png";
 import deleteimg from "../../assets_admin/deleteimg.png";
 import show from "../../assets_admin/show.png";
-import locationimg from "../../assets_admin/locationimg.png";
+import locationimg from "../../assets_admin/delivery-bike.png";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import searchIcon from "../../assets_admin/search.png";
 import Pagination from "../../Components_admin/Pagination/Pagination";
@@ -44,17 +44,16 @@ const MerchantDeliveryMan = () => {
         itemsPerPage,
         searchParam
       );
-    // console.log(res);
-    if (res.status) {
-      setDeliverymen(res.data.data);
-      setTotalPages(Math.ceil(res.data.totalDataCount / itemsPerPage));
+      // console.log(res);
+      if (res.status) {
+        setDeliverymen(res.data.data);
+        setTotalPages(Math.ceil(res.data.totalDataCount / itemsPerPage));
+      }
+    } catch (error) {
+      console.error("Error fetching delivery men:", error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Error fetching delivery men:", error);
-  }
-  finally {
-    setLoading(false);
-  }
   };
 
   useEffect(() => {
@@ -131,7 +130,7 @@ const MerchantDeliveryMan = () => {
     DISABLE: "red",
   };
 
-  const handleLocationClick = (coordinates) => {   
+  const handleLocationClick = (coordinates) => {
     console.log("Coordinates:", coordinates);
     if (
       coordinates &&
@@ -202,7 +201,7 @@ const MerchantDeliveryMan = () => {
               </tr>
             </thead>
             <tbody>
-            {loading ? (
+              {loading ? (
                 <tr>
                   <td colSpan="11" className="text-center p-3">
                     <div className="d-flex justify-content-center">
@@ -258,17 +257,17 @@ const MerchantDeliveryMan = () => {
                       <div className="d-flex justify-content-center align-items-center">
                       <button
                           className="edit-btn"
-                          onClick={() =>
-                            handleLocationClick([
-                              deliveryman?.location?.coordinates[0],
-                              deliveryman?.location?.coordinates[1],
-                            ])
-                          }
+                          // onClick={() => handleLocationClick([
+                          //   deliveryman.location?.coordinates[0],
+                          //   deliveryman.location?.coordinates[1],
+                          // ])}
+
+                          onClick={() => handleLocationClick(deliveryman._id)}
                         >
                           <img
                             src={locationimg}
-                            alt="Edit"
-                            className="mx-auto"
+                            alt="Location"
+                            className="mx-auto "
                           />
                         </button>
                         <button
@@ -331,7 +330,7 @@ const MerchantDeliveryMan = () => {
           onHide={closeEditModal}
         />
       )}
-       {showMapModal && (
+      {showMapModal && (
         <MapModal location={location} onHide={() => setShowMapModal(false)} />
       )}
     </>

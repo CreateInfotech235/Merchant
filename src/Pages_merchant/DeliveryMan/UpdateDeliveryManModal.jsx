@@ -175,7 +175,7 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
                 <div className="input-error col-md-6">
                   <label>Contact No</label>
                   <Field
-                    type="number"
+                    type="text"
                     name="contactNumber"
                     className="form-control"
                     placeholder="Contact No"

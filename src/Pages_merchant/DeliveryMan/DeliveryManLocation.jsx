@@ -138,6 +138,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import locationimg from "../../assets_mercchant/delivery-bike.png";
 import { getDeliveryMan } from "../../Components_merchant/Api/DeliveryMan";
 import './DeliveryMan.css'
 function DeliveryManLocation() {
@@ -199,7 +200,12 @@ function DeliveryManLocation() {
             position,
             map,
             title: `${deliveryMan.firstName} ${deliveryMan.lastName}`,
+            icon: {
+              url: locationimg, // URL of the image
+              scaledSize: new window.google.maps.Size(40, 40), // Adjust width and height
+            },
           });
+          
 
           const infoWindow = new window.google.maps.InfoWindow({
             content: `

@@ -32,7 +32,10 @@ import Loader from "../../Components_admin/Loader/Loader";
 
 const MerchantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [counts, setCounts] = useState({});
+  const [counts, setCounts] = useState({
+    arrivedOrders:""
+    
+  });
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false); // State to handle modal visibility
   const [showSubscriptionModel, setShowSubscriptionModel] = useState(false);
@@ -160,7 +163,7 @@ const MerchantDashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.totalOrders || 0}
+                    {counts?.totalOrders || 0}
                   </h5>
                   <p className="box-para">Total orders</p>
                 </div>
@@ -188,7 +191,7 @@ const MerchantDashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.acceptedOrders || 0}
+                    {counts?.acceptedOrders || 0}
                   </h5>
                   <p className="box-para">Accepted orders</p>
                 </div>
@@ -216,7 +219,7 @@ const MerchantDashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.arrivedOrders || 0}
+                    {counts?.arrivedOrders || 0}
                   </h5>
                   <p className="box-para">Arrived orders</p>
                 </div>

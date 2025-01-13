@@ -1,4 +1,3 @@
-// App.js
 import { useState, useEffect } from "react";
 import {
   Elements,
@@ -45,7 +44,7 @@ const CheckoutForm = ({ plans }) => {
 
   const calculateTotalAmount = () => {
     if (!selectedPlan) return 0;
-    const months = parseInt(duration);
+    const months = parseInt(duration, 10);
     return selectedPlan.amount * months;
   };
 
@@ -68,22 +67,21 @@ const CheckoutForm = ({ plans }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!stripe || !elements || !selectedPlan) return;
-    console.log(elements);
 
-    const card = elements.getElement(CardElement);
+    const card = elements.getElement(CardNumberElement);
+    console.log(card);
     if (!card) {
       setError("Card element not found.");
       return;
     }
 
     const amount = calculateTotalAmount();
-    console.log(card);
 
     try {
       // Call API to get client secret
-      const data = await stripPayment(amount, planId, duration, expiryDate);
-      console.log(data); // Log response to check for issues
-      const clientSecret = data.data.clientSecret;
+      const merchantId = await JSON.parse(localStorage.getItem("userData"));
+      const { data } = await stripPayment(amount, planId, duration,merchantId._id, expiryDate);
+      const clientSecret = data.clientSecret;
 
       if (!clientSecret) {
         setError("Client secret not found.");
@@ -91,18 +89,24 @@ const CheckoutForm = ({ plans }) => {
       }
 
       // Confirm the payment using Stripe
-      const { error, paymentIntent } = await stripe.confirmPayment(
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
         clientSecret,
         {
           payment_method: {
-            card: card, // Pass card here
-            // billing_details: { name: 'Customer Name' }, // Optionally add billing details
+            card: card, 
+            billing_details: {
+              name: `${merchantId.firstName} ${merchantId.lastName}`, // Replace with dynamic customer name if available
+              email: merchantId.email,
+              phone: merchantId.contactNumber,
+            },
           },
         }
       );
+      console.log(paymentIntent);
+      console.log(stripeError);
 
-      if (error) {
-        setError(error.message); // Display error message
+      if (stripeError) {
+        setError(stripeError.message); // Display error message
       } else if (paymentIntent.status === "succeeded") {
         setSucceeded(true); // Payment successful
       }
@@ -113,11 +117,8 @@ const CheckoutForm = ({ plans }) => {
   };
 
   const convertSecondsToMonths = (seconds) => {
-    // Number of seconds in a day
     const secInDay = 24 * 60 * 60;
-    // Average days in a month (approx. calculation)
     const daysInMonth = 30.44;
-    // Convert seconds to months
     const months = seconds / secInDay / daysInMonth;
     return months < 1 ? 1 : Math.round(months);
   };

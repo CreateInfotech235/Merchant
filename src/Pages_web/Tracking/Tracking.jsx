@@ -4,6 +4,7 @@ import HeavyBox from "../../assets_web/Location tracking-amico 1.png";
 import Setting from "../../assets_web/pngtree-tracking-line-icon-vector-png-image_6692888 1.png";
 import Imagess from "../../assets_web/image_2.png";
 import Gotop from "../../Components_web/Gotop/Gotop";
+import { Link } from "react-router-dom";
 function Tracking({ Login, setLogin }) {
   return (
     <>
@@ -33,10 +34,12 @@ function Tracking({ Login, setLogin }) {
         real-time updates on your parcel’s location.
       </p>
       <div className="mt-6 sm:mt-8">
-        <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-md text-sm sm:text-base lg:text-lg">
-          Get Started
-          <span className="ml-2">&rarr;</span>
-        </button>
+        <Link to="/about">
+          <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-md text-sm sm:text-base lg:text-lg">
+            Get Started
+            <span className="ml-2">&rarr;</span>
+          </button>
+        </Link>
       </div>
     </div>
 

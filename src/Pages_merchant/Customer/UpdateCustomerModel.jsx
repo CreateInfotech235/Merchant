@@ -110,7 +110,7 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
                 <div className="input-error col-md-6">
                   <label>Mobile No</label>
                   <Field
-                    type="number"
+                    type="text"
                     name="mobileNumber"
                     className="form-control"
                     placeholder="Contact No"

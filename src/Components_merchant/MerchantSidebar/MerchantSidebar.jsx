@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
-import logo from "../../assets_mercchant/logo.png";
+import logo from "../../assets_mercchant/logo-new.png";
 import dashboard from '../../assets_mercchant/dashboard.svg'
 import subcription from '../../assets_mercchant/subcription.svg'
 import man from '../../assets_mercchant/man.svg'
@@ -41,20 +41,24 @@ const MerchantSidebar = () => {
       num: 1,
     },
     {
-      path: ["/create-order", "/multi-orders", "/all-order", "/order-location", "/trashed-order", "/invoice-format"],
+      path: ["/create-order", "/all-order","/order-location", "/trashed-order", "/invoice-format"],
       num: 2,
     },
     {
-      path: ["/all-customer", "/add-customer", "/trashed-customer"],
+      path: ["/multi-orders", "/all-multi-order", "/trashed-multi-order"],
       num: 3,
     },
     {
-      path: ["/delivery-man", "/add-delivery-man", "/delivery-man-location", "/delivery-man-trashed"],
+      path: ["/all-customer", "/add-customer", "/trashed-customer"],
       num: 4,
     },
     {
-      path: ["/Show-list-of-support-ticket"],
+      path: ["/delivery-man", "/add-delivery-man", "/delivery-man-location", "/delivery-man-trashed"],
       num: 5,
+    },
+    {
+      path: ["/Show-list-of-support-ticket"],
+      num: 6,
     },
   ]
 
@@ -94,7 +98,6 @@ const MerchantSidebar = () => {
       <div className={`col-xxl-2 col-xl-2 p-3 overflow-y-scroll position-fixed h-100 ${isSidebarVisible ? "sidebar visible" : "sidebar"}`}>
         <div className="col-xs-3 mt-5 mb-3 ms-3 me-3">
           <Link to="/Merchant-dashboard" className="d-flex items-center justify-content-center align-items-center text-white">
-            {/* <div className="d-flex items-center justify-content-center blur"></div> */}
             <img src={logo} width={'200px'} className="" alt="logo" />
           </Link>
         </div>
@@ -159,9 +162,7 @@ const MerchantSidebar = () => {
                   <li className={currentPath === "/create-order" ? "active" : ""}>
                     <Link to="/create-order" onClick={() => setSidebarVisible(false)}>Create Order</Link>
                   </li>
-                  <li className={currentPath === "/multi-orders" ? "active" : ""}>
-                    <Link to="/multi-orders" onClick={() => setSidebarVisible(false)}>Multi Orders</Link>
-                  </li>
+               
                   <li className={currentPath === "/all-order" ? "active" : ""}>
                     <Link to="/all-order" onClick={() => setSidebarVisible(false)}>All Orders</Link>
                   </li>
@@ -185,14 +186,44 @@ const MerchantSidebar = () => {
               onClick={() => {handleSublinkClick(3);}}
             >
               <span className=" pe-4">
-                <img src={customer} style={{ width: "25px" }} alt="order" />
+                <img src={order} style={{ width: "25px" }} alt="order" />
               </span>
-              Customers
+              Multi Orders
               <span className={`arrow ${currentpage === 3 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-            {(currentpage === 3 && showsublink === true) && (
+              {(currentpage === 3 && showsublink === true) && (
+              <div className="submenuWrapper">
+                <ul className="submenu">         
+                   <li className={currentPath === "/multi-orders" ? "active" : ""}>
+                    <Link to="/multi-orders" onClick={() => setSidebarVisible(false)}>Multi Orders</Link>
+                  </li> 
+                   <li className={currentPath === "/all-multi-order" ? "active" : ""}>
+                    <Link to="/all-multi-order" onClick={() => setSidebarVisible(false)}>All Multi Orders</Link>
+                  </li> 
+                  <li className={currentPath === "/trashed-multi-order" ? "active" : ""}>
+                    <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trashed Multi Orders</Link>
+                  </li>             
+                </ul>
+              </div>
+            )}
+          </li>
+
+          <li className="my-2">
+            <Button
+              className={`w-100 ${currentpage === 4 ? "active" : ""}`}
+              onClick={() => {handleSublinkClick(4);}}
+            >
+              <span className=" pe-4">
+                <img src={customer} style={{ width: "25px" }} alt="order" />
+              </span>
+              Customers
+              <span className={`arrow ${currentpage === 4 ? "rotate" : ""}`}>
+                <FaAngleRight />
+              </span>
+            </Button>
+            {(currentpage === 4 && showsublink === true) && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/all-customer" ? "active" : ""}>
@@ -211,18 +242,18 @@ const MerchantSidebar = () => {
 
           <li className="my-2">
             <Button
-              className={`w-100 ${currentpage === 4 ? "active" : ""}`}
-              onClick={() => {handleSublinkClick(4);}}
+              className={`w-100 ${currentpage === 5 ? "active" : ""}`}
+              onClick={() => {handleSublinkClick(5);}}
             >
               <span className=" pe-4">
                 <img src={man} style={{ width: "25px" }} alt="delivery" />
               </span>
               Delivery Mans
-              <span className={`arrow ${currentpage === 4 ? "rotate" : ""}`}>
+              <span className={`arrow ${currentpage === 5 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-            {(currentpage === 4 && showsublink === true) && (
+            {(currentpage === 5 && showsublink === true) && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/delivery-man" ? "active" : ""}>
@@ -262,18 +293,18 @@ const MerchantSidebar = () => {
 
           <li className="my-2">
             <Button
-              className={`w-100 ${currentpage === 5 ? "active" : ""}`}
-              onClick={() => {handleSublinkClick(5);}}
+              className={`w-100 ${currentpage === 6 ? "active" : ""}`}
+              onClick={() => {handleSublinkClick(6);}}
             >
               <span className=" pe-4">
                 <img src={support} style={{ width: "25px" }} alt="offers" />
               </span>
               Support Ticket
-              <span className={`arrow ${currentpage === 5 ? "rotate" : ""}`}>
+              <span className={`arrow ${currentpage === 6 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-            {(currentpage === 5 && showsublink === true) && (
+            {(currentpage === 6 && showsublink === true) && (
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/Show-list-of-support-ticket" ? "active" : ""}>

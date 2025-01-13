@@ -8,6 +8,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { sendOtp, signup } from "../../Components_merchant/Api/Auth";
 import loginImage from "../../assets_web/Sign up-amico 1.png";
+import { toast } from "react-toastify";
 
 // Validation Schema with Yup
 const validationSchema = Yup.object({
@@ -58,7 +59,7 @@ const initialValues = {
   medicalCertificate: "",
 };
 
-const Signup2 = ({ Login, setLogin }) => {
+const Signup = ({ Login, setLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [certificateImage, setCertificateImage] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
@@ -76,13 +77,21 @@ const Signup2 = ({ Login, setLogin }) => {
   };
 
   const handleSendOtp = async (values, setErrors) => {
+    if(values.email === "" || values.contactNumber === ""){
+      toast.error("Please fill email and contact number");
+      return;
+    }
     setOtpLoading(true);
+    
+    
     const otpPayload = {
       email: values.email,
       contactNumber: values.contactNumber,
       personType: "CUSTOMER",
       // countryCode: values.address.country
     };
+
+    console.log(otpPayload);
 
     const response = await sendOtp(otpPayload);
     // console.log(response);
@@ -295,6 +304,7 @@ const Signup2 = ({ Login, setLogin }) => {
                       </div>
 
                       <div className="relative">
+                       
                         <Field
                           type={showPassword ? "text" : "password"}
                           name="password"
@@ -312,12 +322,12 @@ const Signup2 = ({ Login, setLogin }) => {
                             <FaEye className="text-gray-400" />
                           )}
                         </button>
+                      </div>
                         {errors.password && touched.password && (
                           <p className="text-red-500 text-sm mt-1">
                             {errors.password}
                           </p>
                         )}
-                      </div>
                       <div>
                         <Field
                           type="text"
@@ -351,10 +361,12 @@ const Signup2 = ({ Login, setLogin }) => {
                         <div>
                           <button
                             type="button"
-                            onClick={() => handleSendOtp(values, setErrors)}
-                            disabled={otpLoading || otpSent}
+                            onClick={() =>{
+                              handleSendOtp(values, setErrors)                       
+                            }}
+                            disabled={otpLoading}
                             className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#fff] ${
-                              otpLoading || otpSent
+                              otpLoading 
                                 ? "bg-gray-400 cursor-not-allowed"
                                 : "bg-[#221F92] hover:bg-[#1a1873]"
                             }`}
@@ -362,7 +374,7 @@ const Signup2 = ({ Login, setLogin }) => {
                             {otpLoading
                               ? "Sending..."
                               : otpSent
-                              ? "OTP Sent"
+                              ? "Resend OTP"
                               : "Send OTP"}
                           </button>
                         </div>
@@ -511,4 +523,4 @@ const Signup2 = ({ Login, setLogin }) => {
   );
 };
 
-export default Signup2;
+export default Signup;

@@ -103,7 +103,7 @@ const DeliveryMan = () => {
   };
   const handleEditClick = (deliveryMan) => {
     console.log(deliveryMan);
-    
+
     setSelectedDeliveryMan(deliveryMan);
     setShowEditModal(true);
   };
@@ -262,25 +262,24 @@ const DeliveryMan = () => {
                         {/* <input type="checkb ox" checked={deliveryman.isVerified} /> */}
                       </td>
                       <td className="user-table1">
-                      <button
-                            className="edit-btn"
-                            // onClick={() => handleLocationClick([
-                            //   deliveryman.location?.coordinates[0],
-                            //   deliveryman.location?.coordinates[1],
-                            // ])}
+                        <button
+                          className="edit-btn"
+                          // onClick={() => handleLocationClick([
+                          //   deliveryman.location?.coordinates[0],
+                          //   deliveryman.location?.coordinates[1],
+                          // ])}
 
-                            onClick={() => handleLocationClick(deliveryman._id)}
-                          >
-                            <img
-                              src={locationimg}
-                              alt="Location"
-                              className="mx-auto "
-                            />
-                          </button>
+                          onClick={() => handleLocationClick(deliveryman._id)}
+                        >
+                          <img
+                            src={locationimg}
+                            alt="Location"
+                            className="mx-auto "
+                          />
+                        </button>
                       </td>
                       <td className="user-table1">
                         <div className="d-flex justify-content-center align-items-center">
-                          
                           <button
                             className="edit-btn ms-1"
                             onClick={() => handleEditClick(deliveryman)}

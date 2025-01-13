@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { forgotPassword, verifyOTP, changePassword } from "../Api/Webapi"; // Assuming changePassword API exists
 import loginImage from "../../assets_web/Computer login-amico 1.png";
+import { toast } from "react-toastify";
 
 const ForgotPassword = ({ Login, setLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -85,11 +86,14 @@ const ForgotPassword = ({ Login, setLogin }) => {
       setIsOtpSending(false);
       if (response == "SUCCESS") {
         setIsOtpSent(false); // OTP sent successfully
+        toast.success("OTP sent successfully");
       } else {
+        toast.error("Error sending OTP");
         console.error("Error sending OTP:", response);
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
+      toast.error("Error sending OTP");
       setIsOtpSending(false);
     }
   };

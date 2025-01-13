@@ -73,6 +73,8 @@ import Document from "./Pages_admin/Document/Document";
 import DeliveryManDocument from "./Pages_admin/DeliveryManDocument/DeliveryManDocument";
 import DeliveryManLocationAdmin from "./Pages_admin/DeliveryManLocation/DeliveryManLocation";
 import VehicleAdmin from "./Pages_admin/Vehicle/Vehicle";
+
+
 import UpdateVehicle from "./Pages_admin/UpdateVehicle/UpdateVehicle";
 import AddVehicleAdmin from "./Pages_admin/AddVehicle/AddVehicle";
 import ExtraCharges from "./Pages_admin/AddExtraCharges/AddExtraCharges";
@@ -149,6 +151,8 @@ import ForgotPassword from "./Components_web/forgot-password/forgot-password";
 import AdminForgotPassword from "./Components_admin/admin-forgot-password/admin-forgot-password";
 import MapSetting from "./Pages_admin/MapSetting/MapSetting";
 import MultiOrders from "./Pages_merchant/CreateOrder/multiorders";
+import MultiOrder from "./Pages_merchant/AllOrder/MultiOrder";
+import TrashedMultiOrder from "./Pages_merchant/TrashedOrder/TrashedMultiOrder";
 
 
 function App() {
@@ -262,10 +266,26 @@ function App() {
           }
         />
         <Route
+          path="/all-multi-order"
+          element={
+            <ProtectedRoute>
+              <MultiOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/trashed-order"
           element={
             <ProtectedRoute>
               <TrashedOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trashed-multi-order"
+          element={
+            <ProtectedRoute>
+              <TrashedMultiOrder />
             </ProtectedRoute>
           }
         />

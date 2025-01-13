@@ -32,7 +32,7 @@ export const updateMerchantProfile = async (data) => {
     // console.log("response", response);
 
     if (response.status === 200) {
-      toast.success(response.data.message);
+      toast.success("Profile Updated Successfully");
       return { status: true, data: response.data.data };
     } else {
       // console.log("API error", response.response.data.message);

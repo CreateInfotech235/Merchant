@@ -33,22 +33,6 @@ const OrderLocation = () => {
 
   return (
     <>
-      <div className="d-flex justify-content-end">
-        <button
-          type="button"
-          className="pickup-location p-1 border-0 text-light m-3 rounded-2 flex justify-center items-center"
-        >
-          <img src={pickup} className="loc-img" alt="Pick Up Location" /> Pick
-          Up Location
-        </button>
-        <button
-          type="button"
-          className="pickup-location p-1 border-0 text-light m-3 rounded-2 flex justify-center items-center"
-        >
-          <img src={deliveryloc} className="loc-img" alt="Delivery Location" />{" "}
-          Delivery Location
-        </button>
-      </div>
       <div className="delivery-man-location">
         <div style={{ height: "672px", width: "100%" }}>
           {/* <GoogleMapReact

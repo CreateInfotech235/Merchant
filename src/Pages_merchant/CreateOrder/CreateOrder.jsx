@@ -22,7 +22,7 @@ const CreateOrder = () => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [isOrderCreated, setIsOrderCreated] = useState(false);
   const merchant = JSON.parse(localStorage.getItem("userData"));
-  // console.log("merchant", merchant);
+
 
   useEffect(() => {
     // Get current location
@@ -261,7 +261,7 @@ const CreateOrder = () => {
       dateTime: Yup.string().required("Required"),
       address: Yup.string().required("Required"),
       // countryCode: Yup.string().required("Required"),
-      mobileNumber: Yup.number().required("Required"),
+      mobileNumber: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email").required("Required"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
@@ -278,7 +278,7 @@ const CreateOrder = () => {
       address: Yup.string().required("Required"),
       name: Yup.string().required("Required"),
       // countryCode: Yup.string().required("Required"),
-      mobileNumber: Yup.number().required("Required"),
+      mobileNumber: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email").required("Required"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
@@ -780,7 +780,7 @@ const CreateOrder = () => {
                         Pickup Contact Number :
                       </label>
                       <Field
-                        type="number"
+                        type="text"
                         name="pickupDetails.mobileNumber"
                         className="form-control"
                         placeholder="Pickup Contact Number"
@@ -848,7 +848,7 @@ const CreateOrder = () => {
                         as="textarea"
                         name="pickupDetails.description"
                         className="form-control"
-                        placeholder="Pickup Instraction"
+                        placeholder="Pickup Instraction (Optional)"
                         rows="4"
                         style={{
                           border: "1px solid #E6E6E6",
@@ -1011,7 +1011,7 @@ const CreateOrder = () => {
                         Delivery Contact Number :
                       </label>
                       <Field
-                        type="number"
+                        type="text"
                         name="deliveryDetails.mobileNumber"
                         className="form-control"
                         placeholder="Delivery Contact Number"
@@ -1077,7 +1077,7 @@ const CreateOrder = () => {
                         as="textarea"
                         name="deliveryDetails.description"
                         className="form-control"
-                        placeholder="Delivery Instraction"
+                        placeholder="Delivery Instraction (Optional)"
                         rows="4"
                         style={{
                           border: "1px solid #E6E6E6",

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom"; // Importing useNavigate for navigation
+import { Link, useNavigate } from "react-router-dom"; // Importing useNavigate for navigation
 import bgimg from "../../assets_web/Pricingbgimg.jpg";
 import tracking from "../../assets_web/Group (4).png";
 import bgImage from "../../assets_web/image (41).png";
@@ -111,10 +111,12 @@ function Pricing() {
               delivery speed, and destination.
             </p>
             <div className="mt-6 sm:mt-8 md:mt-10 flex justify-center lg:justify-start">
-              <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
-                Get Started
-                <span className="ml-2">&rarr;</span>
-              </button>
+              <Link to="/about">
+                <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
+                  Get Started
+                  <span className="ml-2">&rarr;</span>
+                </button>
+              </Link>
             </div>
           </div>
           {/* Image Content */}

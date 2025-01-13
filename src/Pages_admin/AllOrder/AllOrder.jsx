@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import add from "../../assets_admin/add.png";
-import tracking from "../../assets_admin/tracking.png";
+import tracking from "../../assets_admin/delivery-bike.png";
 import deleteimg from "../../assets_admin/deleteimg.png";
 import show from "../../assets_admin/show.png";
 import searchIcon from "../../assets_admin/search.png";
@@ -48,7 +48,7 @@ const AllOrder = () => {
     setLoading(true);
     try {
       const response = await getAllOrder(null, currentPage, ordersPerPage);
-      // console.log(response.data , "Data");
+      console.log(response.data , "Data");
 
       if (response.status) {
         setOrders(response.data);
@@ -311,18 +311,18 @@ const AllOrder = () => {
                     <td className="p-3 text-primary">
                       {order?.showOrderNumber ?? "-"}
                     </td>
-                    <td className="p-3">{order.merchantName || "-"}</td>
-                    <td className="p-3">{order.customerName}</td>
-                    <td className="p-3">{order.pickupAddress.address}</td>
-                    <td className="p-3">{order.deliveryAddress.address}</td>
-                    <td className="p-3">{order.deliveryMan || "-"}</td>
-                    <td className="p-3">{order.createdDate}</td>
-                    <td className="p-3">{order.pickupDate || "-"}</td>
-                    <td className="p-3">{order.deliveryDate || "-"}</td>
+                    <td className="p-3">{order?.merchantName || "-"}</td>
+                    <td className="p-3">{order?.customerName || "-"}</td>
+                    <td className="p-3">{order?.pickupAddress?.address || "-"}</td>
+                    <td className="p-3">{order?.deliveryAddress?.address || "-"}</td>
+                    <td className="p-3">{order?.deliveryMan || "-"}</td>
+                    <td className="p-3">{order?.createdDate || "-"}</td>
+                    <td className="p-3">{order?.pickupDate || "-"}</td>
+                    <td className="p-3">{order?.deliveryDate || "-"}</td>
                     <td className="p-3 fw-bold">{order.invoice || "-"}</td>
                     <td className="p-3">
                       <button className={`${getColorClass(order.status)} mx-2`}>
-                        {order.status}
+                        {order?.status || "-"}
                       </button>
                     </td>
                     {/* <td className="city-data">Assign</td> */}
@@ -351,17 +351,17 @@ const AllOrder = () => {
                               "CANCELLED",
                               "DELIVERED",
                               "CREATED",
-                            ].includes(order.status)
+                            ].includes(order?.status)
                           ) {
                             alert(
                               "You are not able to track. Tracking starts from the status 'Arrived' to 'Delivered'."
                             );
                           } else {
                             hadleTrackOrder(
-                              order.deliveryManId,
-                              order.deliveryAddress.location,
-                              order.pickupAddress.location,
-                              order.status
+                              order?.deliveryManId,
+                              order?.deliveryAddress?.location,
+                              order?.pickupAddress?.location,
+                              order?.status
                             );
                           }
                         }}

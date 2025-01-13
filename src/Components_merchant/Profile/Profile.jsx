@@ -138,7 +138,7 @@ const ProfilePage = () => {
                         merchant.medicalCertificate || certificatePlaceholder
                       }
                       alt="Medical Certificate"
-                      className="w-full h-48 rounded-lg object-cover"
+                      className="w-full h-48 rounded-lg object-contain"
                     />
                   </div>
                 </div>

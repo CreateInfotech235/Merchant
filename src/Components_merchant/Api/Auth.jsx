@@ -9,8 +9,10 @@ export const login = async (data) => {
         console.log(response);
         
         if (response.status === 200) {
+            toast.success(response.data.messgae)
             return { status: true, data: response.data.data }
         } else {
+            toast.error(response.response.data.message)
             return { status: false, message: response.response.data.message }
         }
     } catch (error) {
@@ -39,10 +41,12 @@ export const sendOtp = async (data) => {
 export const signup = async (data) => {
     try {
         const response = await API.post(`/mobile/auth/signUp`, data);
+        console.log(response);
         if (response.status === 200) {
             toast.success(response.data.messgae)
             return { status: true, data: response.data.data }
         } else {
+            toast.error(response.response.data.message)
             return { status: false, message: response.response.data.message }
         }
     } catch (error) {
