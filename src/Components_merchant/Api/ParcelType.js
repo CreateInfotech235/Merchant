@@ -21,6 +21,7 @@ export const getMerchantParcelType = async () => {
   }
 };
 
+
 export const editMerchantParcelType = async (parcelTypeId ,data) => {
   try {
     const merchnatId = localStorage.getItem("merchnatId");

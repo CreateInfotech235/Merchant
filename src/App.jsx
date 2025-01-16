@@ -154,6 +154,7 @@ import MultiOrders from "./Pages_merchant/CreateOrder/MultiOrders";
 import MultiOrder from "./Pages_merchant/AllOrder/MultiOrder";
 import TrashedMultiOrder from "./Pages_merchant/TrashedOrder/TrashedMultiOrder";
 import MultiOrderParcel from "./Pages_merchant/AllOrder/MultiOrderParcel";
+import CommonComponent from "./Pages_admin/common-component/common-component";
 
 
 function App() {
@@ -853,6 +854,14 @@ function App() {
           element={
             <ProtectedRouteAdmin>
               <OrderSetting />
+            </ProtectedRouteAdmin>
+          }
+        />
+        <Route
+          path="/common-component"
+          element={
+            <ProtectedRouteAdmin>
+              <CommonComponent />
             </ProtectedRouteAdmin>
           }
         />

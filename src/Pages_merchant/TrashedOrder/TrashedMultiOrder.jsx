@@ -12,6 +12,7 @@ import ConformDeleteModel from "../ConformDeleteModel/ConformDeleteModel";
 import Loader from "../../Components_admin/Loader/Loader";
 import ConformDeleteModelMulti from "../ConformDeleteModel/ConformDeleteModelMulti";
 import { FaUndo } from "react-icons/fa";
+import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 
 
 const TrashedMultiOrder = () => {
@@ -28,12 +29,18 @@ const TrashedMultiOrder = () => {
   const [text, setText] = useState("");
   const [subOrderId, setSubOrderId] = useState(null);
   const [undo, setUndo] = useState(false);
+  const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
+
 
   const fetchData = async() => {
     setLoading(true);
     try {
       const MerchantId = await localStorage.getItem('merchnatId');
       const response = await getMultiOrders(MerchantId, 1, 10000000);
+      const parcelTypeRes = await getMerchantParcelType();
+      if (parcelTypeRes.status) {
+        setParcleTypeDetail(parcelTypeRes.data);
+      }
       if (response?.data) {
         const trashedData = response.data.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === true));
         setOrderData(trashedData);
@@ -284,6 +291,8 @@ const TrashedMultiOrder = () => {
                                     Delivery Address (PostCode)
                                   </th>
                                   <th className="p-3">Delivery Date</th>
+                                  <th className="p-3">Parcel Type</th>
+
                                   <th className="p-3">Invoice</th>
                                   <th className="p-3">Status</th>
                                   <th className="p-3">Action</th>
@@ -339,7 +348,9 @@ const TrashedMultiOrder = () => {
                                           "-"}
                                       </td>
                                       <td className="p-3">-</td>
+                                      <td className="p-3">{parcelTypeDetail.find(type => type.parcelTypeId === subOrder?.parcelType)?.label ?? "-"}</td> 
                                       <td className="p-3">-</td>
+
                                       <td className="p-3">
                                         <button
                                           className={`${getColorClass(

@@ -401,6 +401,9 @@ const Sidebar = () => {
             {activeTab === 12 && (
               <div className="submenuWrapper">
                 <ul className="submenu">
+                <li className={isActive("/common-component") ? "active" : ""}>
+                    <Link to="/common-component">common components</Link>
+                  </li>
                 <li className={isActive("/home-page") ? "active" : ""}>
                     <Link to="/home-page">Home Page</Link>
                   </li>

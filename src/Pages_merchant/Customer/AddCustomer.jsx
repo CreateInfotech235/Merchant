@@ -61,6 +61,7 @@ const AddUser = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
+
     const res = await addCustomer(values);
     if (res.status) {
       navigate("/all-customer");
@@ -112,12 +113,15 @@ const AddUser = () => {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
+        console.log(jsonData);
+        
         const updatedData = jsonData.map(customer => ({
           ...customer,
-          merchantId: merchantId
+          merchantId: merchantId,
+          mobileNumber: customer.mobileNumber.toString()
         }));
-
+        console.log("updatedData", updatedData);
+        return;
         const res = await addCustomerExal(updatedData);
         console.log("res", res);
         if (res.status) {

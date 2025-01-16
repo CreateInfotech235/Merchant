@@ -19,6 +19,7 @@ import Loader from "../../Components_admin/Loader/Loader";
 import OrderInfoModalMulti from "./OrderInfoModalMulti";
 import UpdateOrderModalMulti from "./UpdateOrderModalMulti";
 import DeleteUserMulti from "../../Components_merchant/DeleteUser/DeleteUserMulti";
+import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 
 const MultiOrder = () => {
   const [showModel, setShowModel] = useState(false);
@@ -43,10 +44,15 @@ const MultiOrder = () => {
   const [openSemTable, setOpenSemTable] = useState({});
   const [subOrderId, setSubOrderId] = useState(null);
   const [isSingle, setIsSingle] = useState(false);
+  const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
+      const parcelTypeRes = await getMerchantParcelType();
+      if (parcelTypeRes.status) {
+        setParcleTypeDetail(parcelTypeRes.data);
+      }
       const MerchantId = await localStorage.getItem("merchnatId");
       const response = await getMultiOrders(
         MerchantId,
@@ -491,6 +497,7 @@ const MultiOrder = () => {
                                     </th>
 
                                     <th className="p-3">Delivery Date</th>
+                                    <th className="p-3">Parcel Type</th>
                                     <th className="p-3">Invoice</th>
                                     <th className="p-3">Status</th>
                                     <th className="p-3">Action</th>
@@ -549,9 +556,10 @@ const MultiOrder = () => {
                                               {`${subOrder?.address} (${subOrder?.postCode})` ??
                                                 "-"}
                                             </td>
-
+                                            {console.log(subOrder)}
                                             <td className="p-3">-</td>
-                                            <td className="p-3">-</td>
+                                            <td className="p-3">{parcelTypeDetail.find(type => type.parcelTypeId === subOrder?.parcelType)?.label ?? "-"}</td>
+                                            <td className="p-3">{subOrder?.invoice ?? "-"}</td>
                                             <td className="p-3">
                                               <button
                                                 className={`${getColorClass(

@@ -322,6 +322,7 @@ const MultiOrders = () => {
           }
         ),
         parcelType: Yup.string().required("Required Parcel Type"),
+        // description: Yup.string(),
       })
     )
   });
@@ -469,7 +470,8 @@ const MultiOrders = () => {
           location: {
             latitude: deliverylocations[index]?.latitude,
             longitude: deliverylocations[index]?.longitude
-          }
+          },
+          description: delivery.description,
         }))
       };
       console.log("payload", payload);
