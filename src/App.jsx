@@ -150,7 +150,7 @@ import TermsConditions from "./Components_web/Terms & Conditions/TermsConditions
 import ForgotPassword from "./Components_web/forgot-password/forgot-password";
 import AdminForgotPassword from "./Components_admin/admin-forgot-password/admin-forgot-password";
 import MapSetting from "./Pages_admin/MapSetting/MapSetting";
-import MultiOrders from "./Pages_merchant/CreateOrder/multiorders";
+import MultiOrders from "./Pages_merchant/CreateOrder/MultiOrders";
 import MultiOrder from "./Pages_merchant/AllOrder/MultiOrder";
 import TrashedMultiOrder from "./Pages_merchant/TrashedOrder/TrashedMultiOrder";
 import MultiOrderParcel from "./Pages_merchant/AllOrder/MultiOrderParcel";
