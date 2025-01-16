@@ -13,6 +13,7 @@ import { Spinner } from "react-bootstrap";
 import Select from "react-select";
 import { getMapApi } from "../../Components_admin/Api/MapApi";
 import { toast } from "react-toastify";
+import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 
 const MultiOrders = () => {
   const naviagte = useNavigate();
@@ -26,6 +27,7 @@ const MultiOrders = () => {
   const merchant = JSON.parse(localStorage.getItem("userData"));
   const [initialValues, setInitialValues] = useState({});
   const [newarrayoflocation, setNewarrayoflocation] = useState([]);
+  const [parcelTypeDetail, setParcelTypeDetail] = useState([]);
   // const [isSubmit, setIsSubmit] = useState(false);
   useEffect(() => {
     console.log("initialValues", initialValues);
@@ -73,6 +75,10 @@ const MultiOrders = () => {
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
       const deliveryMans = await getAllDeliveryMans();
+      const parcelTypeRes = await getMerchantParcelType();
+      if(parcelTypeRes.status){
+        setParcelTypeDetail(parcelTypeRes.data);
+      }
 
       const deliveryManRes = await getDeliveryMan();
       if (deliveryManRes.data || deliveryMans.data) {
@@ -255,6 +261,7 @@ const MultiOrders = () => {
             address: "",
             // countryCode: "",
             mobileNumber: "",
+            parcelType: "",
             name: "",
             email: "",
             description: "",
@@ -314,6 +321,7 @@ const MultiOrders = () => {
             return true;
           }
         ),
+        parcelType: Yup.string().required("Required Parcel Type"),
       })
     )
   });
@@ -457,6 +465,7 @@ const MultiOrders = () => {
           paymentCollectionRupees: delivery.paymentCollectionRupees,
           distance: calculateDistanceeinMiles(distancesAndDurations[index]),
           duration: distancesAndDurations[index]?.duration.text,
+          parcelType: delivery.parcelType,
           location: {
             latitude: deliverylocations[index]?.latitude,
             longitude: deliverylocations[index]?.longitude
@@ -1104,6 +1113,36 @@ const MultiOrders = () => {
                             <ErrorMessage
                               name={`deliveryDetails.${index}.mobileNumber`}
                               component="div"
+                              className="error text-danger ps-2"
+                            />
+                          </div>
+                          <div className="input-error mb-1 col-4">
+                            <label className="fw-thin p-0 pb-1 ">
+                              Select Parcel Type :
+                            </label>
+                            <Select
+                              name={`deliveryDetails.${index}.parcelType`}
+                              className="form-control p-0"
+                              styles={{
+                                control: (base) => ({ ...base, height: "3em" }),
+                              }}
+                              options={parcelTypeDetail.map((type) => ({
+                                value: type.parcelTypeId,
+                                label: type.label
+                              }))}
+                              placeholder="Select Parcel Type"
+                              onChange={(selectedOption) => {
+                                setInitialValues(prev => ({
+                                  ...prev,
+                                  deliveryDetails: prev.deliveryDetails.map((item, i) => 
+                                    i === index ? { ...item, parcelType: selectedOption.value } : item
+                                  )
+                                }));
+                              }}
+                            />
+                            <ErrorMessage
+                              name={`deliveryDetails.${index}.parcelType`}
+                              component="div" 
                               className="error text-danger ps-2"
                             />
                           </div>

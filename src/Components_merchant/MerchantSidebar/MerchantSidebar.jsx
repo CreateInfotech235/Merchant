@@ -45,7 +45,7 @@ const MerchantSidebar = () => {
       num: 2,
     },
     {
-      path: ["/multi-orders", "/all-multi-order", "/trashed-multi-order"],
+      path: ["/multi-orders", "/all-multi-order", "/trashed-multi-order" , "/multi-order-parcel"],
       num: 3,
     },
     {
@@ -204,6 +204,9 @@ const MerchantSidebar = () => {
                   </li> 
                   <li className={currentPath === "/trashed-multi-order" ? "active" : ""}>
                     <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trashed Multi Orders</Link>
+                  </li>             
+                  <li className={currentPath === "/multi-order-parcel" ? "active" : ""}>
+                    <Link to="/multi-order-parcel" onClick={() => setSidebarVisible(false)}>Multi Order Parcel Details</Link>
                   </li>             
                 </ul>
               </div>

@@ -153,6 +153,7 @@ import MapSetting from "./Pages_admin/MapSetting/MapSetting";
 import MultiOrders from "./Pages_merchant/CreateOrder/multiorders";
 import MultiOrder from "./Pages_merchant/AllOrder/MultiOrder";
 import TrashedMultiOrder from "./Pages_merchant/TrashedOrder/TrashedMultiOrder";
+import MultiOrderParcel from "./Pages_merchant/AllOrder/MultiOrderParcel";
 
 
 function App() {
@@ -302,6 +303,14 @@ function App() {
           element={
             <ProtectedRoute>
               <OrderLocation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/multi-order-parcel"
+          element={
+            <ProtectedRoute>
+              <MultiOrderParcel />
             </ProtectedRoute>
           }
         />

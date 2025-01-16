@@ -15,7 +15,6 @@ import {
   calculateDistancee,
   updateOrder,
 } from "../../Components_merchant/Api/Order";
-import { duration } from "@mui/material";
 
 const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   console.log("Order", Order);
@@ -228,6 +227,8 @@ console.log(initialValues.deliveryDetails);
     let deliverylocation = [];
     let pickuplocation = null;
     var distanceMiles = null;
+    let distanceKm = null;
+    let duration = null;
 
     // Handle pickup location
     if (

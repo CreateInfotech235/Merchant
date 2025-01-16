@@ -5,15 +5,21 @@ import phone from "../../assets_mercchant/phone.png";
 import { useNavigate } from "react-router-dom";
 import { getAllCity } from "../../Components_merchant/Api/City";
 import { getAllCountry } from "../../Components_merchant/Api/Country";
-import { addCustomer } from "../../Components_merchant/Api/Customer";
+import { addCustomer, addCustomerExal } from "../../Components_merchant/Api/Customer";
+import * as XLSX from 'xlsx';
+import { toast } from "react-toastify";
 
 const AddUser = () => {
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
+  const [excelData, setExcelData] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [failedCustomers, setFailedCustomers] = useState([]);
 
   const initialValues = {
     firstName: "",
-    lastName: "",
+    lastName: "", 
     country: "",
     city: "",
     address: "",
@@ -31,11 +37,17 @@ const AddUser = () => {
       if (citiesResponse.status) setCities(citiesResponse.data);
     };
     fetchCountriesAndCities();
+
+    // Get failed customer data from localStorage if exists
+    const failedData = localStorage.getItem('failedCustomers');
+    if (failedData) {
+      setFailedCustomers(JSON.parse(failedData));
+    }
   }, []);
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required("first name is required"),
-    lastName: Yup.string().required("last is required"),
+    lastName: Yup.string().required("last is required"), 
     mobileNumber: Yup.string().required("Contact is required"),
     email: Yup.string()
       .email("Invalid email format")
@@ -49,15 +61,127 @@ const AddUser = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
-    // console.log(values);
     const res = await addCustomer(values);
     if (res.status) {
       navigate("/all-customer");
     }
   };
 
+  const handleFileSelect = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const downloadFailedData = () => {
+    if (!failedCustomers || failedCustomers.length === 0) {
+      toast.info("No failed customer data to download");
+      return;
+    }
+
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    
+    // Map failed customers to only include relevant fields
+    const cleanedData = failedCustomers.map(({data, error}) => ({
+      ...data,
+      error
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(cleanedData);
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, "Failed Customers");
+
+    // Save workbook
+    XLSX.writeFile(wb, "failed_customers.xlsx");
+  };
+
+  const handleExcelUpload = async () => {
+    if (!selectedFile) {
+      toast.error("Please select a file first");
+      return;
+    }
+
+    const merchantId = localStorage.getItem("merchnatId");
+    const reader = new FileReader();
+    setIsUploading(true);
+    
+    reader.onload = async (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        const updatedData = jsonData.map(customer => ({
+          ...customer,
+          merchantId: merchantId
+        }));
+
+        const res = await addCustomerExal(updatedData);
+        console.log("res", res);
+        if (res.status) {
+          if (!res.data?.failed || res.data.failed.length === 0) {
+            localStorage.removeItem('failedCustomers');
+            navigate("/all-customer");
+          } else {
+            setFailedCustomers(res.data.failed);
+            localStorage.setItem('failedCustomers', JSON.stringify(res.data.failed));
+            toast.warning(`${res.data.failed.length} customers failed to upload. Click 'Download Failed Data' to get the details.`);
+          }
+        } else {
+          toast.error(res.message);
+        }
+      } catch (error) {
+        toast.error("Error processing Excel file");
+        console.error("Excel processing error:", error);
+      } finally {
+        setIsUploading(false);
+        setSelectedFile(null);
+      }
+    };
+    reader.readAsArrayBuffer(selectedFile);
+  };
+
   return (
     <div className="min-h-[calc(100vh-187px)]">
+      <div className="d-flex justify-content-end mb-4">
+        <div className="me-3">
+          <input
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={handleFileSelect}
+            className="d-none"
+            id="excelUpload"
+            disabled={isUploading}
+          />
+          <label 
+            htmlFor="excelUpload"
+            className="btn btn-success me-2"
+            style={{cursor: isUploading ? 'not-allowed' : 'pointer'}}
+          >
+            Select Excel File
+          </label>
+          {selectedFile && (
+            <button
+              onClick={handleExcelUpload}
+              className={`btn ${isUploading ? 'btn-secondary' : 'btn-primary'}`}
+              disabled={isUploading}
+            >
+              {isUploading ? 'Uploading...' : 'Upload Data'}
+            </button>
+          )}
+          {failedCustomers && failedCustomers.length > 0 && (
+            <button
+              onClick={downloadFailedData}
+              className="btn btn-warning ms-2"
+            >
+              Download Failed Data
+            </button>
+          )}
+        </div>
+      </div>
+
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
@@ -258,3 +382,17 @@ const AddUser = () => {
 };
 
 export default AddUser;
+
+{/* Example Excel Data Format:
+[
+  {
+    "firstName": "John",
+    "lastName": "Doe", 
+    "country": "USA",
+    "city": "New York",
+    "address": "123 Main St",
+    "postCode": "10001",
+    "mobileNumber": "1234567890",
+    "email": "john@example.com"
+  }
+] */}

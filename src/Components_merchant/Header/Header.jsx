@@ -121,9 +121,9 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
   useEffect(()=>{
     const userData = JSON.parse(localStorage.getItem('userData'))
     setUserData(userData.image)
-    
-
   },[])
+  console.log(userData,"userData");
+  
   return (
     <div className="d-flex justify-content-between align-items-center nav-bar pb-xxl-3 pb-xl-3 pb-lg-3 pb-md-3 pb-sm-3 pb-0">
       <div className="profile">

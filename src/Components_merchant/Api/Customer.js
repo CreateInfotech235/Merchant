@@ -51,6 +51,31 @@ export const addCustomer = async (data) => {
     return { status: false, message: error.message };
   }
 };
+export const addCustomerExal = async (data) => {
+  try {
+   
+;
+    // console.log("tampdata", data);
+  
+    const response = await API.post(`/customer/auth/signUpExal`, data);
+    console.log("response", response);
+
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      return { status: true, data: response.data.data };
+    } else {
+      // console.log("API error", response.response.data.message);
+      toast.error(response.response.data.message || response.message);
+      return {
+        status: false,
+        message: response.response.data.message || response.message,
+      };
+    }
+  } catch (error) {
+    console.error("Error Add  Customer:", error);
+    return { status: false, message: error.message };
+  }
+};
 export const updateCustomer = async (id, data) => {
   try {
     const merchantId = localStorage.getItem("merchnatId");
