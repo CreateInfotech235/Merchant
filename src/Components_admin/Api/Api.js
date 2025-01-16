@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8001/admin",
+  baseURL: "https://create-courier-8.onrender.com/admin",
   headers: { "Content-Type": "application/json" },
 });
 
