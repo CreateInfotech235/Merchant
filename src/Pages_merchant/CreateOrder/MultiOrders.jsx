@@ -321,8 +321,7 @@ const MultiOrders = () => {
             return true;
           }
         ),
-        parcelType: Yup.string().required("Required Parcel Type"),
-        // description: Yup.string(),
+        parcelType: Yup.string().optional(),
       })
     )
   });
@@ -353,21 +352,29 @@ const MultiOrders = () => {
     const arrayofaddress = values.deliveryDetails.map((delivery, index) => {
       return delivery.address;
     })
+
+
+    const arrayofpostcode= values.deliveryDetails.map((delivery, index) => {
+      return delivery.postCode;
+    })
     const distancesAndDurations = []
     // const deliverylocations =[]
 
 
 
     // get pickup location from address
+    console.log(values.pickupDetails.address);
+    
     if (values.pickupDetails.address) {
       console.log("pickupDetails.address", values.pickupDetails.address);
 
       const mapApi = await getMapApi();
       const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
+console.log(apiKey);
 
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          values.pickupDetails.address
+          `${values.pickupDetails.address} ${values.pickupDetails.postCode}`
         )}&key=${apiKey}`
       );
 
@@ -408,10 +415,10 @@ const MultiOrders = () => {
 
       for (let index = 0; index < arrayofaddress.length; index++) {
         const address = arrayofaddress[index];
-        console.log("address", address);
+        console.log("address", `${address} ${arrayofpostcode[index]}`);
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            address
+            `${address} ${arrayofpostcode[index]}`
           )}&key=${apiKey}`
         );
         const data = await response.json();

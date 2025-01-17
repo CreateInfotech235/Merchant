@@ -193,6 +193,7 @@ console.log(initialValues.deliveryDetails);
           longitude: Yup.number().required("Required")
         }),
         cashOnDelivery: Yup.string().required("Required")
+        
       })
     ),
   });
@@ -365,7 +366,6 @@ console.log(initialValues.deliveryDetails);
       },
       deliveryDetails: {
         ...values.deliveryDetails,
-
         location: {
           latitude: deliverylocation.latitude,
           longitude: deliverylocation.longitude,

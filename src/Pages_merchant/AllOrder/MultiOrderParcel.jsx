@@ -107,12 +107,15 @@ function MultiOrderParcel() {
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit} sx={{ mb: 4 }}>
+
         <TextField
           label="Parcel Label"
           value={newParcel.label}
           onChange={(e) => setNewParcel({ ...newParcel, label: e.target.value })}
+
           required
-          sx={{ mr: 2 }}
+          sx={{ mr: 2  }}
+          style={{ "$ input[type='text']":{ border:"none"}}}
         />
         <Box sx={{ display: 'inline-flex', alignItems: 'center', mr: 2 }}>
           <Typography>Status:</Typography>

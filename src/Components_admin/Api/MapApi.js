@@ -39,8 +39,6 @@ export const updateMapApi = async (id ,mapKey ,status) => {
 };
 export const getMapApi = async () => {
   try {
-    console.log();
-
     const response = await API.get(`/auth/mapapi`);
     console.log(response);
     if (response.status === 200) {

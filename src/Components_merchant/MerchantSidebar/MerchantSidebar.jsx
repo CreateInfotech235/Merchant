@@ -120,31 +120,21 @@ const MerchantSidebar = () => {
             </Link>
           </li>
 
+          
+
+
           <li className="my-2">
-            <Button
-              className={`w-100 ${currentpage === 1 ? "active" : ""}`}
-              onClick={() => {handleSublinkClick(1);}}
-            >
-              <span className=" pe-4">
+            <Link to="/subscription-active" className="link" >
+              <Button
+                className={`w-100 ${currentpage === 1 ? "active" : ""}`}
+                onClick={() => { setCurrentpage(1); setSidebarVisible(false) }}
+              >
+           <span className=" pe-4">
                 <img src={subcription} style={{ width: "25px" }} alt="subscription" />
               </span>
-              Subscription
-              <span className={`arrow ${currentpage === 1 ? "rotate" : ""}`}>
-                <FaAngleRight />
-              </span>
-            </Button>
-            {(currentpage === 1 && showsublink === true) && (
-              <div className="submenuWrapper">
-                <ul className="submenu">
-                  {/* <li className={currentPath === "/subscription-plans" ? "active" : ""}>
-                    <Link to="/subscription-plans">Subscription Plans</Link>
-                  </li> */}
-                  <li className={currentPath === "/subscription-active" ? "active" : ""}>
-                    <Link to="/subscription-active" onClick={() => setSidebarVisible(false)}>Subscription Active Plan</Link>
-                  </li>
-                </ul>
-              </div>
-            )}
+              Subscription Active Plan
+              </Button>
+            </Link>
           </li>
 
           <li className="my-2">
@@ -201,13 +191,13 @@ const MerchantSidebar = () => {
               <div className="submenuWrapper">
                 <ul className="submenu">         
                    <li className={currentPath === "/multi-orders" ? "active" : ""}>
-                    <Link to="/multi-orders" onClick={() => setSidebarVisible(false)}>Multi Orders</Link>
+                    <Link to="/multi-orders" onClick={() => setSidebarVisible(false)}>Create Order</Link>
                   </li> 
                    <li className={currentPath === "/all-multi-order" ? "active" : ""}>
-                    <Link to="/all-multi-order" onClick={() => setSidebarVisible(false)}>All Multi Orders</Link>
+                    <Link to="/all-multi-order" onClick={() => setSidebarVisible(false)}>All Orders</Link>
                   </li> 
                   <li className={currentPath === "/trashed-multi-order" ? "active" : ""}>
-                    <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trashed Multi Orders</Link>
+                    <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trashed Order</Link>
                   </li>             
                   {/* <li className={currentPath === "/multi-order-parcel" ? "active" : ""}>
                     <Link to="/multi-order-parcel" onClick={() => setSidebarVisible(false)}>Multi Order Parcel Details</Link>
@@ -216,6 +206,21 @@ const MerchantSidebar = () => {
               </div>
             )}
           </li>
+
+          <li className="my-2">
+            <Link to="/multi-order-parcel" className="link" >
+              <Button
+                className={`w-100 ${currentpage === 4 ? "active" : ""}`}
+                onClick={() => { setCurrentpage(4); setSidebarVisible(false) }}
+              >
+                <span className=" pe-4">
+                <img src={order} style={{ width: "25px" }} alt="order" />
+              </span>
+                Order Parcel Type
+              </Button>
+            </Link>
+          </li>
+{/* 
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 4 ? "active" : ""}`}
@@ -233,12 +238,12 @@ const MerchantSidebar = () => {
               <div className="submenuWrapper">
                 <ul className="submenu">                    
                   <li className={currentPath === "/multi-order-parcel" ? "active" : ""}>
-                    <Link to="/multi-order-parcel" onClick={() => setSidebarVisible(false)}>Multi Order Parcel Details</Link>
+                    <Link to="/multi-order-parcel" onClick={() => setSidebarVisible(false)}></Link>
                   </li>             
                 </ul>
               </div>
             )}
-          </li>
+          </li> */}
 
           <li className="my-2">
             <Button
