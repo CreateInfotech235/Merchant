@@ -285,7 +285,7 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 6 ? "active" : ""}`}
-              onClick={() => {handleSublinkClick(5);}}
+              onClick={() => {handleSublinkClick(6);}}
             >
               <span className=" pe-4">
                 <img src={man} style={{ width: "25px" }} alt="delivery" />
