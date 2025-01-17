@@ -15,6 +15,7 @@ import {
   calculateDistancee,
   updateOrder,
 } from "../../Components_merchant/Api/Order";
+import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 
 const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   console.log("Order", Order);
@@ -33,6 +34,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialValues, setInitialValues] = useState({});
 console.log(initialValues.deliveryDetails);
+const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
 
   // const [isOrderUpdated, setIsOrderUpdated] = useState(false);
 
@@ -44,6 +46,16 @@ console.log(initialValues.deliveryDetails);
       setCustomerId(selectedCustomer?._id);
     }
   }, [customer]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const parcelTypeRes = await getMerchantParcelType();
+      if (parcelTypeRes.status) {
+        setParcleTypeDetail(parcelTypeRes.data);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // Get current location
@@ -192,13 +204,14 @@ console.log(initialValues.deliveryDetails);
           latitude: Yup.number().required("Required"),
           longitude: Yup.number().required("Required")
         }),
-        cashOnDelivery: Yup.string().required("Required")
-        
+        cashOnDelivery: Yup.string().required("Required"),
+        parcelType: Yup.string()
       })
     ),
   });
 
 
+ 
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);
@@ -1015,6 +1028,40 @@ console.log( payload, "payload");
 
                           <div className="input-error mb-1 col-4">
                             <label className="fw-thin p-0 pb-1 ">
+                              Select Parcel Type :
+                            </label>
+                            <Select
+                              name={`deliveryDetails.${index}.parcelType`}
+                              className="form-control p-0"
+                              styles={{
+                                control: (base) => ({ ...base, height: "3em" }),
+                              }}
+                              options={parcelTypeDetail.map((type) => ({
+                                value: type.parcelTypeId,
+                                label: type.label   
+                              }))}
+                              value={parcelTypeDetail.find(type => type.parcelTypeId === initialValues.deliveryDetails[index].parcelType)}
+                              placeholder="Select Parcel Type"
+                              onChange={(selectedOption) => {
+                                setInitialValues(prev => ({
+                                  ...prev,
+                                  deliveryDetails: prev.deliveryDetails.map((item, i) => 
+                                    i === index ? { ...item, parcelType: selectedOption.value } : item
+                                  )
+                                }));
+                              }}
+                            />
+                            <ErrorMessage
+                              name={`deliveryDetails.${index}.parcelType`}
+                              component="div" 
+                              className="error text-danger ps-2"
+                            />
+                          </div>
+
+
+
+                          <div className="input-error mb-1 col-4">
+                            <label className="fw-thin p-0 pb-1 ">
                               Delivery Postcode :
                             </label>
                             <Field
@@ -1117,6 +1164,7 @@ console.log( payload, "payload");
                             parcelsCount: 1,
                             paymentCollectionRupees: 0,
                             postCode: "",
+                            parcelType: "",
                           }]
                         }))
                       }}>
