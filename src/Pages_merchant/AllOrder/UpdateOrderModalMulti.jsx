@@ -13,9 +13,11 @@ import Select from "react-select";
 import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import {
   calculateDistancee,
-  updateOrder,
+  orderUpdateMulti,
 } from "../../Components_merchant/Api/Order";
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
+import { getMapApi } from "../../Components_admin/Api/MapApi";
+import { toast } from "react-toastify";
 
 const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   console.log("Order", Order);
@@ -123,6 +125,9 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
     fetchData();
   }, []);
 
+
+
+
   const formatDateTime = (isoString) => {
     if (!isoString) return "";
     const date = new Date(isoString);
@@ -153,7 +158,7 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
         postCode: Order?.pickupAddress?.postCode || "",
       },
       deliveryDetails: Order?.deliveryAddress,
-    });
+    });    
   }, [Order]);
 
   console.log("initialValues", initialValues);
@@ -210,6 +215,8 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
     ),
   });
 
+  
+
 
  
   function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -231,6 +238,11 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
     return deg * (Math.PI / 180);
   };
 
+  const calculateDistanceeinMiles = (value) => {
+    console.log("value", value);
+    return ((parseFloat(value.distance.text.replace(/[^\d.]/g, "")) * 0.621371).toFixed(2));
+  }
+
 
 
   const onSubmit = async (values, { setFieldValue }) => {
@@ -238,174 +250,170 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
     console.log("values",values);
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
-    let deliverylocation = [];
-    let pickuplocation = null;
-    var distanceMiles = null;
-    let distanceKm = null;
-    let duration = null;
+    const arrayoferror = []
+    let pickuplocation =
+      values.pickupDetails.location.latitude === null
+        ? null
+        : {
+          latitude: values.pickupDetails.location.latitude,
+          longitude: values.pickupDetails.location.longitude,
+        };
+    let deliverylocations = []
+
+    const arrayofaddress = values.deliveryDetails.map((delivery, index) => {
+      return delivery.address;
+    })
+
+
+    const arrayofpostcode= values.deliveryDetails.map((delivery, index) => {
+      return delivery.postCode;
+    })
+    const distancesAndDurations = []
+    // const deliverylocations =[]
+
 
     // Handle pickup location
-    if (
-      values.pickupDetails.location.latitude &&
-      values.pickupDetails.location.longitude
-    ) {
-      console.log("Enter in PickUp");
+   
+    if (values.pickupDetails.address) {
+      console.log("pickupDetails.address", values.pickupDetails.address);
 
-      if (values.pickupDetails.address) {
-        try {
-          const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
-          const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-              values.pickupDetails.address
-            )}&key=${apiKey}`
-          );
-          const data = await response.json();
+      const mapApi = await getMapApi();
+      const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
+console.log(apiKey);
+console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`);
 
-          if (data.results && data.results.length > 0) {
-            const { lat, lng } = data.results[0].geometry.location;
-            const formattedAddress = data.results[0]?.formatted_address;
-            const postalCodeComponent = data.results[0].address_components.find(
-              (component) => component.types.includes("postal_code")
-            );
-            const postalCode = postalCodeComponent
-              ? postalCodeComponent.long_name
-              : "";
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          `${values.pickupDetails.address} ${values.pickupDetails.postCode}`
+        )}&key=${apiKey}`
+      );
 
-            pickuplocation = { latitude: lat, longitude: lng };
-            // setFieldValue("pickupDetails.address", formattedAddress);
-            setFieldValue("pickupDetails.location.latitude", lat);
-            setFieldValue("pickupDetails.location.longitude", lng);
-            // setFieldValue("pickupDetails.postCode", postalCode);
-          } else {
-            alert("Pickup address not found. Please try again.");
-            return;
+      const data = await response.json();
+      console.log("pickupdata", data);
+      if (data.results && data.results.length > 0) {
+        console.log("pickupdata", data);
+        const { lat, lng } = data.results[0].geometry.location;
+        pickuplocation = { latitude: lat, longitude: lng };
+        console.log("pickuplocation", pickuplocation);
+        setInitialValues(prev => ({
+          ...prev,
+          pickupDetails: {
+            ...prev.pickupDetails,
+            location: { latitude: lat, longitude: lng }
           }
-        } catch (error) {
-          console.error("Error fetching pickup coordinates:", error);
-          alert("Error processing pickup address");
-          return;
-        }
+        }));
+        // setFieldValue("pickupDetails.location.latitude", lat);
+        // setFieldValue("pickupDetails.location.longitude", lng);
+      } else {
+        toast.error("Pickup address not found. Please try again.");
+        setIsUpdate(false);
+        return;
       }
     } else {
-      pickuplocation = values.pickupDetails.location;
+      toast.error("Please enter a pickup address.");
+      setIsUpdate(false);
+      return;
     }
+
 
     // Handle delivery location
-    if (
-      values.deliveryDetails.location.latitude &&
-      values.deliveryDetails.location.longitude
-    ) {
-      console.log("Enter in Delivery");
+    const mapApi = await getMapApi();
+    const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
 
-      if (values.deliveryDetails.address) {
-        try {
-          const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
-          const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-              values.deliveryDetails.address
-            )}&key=${apiKey}`
-          );
-          const data = await response.json();
-          console.log(data, "Locationn");
+    if (arrayofaddress) {
 
-          if (data.results && data.results.length > 0) {
-            const { lat, lng } = data.results[0].geometry.location;
-            const formattedAddress = data.results[0]?.formatted_address;
 
-            deliverylocation = { latitude: lat, longitude: lng };
-            // setFieldValue("deliveryDetails.address", formattedAddress);
-            setFieldValue("deliveryDetails.location.latitude", lat);
-            setFieldValue("deliveryDetails.location.longitude", lng);
+
+      for (let index = 0; index < arrayofaddress.length; index++) {
+        const address = arrayofaddress[index];
+        console.log("address", `${address} ${arrayofpostcode[index]}`);
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+            `${address} ${arrayofpostcode[index]}`
+          )}&key=${apiKey}`
+        );
+        const data = await response.json();
+        console.log("data", data);
+        if (data.results && data.results.length > 0) {
+          console.log("data", data);
+          if (data.status !== "ZERO_RESULTS") {   
+            const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
+            distancesAndDurations.push(await calculateDistancee(pickuplocation, deliverylocation))
+            deliverylocations.push(deliverylocation)
           } else {
-            alert("Delivery address not found. Please try again.");
-            return;
+            console.log("data", data);
+            arrayoferror.push(`in order ${index + 1} delivery address (${address} ${arrayofpostcode[index]}) not found. Please try again.`);
           }
-        } catch (error) {
-          console.error("Error fetching delivery coordinates:", error);
-          alert("Error processing delivery address");
-          return;
+        } else {
+          arrayoferror.push(`in order ${index + 1} delivery address (${address} ${arrayofpostcode[index]}) not found. Please try again.`);
         }
+
       }
-    } else {
-      deliverylocation = values.deliveryDetails.location;
-    }
 
-    console.log(
-      pickuplocation.latitude,
-      pickuplocation.longitude,
-      deliverylocation.latitude,
-      deliverylocation.longitude,
-      "sdfkgsdsfgsf"
-    );
+      if (arrayoferror.length > 0) {
+        console.log("arrayoferror", arrayoferror);
+        toast.error(arrayoferror.join("\n"));
+        arrayoferror = []
+        setIsUpdate(false);
+        return;
+      }
 
-    if (
-      pickuplocation.latitude &&
-      pickuplocation.longitude &&
-      deliverylocation.latitude &&
-      deliverylocation.longitude
-    ) {
-      console.log("Hello");
-      console.log(
-        pickuplocation.latitude,
-        pickuplocation.longitude,
-        deliverylocation.latitude,
-        deliverylocation.longitude
-      );
 
-      const distance = await calculateDistancee(
-        pickuplocation,
-        deliverylocation
-      );
-      console.log(distance.distance);
-      setFieldValue("distance", distance.distance.text);
-      setFieldValue("duration", distance.duration.text);
-      distanceKm = parseFloat(distance.distance.text.replace(/[^\d.]/g, ""));
-      distanceMiles = (distanceKm * 0.621371).toFixed(2); // Convert and round to 2 decimal places
-      distanceMiles = parseFloat(distanceMiles); // Ensure it's a number type
-      duration = distance.duration.text;
-      console.log(distance);
-    }
 
-    const payload = {
-      ...values,
-      dateTime: timestamp,
-      pickupDetails: {
-        ...values.pickupDetails,
-        dateTime: pictimestamp,
-        location: {
-          latitude: pickuplocation.latitude,
-          longitude: pickuplocation.longitude,
+
+      var payload = {
+        dateTime: timestamp,
+        deliveryManId: initialValues.deliveryManId,
+        pickupDetails: {
+          ...initialValues.pickupDetails,
+          dateTime: pictimestamp,
+          location: {
+            latitude: pickuplocation.latitude,
+            longitude: pickuplocation.longitude
+          }
         },
-      },
-      deliveryDetails: {
-        ...values.deliveryDetails,
-        location: {
-          latitude: deliverylocation.latitude,
-          longitude: deliverylocation.longitude,
-        },
-      },
-      distance: distanceMiles,
-      duration: duration,
-    };
-    console.log(payload);
+        merchant: merchant._id,
+        deliveryDetails: initialValues.deliveryDetails.map((delivery, index) => ({
+          address: delivery.address,
+          cashOnDelivery: delivery.cashOnDelivery,
+          description: delivery.description,
+          email: delivery.email,
+          mobileNumber: delivery.mobileNumber,
+          name: delivery.name,
+          parcelsCount: delivery.parcelsCount,
+          postCode: delivery.postCode,
+          subOrderId: delivery.subOrderId,
+          paymentCollectionRupees: delivery.paymentCollectionRupees,
+          distance: calculateDistanceeinMiles(distancesAndDurations[index]),
+          duration: distancesAndDurations[index]?.duration.text,
+          parcelType: delivery.parcelType,
+          location: {
+            latitude: deliverylocations[index]?.latitude,
+            longitude: deliverylocations[index]?.longitude
+          },
+          description: delivery.description,
+        }))
+      };
+      console.log("payload", payload);
 
-    if (!values.cashOnDelivery) {
-      delete payload.paymentCollectionRupees;
-    }
-console.log( payload, "payload");
-
-    try {
-      const res = await updateOrder(Order._id, payload);
-      if (res.status) {
+      const res1 = await orderUpdateMulti(Order._id, payload);
+      console.log("res1", res1);
+      if (res1.status) {
+        console.log("res1", res1);
         onHide();
-        navigate("/all-order");
+        navigate("/all-multi-order");
       }
-    } catch (error) {
-      console.error("Error updating order:", error);
-      alert("Failed to update order");
-    } finally {
+      return;
+    } else {
+      toast.error("Please enter delivery address");
       setIsUpdate(false);
     }
+
+    if (arrayoferror.length > 0) {
+      toast.error(arrayoferror.join("\n"));
+      setIsUpdate(false);
+    }
+    setIsUpdate(false);
   };
 
   return (
@@ -422,7 +430,15 @@ console.log( payload, "payload");
         >
           {({ setFieldValue, values }) => {
             return (
-              <Form className="create-order">
+              <Form 
+                className="create-order"
+                onKeyDown={(e) => {
+                  // Prevent form submission on Enter key except in textarea elements
+                  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                  }
+                }}
+              >
 
                 <div className="pick-up mt-2 row">
 
@@ -443,6 +459,7 @@ console.log( payload, "payload");
                         className="form-control w-25% h-100%"
                         placeholder="Date and Time"
                         defaultValue={new Date().toISOString().slice(0, 16)}
+                        disabled={isUpdate}
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
                       />
                       <ErrorMessage
@@ -462,6 +479,7 @@ console.log( payload, "payload");
                         className="form-control w-25% h-100%"
                         placeholder="Pickup Postcode"
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                        disabled={isUpdate}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -483,8 +501,10 @@ console.log( payload, "payload");
                           style={{
                             height: "3em",
                             border: "1px solid #E6E6E6",
-                            fontSize: "15px"
+                            fontSize: "15px",
+                      
                           }}
+                          disabled={isUpdate}
                         />
                         <ErrorMessage
                           name="pickupDetails.address"
@@ -505,6 +525,7 @@ console.log( payload, "payload");
                             lineHeight: "1"
                           }}
                           onClick={() => getCurrentLocation(setFieldValue)}
+                          disabled={isUpdate}
                         >
                           Use Current Location
                         </button>
@@ -550,6 +571,7 @@ console.log( payload, "payload");
                           border: "1px solid #E6E6E6",
                           borderRadius: "5px",
                         }}
+                        disabled={isUpdate}
                       />
                       <ErrorMessage
                         name="pickupDetails.mobileNumber"
@@ -572,6 +594,7 @@ console.log( payload, "payload");
                           border: "1px solid #E6E6E6",
                           borderRadius: "5px",
                         }}
+                        disabled={isUpdate}
                       />
                       <ErrorMessage
                         name="pickupDetails.name"
@@ -594,6 +617,7 @@ console.log( payload, "payload");
                           border: "1px solid #E6E6E6",
                           borderRadius: "5px",
                         }}
+                        disabled={isUpdate}
                       />
                       <ErrorMessage
                         name="pickupDetails.email"
@@ -617,6 +641,7 @@ console.log( payload, "payload");
                           borderRadius: "5px",
                           height: "3em",
                         }}
+                        disabled={isUpdate}
                       />
                       <ErrorMessage
                         name="pickupDetails.description"
@@ -644,6 +669,10 @@ console.log( payload, "payload");
                             deliveryManId: e.target.value
                           }));
                         }}
+                        style={{
+                          backgroundColor: isUpdate ? "#e9ecef" : "white",
+                        }}
+                        disabled={isUpdate}
                       >
                         <option value="" className="text-gray-500">
                           Select Delivery Man
@@ -752,8 +781,9 @@ console.log( payload, "payload");
                               className="form-control mb-1 p-0"
 
                               styles={{
-                                control: (base) => ({ ...base,   height: "3em" }),
+                                control: (base) => ({ ...base,   height: "3em",backgroundColor: isUpdate ? "#e9ecef" : "white", }),
                               }}
+                              disabled={isUpdate}
                               options={customer.map((cust) => ({
                                 value: cust._id,
                                 label: cust.firstName,
@@ -829,6 +859,9 @@ console.log( payload, "payload");
                               type="number"
                               name={`deliveryDetails.${index}.parcelsCount`}
                               onChange={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                }
                                 setInitialValues(prev => ({
                                   ...prev,
                                   deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: e.target.value } : item)
@@ -841,6 +874,7 @@ console.log( payload, "payload");
                                 border: "1px solid #E6E6E6",
                                 borderRadius: "5px",
                               }}
+                              disabled={isUpdate}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.parcelsCount`}
@@ -869,6 +903,7 @@ console.log( payload, "payload");
                                       deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value } : item)
                                     }));
                                   }}
+                                  disabled={isUpdate}
                                   value="true"
                                   className="form-check-input"
                                   style={{
@@ -891,6 +926,7 @@ console.log( payload, "payload");
                                       deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value } : item)
                                     }));
                                   }}
+                                  disabled={isUpdate}
                                   value="false"
                                   className="form-check-input"
                                   style={{
@@ -922,6 +958,7 @@ console.log( payload, "payload");
                                   }));
                                 }}
                                 className="form-control mt-0"
+                                disabled={isUpdate}
                                 style={{ height: "3em", border: "1px solid #E6E6E6" }}
                                 placeholder="Enter Payment Collection pounds  "
 
@@ -944,6 +981,7 @@ console.log( payload, "payload");
                               name={`deliveryDetails.${index}.name`}
                               className="form-control"
                               placeholder="Customer Name"
+                              disabled={isUpdate}
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
@@ -976,6 +1014,7 @@ console.log( payload, "payload");
                               name={`deliveryDetails.${index}.email`}
                               className="form-control"
                               placeholder="Delivery Email"
+                              disabled={isUpdate}
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
@@ -1005,6 +1044,7 @@ console.log( payload, "payload");
                               name={`deliveryDetails.${index}.mobileNumber`}
                               className="form-control"
                               placeholder="Delivery Contact Number"
+                              disabled={isUpdate}
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
@@ -1033,8 +1073,9 @@ console.log( payload, "payload");
                             <Select
                               name={`deliveryDetails.${index}.parcelType`}
                               className="form-control p-0"
+                              disabled={isUpdate}
                               styles={{
-                                control: (base) => ({ ...base, height: "3em" }),
+                                control: (base) => ({ ...base, height: "3em",backgroundColor: isUpdate ? "#e9ecef" : "white", }),
                               }}
                               options={parcelTypeDetail.map((type) => ({
                                 value: type.parcelTypeId,
@@ -1068,6 +1109,7 @@ console.log( payload, "payload");
                               type="text"
                               name={`deliveryDetails.${index}.postCode`}
                               className="form-control w-25% h-100%"
+                              disabled={isUpdate}
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
@@ -1092,6 +1134,7 @@ console.log( payload, "payload");
                               as="textarea"
                               name={`deliveryDetails.${index}.address`}
                               className="form-control w-25% h-100%"
+                              disabled={isUpdate}
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
@@ -1119,6 +1162,7 @@ console.log( payload, "payload");
                               name={`deliveryDetails.${index}.description`}
                               className="form-control"
                               placeholder="Delivery Instraction"
+                              disabled={isUpdate}
                               rows="2"
                               onChange={(e) => {
                                 setInitialValues(prev => ({
@@ -1144,7 +1188,7 @@ console.log( payload, "payload");
 
                     <div className={`d-flex  mt-2 ${isSingle ? "justify-content-end" : "justify-content-between"}`}>
 
-                      <button className="btn btn-primary mt-3" style={{display:isSingle ? "none" : "" }} type="button" onClick={() => {
+                      <button className="btn btn-primary mt-3" style={{display:isSingle ? "none" : "" }} disabled={isUpdate} type="button" onClick={() => {
                         setInitialValues(prev => ({
                           ...prev,
                           deliveryDetails: [...prev.deliveryDetails, {

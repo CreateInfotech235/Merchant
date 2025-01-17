@@ -519,6 +519,11 @@ console.log(apiKey);
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={onSubmit}
+          onKeyDown={(e)=>{if(e.key === 'Enter'){
+            e.preventDefault();
+            onSubmit(values, { setFieldValue });
+          }}}
+          
         >
           {({ setFieldValue, values }) => {
             return (
@@ -544,6 +549,7 @@ console.log(apiKey);
                         placeholder="Date and Time"
                         defaultValue={new Date().toISOString().slice(0, 16)}
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                        disabled={isOrderCreated}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -562,6 +568,7 @@ console.log(apiKey);
                         className="form-control w-25% h-100%"
                         placeholder="Pickup Postcode"
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                        disabled={isOrderCreated}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -585,6 +592,8 @@ console.log(apiKey);
                             border: "1px solid #E6E6E6",
                             fontSize: "15px"
                           }}
+                        disabled={isOrderCreated}
+
                         />
                         <ErrorMessage
                           name="pickupDetails.address"
@@ -605,6 +614,7 @@ console.log(apiKey);
                             lineHeight: "1"
                           }}
                           onClick={() => getCurrentLocation(setFieldValue)}
+                          disabled={isOrderCreated}
                         >
                           Use Current Location
                         </button>
@@ -650,6 +660,7 @@ console.log(apiKey);
                           border: "1px solid #E6E6E6",
                           borderRadius: "5px",
                         }}
+                        disabled={isOrderCreated}
                       />
                       <ErrorMessage
                         name="pickupDetails.mobileNumber"
@@ -672,6 +683,7 @@ console.log(apiKey);
                           border: "1px solid #E6E6E6",
                           borderRadius: "5px",
                         }}
+                        disabled={isOrderCreated}
                       />
                       <ErrorMessage
                         name="pickupDetails.name"
@@ -694,6 +706,7 @@ console.log(apiKey);
                           border: "1px solid #E6E6E6",
                           borderRadius: "5px",
                         }}
+                        disabled={isOrderCreated}
                       />
                       <ErrorMessage
                         name="pickupDetails.email"
@@ -717,6 +730,7 @@ console.log(apiKey);
                           borderRadius: "5px",
                           height: "3em",
                         }}
+                        disabled={isOrderCreated}
                       />
                       <ErrorMessage
                         name="pickupDetails.description"
@@ -744,6 +758,10 @@ console.log(apiKey);
                             deliveryManId: e.target.value
                           }));
                         }}
+                        disabled={isOrderCreated}
+                        style={{
+                          backgroundColor: isOrderCreated ? "#e9ecef" : "white",
+                        }}
                       >
                         <option value="" className="text-gray-500">
                           Select Delivery Man
@@ -766,7 +784,7 @@ console.log(apiKey);
                                   key={index}
                                   value={"admin"}
                                   className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
-                                  disabled
+                                  disabled={isOrderCreated} 
                                 >
                                   Admin
                                 </option>
@@ -851,9 +869,10 @@ console.log(apiKey);
                             <Select
                               name={`deliveryDetails.${index}.customerId`}
                               className="form-control mb-1 p-0"
+                              disabled={isOrderCreated}
 
                               styles={{
-                                control: (base) => ({ ...base, height: "3em" }),
+                                control: (base) => ({ ...base, height: "3em",backgroundColor: isOrderCreated ? "#e9ecef" : "white",}),
                               }}
                               options={customer.map((cust) => ({
                                 value: cust._id,
@@ -943,6 +962,7 @@ console.log(apiKey);
                                 border: "1px solid #E6E6E6",
                                 borderRadius: "5px",
                               }}
+                              disabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.parcelsCount`}
@@ -978,6 +998,7 @@ console.log(apiKey);
                                     height: "1.2em",
                                     width: "1.2em",
                                   }}
+                                  disabled={isOrderCreated}
                                 />
                                 Yes
                               </label>
@@ -1000,6 +1021,7 @@ console.log(apiKey);
                                     height: "1.2em",
                                     width: "1.2em",
                                   }}
+                                  disabled={isOrderCreated}
                                 />
                                 No
                               </label>
@@ -1026,6 +1048,7 @@ console.log(apiKey);
                                 className="form-control mt-0"
                                 style={{ height: "3em", border: "1px solid #E6E6E6" }}
                                 placeholder="Enter Payment Collection pounds  "
+                                disabled={isOrderCreated}
 
                               />
                               <ErrorMessage
@@ -1057,6 +1080,7 @@ console.log(apiKey);
                                 border: "1px solid #E6E6E6",
                                 borderRadius: "5px",
                               }}
+                              disabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.name`}
@@ -1089,6 +1113,7 @@ console.log(apiKey);
                                 border: "1px solid #E6E6E6",
                                 borderRadius: "5px",
                               }}
+                              disabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.email`}
@@ -1118,6 +1143,7 @@ console.log(apiKey);
                                 border: "1px solid #E6E6E6",
                                 borderRadius: "5px",
                               }}
+                              disabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.mobileNumber`}
@@ -1134,7 +1160,7 @@ console.log(apiKey);
                               name={`deliveryDetails.${index}.parcelType`}
                               className="form-control p-0"
                               styles={{
-                                control: (base) => ({ ...base, height: "3em" }),
+                                control: (base) => ({ ...base, height: "3em",backgroundColor: isOrderCreated ? "#e9ecef" : "white",}),
                               }}
                               options={parcelTypeDetail.map((type) => ({
                                 value: type.parcelTypeId,
@@ -1149,6 +1175,7 @@ console.log(apiKey);
                                   )
                                 }));
                               }}
+                              disabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.parcelType`}
@@ -1175,6 +1202,7 @@ console.log(apiKey);
                               }}
                               placeholder="Delivery Postcode"
                               style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                              disabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.postCode`}
@@ -1199,6 +1227,7 @@ console.log(apiKey);
                               }}
                               placeholder="Delivery Address"
                               style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                              disabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.address`}
@@ -1230,6 +1259,7 @@ console.log(apiKey);
                                 borderRadius: "5px",
                                 height: "3em"
                               }}
+                              disabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.description`}
@@ -1243,7 +1273,8 @@ console.log(apiKey);
 
                     <div className="d-flex justify-content-between mt-2">
 
-                      <button className="btn btn-primary mt-3" type="button" onClick={() => {
+                      <button className="btn btn-primary mt-3" type="button" disabled={isOrderCreated}   onClick={() => {
+                        
                         setInitialValues(prev => ({
                           ...prev,
                           deliveryDetails: [...prev.deliveryDetails, {
@@ -1272,10 +1303,11 @@ console.log(apiKey);
                       {/* Submit Button */}
                       <div className="d-flex justify-content-end">
                         <button
-                          type="submit"
+                          type="button"
                           className="btn btn-secondary mt-1 me-4"
                           onClick={() => naviagte("/all-multi-order")}
                           style={{ height: "3em" }}
+                          // disabled={isOrderCreated}
                         >
                           Cancel
                         </button>
