@@ -5,10 +5,13 @@ import { FaAngleRight } from "react-icons/fa";
 import logo from "../../assets_mercchant/logo-new.png";
 import dashboard from '../../assets_mercchant/hugeicons_dashboard-square-add.png'
 import subcription from '../../assets_mercchant/subcription.svg'
-import man from '../../assets_mercchant/man.svg'
-import customer from '../../assets_mercchant/customer.png'
-import order from '../../assets_mercchant/order-delivery (1).png'
+import man from '../../assets_mercchant/delivery-man 1.png'
+import customer from '../../assets_mercchant/carbon_customer.png'
+import order from '../../assets_mercchant/icon-park-outline_transaction-order.png'
 import support from '../../assets_mercchant/support.png'
+import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
+import { BsBoxSeam } from "react-icons/bs";
+import { LuBoxes } from "react-icons/lu";
 import "./MerchantSidebar.css";
 
 const MerchantSidebar = () => {
@@ -171,7 +174,7 @@ const MerchantSidebar = () => {
               onClick={() => {handleSublinkClick(3);}}
             >
               <span className=" pe-4">
-                <img src={order} style={{ width: "25px" }} alt="order" />
+                <LuBoxes style={{ fontSize: "27px" ,color:"#fff",fontWeight:"lighter"}} alt="order" />
               </span>
               Multi Orders
               <span className={`arrow ${currentpage === 3 ? "rotate" : ""}`}>
@@ -205,9 +208,9 @@ const MerchantSidebar = () => {
                 onClick={() => { setCurrentpage(4); setSidebarVisible(false) }}
               >
                 <span className=" pe-4">
-                <img src={order} style={{ width: "25px" }} alt="order" />
+                <BsBoxSeam style={{ fontSize: "27px" ,color:"#fff",fontWeight:"lighter"}} alt="order" />
               </span>
-                Order Parcel Type
+                Parcel Type
               </Button>
             </Link>
           </li>
@@ -218,7 +221,7 @@ const MerchantSidebar = () => {
                 onClick={() => { setCurrentpage(8); setSidebarVisible(false) }}
               >
                 <span className=" pe-4">
-                <img src={order} style={{ width: "25px" }} alt="order" />
+                <LiaFileInvoiceDollarSolid style={{ fontSize: "27px" ,color:"#fff"}} alt="order" />
               </span>
               Invoice Format
               </Button>

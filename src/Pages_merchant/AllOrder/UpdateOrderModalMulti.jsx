@@ -759,11 +759,13 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                             <div>
                               {
                                 index > 0 && (
-                                  <button className="btn btn-danger" onClick={() => {
+                                  <button className="btn btn-danger" disabled={isUpdate} onClick={() => {
                                     setInitialValues(prev => ({
                                       ...prev,
                                       deliveryDetails: prev?.deliveryDetails?.filter((_, i) => i !== index)
                                     }));
+                                    
+
                                   }}>
                                     Delete
                                   </button>
