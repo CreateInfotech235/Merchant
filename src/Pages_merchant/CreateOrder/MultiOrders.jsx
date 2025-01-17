@@ -869,7 +869,7 @@ console.log(apiKey);
                             <Select
                               name={`deliveryDetails.${index}.customerId`}
                               className="form-control mb-1 p-0"
-                              disabled={isOrderCreated}
+                              isDisabled={isOrderCreated}
 
                               styles={{
                                 control: (base) => ({ ...base, height: "3em",backgroundColor: isOrderCreated ? "#e9ecef" : "white",}),
@@ -1154,7 +1154,7 @@ console.log(apiKey);
                           
                           <div className="input-error mb-1 col-4">
                             <label className="fw-thin p-0 pb-1 ">
-                              Select Parcel Type :
+                              Select Parcel Type (Optional):
                             </label>
                             <Select
                               name={`deliveryDetails.${index}.parcelType`}
@@ -1175,7 +1175,7 @@ console.log(apiKey);
                                   )
                                 }));
                               }}
-                              disabled={isOrderCreated}
+                              isDisabled={isOrderCreated}
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.parcelType`}

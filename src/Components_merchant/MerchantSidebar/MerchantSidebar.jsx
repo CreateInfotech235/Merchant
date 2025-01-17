@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { FaAngleRight } from "react-icons/fa";
 import logo from "../../assets_mercchant/logo-new.png";
-import dashboard from '../../assets_mercchant/dashboard.svg'
+import dashboard from '../../assets_mercchant/hugeicons_dashboard-square-add.png'
 import subcription from '../../assets_mercchant/subcription.svg'
 import man from '../../assets_mercchant/man.svg'
 import customer from '../../assets_mercchant/customer.png'
@@ -41,7 +41,7 @@ const MerchantSidebar = () => {
       num: 1,
     },
     {
-      path: ["/create-order", "/all-order","/order-location", "/trashed-order", "/invoice-format"],
+      path: ["/create-order", "/all-order","/order-location", "/trashed-order", ],
       num: 2,
     },
     {
@@ -63,6 +63,10 @@ const MerchantSidebar = () => {
     {
       path: ["/Show-list-of-support-ticket"],
       num: 7,
+    },
+    {
+      path: ["/invoice-format"],
+      num: 8,
     },
   ]
 
@@ -123,19 +127,6 @@ const MerchantSidebar = () => {
           
 
 
-          <li className="my-2">
-            <Link to="/subscription-active" className="link" >
-              <Button
-                className={`w-100 ${currentpage === 1 ? "active" : ""}`}
-                onClick={() => { setCurrentpage(1); setSidebarVisible(false) }}
-              >
-           <span className=" pe-4">
-                <img src={subcription} style={{ width: "25px" }} alt="subscription" />
-              </span>
-              Subscription Active Plan
-              </Button>
-            </Link>
-          </li>
 
           <li className="my-2">
             <Button
@@ -166,9 +157,9 @@ const MerchantSidebar = () => {
                   <li className={currentPath === "/trashed-order" ? "active" : ""}>
                     <Link to="/trashed-order" onClick={() => setSidebarVisible(false)}>Trashed Order</Link>
                   </li>
-                  <li className={currentPath === "/invoice-format" ? "active" : ""}>
+                  {/* <li className={currentPath === "/invoice-format" ? "active" : ""}>
                     <Link to="/invoice-format" onClick={() => setSidebarVisible(false)} >Invoice Format</Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             )}
@@ -217,6 +208,19 @@ const MerchantSidebar = () => {
                 <img src={order} style={{ width: "25px" }} alt="order" />
               </span>
                 Order Parcel Type
+              </Button>
+            </Link>
+          </li>
+          <li className="my-2">
+            <Link to="/invoice-format" className="link" >
+              <Button
+                className={`w-100 ${currentpage === 8 ? "active" : ""}`}
+                onClick={() => { setCurrentpage(8); setSidebarVisible(false) }}
+              >
+                <span className=" pe-4">
+                <img src={order} style={{ width: "25px" }} alt="order" />
+              </span>
+              Invoice Format
               </Button>
             </Link>
           </li>
@@ -352,6 +356,22 @@ const MerchantSidebar = () => {
                 </ul>
               </div>
             )}
+          </li>
+
+
+          
+          <li className="my-2">
+            <Link to="/subscription-active" className="link" >
+              <Button
+                className={`w-100 ${currentpage === 1 ? "active" : ""}`}
+                onClick={() => { setCurrentpage(1); setSidebarVisible(false) }}
+              >
+           <span className=" pe-4">
+                <img src={subcription} style={{ width: "25px" }} alt="subscription" />
+              </span>
+              Subscription
+              </Button>
+            </Link>
           </li>
 
           {/* <li className="my-2">

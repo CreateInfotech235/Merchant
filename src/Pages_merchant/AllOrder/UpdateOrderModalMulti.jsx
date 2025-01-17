@@ -783,7 +783,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                               styles={{
                                 control: (base) => ({ ...base,   height: "3em",backgroundColor: isUpdate ? "#e9ecef" : "white", }),
                               }}
-                              disabled={isUpdate}
+                              isDisabled={isUpdate}
                               options={customer.map((cust) => ({
                                 value: cust._id,
                                 label: cust.firstName,
@@ -1068,12 +1068,12 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
 
                           <div className="input-error mb-1 col-4">
                             <label className="fw-thin p-0 pb-1 ">
-                              Select Parcel Type :
+                              `Select Parcel Type (Optional) :`
                             </label>
                             <Select
                               name={`deliveryDetails.${index}.parcelType`}
                               className="form-control p-0"
-                              disabled={isUpdate}
+                              isDisabled={isUpdate}
                               styles={{
                                 control: (base) => ({ ...base, height: "3em",backgroundColor: isUpdate ? "#e9ecef" : "white", }),
                               }}
