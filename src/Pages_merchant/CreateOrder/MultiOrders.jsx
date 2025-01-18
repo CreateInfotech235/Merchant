@@ -115,7 +115,13 @@ const MultiOrders = () => {
 
         setDeliveryMen(mergedDeliveryMen);
       }
-      if (customerRes?.status) setCustomer(customerRes?.data || []);
+      console.log(customerRes);
+      
+      if (customerRes?.status) {
+      const filteredCustomer = customerRes?.data?.filter(customer => customer.trashed == false);
+      console.log(filteredCustomer);
+        setCustomer(filteredCustomer || []);
+      }
       setIsLoading(false);
     };
 
