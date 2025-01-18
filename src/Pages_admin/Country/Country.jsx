@@ -32,7 +32,7 @@ const Country = () => {
     try {
       const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
       const response = await fetch(
-        `https://create-courier-8.onrender.com//admin/country?pageCount=${currentPage}&pageLimit=${itemsPerPage}${searchParam}`,
+        `https://create-courier-8.onrender.com/admin/country?pageCount=${currentPage}&pageLimit=${itemsPerPage}${searchParam}`,
         {
           method: "GET",
           headers: {
