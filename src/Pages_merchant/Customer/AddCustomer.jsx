@@ -68,6 +68,8 @@ const AddUser = () => {
     }
   };
 
+
+
   const handleFileSelect = (e) => {
     setSelectedFile(e.target.files[0]);
   };
@@ -105,7 +107,6 @@ const AddUser = () => {
     const merchantId = localStorage.getItem("merchnatId");
     const reader = new FileReader();
     setIsUploading(true);
-    
     reader.onload = async (e) => {
       try {
         const data = new Uint8Array(e.target.result);
@@ -118,17 +119,26 @@ const AddUser = () => {
         const updatedData = jsonData.map(customer => ({
           ...customer,
           merchantId: merchantId,
-          mobileNumber: customer.mobileNumber.toString()
+          firstName: String(customer.firstName || '-'),
+          lastName: String(customer.lastName || '-'),
+          country: String(customer.country || '-'),
+          city: String(customer.city || '-'),
+          address: String(customer.address || '-'),
+          postCode: String(customer.postCode || '-'),
+          mobileNumber: String(customer.mobileNumber || '-'),
+          email: String(customer.email || '-')
         }));
         console.log("updatedData", updatedData);
-        return;
+        // return;
         const res = await addCustomerExal(updatedData);
-        console.log("res", res);
+        // console.log("res", res);
         if (res.status) {
+          console.log("res.data", res.data);
           if (!res.data?.failed || res.data.failed.length === 0) {
             localStorage.removeItem('failedCustomers');
             navigate("/all-customer");
           } else {
+            console.log("res.data.failed", res.data.failed);
             setFailedCustomers(res.data.failed);
             localStorage.setItem('failedCustomers', JSON.stringify(res.data.failed));
             toast.warning(`${res.data.failed.length} customers failed to upload. Click 'Download Failed Data' to get the details.`);

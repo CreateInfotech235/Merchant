@@ -84,7 +84,7 @@ const MultiOrders = () => {
       if (deliveryManRes.data || deliveryMans.data) {
         // Filter active delivery men from first source
         const activeDeliveryMen =
-          deliveryManRes.data?.filter((man) => man.status !== "DISABLE") || [];
+          deliveryManRes.data?.filter((man) => man.status !== "DISABLE" && man.trashed !== true) || [];
         const formattedAdminDeliveryMen =
           deliveryMans.data?.map((man) => ({
             ...man,
@@ -773,6 +773,7 @@ console.log(apiKey);
                           Select Delivery Man
                         </option>
                         {deliveryMan.map((data, index) => {
+                         console.log("data", data);
                           let distance = "";
                           if (currentLocation && data.location) {
                             distance = calculateDistance(
