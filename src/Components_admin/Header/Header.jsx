@@ -104,6 +104,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
   }, []);
 
   const handleLogout = async () => {
+    console.log("logout");
     try {
       // Retrieve the refresh token from local storage
       const refreshToken = localStorage.getItem("refreshTokenForAdmin");
@@ -118,7 +119,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
 
       // Make the PATCH request to log out
       const response = await axios.patch(
-        "https://create-courier-8.onrender.com/admin/auth/logout",
+        "http://localhost:8001/admin/auth/logout",
         {
           refreshToken: refreshToken,
           personType: "ADMIN",
@@ -130,6 +131,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
           },
         }
       );
+        console.log(response);
 
       // Handle successful logout
       if (response.status === 200 && response.data.status === "SUCCESS") {
@@ -142,9 +144,16 @@ const Header = ({ toggleThemeMode, themeMode }) => {
         // Redirect to login page after logout
         window.location.href = "/";
       } else {
+        localStorage.removeItem("refreshTokenForAdmin");
+        localStorage.removeItem("accessTokenForAdmin");
+        window.location.href = "/";
+
         console.error("Logout failed:", response.data.message);
       }
     } catch (error) {
+      localStorage.removeItem("refreshTokenForAdmin");
+      localStorage.removeItem("accessTokenForAdmin");
+      window.location.href = "/";
       console.error("Error during logout:", error);
     }
   };
