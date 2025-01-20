@@ -32,7 +32,7 @@ export const addCustomer = async (data) => {
     // console.log("tampdata", tampdata);
     // Send the tampdata to the API
     console.log(tampdata);
-    
+
     const response = await API.post(`/customer/auth/signUp`, tampdata);
     // Log the response for debugging
     // console.log("response", response);
@@ -55,10 +55,10 @@ export const addCustomer = async (data) => {
 };
 export const addCustomerExal = async (data) => {
   try {
-   
-;
+
+    ;
     // console.log("tampdata", data);
-  
+
     const response = await API.post(`/customer/auth/signUpExal`, data);
     console.log("response", response);
 

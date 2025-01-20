@@ -77,6 +77,7 @@ const Customers = () => {
         customer.email.toLowerCase().includes(query))
     );
   });
+  console.log(filteredCustomers, 'filteredCustomers');
 
   const handleLocationClick = (coordinates) => {
     if (coordinates && coordinates.length === 2) {
@@ -148,11 +149,12 @@ const Customers = () => {
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
                 <th className="p-3">Customer ID</th>
+                <th className="p-3">NHS Number</th>
                 <th className="p-3">First Name</th>
                 <th className="p-3">Last Name</th>
                 <th className="p-3">Address</th>
-                <th className="p-3">Email</th>
                 <th className="p-3">Postcode</th>
+                <th className="p-3">Email</th>
                 <th className="p-3">Actions</th>
               </tr>
             </thead>
@@ -180,11 +182,13 @@ const Customers = () => {
                   customer.trashed === false ? (
                     <tr key={index}>
                       <td className="p-3">{customer.showCustomerNumber}</td>
+                      <td className="p-3">{customer.NHS_Number}</td>
                       <td className="p-3">{customer.firstName}</td>
                       <td className="p-3">{customer.lastName}</td>
                       <td className="p-3">{customer.address}</td>
-                      <td className="p-3">{customer.email}</td>
+                      {/* <td className="p-3">{customer.phoneNumber}</td> */}
                       <td className="p-3">{customer.postCode}</td>
+                      <td className="p-3">{customer.email}</td>
                       <td className="table-head2">
                         <div className="d-flex align-items-center justify-content-center">
                           <button
