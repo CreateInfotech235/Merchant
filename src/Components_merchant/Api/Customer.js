@@ -31,6 +31,8 @@ export const addCustomer = async (data) => {
     // Log the tampdata to confirm it's correctly constructed
     // console.log("tampdata", tampdata);
     // Send the tampdata to the API
+    console.log(tampdata);
+    
     const response = await API.post(`/customer/auth/signUp`, tampdata);
     // Log the response for debugging
     // console.log("response", response);

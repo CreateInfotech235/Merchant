@@ -19,13 +19,14 @@ const AddUser = () => {
 
   const initialValues = {
     firstName: "",
-    lastName: "", 
+    lastName: "",
     country: "",
     city: "",
     address: "",
     postCode: "",
     mobileNumber: "",
     email: "",
+    NHS_Number: ""
   };
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const AddUser = () => {
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required("first name is required"),
-    lastName: Yup.string().required("last is required"), 
+    lastName: Yup.string().required("last is required"),
     mobileNumber: Yup.string().required("Contact is required"),
     email: Yup.string()
       .email("Invalid email format")
@@ -56,6 +57,7 @@ const AddUser = () => {
     city: Yup.string().required("City is required"),
     address: Yup.string().required("Address is required"),
     postCode: Yup.string().required("PostCode is required"),
+    NHS_Number: Yup.string().optional()
   });
 
   const navigate = useNavigate();
@@ -82,9 +84,9 @@ const AddUser = () => {
 
     // Create workbook and worksheet
     const wb = XLSX.utils.book_new();
-    
+
     // Map failed customers to only include relevant fields
-    const cleanedData = failedCustomers.map(({data, error}) => ({
+    const cleanedData = failedCustomers.map(({ data, error }) => ({
       ...data,
       error
     }));
@@ -115,7 +117,7 @@ const AddUser = () => {
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
         console.log(jsonData);
-        
+
         const updatedData = jsonData.map(customer => ({
           ...customer,
           merchantId: merchantId,
@@ -126,7 +128,8 @@ const AddUser = () => {
           address: String(customer.address || '-'),
           postCode: String(customer.postCode || '-'),
           mobileNumber: String(customer.mobileNumber || '-'),
-          email: String(customer.email || '-')
+          email: String(customer.email || '-'),
+          NHS_Number: String(customer.NHS_Number || '')
         }));
         console.log("updatedData", updatedData);
         // return;
@@ -169,10 +172,10 @@ const AddUser = () => {
             id="excelUpload"
             disabled={isUploading}
           />
-          <label 
+          <label
             htmlFor="excelUpload"
             className="btn btn-success me-2"
-            style={{cursor: isUploading ? 'not-allowed' : 'pointer'}}
+            style={{ cursor: isUploading ? 'not-allowed' : 'pointer' }}
           >
             Select Excel File
           </label>
@@ -196,201 +199,222 @@ const AddUser = () => {
         </div>
       </div>
 
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-    >
-      {(formik) => (
-        <Form className="user-form">
-          {/* Form fields for Name, Contact, Email */}
-          <div className="row input-box">
-            {/* Name Field */}
-            <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <Field
-                type="text"
-                name="firstName"
-                className="form-control"
-                placeholder="First Name"
-                style={{
-                  height: "4.5em",
-                  border: "1px solid #E6E6E6",
-                  borderRadius: "5px",
-                }}
-              />
-              <ErrorMessage
-                name="firstName"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
-            <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <Field
-                type="text"
-                name="lastName"
-                className="form-control"
-                placeholder="Last Name"
-                style={{
-                  height: "4.5em",
-                  border: "1px solid #E6E6E6",
-                  borderRadius: "5px",
-                }}
-              />
-              <ErrorMessage
-                name="lastName"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
-
-            {/* Contact Field */}
-            <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <div className="location">
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={onSubmit}
+      >
+        {(formik) => (
+          <Form className="user-form">
+            {/* Form fields for Name, Contact, Email */}
+            <div className="row input-box">
+              {/* Name Field */}
+              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
                 <Field
                   type="text"
-                  name="mobileNumber"
+                  name="firstName"
                   className="form-control"
-                  placeholder="Contact Number"
+                  placeholder="First Name"
                   style={{
                     height: "4.5em",
                     border: "1px solid #E6E6E6",
                     borderRadius: "5px",
                   }}
                 />
-                <div className="imgs">
-                  <img src={phone} className="location-img" alt="Phone" />
+                <ErrorMessage
+                  name="firstName"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
+              </div>
+              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+                <Field
+                  type="text"
+                  name="lastName"
+                  className="form-control"
+                  placeholder="Last Name"
+                  style={{
+                    height: "4.5em",
+                    border: "1px solid #E6E6E6",
+                    borderRadius: "5px",
+                  }}
+                />
+                <ErrorMessage
+                  name="lastName"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
+              </div>
+
+              {/* Contact Field */}
+              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+                <div className="location">
+                  <Field
+                    type="text"
+                    name="mobileNumber"
+                    className="form-control"
+                    placeholder="Contact Number"
+                    style={{
+                      height: "4.5em",
+                      border: "1px solid #E6E6E6",
+                      borderRadius: "5px",
+                    }}
+                  />
+                  <div className="imgs">
+                    <img src={phone} className="location-img" alt="Phone" />
+                  </div>
                 </div>
+                <ErrorMessage
+                  name="mobileNumber"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
               </div>
-              <ErrorMessage
-                name="mobileNumber"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
 
-            <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <div className="location">
-                <Field
-                  type="email"
+              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+                <div className="location">
+                  <Field
+                    type="email"
+                    name="email"
+                    className="form-control"
+                    placeholder="Email"
+                    style={{
+                      height: "4.5em",
+                      border: "1px solid #E6E6E6",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
+                <ErrorMessage
                   name="email"
-                  className="form-control"
-                  placeholder="Email"
-                  style={{
-                    height: "4.5em",
-                    border: "1px solid #E6E6E6",
-                    borderRadius: "5px",
-                  }}
+                  component="div"
+                  className="error text-danger ps-2"
                 />
-              </div>
-              <ErrorMessage
-                name="email"
-                component="div"
-                className="error text-danger ps-2"
-              />
 
-            </div>
-<div className="input-error col-10 mb-3">
-              <div className="location">
-                <Field
-                  type="text"
+              </div>
+              <div className="input-error col-10 mb-3">
+                <div className="location">
+                  <Field
+                    type="text"
+                    name="address"
+                    className="form-control"
+                    placeholder="Address"
+                    style={{
+                      height: "4.5em",
+                      border: "1px solid #E6E6E6",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
+                <ErrorMessage
                   name="address"
-                  className="form-control"
-                  placeholder="Address"
-                  style={{
-                    height: "4.5em",
-                    border: "1px solid #E6E6E6",
-                    borderRadius: "5px",
-                  }}
+                  component="div"
+                  className="error text-danger ps-2"
                 />
               </div>
-              <ErrorMessage
-                name="address"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
-             
-            <div className="input-error col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <div className="location">
-                <Field
-                  type="text"
-                  name="city"
-                  className="form-control"
-                  placeholder="City name"
-                  style={{
-                    height: "4.5em",
-                    border: "1px solid #E6E6E6",
-                    borderRadius: "5px",
-                  }}
-                />
-              </div>
-              <ErrorMessage
-                name="city"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
-            <div className="input-error col-xxl-3 col-xl-3 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <Field
-                type="text"
-                name="postCode"
-                className="form-control"
-                placeholder="Post Code"
-                style={{
-                  height: "4.5em",
-                  border: "1px solid #E6E6E6",
-                  borderRadius: "5px",
-                }}
-              />
-              <ErrorMessage
-                name="postCode"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
-            <div className="input-error col-xxl-4 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-              <div className="location">
-                <Field
-                  type="text"
-                  name="country"
-                  className="form-control"
-                  placeholder="Country name"
-                  style={{
-                    height: "4.5em",
-                    border: "1px solid #E6E6E6",
-                    borderRadius: "5px",
-                  }}
-                />
-              </div>
-              <ErrorMessage
-                name="country"
-                component="div"
-                className="error text-danger ps-2"
-              />
-            </div>
-          </div>
 
-          {/* Buttons */}
-          <div className="d-flex justify-content-end">
-            <button
-              type="submit"
-              className="btn rounded-2 m-3 p-2 fw-bold"
-              style={{ width: "150px", background: "#d65246", color: "white" }}
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              className="btn rounded-2 m-3 p-2 fw-bold"
-              style={{ width: "150px", background: "#FFF", color: "#000" }}
-              onClick={() => navigate("/all-customer")}
-            >
-              Cancel
-            </button>
-          </div>
-        </Form>
-      )}
-    </Formik>
+              <div className="input-error col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+                <div className="location">
+                  <Field
+                    type="text"
+                    name="city"
+                    className="form-control"
+                    placeholder="City name"
+                    style={{
+                      height: "4.5em",
+                      border: "1px solid #E6E6E6",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
+                <ErrorMessage
+                  name="city"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
+              </div>
+              <div className="input-error col-xxl-3 col-xl-3 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+                <Field
+                  type="text"
+                  name="postCode"
+                  className="form-control"
+                  placeholder="Post Code"
+                  style={{
+                    height: "4.5em",
+                    border: "1px solid #E6E6E6",
+                    borderRadius: "5px",
+                  }}
+                />
+                <ErrorMessage
+                  name="postCode"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
+              </div>
+
+
+              <div className="input-error col-xxl-4 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+                <div className="location">
+                  <Field
+                    type="text"
+                    name="country"
+                    className="form-control"
+                    placeholder="Country name"
+                    style={{
+                      height: "4.5em",
+                      border: "1px solid #E6E6E6",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
+                <ErrorMessage
+                  name="country"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
+              </div>
+              <div className="input-error col-xxl-3 col-xl-3 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+                <Field
+                  type="text"
+                  name="NHS_Number"
+                  className="form-control"
+                  placeholder="NHS_Number"
+                  style={{
+                    height: "4.5em",
+                    border: "1px solid #E6E6E6",
+                    borderRadius: "5px",
+                  }}
+                />
+                <ErrorMessage
+                  name="NHS_Number"
+                  component="div"
+                  className="error text-danger ps-2"
+                />
+              </div>
+            </div>
+
+
+            {/* Buttons */}
+            <div className="d-flex justify-content-end">
+              <button
+                type="submit"
+                className="btn rounded-2 m-3 p-2 fw-bold"
+                style={{ width: "150px", background: "#d65246", color: "white" }}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                className="btn rounded-2 m-3 p-2 fw-bold"
+                style={{ width: "150px", background: "#FFF", color: "#000" }}
+                onClick={() => navigate("/all-customer")}
+              >
+                Cancel
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 };
