@@ -43,10 +43,10 @@ const MerchantSidebar = () => {
       path: ["/subscription-active"],
       num: 1,
     },
-    {
-      path: ["/create-order", "/all-order","/order-location", "/trashed-order", ],
-      num: 2,
-    },
+    // {
+    //   path: ["/create-order", "/all-order","/order-location", "/trashed-order", ],
+    //   num: 2,
+    // },
     {
       path: ["/multi-orders", "/all-multi-order", "/trashed-multi-order"],
       num: 3,
@@ -131,7 +131,7 @@ const MerchantSidebar = () => {
 
 
 
-          <li className="my-2">
+          {/* <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 2 ? "active" : ""}`}
               onClick={() => {handleSublinkClick(2);}}
@@ -160,13 +160,11 @@ const MerchantSidebar = () => {
                   <li className={currentPath === "/trashed-order" ? "active" : ""}>
                     <Link to="/trashed-order" onClick={() => setSidebarVisible(false)}>Trashed Order</Link>
                   </li>
-                  {/* <li className={currentPath === "/invoice-format" ? "active" : ""}>
-                    <Link to="/invoice-format" onClick={() => setSidebarVisible(false)} >Invoice Format</Link>
-                  </li> */}
+              
                 </ul>
               </div>
             )}
-          </li>
+          </li> */}
 
           <li className="my-2">
             <Button

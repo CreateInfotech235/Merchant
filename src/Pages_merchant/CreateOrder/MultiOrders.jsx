@@ -307,9 +307,9 @@ const MultiOrders = () => {
     deliveryDetails: Yup.array().of(
       Yup.object().shape({
         address: Yup.string().required("Required Delivery Address"),
-        name: Yup.string().required("Required Delivery Name"),
-        mobileNumber: Yup.string().required("Required Delivery Contact Number"),
-        email: Yup.string().email("Invalid email").required("Required Delivery Email"),
+        name: Yup.string(),
+        mobileNumber: Yup.string(),
+        email: Yup.string().email("Invalid email"),
         description: Yup.string(),
         postCode: Yup.string().required("Required Delivery Postcode"),
         parcelsCount: Yup.number()
@@ -713,6 +713,15 @@ console.log(apiKey);
                           borderRadius: "5px",
                         }}
                         disabled={isOrderCreated}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              email: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.email"
@@ -883,8 +892,7 @@ console.log(apiKey);
                               }}
                               options={customer.map((cust) => ({
                                 value: cust._id,
-                                label: cust.firstName,
-                                label: `${cust.firstName}  -  ${cust.email}  -  ${cust.mobileNumber}`,
+                                label: ` ${cust.NHS_Number} - ${cust.firstName}  ${cust.lastName}  -  ${cust.email}  -  ${cust.mobileNumber}`,
                                 ...cust,
                               }))}
                               placeholder="Select Customer"
@@ -894,6 +902,7 @@ console.log(apiKey);
                                 const searchValue = inputValue.toLowerCase();
 
                                 return (
+                                  data.NHS_Number.toLowerCase().includes(searchValue) ||
                                   data.firstName.toLowerCase().includes(searchValue) ||
                                   data.lastName.toLowerCase().includes(searchValue) ||
                                   data.email.toLowerCase().includes(searchValue) ||
@@ -1069,7 +1078,7 @@ console.log(apiKey);
 
                           <div className="input-error mb-1 col-4">
                             <label className="fw-thin p-0 pb-1 ">
-                              Customer Name :
+                              Customer Name (Optional) :
                             </label>
                             <Field
                               type="text"
@@ -1102,7 +1111,7 @@ console.log(apiKey);
 
                           <div className="input-error mb-1 col-4">
                             <label className="fw-thin p-0 pb-1 ">
-                              Delivery Email :
+                              Delivery Email (Optional) :
                             </label>
                             <Field
                               type="email"
@@ -1132,7 +1141,7 @@ console.log(apiKey);
 
                           <div className="input-error mb-1 col-4">
                             <label className="fw-thin p-0 pb-1 ">
-                              Delivery Contact Number :
+                              Delivery Contact Number (Optional) :
                             </label>
                             <Field
                               type="text"

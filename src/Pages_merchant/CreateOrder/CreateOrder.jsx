@@ -262,7 +262,7 @@ const CreateOrder = () => {
       address: Yup.string().required("Required"),
       // countryCode: Yup.string().required("Required"),
       mobileNumber: Yup.string().required("Required"),
-      email: Yup.string().email("Invalid email").required("Required"),
+      email: Yup.string().email("Invalid email"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
 
@@ -279,7 +279,7 @@ const CreateOrder = () => {
       name: Yup.string().required("Required"),
       // countryCode: Yup.string().required("Required"),
       mobileNumber: Yup.string().required("Required"),
-      email: Yup.string().email("Invalid email").required("Required"),
+      email: Yup.string().email("Invalid email"),
       description: Yup.string(),
       postCode: Yup.string().required("Required"),
     }),
