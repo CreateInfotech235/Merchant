@@ -49,10 +49,9 @@ const AddUser = () => {
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required("first name is required"),
     lastName: Yup.string().required("last is required"),
-    mobileNumber: Yup.string().required("Contact is required"),
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
+    mobileNumber: Yup.string(),
+    email: Yup.string().optional(),
+      // .email("Invalid email format"),
     country: Yup.string().required("Country is required"),
     city: Yup.string().required("City is required"),
     address: Yup.string().required("Address is required"),
@@ -63,7 +62,13 @@ const AddUser = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
+    if (values.email === '' || values.email === "-") {
+      values.email = '-'
+    }
 
+    if (values.mobileNumber === '' || values.mobileNumber === "-") {
+      values.mobileNumber = '-'
+    }
     const res = await addCustomer(values);
     if (res.status) {
       navigate("/all-customer");
