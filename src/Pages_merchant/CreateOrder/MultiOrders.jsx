@@ -309,7 +309,7 @@ const MultiOrders = () => {
         address: Yup.string().required("Required Delivery Address"),
         name: Yup.string(),
         mobileNumber: Yup.string(),
-        email: Yup.string().email("Invalid email"),
+        email: Yup.string(),
         description: Yup.string(),
         postCode: Yup.string().required("Required Delivery Postcode"),
         parcelsCount: Yup.number()
@@ -341,6 +341,7 @@ const MultiOrders = () => {
 
 
   const onSubmit = async (values, { setFieldValue }) => {
+
     setIsOrderCreated(true);
     console.log("values", values);
     const timestamp = new Date(values.dateTime).getTime();
@@ -1114,7 +1115,7 @@ console.log(apiKey);
                               Delivery Email (Optional) :
                             </label>
                             <Field
-                              type="email"
+                              type="text"
                               name={`deliveryDetails.${index}.email`}
                               className="form-control"
                               placeholder="Delivery Email"
