@@ -79,6 +79,7 @@ const MultiOrder = () => {
 
   useEffect(() => {
     setFilteredOrders(orderData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+setTotalPages(Math.ceil(orderData.length / itemsPerPage));
   }, [currentPage, itemsPerPage]);
 
 
@@ -98,46 +99,44 @@ const MultiOrder = () => {
 
 
   
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-    setCurrentPage(1); // Reset to first page when searching
-    filterOrders(event.target.value);
-    setFilteredOrders(orderData.slice(0, itemsPerPage));
-  };
-
   const filterOrders = (query) => {
 
+    console.log("orderData",orderData);
+    setCurrentPage(1); // Reset to first page when searching
 
-    const filteredData = orderData.filter((order) => {
-      const query = searchQuery.toLowerCase();
-     
-      return (
-        !order.trashed &&
-        (order.showOrderNumber?.toString().includes(query) ||
-          order.customerName?.toLowerCase().includes(query) ||
-          order.pickupAddress?.address?.toLowerCase().includes(query) ||
-          order.deliveryAddress?.address?.toLowerCase().includes(query) ||
-          order.status?.toLowerCase().includes(query))
-      );
-    });
+    setSearchQuery(query);
+    
+        const filteredData = orderData.filter((order) => {
+          const query = searchQuery.toLowerCase();
+         
+          return (
+            !order.trashed &&
+            (order.showOrderNumber?.toString().includes(query) ||
+              order.customerName?.toLowerCase().includes(query) ||
+              order.pickupAddress?.address?.toLowerCase().includes(query) ||
+              order.deliveryAddress?.address?.toLowerCase().includes(query) ||
+              order.status?.toLowerCase().includes(query))
+          );
+        });
+    
+        // Sort data by exact match on showOrderNumber
+        const sortedData = filteredData.sort((a, b) => {
+          const aMatch = String(a.showOrderNumber).toLowerCase() === query;
+          const bMatch = String(b.showOrderNumber).toLowerCase() === query;
+          return bMatch - aMatch; // Exact matches appear first
+        });
+    console.log("sortedData",sortedData);
+        // Update pagination based on filtered results
+        setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        setFilteredOrders(sortedData.slice(startIndex, endIndex));
+      };
 
-    // Sort data by exact match on showOrderNumber
-    const sortedData = filteredData.sort((a, b) => {
-      const aMatch = String(a.showOrderNumber).toLowerCase() === query;
-      const bMatch = String(b.showOrderNumber).toLowerCase() === query;
-      return bMatch - aMatch; // Exact matches appear first
-    });
+      useEffect(()=>{
+        filterOrders(searchQuery);
+      },[searchQuery])
 
-    // Update pagination based on filtered results
-    setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    setFilteredOrders(sortedData.slice(startIndex, endIndex));
-  };
-
-  // Get current orders for pagination
-  const currentOrders = filteredOrders;
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -313,7 +312,7 @@ const MultiOrder = () => {
               className="search-btn border-1 border-slate-500 rounded-start-4 p-3"
               placeholder="Search Order"
               value={searchQuery}
-              onChange={handleSearchChange}
+              onChange={(e)=>{setSearchQuery(e.target.value); setCurrentPage(1);}}
             />
             <button className="search-img rounded-end-4 border-0 flex justify-center items-center">
               <img
@@ -356,7 +355,7 @@ const MultiOrder = () => {
                     </div>
                   </td>
                 </tr>
-              ) : currentOrders.length === 0 ? (
+              ) : filteredOrders.length === 0 ? (
                 <tr>
                   <td colSpan="13" className="text-center p-3">
                     <div className="d-flex justify-content-center">
@@ -365,7 +364,7 @@ const MultiOrder = () => {
                   </td>
                 </tr>
               ) : (
-                currentOrders.map((order, index) =>
+                filteredOrders.map((order, index) =>
                   order.trashed === false ? (
                     <React.Fragment key={index}>
                       <tr className="country-row">
@@ -632,7 +631,7 @@ const MultiOrder = () => {
           <select
             className="form-select ms-3 w-20" 
             value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+            onChange={(e) =>{setCurrentPage(1); setItemsPerPage(Number(e.target.value))}}
           >
             <option value={10}>10</option>
             <option value={25}>25</option>
