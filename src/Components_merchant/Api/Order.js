@@ -118,15 +118,13 @@ export const getOrders = async (userId, pageCount, pageLimit) => {
   }
 };
 
-export const getMultiOrders = async (userId, pageCount, pageLimit) => {
+export const getMultiOrders = async (userId) => {
   try {
     const response = await API.get(
       `/mobile/order/getAllOrdersFromMerchantMulti/${userId}`,
       {
         params: {
           user: userId,
-          pageCount: pageCount,
-          pageLimit: pageLimit,
         },
       }
     );

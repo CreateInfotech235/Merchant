@@ -13,8 +13,8 @@ import CutomerInfoModal from "./CustomerInfoModal";
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
 import UpdateCustomerModel from "./UpdateCustomerModel";
 import Loader from "../../Components_admin/Loader/Loader";
+import { Pagination, Stack } from "@mui/material";
 
-// Custom marker icon for leaflet
 const markerIcon = new L.Icon({
   iconUrl: locationimg,
   iconSize: [25, 41],
@@ -22,10 +22,11 @@ const markerIcon = new L.Icon({
 });
 
 const Customers = () => {
+  const [allCustomers, setAllCustomers] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true); // State to track loading
-  const [error, setError] = useState(null); // State to track API errors
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -37,7 +38,7 @@ const Customers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
-
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
 
   useEffect(() => {
     if (themeMode === "dark") {
@@ -52,36 +53,87 @@ const Customers = () => {
   };
 
   const fetchCustomers = async () => {
-    setLoading(true); // Set loading to true before the API call
+    setLoading(true);
     try {
-      const response = await getAllCustomers(currentPage, itemsPerPage, searchQuery);
+      const response = await getAllCustomers();
       if (response.status && response.data.length > 0) {
-        setCustomers(response.data);
+        setAllCustomers(response.data);
+        const initialData = response.data.slice(0, itemsPerPage);
+        setCustomers(initialData);
+        setFilteredCustomers(initialData);
+        setTotalPages(Math.ceil(response.data.length / itemsPerPage));
       } else {
-        setCustomers([]); // Clear customers if no data is returned
+        setAllCustomers([]);
+        setCustomers([]);
+        setFilteredCustomers([]);
+        setTotalPages(1);
       }
     } catch (err) {
       console.error("Error fetching customers:", err);
       setError("Failed to fetch customers. Please try again later.");
     } finally {
-      setLoading(false); // Set loading to false after the API call
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchCustomers();
-  }, [showModel , showEditModal]);
-  const filteredCustomers = customers.filter((customer) => {
+  }, [showModel, showEditModal]);
+
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedCustomers = allCustomers.slice(startIndex, endIndex);
+    setCustomers(paginatedCustomers);
+    
+    // Apply search filter to paginated data
+    if (searchQuery) {
+      filterCustomers(paginatedCustomers);
+    } else {
+      setFilteredCustomers(paginatedCustomers);
+    }
+    
+    setTotalPages(Math.ceil(allCustomers.length / itemsPerPage));
+  }, [itemsPerPage, currentPage, allCustomers]);
+
+  function filterCustomers(customersToFilter = customers) {
     const query = searchQuery.toLowerCase();
-    return (
-      !customer.trashed && // Skip if the customer is trashed
-      (customer.customerId.toLowerCase().includes(query) ||
-        customer.firstName.toLowerCase().includes(query) ||
-        customer.lastName.toLowerCase().includes(query) ||
-        customer.email.toLowerCase().includes(query))
-    );
-  });
-  console.log(filteredCustomers, 'filteredCustomers');
+    const data = allCustomers.filter((customer) => {
+      return (
+        !customer.trashed &&
+        (customer.customerId?.toLowerCase().includes(query) ||
+          customer.firstName?.toLowerCase().includes(query) ||
+          customer.lastName?.toLowerCase().includes(query) ||
+          customer.email?.toLowerCase().includes(query) ||
+          customer.NHS_Number?.toLowerCase().includes(query) ||
+          customer.address?.toLowerCase().includes(query) ||
+          customer.postCode?.toLowerCase().includes(query) ||
+          customer.showCustomerNumber?.toString().includes(query))
+      );
+    });
+    
+    // Update pagination based on filtered results
+    setTotalPages(Math.ceil(data.length / itemsPerPage));
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    // Sort data by exact match on showCustomerNumber
+    const sortedData = data.sort((a, b) => {
+      const aMatch = a.showCustomerNumber.toString() === query;
+      const bMatch = b.showCustomerNumber.toString() === query;
+      return bMatch - aMatch;
+    });
+    setFilteredCustomers(sortedData.slice(startIndex, endIndex));
+  }
+
+  useEffect(() => {
+    if (searchQuery) {
+      filterCustomers();
+    } else {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      setFilteredCustomers(allCustomers.slice(startIndex, endIndex));
+    }
+  }, [searchQuery]);
 
   const handleLocationClick = (coordinates) => {
     if (coordinates && coordinates.length === 2) {
@@ -112,9 +164,8 @@ const Customers = () => {
     setSelectedCustomer(null);
   };
 
-
-  const handleClick = (event) => {
-    setCurrentPage(Number(event.target.id));
+  const handleClick = (event, page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -127,9 +178,12 @@ const Customers = () => {
               className="search-btn rounded-start-4 p-3"
               placeholder="Search customers"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
             />
-            <button className="search-img rounded-end-4 border-0 flex justify-center items-center">
+            <button className="search-img rounded-end-4 border-0 flex justify-center items-center" onClick={() => fetchCustomers()}>
               <img src={searchIcon} className="search" alt="search icon" />
             </button>
           </div>
@@ -152,91 +206,109 @@ const Customers = () => {
           <div className="text-center text-danger p-3">{error}</div>
         ) : (
           <>
-          <table
-            className="table-borderless w-100 text-center bg-light"
-            style={{ fontSize: "12px" }}
-          >
-            <thead className="text-light" style={{ background: "#253A71" }}>
-              <tr>
-                <th className="p-3">Customer ID</th>
-                <th className="p-3">NHS Number</th>
-                <th className="p-3">First Name</th>
-                <th className="p-3">Last Name</th>
-                <th className="p-3">Address</th>
-                <th className="p-3">Postcode</th>
-                <th className="p-3">Email</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
+            <table
+              className="table-borderless w-100 text-center bg-light"
+              style={{ fontSize: "12px" }}
+            >
+              <thead className="text-light" style={{ background: "#253A71" }}>
                 <tr>
-                  <td colSpan="9" className="text-center p-3">
-                    <div className="d-flex justify-content-center">
-                      <div className="mx-auto">
-                        <Loader />
-                      </div>
-                    </div>
-                  </td>
+                  <th className="p-3">Customer ID</th>
+                  <th className="p-3">NHS Number</th>
+                  <th className="p-3">First Name</th>
+                  <th className="p-3">Last Name</th>
+                  <th className="p-3">Address</th>
+                  <th className="p-3">Postcode</th>
+                  <th className="p-3">Email</th>
+                  <th className="p-3">Actions</th>
                 </tr>
-              ) : filteredCustomers.length === 0 ? (
-                <tr>
-                  <td colSpan="9" className="text-center p-3">
-                    <div className="d-flex justify-content-center">
-                      <div className="mx-auto">No Data Found</div>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                filteredCustomers.map((customer, index) =>
-                  customer.trashed === false ? (
-                    <tr key={index}>
-                      <td className="p-3">{customer.showCustomerNumber}</td>
-                      <td className="p-3">{customer.NHS_Number}</td>
-                      <td className="p-3">{customer.firstName}</td>
-                      <td className="p-3">{customer.lastName}</td>
-                      <td className="p-3">{customer.address}</td>
-                      {/* <td className="p-3">{customer.phoneNumber}</td> */}
-                      <td className="p-3">{customer.postCode}</td>
-                      <td className="p-3">{customer.email}</td>
-                      <td className="table-head2">
-                        <div className="d-flex align-items-center justify-content-center">
-                          <button
-                            className="edit-btn ms-1"
-                            onClick={() => handleEditClick(customer)}
-                          >
-                            <img src={edit} alt="Edit" className="mx-auto" />
-                          </button>
-                          <button
-                            className="delete-btn me-1"
-                            onClick={() => hadleDeleteCustomer(customer._id)}
-                          >
-                            <img
-                              src={deleteimg}
-                              alt="Delete"
-                              className="mx-auto"
-                            />
-                          </button>
-                          <button
-                            className="show-btn m-2"
-                            onClick={() => handleShowInfo(customer)}
-                          >
-                            <img src={show} alt="Show" className="mx-auto" />
-                          </button>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="9" className="text-center p-3">
+                      <div className="d-flex justify-content-center">
+                        <div className="mx-auto">
+                          <Loader />
                         </div>
-                      </td>
-                    </tr>
-                  ) : null
-                )
-              )}
-            </tbody>
-          </table>
-          {/* <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handleClick={handleClick}
-        /> */}
-        </>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredCustomers.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="text-center p-3">
+                      <div className="d-flex justify-content-center">
+                        <div className="mx-auto">No Data Found</div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredCustomers.map((customer, index) =>
+                    customer.trashed === false ? (
+                      <tr key={index}>
+                        <td className="p-3">{customer.showCustomerNumber}</td>
+                        <td className="p-3">{customer.NHS_Number}</td>
+                        <td className="p-3">{customer.firstName}</td>
+                        <td className="p-3">{customer.lastName}</td>
+                        <td className="p-3">{customer.address}</td>
+                        <td className="p-3">{customer.postCode}</td>
+                        <td className="p-3">{customer.email}</td>
+                        <td className="table-head2">
+                          <div className="d-flex align-items-center justify-content-center">
+                            <button
+                              className="edit-btn ms-1"
+                              onClick={() => handleEditClick(customer)}
+                            >
+                              <img src={edit} alt="Edit" className="mx-auto" />
+                            </button>
+                            <button
+                              className="delete-btn me-1"
+                              onClick={() => hadleDeleteCustomer(customer._id)}
+                            >
+                              <img
+                                src={deleteimg}
+                                alt="Delete"
+                                className="mx-auto"
+                              />
+                            </button>
+                            <button
+                              className="show-btn m-2"
+                              onClick={() => handleShowInfo(customer)}
+                            >
+                              <img src={show} alt="Show" className="mx-auto" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null
+                  )
+                )}
+              </tbody>
+            </table>
+
+            <div className="d-flex justify-content-end align-items-end">
+              <Stack spacing={2}>
+                <Pagination 
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handleClick}
+                  variant="outlined" 
+                  shape="rounded"
+                />
+              </Stack>
+
+              <select
+                className="form-select w-20 ms-3"
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={75}>75</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+          </>
         )}
       </div>
 

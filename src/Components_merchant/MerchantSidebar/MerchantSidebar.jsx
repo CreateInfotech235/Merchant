@@ -44,7 +44,7 @@ const MerchantSidebar = () => {
       num: 1,
     },
     {
-      path: ["/create-order", "/all-order","/order-location", "/trashed-order", ],
+      path: ["/create-order", "/all-order", "/order-location", "/trashed-order",],
       num: 2,
     },
     {
@@ -127,10 +127,10 @@ const MerchantSidebar = () => {
             </Link>
           </li>
 
-          
 
 
-{/* 
+
+          {/* 
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 2 ? "active" : ""}`}
@@ -169,28 +169,28 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 3 ? "active" : ""}`}
-              onClick={() => {handleSublinkClick(3);}}
+              onClick={() => { handleSublinkClick(3); }}
             >
               <span className=" pe-4">
-                <LuBoxes style={{ fontSize: "27px" ,color:"#fff",fontWeight:"lighter"}} alt="order" />
+                <LuBoxes style={{ fontSize: "27px", color: "#fff", fontWeight: "lighter" }} alt="order" />
               </span>
               Multi Orders
               <span className={`arrow ${currentpage === 3 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
             </Button>
-              {(currentpage === 3 && showsublink === true) && (
+            {(currentpage === 3 && showsublink === true) && (
               <div className="submenuWrapper">
-                <ul className="submenu">         
-                   <li className={currentPath === "/multi-orders" ? "active" : ""}>
+                <ul className="submenu">
+                  <li className={currentPath === "/multi-orders" ? "active" : ""}>
                     <Link to="/multi-orders" onClick={() => setSidebarVisible(false)}>Create Order</Link>
-                  </li> 
-                   <li className={currentPath === "/all-multi-order" ? "active" : ""}>
+                  </li>
+                  <li className={currentPath === "/all-multi-order" ? "active" : ""}>
                     <Link to="/all-multi-order" onClick={() => setSidebarVisible(false)}>All Orders</Link>
-                  </li> 
+                  </li>
                   <li className={currentPath === "/trashed-multi-order" ? "active" : ""}>
                     <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trashed Order</Link>
-                  </li>             
+                  </li>
                   {/* <li className={currentPath === "/multi-order-parcel" ? "active" : ""}>
                     <Link to="/multi-order-parcel" onClick={() => setSidebarVisible(false)}>Multi Order Parcel Details</Link>
                   </li>              */}
@@ -206,8 +206,8 @@ const MerchantSidebar = () => {
                 onClick={() => { setCurrentpage(4); setSidebarVisible(false) }}
               >
                 <span className=" pe-4">
-                <BsBoxSeam style={{ fontSize: "27px" ,color:"#fff",fontWeight:"lighter"}} alt="order" />
-              </span>
+                  <BsBoxSeam style={{ fontSize: "27px", color: "#fff", fontWeight: "lighter" }} alt="order" />
+                </span>
                 Parcel Type
               </Button>
             </Link>
@@ -219,13 +219,13 @@ const MerchantSidebar = () => {
                 onClick={() => { setCurrentpage(8); setSidebarVisible(false) }}
               >
                 <span className=" pe-4">
-                <LiaFileInvoiceDollarSolid style={{ fontSize: "27px" ,color:"#fff"}} alt="order" />
-              </span>
-              Invoice Format
+                  <LiaFileInvoiceDollarSolid style={{ fontSize: "27px", color: "#fff" }} alt="order" />
+                </span>
+                Invoice Format
               </Button>
             </Link>
           </li>
-{/* 
+          {/* 
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 4 ? "active" : ""}`}
@@ -253,7 +253,7 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 5 ? "active" : ""}`}
-              onClick={() => {handleSublinkClick(5);}}
+              onClick={() => { handleSublinkClick(5); }}
             >
               <span className=" pe-4">
                 <img src={customer} style={{ width: "25px" }} alt="order" />
@@ -283,7 +283,7 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 6 ? "active" : ""}`}
-              onClick={() => {handleSublinkClick(6);}}
+              onClick={() => { handleSublinkClick(6); }}
             >
               <span className=" pe-4">
                 <img src={man} style={{ width: "25px" }} alt="delivery" />
@@ -330,7 +330,7 @@ const MerchantSidebar = () => {
               </div>
             )}
           </li>
-
+          {/* 
           <li className="my-2">
             <Button
               className={`w-100 ${currentpage === 7 ? "active" : ""}`}
@@ -339,7 +339,7 @@ const MerchantSidebar = () => {
               <span className=" pe-4">
                 <img src={support} style={{ width: "25px" }} alt="offers" />
               </span>
-              Support Ticket
+    
               <span className={`arrow ${currentpage === 7 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
@@ -350,27 +350,38 @@ const MerchantSidebar = () => {
                   <li className={currentPath === "/Show-list-of-support-ticket" ? "active" : ""}>
                     <Link to="/Show-list-of-support-ticket" onClick={() => setSidebarVisible(false)}>Show list of support ticket</Link>
                   </li>
-                  {/* <li className={currentPath === "/add-extra-charges" ? "active" : ""}>
-                    <Link to="/Show-list-of-support-ticket">Raise issue</Link>
-                  </li> */}
-
+               
                 </ul>
               </div>
             )}
+          </li> */}
+
+
+
+          <li className="my-2">
+            <Link to="/Show-list-of-support-ticket" className="link" >
+              <Button
+                className={`w-100 ${currentpage === 7 ? "active" : ""}`}
+                onClick={() => { setCurrentpage(7); setSidebarVisible(false) }}
+              >
+                <span className=" pe-4">
+                  <img src={support} style={{ width: "25px" }} alt="offers" />
+                </span>
+                Support Ticket
+              </Button>
+            </Link>
           </li>
 
-
-          
           <li className="my-2">
             <Link to="/subscription-active" className="link" >
               <Button
                 className={`w-100 ${currentpage === 1 ? "active" : ""}`}
                 onClick={() => { setCurrentpage(1); setSidebarVisible(false) }}
               >
-           <span className=" pe-4">
-                <img src={subcription} style={{ width: "25px" }} alt="subscription" />
-              </span>
-              Subscription
+                <span className=" pe-4">
+                  <img src={subcription} style={{ width: "25px" }} alt="subscription" />
+                </span>
+                Subscription
               </Button>
             </Link>
           </li>

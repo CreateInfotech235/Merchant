@@ -8,7 +8,7 @@ import show from "../../assets_mercchant/show.png";
 import searchIcon from "../../assets_mercchant/search.png";
 import { getMultiOrders, getOrders } from "../../Components_merchant/Api/Order";
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
-import edit from "../../assets_mercchant/edit.png";
+import edit from "../../assets_mercchant/edit.png"; 
 import UpdateDeliveryBoyModal from "../DeliveryMan/UpdateDeliveryManModal";
 import UpdateOrderModal from "./UpdateOrderModal";
 import { format } from "date-fns";
@@ -20,18 +20,19 @@ import OrderInfoModalMulti from "./OrderInfoModalMulti";
 import UpdateOrderModalMulti from "./UpdateOrderModalMulti";
 import DeleteUserMulti from "../../Components_merchant/DeleteUser/DeleteUserMulti";
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
+import { Pagination, Stack } from "@mui/material";
 
 const MultiOrder = () => {
   const [showModel, setShowModel] = useState(false);
   const [orderId, setOrderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [ordersPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [themeMode, setThemeMode] = useState("light");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orderData, setOrderData] = useState([]);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
   const [location, setLocation] = useState(null);
@@ -45,6 +46,8 @@ const MultiOrder = () => {
   const [subOrderId, setSubOrderId] = useState(null);
   const [isSingle, setIsSingle] = useState(false);
   const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [ordersPerPage, setOrdersPerPage] = useState(10);
 
   const fetchData = async () => {
     setLoading(true);
@@ -56,14 +59,13 @@ const MultiOrder = () => {
       const MerchantId = await localStorage.getItem("merchnatId");
       const response = await getMultiOrders(
         MerchantId,
-        currentPage,
-        ordersPerPage
       );
       console.log("response", response);
 
       if (response?.data) {
         setOrderData(response.data);
-        setFilteredOrders(response.data);
+        setFilteredOrders(response.data.slice(0, itemsPerPage));
+        setTotalPages(Math.ceil(response.data.length / itemsPerPage));
       } else {
         setOrderData([]);
         setFilteredOrders([]);
@@ -74,11 +76,14 @@ const MultiOrder = () => {
       setLoading(false);
     }
   };
- 
+
 
   useEffect(() => {
+    setFilteredOrders(orderData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+  }, [currentPage, itemsPerPage]);
+  useEffect(() => {
     fetchData();
-  }, [showModel, showEditModal, currentPage, ordersPerPage]);
+  }, [showModel, showEditModal]);
 
   const closeEditModal = () => {
     setShowEditModal(false);
@@ -87,73 +92,56 @@ const MultiOrder = () => {
 
   const closeModel = () => setShowModel(false);
 
+
+
+
+
+  
+
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
     setCurrentPage(1); // Reset to first page when searching
     filterOrders(event.target.value);
+    setFilteredOrders(orderData.slice(0, itemsPerPage));
   };
 
   const filterOrders = (query) => {
-    if (!query) {
-      setFilteredOrders(orderData);
-      return;
-    }
 
-    const lowercasedQuery = query.toLowerCase();
+
     const filteredData = orderData.filter((order) => {
+      const query = searchQuery.toLowerCase();
+     
       return (
-        String(order.orderId).toLowerCase().includes(lowercasedQuery) ||
-        (order.customerName ? order.customerName.toLowerCase() : "").includes(
-          lowercasedQuery
-        ) ||
-        (order.pickupAddress?.address
-          ? String(order.pickupAddress.address).toLowerCase()
-          : ""
-        ).includes(lowercasedQuery) ||
-        (order.deliveryAddress?.address
-          ? String(order.deliveryAddress.address).toLowerCase()
-          : ""
-        ).includes(lowercasedQuery) ||
-        (order.status ? order.status.toLowerCase() : "").includes(
-          lowercasedQuery
-        )
+        !order.trashed &&
+        (order.showOrderNumber?.toString().includes(query) ||
+          order.customerName?.toLowerCase().includes(query) ||
+          order.pickupAddress?.address?.toLowerCase().includes(query) ||
+          order.deliveryAddress?.address?.toLowerCase().includes(query) ||
+          order.status?.toLowerCase().includes(query))
       );
     });
 
-    setFilteredOrders(filteredData);
+    // Sort data by exact match on showOrderNumber
+    const sortedData = filteredData.sort((a, b) => {
+      const aMatch = String(a.showOrderNumber).toLowerCase() === query;
+      const bMatch = String(b.showOrderNumber).toLowerCase() === query;
+      return bMatch - aMatch; // Exact matches appear first
+    });
+
+    // Update pagination based on filtered results
+    setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setFilteredOrders(sortedData.slice(startIndex, endIndex));
   };
 
   // Get current orders for pagination
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = filteredOrders.slice(
-    indexOfFirstOrder,
-    indexOfLastOrder
-  );
+  const currentOrders = filteredOrders;
 
-  // Calculate total pages
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
-
-  // Change page
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Generate page numbers
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
-
-  const renderPageNumbers = () => {
-    return pageNumbers.map((number) => (
-      <li key={number} className={currentPage === number ? "active" : ""}>
-        <button
-          onClick={() => paginate(number)}
-          className={`pagination-btn ${currentPage === number ? "active" : ""}`}
-        >
-          {number}
-        </button>
-      </li>
-    ));
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
   };
 
   const hadleTrackOrder = async (
@@ -205,7 +193,7 @@ const MultiOrder = () => {
     setShowInfoModal(true);
     setSelectedOrder({
       ...Order,
-      deliveryAddresses: Order.deliveryAddress, // Pass delivery addresses separately
+      deliveryAddresses: Order.deliveryAddress,
     });
   };
 
@@ -241,7 +229,7 @@ const MultiOrder = () => {
 
   const statusColors = {
     CREATED: "gray",
-    ASSIGNED: "blue",
+    ASSIGNED: "blue", 
     ACCEPTED: "green",
     CANCELLED: "red",
     UNASSIGNED: "red",
@@ -352,11 +340,9 @@ const MultiOrder = () => {
                 <th className="p-3">Delivery Man</th>
                 <th className="p-3">Created Date</th>
                 <th className="p-3">Pickup Date</th>
-                {/* <th className="p-3">Delivery Date</th> */}
                 <th className="p-3">Invoice</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
-                {/* <th className="p-3">Order Tracking</th> */}
                 <th className="p-3">Info</th>
               </tr>
             </thead>
@@ -395,7 +381,6 @@ const MultiOrder = () => {
                         </td>
                         <td className="p-3">{order?.createdDate ?? "-"}</td>
                         <td className="p-3">{order?.pickupDate ?? "-"}</td>
-                        {/* <td className="p-3">{order?.deliveryDate ?? "-"}</td> */}
                         <td className="p-3 fw-bold">
                           {order.status === "DELIVERED" ? (
                             <button
@@ -441,39 +426,6 @@ const MultiOrder = () => {
                             <img src={show} alt="Show" className="mx-auto" />
                           </button>
                         </td>
-                        {/* <td className="city-data">
-                          <button
-                            className="delete-btn"
-                            onClick={() => {
-                              if (
-                                [
-                                  "ACCEPTED",
-                                  "ASSIGNED",
-                                  "CANCELLED",
-                                  "DELIVERED",
-                                  "CREATED",
-                                ].includes(order.status)
-                              ) {
-                                alert(
-                                  "You are not able to track. Tracking starts from the status 'Arrived' to 'Delivered'."
-                                );
-                              } else {
-                                hadleTrackOrder(
-                                  order.deliveryManId,
-                                  order.deliveryAddress.location,
-                                  order.pickupAddress.location,
-                                  order.status
-                                );
-                              }
-                            }}
-                          >
-                            <img
-                              src={tracking}
-                              alt="Tracking"
-                              className="mx-auto"
-                            />
-                          </button>
-                        </td> */}
                         <td>
                           <button onClick={() => toggleSemTable(order._id)}>
                             {openSemTable[order._id] ? "Close" : "Open"}
@@ -496,7 +448,6 @@ const MultiOrder = () => {
                                     <th className="p-3">
                                       Delivery Address (PostCode)
                                     </th>
-
                                     <th className="p-3">Delivery Date</th>
                                     <th className="p-3">Parcel Type</th>
                                     <th className="p-3">Invoice</th>
@@ -557,7 +508,6 @@ const MultiOrder = () => {
                                               {`${subOrder?.address} (${subOrder?.postCode})` ??
                                                 "-"}
                                             </td>
-                                            {console.log(subOrder)}
                                             <td className="p-3">-</td>
                                             <td className="p-3">{parcelTypeDetail.find(type => type.parcelTypeId === subOrder?.parcelType)?.label ?? "-"}</td>
                                             <td className="p-3">{subOrder?.invoice ?? "-"}</td>
@@ -576,7 +526,7 @@ const MultiOrder = () => {
                                                 onClick={() =>
                                                   handleEditClick({
                                                     ...order,
-                                                    deliveryAddresses: subOrder, // Pass `subOrder` inside an array
+                                                    deliveryAddresses: subOrder,
                                                     isSingle: subOrder?.subOrderId,
                                                   })
                                                 }
@@ -608,7 +558,7 @@ const MultiOrder = () => {
                                                 onClick={() =>
                                                   handleViewClick({
                                                     ...order,
-                                                    deliveryAddresses: subOrder, // Pass `subOrder` inside an array
+                                                    deliveryAddresses: subOrder,
                                                   })
                                                 }
                                               >
@@ -670,8 +620,27 @@ const MultiOrder = () => {
             </tbody>
           </table>
         </div>
-        <div className="pagination-container d-flex justify-content-end mt-3">
-          <ul className="pagination">{renderPageNumbers()}</ul>
+        <div className="d-flex justify-content-end align-items-center mt-3">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+            />
+          </Stack>
+          <select
+            className="form-select ms-3 w-20" 
+            value={itemsPerPage}
+            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={75}>75</option>
+            <option value={100}>100</option>
+          </select>
         </div>
       </div>
       {showEditModal && (

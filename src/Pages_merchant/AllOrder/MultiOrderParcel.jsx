@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography, TextField, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { toast } from 'react-toastify';
 import { addMerchantParcelType, deleteMerchantParcelType, editMerchantParcelType, getMerchantParcelType } from '../../Components_merchant/Api/ParcelType';
+import Loader from '../../Components_admin/Loader/Loader';
 
 function MultiOrderParcel() {
   const [parcelTypes, setParcelTypes] = useState([]);
@@ -13,12 +14,14 @@ function MultiOrderParcel() {
   const [limit] = useState(10);
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchParcelTypes();
   }, []);
 
   const fetchParcelTypes = async () => {
+    setIsLoading(true);
     try {
       const response = await getMerchantParcelType();
       if (response?.status && response?.data) {
@@ -30,6 +33,7 @@ function MultiOrderParcel() {
       setParcelTypes([]);
       toast.error('Error fetching parcel types');
     }
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -99,6 +103,14 @@ function MultiOrderParcel() {
       status: e.target.checked
     }));
   };
+
+
+
+  if(isLoading){
+    return <div className='d-flex justify-content-center align-items-center' style={{height:"60vh"}}>
+      <Loader/>
+      </div>
+  }
 
   return (
     <Box sx={{ p: 3 }}>

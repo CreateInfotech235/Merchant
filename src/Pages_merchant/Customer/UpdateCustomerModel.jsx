@@ -22,6 +22,7 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
     mobileNumber: customer ? customer.mobileNumber : "",
     postCode: customer ? customer.postCode : "",
     address: customer ? customer.address : "",
+    NHS_Number: customer ? customer.NHS_Number : "",
   };
 
   const options = useMemo(() => countryList().getData(), []);
@@ -37,6 +38,7 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
     mobileNumber: Yup.string().required("Contact number is required"),
     postCode: Yup.string().required("postCode code is required"),
     address: Yup.string().required("Address is required"),
+    NHS_Number: Yup.string().required("NHS Number is required"),
   });
 
   const onSubmit = async (values) => {
@@ -52,7 +54,7 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
   return (
     <Modal show={true} onHide={onHide} size="xl">
       <Modal.Header closeButton>
-        <Modal.Title>Update Delivery Boy</Modal.Title>
+        <Modal.Title>Update Customer</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
@@ -174,6 +176,7 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
           
 
      
+
                 <div className="input-error col-md-6">
                   <label>Address</label>
                   <Field
@@ -189,7 +192,21 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
                   />
           
               </div>
-
+              <div className="input-error col-md-6">
+                  <label>NHS Number</label>
+                  <Field
+                    type="text"
+                    name="NHS_Number"
+                    className="form-control"
+                    placeholder="NHS Number"
+                  />
+                  <ErrorMessage
+                    name="NHS_Number"
+                    component="div"
+                    className="error text-danger"
+                  />
+          
+              </div>
               </div>
               
 

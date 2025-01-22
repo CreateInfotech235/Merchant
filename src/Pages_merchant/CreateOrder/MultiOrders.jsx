@@ -29,6 +29,10 @@ const MultiOrders = () => {
   const [newarrayoflocation, setNewarrayoflocation] = useState([]);
   const [parcelTypeDetail, setParcelTypeDetail] = useState([]);
   // const [isSubmit, setIsSubmit] = useState(false);
+
+
+
+
   useEffect(() => {
     console.log("initialValues", initialValues);
     console.log("newarrayoflocation", newarrayoflocation);
@@ -1314,7 +1318,7 @@ console.log(apiKey);
                           }]
                         }))
                       }}>
-                        + Add Delivery Information
+                        + Add Another Delivery
                       </button>
 
                       {/* Submit Button */}
