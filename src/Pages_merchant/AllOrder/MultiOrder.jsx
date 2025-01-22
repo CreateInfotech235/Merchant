@@ -47,7 +47,6 @@ const MultiOrder = () => {
   const [isSingle, setIsSingle] = useState(false);
   const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [ordersPerPage, setOrdersPerPage] = useState(10);
 
   const fetchData = async () => {
     setLoading(true);
@@ -81,6 +80,8 @@ const MultiOrder = () => {
   useEffect(() => {
     setFilteredOrders(orderData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
   }, [currentPage, itemsPerPage]);
+
+
   useEffect(() => {
     fetchData();
   }, [showModel, showEditModal]);
@@ -136,8 +137,6 @@ const MultiOrder = () => {
   };
 
   // Get current orders for pagination
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = filteredOrders;
 
   const handlePageChange = (event, value) => {

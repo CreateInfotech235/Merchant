@@ -16,6 +16,8 @@ const AddUser = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [failedCustomers, setFailedCustomers] = useState([]);
+  // const[formetdata,setFormetdata]=useState([{firstName:"1",lastName:"",country:"",city:"",address:"",postCode:"",mobileNumber:"",email:"",NHS_Number:""}])
+  
 
   const initialValues = {
     firstName: "",
@@ -104,6 +106,40 @@ const AddUser = () => {
     // Save workbook
     XLSX.writeFile(wb, "failed_customers.xlsx");
   };
+  const downloadTemplate = () => {
+    const wb = XLSX.utils.book_new();
+    
+    // Define the sheet data
+    const sheetData = [
+      {
+        firstName: "",
+        lastName: "",
+        country: "",
+        city: "",
+        address: "",
+        postCode: "",
+        mobileNumber: "",
+        email: "",
+        NHS_Number: ""
+      }
+    ];
+    
+    // Create a worksheet
+    const ws = XLSX.utils.json_to_sheet(sheetData);
+    
+    // Ensure mobileNumber is set as text
+    const mobileNumberCell = ws["H2"]; // H2 corresponds to the "mobileNumber" column (assuming it's the 8th column)
+    if (mobileNumberCell) {
+      mobileNumberCell.t = "s"; // Set the type to 's' for string
+    }
+  
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, "Template");
+  
+    // Write the workbook to a file
+    XLSX.writeFile(wb, "template.xlsx");
+  };
+  
 
   const handleExcelUpload = async () => {
     if (!selectedFile) {
@@ -201,6 +237,12 @@ const AddUser = () => {
               Download Failed Data
             </button>
           )}
+          <button
+            onClick={downloadTemplate}
+            className="btn btn-primary ms-2"
+          >
+          Download Template
+          </button>
         </div>
       </div>
 

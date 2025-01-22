@@ -7,50 +7,43 @@ import "./DeliveryMan.css";
 import show from "../../assets_mercchant/show.png";
 import locationimg from "../../assets_mercchant/delivery-bike.png";
 import searchIcon from "../../assets_mercchant/search.png";
-import Pagination from "../../Components_merchant/Pagination/Pagination";
+import { Stack } from "@mui/material";
+import { Pagination } from "@mui/material";
 import { getDeliveryMan } from "../../Components_merchant/Api/DeliveryMan";
 import UpdateDeliveryBoyModal from "./UpdateDeliveryManModal";
-import DeliveryManInfoModal from "./DeliveryManInfoModal"; // Import the new modal
+import DeliveryManInfoModal from "./DeliveryManInfoModal";
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
 import Loader from "../../Components_admin/Loader/Loader";
 import MapModal from "./MapModal";
 
 const DeliveryMan = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
   const [showModel, setShowModel] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
-  const [deliverymen, setDeliverymen] = useState([]); // State for API data
-  const [totalPages, setTotalPages] = useState(1); // For pagination
-  const [selectedDeliveryMan, setSelectedDeliveryMan] = useState(null); // State for selected delivery man to edit or view
-  const [showEditModal, setShowEditModal] = useState(false); // State for showing the edit modal
-  const [showModal, setShowModal] = useState(false); // State for showing the edit modal
-  const [showInfoModal, setShowInfoModal] = useState(false); // State for showing the view modal
-  const [location, setLocation] = useState(null); // State for location
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deliverymen, setDeliverymen] = useState([]);
+  const [selectedDeliveryMan, setSelectedDeliveryMan] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showMapModal, setShowMapModal] = useState(false);
-  const closeModel = () => setShowModel(false);
+  const [allDeliveryMen, setAllDeliveryMen] = useState([]);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchDeliveryMen = async () => {
     setLoading(true);
     try {
-      const searchParam = searchTerm ? `&searchValue=${searchTerm}` : "";
-      const res = await getDeliveryMan(currentPage, itemsPerPage, searchParam);
-
-      console.log(res, "res");
+      const res = await getDeliveryMan();
       if (res.status) {
-        const trashedData = res.data
+        const deliveryMenData = res.data
           .filter((data) => data.trashed === false)
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-        const sortedDeliveryMen = res.data.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-
-        setDeliverymen(trashedData);
-
-        // If you want to set trashed data somewhere, you can also handle it
-        // setTrashedDeliverymen(trashedData);
+          .sort((a, b) => new Date(b.showDeliveryManNumber) - new Date(a.showDeliveryManNumber));
+        
+        setAllDeliveryMen(deliveryMenData);
+        filterAndPaginateData(deliveryMenData, searchTerm, currentPage);
+        setTotalPages(Math.ceil(deliveryMenData.length / itemsPerPage));
       }
     } catch (err) {
       console.error("Error fetching delivery men:", err);
@@ -61,76 +54,71 @@ const DeliveryMan = () => {
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [currentPage, showModal, showEditModal, searchTerm]); // Fetch data when page or search term changes
+  }, [showModal, showEditModal]);
 
-  // Handle search input change
+  useEffect(() => {
+    filterAndPaginateData(allDeliveryMen, searchTerm, currentPage);
+    setTotalPages(Math.ceil(allDeliveryMen.length / itemsPerPage));
+  }, [currentPage, itemsPerPage, searchTerm]);
+
+  const filterAndPaginateData = (data, query, page) => {
+    const filteredData = data.filter((deliveryman) => {
+      const searchQuery = query.toLowerCase();
+      return (
+        (deliveryman.showDeliveryManNumber?.toString().includes(searchQuery)) ||
+        (deliveryman.firstName?.toLowerCase().includes(searchQuery)) ||
+        (deliveryman.lastName?.toLowerCase().includes(searchQuery)) ||
+        (deliveryman.email?.toLowerCase().includes(searchQuery)) ||
+        (deliveryman.contactNumber?.toString().includes(searchQuery))
+      );
+    });
+
+      const sortedData = filteredData.sort((a, b) => {
+      const aMatch = String(a.showDeliveryManNumber).toLowerCase() === query;
+      const bMatch = String(b.showDeliveryManNumber).toLowerCase() === query;
+      return bMatch - aMatch; // Exact matches appear first
+    });
+    console.log("filteredData", filteredData);
+
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setDeliverymen(sortedData.slice(startIndex, endIndex));
+    setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
+  };
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset pagination when search term changes
+    setCurrentPage(1);
   };
-
-  const handleClick = (event) => {
-    setCurrentPage(Number(event.target.id));
-  };
-
-  // Filter deliverymen based on search term
-  const filteredDeliverymen = deliverymen?.filter((deliveryman) => {
-    const query = searchTerm.toLowerCase();
-    return (
-      (deliveryman.firstName &&
-        deliveryman.firstName.toLowerCase().includes(query)) ||
-      (deliveryman.lastName &&
-        deliveryman.lastName.toLowerCase().includes(query)) ||
-      (deliveryman.email && deliveryman.email.toLowerCase().includes(query)) ||
-      (deliveryman.contactNumber &&
-        deliveryman.contactNumber.toString().includes(query))
-    );
-  });
-
-  // Pagination logic
-  const indexOfLastDeliveryMan = currentPage * itemsPerPage;
-  const indexOfFirstDeliveryMan = indexOfLastDeliveryMan - itemsPerPage;
-  const currentDeliveryMen = filteredDeliverymen.slice(
-    indexOfFirstDeliveryMan,
-    indexOfLastDeliveryMan
-  );
-
-  console.log("currentDeliveryMen", currentDeliveryMen);
 
   const handleDeleteClick = (deliveryMan) => {
     setSelectedDeliveryMan(deliveryMan._id);
     setShowModal(true);
   };
-  const handleEditClick = (deliveryMan) => {
-    console.log(deliveryMan);
 
+  const handleEditClick = (deliveryMan) => {
     setSelectedDeliveryMan(deliveryMan);
     setShowEditModal(true);
   };
 
   const closeEditModal = () => {
     setShowEditModal(false);
-    setSelectedDeliveryMan(null); // Clear the selected delivery man after closing
+    setSelectedDeliveryMan(null);
   };
+
   const closeModal = () => {
-    setShowEditModal(false);
-    setSelectedDeliveryMan(null); // Clear the selected delivery man after closing
+    setShowModal(false);
+    setSelectedDeliveryMan(null);
   };
 
-  // Function to open info modal and set the selected delivery man
   const handleViewClick = (deliveryMan) => {
-    // console.log("delivery", deliveryMan);
-
-    setShowInfoModal(true); // Show the info modal
+    setShowInfoModal(true);
     setSelectedDeliveryMan(deliveryMan);
   };
 
-  // console.log("view", showInfoModal);
-
-  // Function to close the info modal
   const closeInfoModal = () => {
     setShowInfoModal(false);
-    setSelectedDeliveryMan(null); // Clear the selected delivery man after closing
+    setSelectedDeliveryMan(null);
   };
 
   const statusColors = {
@@ -142,17 +130,16 @@ const DeliveryMan = () => {
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
   const handleLocationClick = (coordinates) => {
-    console.log("Coordinates:", coordinates);
-    if (
-      coordinates &&
-      coordinates[0] !== undefined &&
-      coordinates[1] !== undefined
-    ) {
+    if (coordinates) {
       setLocation(coordinates);
       setShowMapModal(true);
     } else {
       alert("No coordinates found");
     }
+  };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
   };
 
   return (
@@ -162,7 +149,7 @@ const DeliveryMan = () => {
           <Link to="/add-delivery-man">
             <button
               type="button"
-              className="btn text-light flex items-center justify-center "
+              className="btn text-light flex items-center justify-center"
               style={{ background: "#D65246" }}
             >
               <img src={add} className="pe-2" alt="Add" />
@@ -209,7 +196,7 @@ const DeliveryMan = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="11" className="text-center p-3">
+                  <td colSpan="13" className="text-center p-3">
                     <div className="d-flex justify-content-center">
                       <div className="mx-auto">
                         <Loader />
@@ -217,109 +204,115 @@ const DeliveryMan = () => {
                     </div>
                   </td>
                 </tr>
-              ) : currentDeliveryMen.length === 0 ? (
+              ) : deliverymen.length === 0 ? (
                 <tr>
-                  <td colSpan="11" className="text-center p-3">
+                  <td colSpan="13" className="text-center p-3">
                     <div className="d-flex justify-content-center">
                       <div className="mx-auto">No Data Found</div>
                     </div>
                   </td>
                 </tr>
               ) : (
-                currentDeliveryMen.map((deliveryman) =>
-                  deliveryman.trashed === false ? (
-                    <tr key={deliveryman._id}>
-                      <td className="user-table1">
-                        <input type="checkbox" />
-                      </td>
-                      <td className="p-3">
-                        {deliveryman?.showDeliveryManNumber ?? "-"}
-                      </td>
-                      <td className="p-3">{deliveryman?.firstName ?? "-"}</td>
-                      <td className="p-3">{deliveryman?.lastName ?? "-"}</td>
-                      <td className="p-3">
-                        {deliveryman.countryCode} {deliveryman.contactNumber}
-                      </td>
-                      <td className="p-3">{deliveryman.email}</td>
-                      <td className="p-3">{deliveryman.address}</td>
-                      <td className="p-3">{deliveryman.postCode}</td>
-                      <td className="p-3">{`${deliveryman.charge} / ${deliveryman.chargeMethod}`}</td>
-                      <td className="p-3">
-                        <button className={getColorClass(deliveryman.status)}>
-                          {deliveryman.status === "ENABLE"
-                            ? "ONLINE"
-                            : "OFFLINE"}
-                        </button>
-                      </td>
-                      <td className="user-table1">
+                deliverymen.map((deliveryman) => (
+                  <tr key={deliveryman._id}>
+                    <td className="user-table1">
+                      <input type="checkbox" />
+                    </td>
+                    <td className="p-3">
+                      {deliveryman?.showDeliveryManNumber ?? "-"}
+                    </td>
+                    <td className="p-3">{deliveryman?.firstName ?? "-"}</td>
+                    <td className="p-3">{deliveryman?.lastName ?? "-"}</td>
+                    <td className="p-3">
+                      {deliveryman.countryCode} {deliveryman.contactNumber}
+                    </td>
+                    <td className="p-3">{deliveryman.email}</td>
+                    <td className="p-3">{deliveryman.address}</td>
+                    <td className="p-3">{deliveryman.postCode}</td>
+                    <td className="p-3">{`${deliveryman.charge} / ${deliveryman.chargeMethod}`}</td>
+                    <td className="p-3">
+                      <button className={getColorClass(deliveryman.status)}>
+                        {deliveryman.status === "ENABLE" ? "ONLINE" : "OFFLINE"}
+                      </button>
+                    </td>
+                    <td className="user-table1">
+                      <button
+                        className={`enable-btn ${deliveryman.isVerified ? "green" : "red"}`}
+                      >
+                        {deliveryman.isVerified ? "ACTIVE" : "INACTIVE"}
+                      </button>
+                    </td>
+                    <td className="user-table1">
+                      <button
+                        className="edit-btn"
+                        onClick={() => handleLocationClick(deliveryman._id)}
+                      >
+                        <img
+                          src={locationimg}
+                          alt="Location"
+                          className="mx-auto"
+                        />
+                      </button>
+                    </td>
+                    <td className="user-table1">
+                      <div className="d-flex justify-content-center align-items-center">
                         <button
-                          className={`enable-btn ${
-                            deliveryman.isVerified ? "green" : "red"
-                          }`}
+                          className="edit-btn ms-1"
+                          onClick={() => handleEditClick(deliveryman)}
                         >
-                          {deliveryman.isVerified ? "ACTIVE" : "INACTIVE"}
+                          <img src={edit} alt="Edit" className="mx-auto" />
                         </button>
-                        {/* <input type="checkb ox" checked={deliveryman.isVerified} /> */}
-                      </td>
-                      <td className="user-table1">
                         <button
-                          className="edit-btn"
-                          // onClick={() => handleLocationClick([
-                          //   deliveryman.location?.coordinates[0],
-                          //   deliveryman.location?.coordinates[1],
-                          // ])}
-
-                          onClick={() => handleLocationClick(deliveryman._id)}
+                          className="delete-btn ms-1"
+                          onClick={() => handleDeleteClick(deliveryman)}
                         >
                           <img
-                            src={locationimg}
-                            alt="Location"
-                            className="mx-auto "
+                            src={deleteimg}
+                            alt="Delete"
+                            className="mx-auto"
                           />
                         </button>
-                      </td>
-                      <td className="user-table1">
-                        <div className="d-flex justify-content-center align-items-center">
-                          <button
-                            className="edit-btn ms-1"
-                            onClick={() => handleEditClick(deliveryman)}
-                          >
-                            <img src={edit} alt="Edit" className="mx-auto" />
-                          </button>
-                          <button
-                            className="delete-btn ms-1"
-                            onClick={() => handleDeleteClick(deliveryman)}
-                          >
-                            <img
-                              src={deleteimg}
-                              alt="Delete"
-                              className="mx-auto"
-                            />
-                          </button>
-
-                          <button
-                            className="show-btn ms-1"
-                            onClick={() => handleViewClick(deliveryman)}
-                          >
-                            <img src={show} alt="Show" className="mx-auto" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : null
-                )
+                        <button
+                          className="show-btn ms-1"
+                          onClick={() => handleViewClick(deliveryman)}
+                        >
+                          <img src={show} alt="Show" className="mx-auto" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
         </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handleClick={handleClick}
-        />
+        <div className="d-flex justify-content-end align-items-center mt-3">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+            />
+          </Stack>
+          <select
+            className="form-select ms-3 w-20"
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={75}>75</option>
+            <option value={100}>100</option>
+          </select>
+        </div>
       </div>
 
-      {/* Conditionally render the UpdateDeliveryBoyModal */}
       {showEditModal && (
         <UpdateDeliveryBoyModal
           deliveryBoy={selectedDeliveryMan}
@@ -335,13 +328,14 @@ const DeliveryMan = () => {
           onHide={() => setShowModal(false)}
         />
       )}
-      {/* Conditionally render the DeliveryManInfoModal */}
+
       {showInfoModal && (
         <DeliveryManInfoModal
           deliveryBoy={selectedDeliveryMan}
           onHide={closeInfoModal}
         />
       )}
+
       {showMapModal && (
         <MapModal location={location} onHide={() => setShowMapModal(false)} />
       )}

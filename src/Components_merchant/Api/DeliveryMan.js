@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import API from "./Api";
 
-export const getDeliveryMan = async (page, pageLimit, search) => {
+export const getDeliveryMan = async () => {
   try {
     const merchnatId = localStorage.getItem("merchnatId");
 
