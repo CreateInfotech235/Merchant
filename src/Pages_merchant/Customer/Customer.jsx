@@ -34,6 +34,10 @@ const Customers = () => {
   const [showModel, setShowModel] = useState(false);
   const [customerId, setCustomerId] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
 
   useEffect(() => {
     if (themeMode === "dark") {
@@ -50,7 +54,7 @@ const Customers = () => {
   const fetchCustomers = async () => {
     setLoading(true); // Set loading to true before the API call
     try {
-      const response = await getAllCustomers();
+      const response = await getAllCustomers(currentPage, itemsPerPage, searchQuery);
       if (response.status && response.data.length > 0) {
         setCustomers(response.data);
       } else {
@@ -108,6 +112,11 @@ const Customers = () => {
     setSelectedCustomer(null);
   };
 
+
+  const handleClick = (event) => {
+    setCurrentPage(Number(event.target.id));
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
@@ -142,6 +151,7 @@ const Customers = () => {
         {error ? (
           <div className="text-center text-danger p-3">{error}</div>
         ) : (
+          <>
           <table
             className="table-borderless w-100 text-center bg-light"
             style={{ fontSize: "12px" }}
@@ -221,6 +231,12 @@ const Customers = () => {
               )}
             </tbody>
           </table>
+          {/* <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handleClick={handleClick}
+        /> */}
+        </>
         )}
       </div>
 

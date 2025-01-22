@@ -10,6 +10,7 @@ const AddDeliveryBoy = () => {
   const navigate = useNavigate();
   const merchnatId = localStorage.getItem("merchnatId");
   const [showPassword, setShowPassword] = useState(false); // State for password visibility toggle
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initialValues = {
     firstName: "",
@@ -54,78 +55,71 @@ const AddDeliveryBoy = () => {
     charge: Yup.string().required("Charge is required"),
   });
 
-  const onSubmit = async (values, { setFieldValue }) => {
-    var locationData = null;
-    var defaultLocationData = null;
+  const onSubmit = async (values, { setFieldValue, resetForm }) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    if (!values.location.latitude && !values.location.longitude) {
-      // console.log('Helo');
-      if (values.address) {
-        // Fetch the coordinates using geocoding
-        const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
-        console.log(values.address, "Delivery add");
+    try {
+      let locationData = values.location;
+      let defaultLocationData = values.defaultLocation;
 
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            values.address
-          )}&key=${apiKey}`
-        );
-        const data = await response.json();
-        console.log(data);
-        // console.log(setFieldValue);
+      if (!values.location.latitude && !values.location.longitude) {
+        if (values.address) {
+          const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
+          console.log(values.address, "Delivery add");
 
-        if (data.results && data.results.length > 0) {
-          const { lat, lng } = await data.results[0].geometry.location; // Correctly extract latitude and longitude
-          const formattedAddress =
-            (await data.results[0]?.formatted_address) ||
-            "Unable to fetch address";
-
-          // console.log(formattedAddress, lat, lng);
-          const postalCodeComponent = data.results[0].address_components.find(
-            (component) => component.types.includes("postal_code")
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+              values.address
+            )}&key=${apiKey}`
           );
-          const postalCode = (await postalCodeComponent)
-            ? postalCodeComponent.long_name
-            : "";
+          const data = await response.json();
 
-          locationData = {
-            latitude: lat,
-            longitude: lng,
-          };
-          defaultLocationData = {
-            latitude: lat,
-            longitude: lng,
-          };
+          if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry.location;
 
-          // Set the address and coordinates to the form
-          // setFieldValue("deliveryDetails.address", formattedAddress);
-          setFieldValue("location.latitude", lat);
-          setFieldValue("location.longitude", lng);
-          // setFieldValue("deliveryDetails.postCode", postalCode);
+            locationData = {
+              latitude: lat,
+              longitude: lng,
+            };
+            defaultLocationData = {
+              latitude: lat,
+              longitude: lng,
+            };
+
+            setFieldValue("location.latitude", lat);
+            setFieldValue("location.longitude", lng);
+          } else {
+            alert("Address not found. Please try again.");
+            setIsSubmitting(false);
+            return;
+          }
         } else {
-          alert("Address not found. Please try again.");
+          alert("Please enter an address.");
+          setIsSubmitting(false);
+          return;
         }
-      } else {
-        alert("Please enter an address.");
       }
-    }
-    console.log(values);
 
-    const payload = {
-      ...values,
-      location: {
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
-      },
-      defaultLocation: {
-        latitude: defaultLocationData.latitude,
-        longitude: defaultLocationData.longitude,
-      },
-    };
+      const payload = {
+        ...values,
+        location: locationData,
+        defaultLocation: {
+          latitude: Number(defaultLocationData.latitude),
+          longitude: Number(defaultLocationData.longitude),
+        },
+      };
 
-    const res = await addDeliveryBoy(payload);
-    if (res.status) {
-      navigate("/delivery-man");
+      const res = await addDeliveryBoy(payload);
+      if (res.status) {
+        resetForm();
+        navigate("/delivery-man");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred while submitting the form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -344,8 +338,9 @@ const AddDeliveryBoy = () => {
                         background: "#d65246",
                         color: "white",
                       }}
+                      disabled={isSubmitting}
                     >
-                      Save
+                      {isSubmitting ? "Saving..." : "Save"}
                     </button>
                   </div>
                   <div>

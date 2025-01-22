@@ -2,6 +2,7 @@ import API from "./Api";
 import { toast } from "react-toastify";
 export const getAllCustomers = async () => {
   try {
+    // console.log(pageCount, pageLimit, searchQuery);
     const merchantId = await localStorage.getItem("merchnatId");
     // Create a new object with the original data and merchantId
     const tampdata = { merchantId };
