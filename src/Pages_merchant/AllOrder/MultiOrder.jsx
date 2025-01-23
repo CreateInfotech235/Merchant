@@ -8,7 +8,7 @@ import show from "../../assets_mercchant/show.png";
 import searchIcon from "../../assets_mercchant/search.png";
 import { getMultiOrders, getOrders } from "../../Components_merchant/Api/Order";
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
-import edit from "../../assets_mercchant/edit.png"; 
+import edit from "../../assets_mercchant/edit.png";
 import UpdateDeliveryBoyModal from "../DeliveryMan/UpdateDeliveryManModal";
 import UpdateOrderModal from "./UpdateOrderModal";
 import { format } from "date-fns";
@@ -48,6 +48,11 @@ const MultiOrder = () => {
   const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
 
+
+  const [startDate, setStartDate] = useState(undefined);
+  const [endDate, setEndDate] = useState(undefined);
+  const [filterStatus, setFilterStatus] = useState("all");
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -79,7 +84,7 @@ const MultiOrder = () => {
 
   useEffect(() => {
     setFilteredOrders(orderData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-setTotalPages(Math.ceil(orderData.length / itemsPerPage));
+    setTotalPages(Math.ceil(orderData.length / itemsPerPage));
   }, [currentPage, itemsPerPage]);
 
 
@@ -95,47 +100,88 @@ setTotalPages(Math.ceil(orderData.length / itemsPerPage));
   const closeModel = () => setShowModel(false);
 
 
-
-
-
-  
   const filterOrders = (query) => {
-
-    console.log("orderData",orderData);
     setCurrentPage(1); // Reset to first page when searching
 
     setSearchQuery(query);
-    
-        const filteredData = orderData.filter((order) => {
-          const query = searchQuery.toLowerCase();
-         
-          return (
-            !order.trashed &&
-            (order.showOrderNumber?.toString().includes(query) ||
-              order.customerName?.toLowerCase().includes(query) ||
-              order.pickupAddress?.address?.toLowerCase().includes(query) ||
-              order.deliveryAddress?.address?.toLowerCase().includes(query) ||
-              order.status?.toLowerCase().includes(query))
-          );
-        });
-    
-        // Sort data by exact match on showOrderNumber
-        const sortedData = filteredData.sort((a, b) => {
-          const aMatch = String(a.showOrderNumber).toLowerCase() === query;
-          const bMatch = String(b.showOrderNumber).toLowerCase() === query;
-          return bMatch - aMatch; // Exact matches appear first
-        });
-    console.log("sortedData",sortedData);
-        // Update pagination based on filtered results
-        setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        setFilteredOrders(sortedData.slice(startIndex, endIndex));
-      };
+    var data = orderData;
+    const filteredData = orderData.filter((order) => {
+      const query = searchQuery.toLowerCase();
 
-      useEffect(()=>{
-        filterOrders(searchQuery);
-      },[searchQuery])
+      return (
+        !order.trashed &&
+        (order.showOrderNumber?.toString().includes(query) ||
+          order.customerName?.toLowerCase().includes(query) ||
+          order.pickupAddress?.address?.toLowerCase().includes(query) ||
+          order.deliveryAddress?.address?.toLowerCase().includes(query) ||
+          order.status?.toLowerCase().includes(query))
+      );
+    });
+    data = filteredData;
+
+
+
+    if (filterStatus !== "all") {
+      data = data.filter((order) => order.status?.toLowerCase() === filterStatus.toLowerCase());
+    }
+
+    if (startDate || endDate) {
+      if (startDate && endDate) {
+        // If both dates are same, include orders from that entire day
+        const startFilterDate = new Date(startDate);
+        const endFilterDate = new Date(endDate);
+        endFilterDate.setHours(23, 59, 59); // Set end date to end of day
+
+        data = data.filter((order) => {
+          const [datePart, timePart] = order.createdDate.split(" , ");
+          const [day, month, year] = datePart.split("-");
+          const [hours, minutes] = timePart.split(":");
+          const orderDate = new Date(year, month - 1, day, hours, minutes);
+          return orderDate >= startFilterDate && orderDate <= endFilterDate;
+        });
+      } else {
+        // Handle single date filters
+        if (startDate) {
+          data = data.filter((order) => {
+            const [datePart, timePart] = order.createdDate.split(" , ");
+            const [day, month, year] = datePart.split("-");
+            const [hours, minutes] = timePart.split(":");
+            const orderDate = new Date(year, month - 1, day, hours, minutes);
+            const filterDate = new Date(startDate);
+            return orderDate >= filterDate;
+          });
+        }
+        if (endDate) {
+          data = data.filter((order) => {
+            const [datePart, timePart] = order.createdDate.split(" , ");
+            const [day, month, year] = datePart.split("-");
+            const [hours, minutes] = timePart.split(":");
+            const orderDate = new Date(year, month - 1, day, hours, minutes);
+            const filterDate = new Date(endDate);
+            filterDate.setHours(23, 59, 59); // Set end date to end of day
+            return orderDate <= filterDate;
+          });
+        }
+      }
+    }
+
+    // Sort data by exact match on showOrderNumber
+    const sortedData = data.sort((a, b) => {
+      const aMatch = String(a.showOrderNumber).toLowerCase() === query;
+      const bMatch = String(b.showOrderNumber).toLowerCase() === query;
+      return bMatch - aMatch; // Exact matches appear first
+    });
+
+    // Update pagination based on filtered results
+    setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setFilteredOrders(sortedData.slice(startIndex, endIndex));
+  };
+
+  useEffect(() => {
+    filterOrders(searchQuery);
+  }, [searchQuery, startDate, endDate, filterStatus])
 
 
   const handlePageChange = (event, value) => {
@@ -227,7 +273,7 @@ setTotalPages(Math.ceil(orderData.length / itemsPerPage));
 
   const statusColors = {
     CREATED: "gray",
-    ASSIGNED: "blue", 
+    ASSIGNED: "blue",
     ACCEPTED: "green",
     CANCELLED: "red",
     UNASSIGNED: "red",
@@ -287,7 +333,7 @@ setTotalPages(Math.ceil(orderData.length / itemsPerPage));
   };
 
   return (
-    <div className="h-screen">
+    <div >
       <div className="d-flex justify-content-between align-items-center pb-3 nav-bar">
         <div className="add-order-button">
           <button
@@ -296,7 +342,7 @@ setTotalPages(Math.ceil(orderData.length / itemsPerPage));
             style={{ background: "#D65246" }}
           >
             <Link
-              to="/create-order"
+              to="/multi-orders"
               className="d-flex align-items-center"
               style={{ textDecoration: "none", color: "white" }}
             >
@@ -312,7 +358,7 @@ setTotalPages(Math.ceil(orderData.length / itemsPerPage));
               className="search-btn border-1 border-slate-500 rounded-start-4 p-3"
               placeholder="Search Order"
               value={searchQuery}
-              onChange={(e)=>{setSearchQuery(e.target.value); setCurrentPage(1);}}
+              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
             />
             <button className="search-img rounded-end-4 border-0 flex justify-center items-center">
               <img
@@ -324,8 +370,79 @@ setTotalPages(Math.ceil(orderData.length / itemsPerPage));
           </div>
         </div>
       </div>
+      <div className="filter-container p-3 bg-white rounded-lg shadow-md">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="date-input-group flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">Start:</label>
+              <input 
+                type="date" 
+                value={startDate} 
+                onChange={(e) => { setStartDate(e.target.value); }}
+                className="form-input rounded-md border-gray-300 shadow-sm h-9"
+              />
+            </div>
+            <div className="date-input-group flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">End:</label>
+              <input 
+                type="date" 
+                value={endDate} 
+                onChange={(e) => { setEndDate(e.target.value); }}
+                className="form-input rounded-md border-gray-300 shadow-sm h-9" 
+              />
+            </div>
+            <button 
+              className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+              onClick={() => { 
+                setStartDate(new Date().toISOString().split('T')[0]); 
+                setEndDate(new Date().toISOString().split('T')[0]) 
+              }}
+            >
+              Today
+            </button>
+            <button 
+              className="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
+              onClick={() => { setStartDate(""); setEndDate("") }}
+            >
+              Clear Dates
+            </button>
+          </div>
 
-      <div className="w-100">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <label htmlFor="status" className="text-sm font-medium text-gray-700">Status:</label>
+              <select 
+                id="status" 
+                value={filterStatus} 
+                onChange={(e) => { setFilterStatus(e.target.value) }}
+                className="form-select rounded-md border-gray-300 shadow-sm h-9"
+              >
+                <option value="all">All</option>
+                <option value="CREATED">Created</option>
+                <option value="ASSIGNED">Assigned</option>
+                <option value="ACCEPTED">Accepted</option>
+                <option value="CANCELLED">Cancelled</option>
+                <option value="UNASSIGNED">Unassigned</option>
+                <option value="DELIVERED">Delivered</option>
+                <option value="PICKED_UP">Picked Up</option>
+                <option value="DEPARTED">Departed</option>
+                <option value="ARRIVED">Arrived</option>
+              </select>
+            </div>
+            <button 
+              className="px-3 py-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors"
+              onClick={() => { 
+                setStartDate(""); 
+                setEndDate(""); 
+                setFilterStatus("all"); 
+              }}
+            >
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="w-100 mt-3">
         <div className="table-responsive">
           <table
             className="table-borderless w-100 text-center bg-light"
@@ -629,9 +746,9 @@ setTotalPages(Math.ceil(orderData.length / itemsPerPage));
             />
           </Stack>
           <select
-            className="form-select ms-3 w-20" 
+            className="form-select ms-3 w-20"
             value={itemsPerPage}
-            onChange={(e) =>{setCurrentPage(1); setItemsPerPage(Number(e.target.value))}}
+            onChange={(e) => { setCurrentPage(1); setItemsPerPage(Number(e.target.value)) }}
           >
             <option value={10}>10</option>
             <option value={25}>25</option>

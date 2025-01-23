@@ -31,7 +31,7 @@ const MultiOrders = () => {
   // const [isSubmit, setIsSubmit] = useState(false);
 
 
-
+console.log("customer", customer);
 
   useEffect(() => {
     console.log("initialValues", initialValues);
@@ -78,7 +78,8 @@ const MultiOrders = () => {
 
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
-      const deliveryMans = await getAllDeliveryMans();
+      const deliveryMans = await getAllDeliveryMans({createdByAdmin: true});
+      console.log("deliveryMans", deliveryMans);
       const parcelTypeRes = await getMerchantParcelType();
       if(parcelTypeRes.status){
         setParcelTypeDetail(parcelTypeRes.data);
@@ -261,6 +262,7 @@ const MultiOrders = () => {
             postCode: merchant?.address?.postalCode || "",
           },
           deliveryDetails: [{
+            customerId: "",
             subOrderId: 1,
             parcelsCount: 1,
             paymentCollectionRupees: 0,
@@ -310,6 +312,7 @@ const MultiOrders = () => {
     }),
     deliveryDetails: Yup.array().of(
       Yup.object().shape({
+        customerId: Yup.string().required("Required Customer to be selected"),
         address: Yup.string().required("Required Delivery Address"),
         name: Yup.string(),
         mobileNumber: Yup.string(),
@@ -472,6 +475,7 @@ console.log(apiKey);
         },
         merchant: merchant._id,
         deliveryDetails: initialValues.deliveryDetails.map((delivery, index) => ({
+          customerId: delivery.customerId,
           address: delivery.address,
           cashOnDelivery: delivery.cashOnDelivery,
           description: delivery.description,
@@ -787,7 +791,7 @@ console.log(apiKey);
                           Select Delivery Man
                         </option>
                         {deliveryMan.map((data, index) => {
-                         console.log("data", data);
+                         console.log("data1", data);
                           let distance = "";
                           if (currentLocation && data.location) {
                             distance = calculateDistance(
@@ -875,7 +879,7 @@ console.log(apiKey);
                                       ...prev,
                                       deliveryDetails: prev.deliveryDetails.filter((_, i) => i !== index)
                                     }));
-                                  }}>
+                                  }} disabled={isOrderCreated}>
                                     Remove
                                   </button>
                                 )
@@ -897,7 +901,7 @@ console.log(apiKey);
                               }}
                               options={customer.map((cust) => ({
                                 value: cust._id,
-                                label: ` ${cust.NHS_Number} - ${cust.firstName}  ${cust.lastName}  -  ${cust.email}  -  ${cust.mobileNumber}`,
+                                label: ` ${cust.NHS_Number} - ${cust.firstName}  ${cust.lastName}  -  ${cust.address}  -  ${cust.postCode}`,
                                 ...cust,
                               }))}
                               placeholder="Select Customer"
@@ -949,7 +953,7 @@ console.log(apiKey);
 
                                   setInitialValues(prev => ({
                                     ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: selectedOption.firstName } : item)
+                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: selectedOption.firstName + " " + selectedOption.lastName } : item)
                                   }));
                                 } else {
                                   setInitialValues(prev => ({

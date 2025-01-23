@@ -11,6 +11,7 @@ const AddDeliveryBoy = () => {
   const merchnatId = localStorage.getItem("merchnatId");
   const [showPassword, setShowPassword] = useState(false); // State for password visibility toggle
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [chargeMethod, setChargeMethod] = useState("");
 
   const initialValues = {
     firstName: "",
@@ -294,12 +295,17 @@ const AddDeliveryBoy = () => {
                       name="chargeMethod"
                       className="form-control w-25% h-100%"
                       style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+                      onChange={(e) => {
+                        setChargeMethod(e.target.value);
+                        formik.setFieldValue("chargeMethod", e.target.value);
+                      }}
+                      value={chargeMethod}
                     >
                       <option value="" disabled>
                         Select Charge Method
                       </option>
-                      <option value="DISTANCE">Distance</option>
-                      <option value="TIME">Time</option>
+                      <option value="DISTANCE">per mile</option>
+                      <option value="TIME">per hour</option>
                     </Field>
                     <ErrorMessage
                       name="chargeMethod"
@@ -307,24 +313,28 @@ const AddDeliveryBoy = () => {
                       className="error text-danger ps-2"
                     />
                   </div>
-
+                  {chargeMethod && (
                   <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
                     <label className="w-100" style={{ color: "#999696" }}>
-                      Charge
+                      Charge {chargeMethod==="DISTANCE"?"per mile":"per hour"}
                     </label>
                     <Field
                       type="text"
                       name="charge"
                       className="form-control w-25% h-100%"
-                      placeholder="Charge per mile"
+                      placeholder={`Charge ${chargeMethod?chargeMethod==="DISTANCE"?"per mile":"per hour":""}`}
                       style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+                      onChange={(e) => {
+                        formik.setFieldValue("charge", e.target.value);
+                      }}
                     />
                     <ErrorMessage
                       name="charge"
                       component="div"
                       className="error text-danger ps-2"
-                    />
-                  </div>
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <br />

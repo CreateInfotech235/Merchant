@@ -16,7 +16,6 @@ export const getWebHome = async () => {
 export const forgotPassword = async (email) => {
     console.log(" send email", email);
     try {
-        console.log('sadasfad');
         
         const response = await API.post(`/mobile/auth/forgot-password/send-otp`, {email});
         console.log(response.data);

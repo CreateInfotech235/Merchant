@@ -216,9 +216,9 @@ export const deleteDeliveryMan = async (id) => {
   }
 };
 
-export const getAllDeliveryMans = async () => {
+export const getAllDeliveryMans = async (data) => {
   try {
-    const response = await API.get(`/mobile/auth/getAllDeliveryMans`);
+    const response = await API.get(`/mobile/auth/getAllDeliveryMans`, {params: data});
     // console.log("response", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };

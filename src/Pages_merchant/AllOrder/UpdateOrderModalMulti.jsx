@@ -18,6 +18,7 @@ import {
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 import { getMapApi } from "../../Components_admin/Api/MapApi";
 import { toast } from "react-toastify";
+import { Autocomplete, TextField } from "@mui/material";
 
 const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   console.log("Order", Order);
@@ -35,8 +36,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialValues, setInitialValues] = useState({});
-console.log(initialValues.deliveryDetails);
-const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
+  console.log(initialValues.deliveryDetails);
+  const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
 
   // const [isOrderUpdated, setIsOrderUpdated] = useState(false);
 
@@ -158,8 +159,10 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
         postCode: Order?.pickupAddress?.postCode || "",
       },
       deliveryDetails: Order?.deliveryAddress,
-    });    
+    });
   }, [Order]);
+  console.log(initialValues.deliveryDetails, 'initialValues.deliveryDetails');
+
 
   console.log("initialValues", initialValues);
   const validationSchema = Yup.object().shape({
@@ -198,27 +201,28 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
           .positive("Must be positive")
           .min(1),
         address: Yup.string().required("Required"),
-        name: Yup.string().required("Required"),
-        mobileNumber: Yup.number().required("Required"),
-        email: Yup.string().email("Invalid email").required("Required"),
+        name: Yup.string(),
+        mobileNumber: Yup.string(),
+        email: Yup.string(),
         description: Yup.string(),
-        postCode: Yup.string().required("Required"),
-        distance: Yup.number().required("Required"),
-        duration: Yup.string().required("Required"),
+        postCode: Yup.string().required("postcode is required"),
+        distance: Yup.number(),
+        duration: Yup.string(),
         location: Yup.object().shape({
-          latitude: Yup.number().required("Required"),
-          longitude: Yup.number().required("Required")
+          latitude: Yup.number(),
+          longitude: Yup.number()
         }),
+        customerId: Yup.string().required("customer is required"),
         cashOnDelivery: Yup.string().required("Required"),
         parcelType: Yup.string()
       })
     ),
   });
 
-  
 
 
- 
+
+
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);
@@ -247,7 +251,7 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
 
   const onSubmit = async (values, { setFieldValue }) => {
     setIsUpdate(true);
-    console.log("values",values);
+    console.log("values", values);
     const timestamp = new Date(values.dateTime).getTime();
     const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
     const arrayoferror = []
@@ -265,7 +269,7 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
     })
 
 
-    const arrayofpostcode= values.deliveryDetails.map((delivery, index) => {
+    const arrayofpostcode = values.deliveryDetails.map((delivery, index) => {
       return delivery.postCode;
     })
     const distancesAndDurations = []
@@ -273,14 +277,14 @@ const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
 
 
     // Handle pickup location
-   
+
     if (values.pickupDetails.address) {
       console.log("pickupDetails.address", values.pickupDetails.address);
 
       const mapApi = await getMapApi();
       const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
-console.log(apiKey);
-console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`);
+      console.log(apiKey);
+      console.log(`${values.pickupDetails.address} ${values.pickupDetails.postCode}`);
 
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -336,7 +340,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
         console.log("data", data);
         if (data.results && data.results.length > 0) {
           console.log("data", data);
-          if (data.status !== "ZERO_RESULTS") {   
+          if (data.status !== "ZERO_RESULTS") {
             const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
             distancesAndDurations.push(await calculateDistancee(pickuplocation, deliverylocation))
             deliverylocations.push(deliverylocation)
@@ -392,6 +396,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
             longitude: deliverylocations[index]?.longitude
           },
           description: delivery.description,
+          customerId: delivery.customerId,
         }))
       };
       console.log("payload", payload);
@@ -402,6 +407,8 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
         console.log("res1", res1);
         onHide();
         navigate("/all-multi-order");
+      } else {
+        setIsUpdate(false);
       }
       return;
     } else {
@@ -415,7 +422,6 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
     }
     setIsUpdate(false);
   };
-
   return (
     <Modal show={true} onHide={onHide} size="xl">
       <Modal.Header closeButton>
@@ -429,8 +435,17 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
           onSubmit={onSubmit}
         >
           {({ setFieldValue, values }) => {
+            // Set customer IDs when initialValues change
+            useEffect(() => {
+              console.log(initialValues, 'initialValues123');
+              console.log(values, 'values123');
+              initialValues.deliveryDetails?.forEach((detail, index) => {
+                setFieldValue(`deliveryDetails.${index}.customerId`, detail?.customerId ?? "");
+              });
+            }, [initialValues, setFieldValue]);
+
             return (
-              <Form 
+              <Form
                 className="create-order"
                 onKeyDown={(e) => {
                   // Prevent form submission on Enter key except in textarea elements
@@ -443,7 +458,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                 <div className="pick-up mt-2 row">
 
                   {/* Pickup Information */}
-                  <div className="col-12 col-lg-12 row" style={{display: isSingle ? "none" : ""}}>
+                  <div className="col-12 col-lg-12 row" style={{ display: isSingle ? "none" : "" }}>
                     <h3 className="fw-bold text-4xl pb-1 text-center">
                       Pickup Information
                     </h3>
@@ -502,7 +517,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                             height: "3em",
                             border: "1px solid #E6E6E6",
                             fontSize: "15px",
-                      
+
                           }}
                           disabled={isUpdate}
                         />
@@ -750,7 +765,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                     </div>
                     {
                       initialValues?.deliveryDetails?.map((data, index) => (
-                        <div className={`row shadow  rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index} style={{display:isSingle? isSingle!=index+1 ? "none" : "" : ""}}>
+                        <div className={`row shadow  rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index} style={{ display: isSingle ? isSingle != index + 1 ? "none" : "" : "" }}>
 
                           <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
                             <div>
@@ -764,7 +779,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                                       ...prev,
                                       deliveryDetails: prev?.deliveryDetails?.filter((_, i) => i !== index)
                                     }));
-                                    
+
 
                                   }}>
                                     Delete
@@ -773,83 +788,158 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                               }
                             </div>
                           </div>
-
-                          <div className="input-error mb-1 col-4 ">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Select Customer :
+                          <div className="input-error mb-1 col-4" style={{ border: "none" }}>
+                            <label className="fw-thin p-0 pb-1">
+                              Select Customer:
                             </label>
-                            <Select
-                              name={`deliveryDetails.${index}.customerId`}
-                              className="form-control mb-1 p-0"
-
-                              styles={{
-                                control: (base) => ({ ...base,   height: "3em",backgroundColor: isUpdate ? "#e9ecef" : "white", }),
-                              }}
-                              isDisabled={isUpdate}
+                            <Autocomplete
+                              disablePortal
+                              value={customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId) ? {
+                                label: `${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).NHS_Number} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).firstName} ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).lastName} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).address} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).postCode}`,
+                                value: initialValues.deliveryDetails[index].customerId,
+                                customer: customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId)
+                              } : null}
                               options={customer.map((cust) => ({
+                                label: `${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`,
                                 value: cust._id,
-                                label: cust.firstName,
-                                label: `${cust.firstName}  -  ${cust.email}  -  ${cust.mobileNumber}`,
-                                ...cust,
+                                customer: cust
                               }))}
-                              placeholder="Select Customer"
-                              isClearable
-                              filterOption={(option, inputValue) => {
-                                const data = option.data;
-                                const searchValue = inputValue.toLowerCase();
-                                return (
-                                  data.firstName.toLowerCase().includes(searchValue) ||
-                                  data.lastName.toLowerCase().includes(searchValue) ||
-                                  data.email.toLowerCase().includes(searchValue) ||
-                                  data.mobileNumber.toLowerCase().includes(searchValue)
-                                );
-                              }}
-                              onChange={(selectedOption) => {
-                                if (selectedOption) {
+                              sx={{ width: "100%", border: "none", borderRadius: "5px", outline: "none", "& .MuiInputBase-input": { border: "none", outline: "none" } ,"& .MuiInputBase-input:focus": { border: "none", outline: "none",boxShadow: "none" } }}
+                              onChange={(e, newValue) => {
+                                console.log(newValue, 'newValue');
+                                if (newValue) {
+                                  console.log(newValue, 'newValue');
+                                  setFieldValue(`deliveryDetails.${index}.customerId`, newValue.value);
+                                  const selectedCustomer = newValue.customer;
 
                                   setInitialValues(prev => ({
                                     ...prev,
-                                    deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, customerId: selectedOption.value } : item)
-                                  }));
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, address: selectedOption.address } : item)
-                                  }));
-
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: selectedOption.mobileNumber } : item)
-                                  }));
-
-
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: selectedOption.email } : item)
-                                  }));
-
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: selectedOption.description } : item)
-                                  }));
-
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: selectedOption.postCode } : item)
-                                  }));
-
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: selectedOption.firstName } : item)
+                                    deliveryDetails: prev?.deliveryDetails?.map((item, i) =>
+                                      i === index ? {
+                                        ...item,
+                                        customerId: selectedCustomer._id,
+                                        address: selectedCustomer.address,
+                                        mobileNumber: selectedCustomer.mobileNumber,
+                                        email: selectedCustomer.email,
+                                        description: selectedCustomer.description,
+                                        postCode: selectedCustomer.postCode,
+                                        name: selectedCustomer.firstName
+                                      } : item
+                                    )
                                   }));
                                 } else {
                                   setInitialValues(prev => ({
                                     ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: "", mobileNumber: "", email: "", description: "", postCode: "", name: "" } : item)
+                                    deliveryDetails: prev.deliveryDetails.map((item, i) =>
+                                      i === index ? {
+                                        ...item,
+                                        address: "",
+                                        mobileNumber: "",
+                                        email: "",
+                                        description: "",
+                                        postCode: "",
+                                        name: ""
+                                      } : item
+                                    )
                                   }));
                                 }
                               }}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  style={{
+                                    backgroundColor: isUpdate ? "#e9ecef" : "white",
+                                    // border: "1px solid #E6E6E6",
+                                    borderRadius: "5px",
+                                    // height: "3em",
+                                  }}
+                                  label="Select Customer"
+                                  disabled={isUpdate}
+                                />
+                              )}
+                            />
+                            <ErrorMessage
+                              name={`deliveryDetails.${index}.customerId`}
+                              component="div"
+                              className="error text-danger ps-2"
                             />
                           </div>
+
+
+
+                          {/*                         
+                          <div className="input-error mb-1 col-4 ">
+                            <label className="fw-thin p-0 pb-1 ">
+                              Select Customer :
+                            </label>
+                            <Field name={`deliveryDetails.${index}.customerId`}>
+                              {({ field, form }) => (
+                                <Field
+                                  as="select"
+                                  name={`deliveryDetails.${index}.customerId`}
+                                  className="w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  onChange={(e) => {
+                                    const selectedCustomer = customer.find(cust => cust._id === e.target.value);
+                                    
+                                    if (selectedCustomer) {
+                                      setInitialValues(prev => ({
+                                        ...prev,
+                                        deliveryDetails: prev?.deliveryDetails?.map((item, i) => 
+                                          i === index ? {
+                                            ...item,
+                                            customerId: selectedCustomer._id,
+                                            address: selectedCustomer.address,
+                                            mobileNumber: selectedCustomer.mobileNumber,
+                                            email: selectedCustomer.email,
+                                            description: selectedCustomer.description,
+                                            postCode: selectedCustomer.postCode,
+                                            name: selectedCustomer.firstName
+                                          } : item
+                                        )
+                                      }));
+                                    } else {
+                                      setInitialValues(prev => ({
+                                        ...prev,
+                                        deliveryDetails: prev.deliveryDetails.map((item, i) => 
+                                          i === index ? {
+                                            ...item,
+                                            address: "",
+                                            mobileNumber: "",
+                                            email: "",
+                                            description: "",
+                                            postCode: "",
+                                            name: ""
+                                          } : item
+                                        )
+                                      }));
+                                    }
+                                  }}
+                                  style={{
+                                    backgroundColor: isUpdate ? "#e9ecef" : "white",
+                                  }}
+                                  disabled={isUpdate}
+                                >
+                                  <option value="" className="text-gray-500">
+                                    Select Customer
+                                  </option>
+                                  {customer.map((cust) => (
+                                    <option
+                                      key={cust._id}
+                                      value={cust._id}
+                                      className="py-1.5 px-3 hover:bg-gray-100 w-300px flex justify-between"
+                                    >
+                                      {`${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`}
+                                    </option>
+                                  ))}
+                                </Field>
+                              )}
+                            </Field>
+                            <ErrorMessage
+                              name={`deliveryDetails.${index}.customerId`}
+                              component="div"
+                              className="error text-danger ps-2"
+                            />
+                          </div> */}
 
 
                           <div
@@ -1012,7 +1102,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                               Delivery Email :
                             </label>
                             <Field
-                              type="email"
+                              type="text"
                               name={`deliveryDetails.${index}.email`}
                               className="form-control"
                               placeholder="Delivery Email"
@@ -1077,18 +1167,18 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                               className="form-control p-0"
                               isDisabled={isUpdate}
                               styles={{
-                                control: (base) => ({ ...base, height: "3em",backgroundColor: isUpdate ? "#e9ecef" : "white", }),
+                                control: (base) => ({ ...base, height: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white", }),
                               }}
                               options={parcelTypeDetail.map((type) => ({
                                 value: type.parcelTypeId,
-                                label: type.label   
+                                label: type.label
                               }))}
                               value={parcelTypeDetail.find(type => type.parcelTypeId === initialValues.deliveryDetails[index].parcelType)}
                               placeholder="Select Parcel Type"
                               onChange={(selectedOption) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => 
+                                  deliveryDetails: prev.deliveryDetails.map((item, i) =>
                                     i === index ? { ...item, parcelType: selectedOption.value } : item
                                   )
                                 }));
@@ -1096,7 +1186,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.parcelType`}
-                              component="div" 
+                              component="div"
                               className="error text-danger ps-2"
                             />
                           </div>
@@ -1190,7 +1280,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
 
                     <div className={`d-flex  mt-2 ${isSingle ? "justify-content-end" : "justify-content-between"}`}>
 
-                      <button className="btn btn-primary mt-3" style={{display:isSingle ? "none" : "" }} disabled={isUpdate} type="button" onClick={() => {
+                      <button className="btn btn-primary mt-3" style={{ display: isSingle ? "none" : "" }} disabled={isUpdate} type="button" onClick={() => {
                         setInitialValues(prev => ({
                           ...prev,
                           deliveryDetails: [...prev.deliveryDetails, {
@@ -1222,7 +1312,7 @@ console.log( `${values.pickupDetails.address} ${values.pickupDetails.postCode}`)
                         <button
                           type="button"
                           className="btn btn-secondary mt-1 me-4"
-                          onClick={() => { onHide(); navigate("/all-multi-order")}}
+                          onClick={() => { onHide(); navigate("/all-multi-order") }}
                           style={{ height: "3em" }}
                         >
                           Cancel

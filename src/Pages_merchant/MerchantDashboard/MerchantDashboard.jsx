@@ -34,7 +34,6 @@ const MerchantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [counts, setCounts] = useState({
     arrivedOrders:""
-    
   });
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false); // State to handle modal visibility

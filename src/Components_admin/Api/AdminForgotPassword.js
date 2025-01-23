@@ -2,7 +2,7 @@ import axios from "axios";
 import API from "./Api";
 
 export const forgotPassword = async (email) => {
-    console.log(" send email", email);
+    console.log("send email", email);
     try {
         const response = await API.post(`/auth/forgot-password/send-otp`, { email });
         console.log(response.data.status);
