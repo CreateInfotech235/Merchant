@@ -122,8 +122,12 @@ const MultiOrder = () => {
 
 
     if (filterStatus !== "all") {
+      console.log("filterStatus", filterStatus);
+      console.log("data", );
+
       data = data.filter((order) => order.status?.toLowerCase() === filterStatus.toLowerCase());
     }
+
 
     if (startDate || endDate) {
       if (startDate && endDate) {
@@ -419,6 +423,7 @@ const MultiOrder = () => {
               >
                 <option value="all">All</option>
                 <option value="CREATED">Created</option>
+                
                 <option value="ASSIGNED">Assigned</option>
                 <option value="ACCEPTED">Accepted</option>
                 <option value="CANCELLED">Cancelled</option>
