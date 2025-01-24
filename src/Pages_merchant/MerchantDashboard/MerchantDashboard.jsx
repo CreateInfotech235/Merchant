@@ -97,6 +97,71 @@ const MerchantDashboard = () => {
     setShowSubscriptionModel(true);
   }; // Function to close the modal
 
+
+
+const arrayofdata=[
+  {
+    title:"Total orders",
+    icon:Totalorders,
+    value:counts?.maintotelOrders || 0
+  },
+  {
+    title:"Total sub orders",
+    icon:Totalorders,
+    value:counts?.totalOrders || 0
+  },
+  {
+    title:"Assigned orders",
+    icon:Assignedorders,
+    value:counts?.assignedOrders || 0
+  },
+  {
+    title:"Arrived orders",
+    icon:Arrivedorders,
+    value:counts?.arrivedOrders || 0
+  },
+  {
+    title:"Picked orders",
+    icon:Pickedorders,
+    value:counts?.pickedOrders || 0
+  },
+  {
+    title:"Departed orders",
+    icon:Departedorders,
+    value:counts?.departedOrders || 0
+  },
+
+  {
+    title:"Delivered orders",
+      icon:totalorder,
+    value:counts?.deliveredOrders || 0
+  },
+ 
+  {
+    title:"Cancelled orders",
+    icon:Cancelledorders,
+    value:counts?.cancelledOrders || 0
+  },
+  {
+    title:"Total customer",
+    icon:Totalorders,
+    value:counts?.totelcustomer || 0
+  },
+  {
+    title:"DeliveryMan",
+    icon:DeliveryMan,
+    value:counts?.deliveryMan || 0
+  },
+  // {
+  //   title:"Total trashed orders",
+  //   icon:Totalorders,
+  //   value:counts?.toteltrashed || 0
+  // },
+  
+]
+
+
+
   return (
     <div className="min-h-[calc(100vh-187px)]">
       <Modal show={showModal} centered>
@@ -140,12 +205,14 @@ const MerchantDashboard = () => {
               className="dashboard row pt-3 h-100 w-120"
               style={{ marginLeft: "-10px" }}
             >
+              
+              {arrayofdata.map((item,index)=>(
               <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
                     <img
-                      src={Totalorders}
-                      alt="Total Order"
+                      src={item.icon}
+                      alt={item.title}
                       style={{ width: "55px" }}
                     />
                     {/* <img
@@ -162,263 +229,13 @@ const MerchantDashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts?.totalOrders || 0}
+                    {item.value}
                   </h5>
-                  <p className="box-para">Total orders</p>
+                  <p className="box-para">{item.title}</p>
                 </div>
               </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={Acceptedorders}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts?.acceptedOrders || 0}
-                  </h5>
-                  <p className="box-para">Accepted orders</p>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={Arrivedorders}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts?.arrivedOrders || 0}
-                  </h5>
-                  <p className="box-para">Arrived orders</p>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={Assignedorders}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts.assignedOrders || 0}
-                  </h5>
-                  <p className="box-para">Assigned orders</p>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={Cancelledorders}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts.cancelledOrders || 0}
-                  </h5>
-                  <p className="box-para">Cancelled orders</p>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={Createdorders}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts.createdOrders || 0}
-                  </h5>
-                  <p className="box-para">Created orders</p>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={totalorder}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts.deliveredOrders || 0}
-                  </h5>
-                  <p className="box-para">Delivered orders</p>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={Departedorders}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts.departedOrders || 0}
-                  </h5>
-                  <p className="box-para">Departed orders</p>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={Pickedorders}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts.pickedOrders || 0}
-                  </h5>
-                  <p className="box-para">Picked orders</p>
-                </div>
-              </div>
-
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
-                <div className="box rounded-2 p-4">
-                  <div className="d-flex align-items-center justify-content-between pb-4">
-                    <img
-                      src={DeliveryMan}
-                      alt="Total Order"
-                      style={{ width: "55px" }}
-                    />
-                    {/* <img
-                  src={arrow}
-                  alt="Total Order"
-                  className="pe-2 ps-2 pb-2"
-                  style={{ height: "20px" }}
-                />
-                <p style={{ fontSize: "9px" }}>
-                  10.5%{" "}
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    +$56k today
-                  </span>
-                </p> */}
-                  </div>
-                  <h5 className="box-heading fw-bold">
-                    {counts.deliveryMan || 0}
-                  </h5>
-                  <p className="box-para">DeliveryMan</p>
-                </div>
-              </div>
+              ))}
+              
             </div>
 
             <div className="mt-4">

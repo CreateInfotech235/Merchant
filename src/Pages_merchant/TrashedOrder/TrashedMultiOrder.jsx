@@ -12,7 +12,7 @@ import ConformDeleteModel from "../ConformDeleteModel/ConformDeleteModel";
 import Loader from "../../Components_admin/Loader/Loader";
 import ConformDeleteModelMulti from "../ConformDeleteModel/ConformDeleteModelMulti";
 import { FaUndo } from "react-icons/fa";
-import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
+import { Stack, Pagination } from "@mui/material";
 
 
 const TrashedMultiOrder = () => {
@@ -29,30 +29,33 @@ const TrashedMultiOrder = () => {
   const [text, setText] = useState("");
   const [subOrderId, setSubOrderId] = useState(null);
   const [undo, setUndo] = useState(false);
-  const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
-
+  const [startDate, setStartDate] = useState(undefined);
+  const [endDate, setEndDate] = useState(undefined);
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchData = async() => {
     setLoading(true);
     try {
       const MerchantId = await localStorage.getItem('merchnatId');
       const response = await getMultiOrders(MerchantId, 1, 10000000);
-      const parcelTypeRes = await getMerchantParcelType();
-      if (parcelTypeRes.status) {
-        setParcleTypeDetail(parcelTypeRes.data);
-      }
       if (response?.data) {
         const trashedData = response.data.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === true));
         setOrderData(trashedData);
         setFilteredOrders(trashedData);
+        // Set initial total pages based on fetched data
+        setTotalPages(Math.ceil(trashedData.length / itemsPerPage));
       } else {
         setOrderData([]);
         setFilteredOrders([]);
+        setTotalPages(1); // Set to 1 if no data
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
       setOrderData([]);
       setFilteredOrders([]);
+      setTotalPages(1); // Set to 1 if error
     } finally {
       setLoading(false);
     }
@@ -70,13 +73,9 @@ const TrashedMultiOrder = () => {
   };
 
   const filterOrders = (query) => {
-    if (!query) {
-      setFilteredOrders(orderData);
-      return;
-    }
-
+    let data = orderData;
     const lowercasedQuery = query.toLowerCase();
-    const filteredData = orderData.filter((order) => {
+    const filteredData = data.filter((order) => {
       return (
         String(order.orderId).toLowerCase().includes(lowercasedQuery) ||
         (order.customerName ? order.customerName.toLowerCase() : "").includes(lowercasedQuery) ||
@@ -85,15 +84,83 @@ const TrashedMultiOrder = () => {
         (order.status ? order.status.toLowerCase() : "").includes(lowercasedQuery)
       );
     });
-    
-    setFilteredOrders(filteredData);
+    data = filteredData;
+
+    if (filterStatus !== "all") {
+      data = data.filter((order) => order.status?.toLowerCase() === filterStatus.toLowerCase());
+    }
+
+    if (startDate || endDate) {
+      if (startDate && endDate) {
+        const startFilterDate = new Date(startDate);
+        const endFilterDate = new Date(endDate);
+        endFilterDate.setHours(23, 59, 59);
+
+        data = data.filter((order) => {
+          const [datePart, timePart] = order.createdDate.split(" , ");
+          const [day, month, year] = datePart.split("-");
+          const [hours, minutes] = timePart.split(":");
+          const orderDate = new Date(year, month - 1, day, hours, minutes);
+          return orderDate >= startFilterDate && orderDate <= endFilterDate;
+        });
+      } else {
+        if (startDate) {
+          const filterDate = new Date(startDate);
+          filterDate.setHours(0, 0, 0);
+
+          data = data.filter((order) => {
+            const [datePart, timePart] = order.createdDate.split(" , ");
+            const [day, month, year] = datePart.split("-");
+            const [hours, minutes] = timePart.split(":");
+            const orderDate = new Date(year, month - 1, day, hours, minutes);
+            return orderDate >= filterDate;
+          });
+        }
+
+        if (endDate) {
+          const filterDate = new Date(endDate);
+          filterDate.setHours(23, 59, 59);
+
+          data = data.filter((order) => {
+            const [datePart, timePart] = order.createdDate.split(" , ");
+            const [day, month, year] = datePart.split("-");
+            const [hours, minutes] = timePart.split(":");
+            const orderDate = new Date(year, month - 1, day, hours, minutes);
+            return orderDate <= filterDate;
+          });
+        }
+      }
+    }
+
+    const sortedData = data.sort((a, b) => {
+      const aMatch = String(a.showOrderNumber).toLowerCase() === lowercasedQuery;
+      const bMatch = String(b.showOrderNumber).toLowerCase() === lowercasedQuery;
+      return bMatch - aMatch;
+    });
+
+    // Update total pages based on filtered data length
+    const newTotalPages = Math.max(1, Math.ceil(sortedData.length / itemsPerPage));
+    setTotalPages(newTotalPages);
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setFilteredOrders(sortedData.slice(startIndex, endIndex));
   };
+
+  useEffect(() => {
+    filterOrders(searchQuery);
+    setCurrentPage(1);
+  }, [searchQuery, startDate, endDate, filterStatus]);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    filterOrders(searchQuery);
+  };
+ 
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = searchQuery.length > 0 ? filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder) : orderData.slice(indexOfFirstOrder, indexOfLastOrder);
-
-  const totalPages = Math.ceil((searchQuery.length > 0 ? filteredOrders.length : orderData.length) / ordersPerPage);
 
   const handleClick = (event) => {
     setCurrentPage(Number(event.target.id));
@@ -162,6 +229,9 @@ const TrashedMultiOrder = () => {
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
+
+console.log(totalPages);
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center pb-3 nav-bar">
@@ -183,9 +253,82 @@ const TrashedMultiOrder = () => {
           </div>
         </div>
       </div>
-    
 
-      <div className=" w-100">
+    
+        <div className="filter-container p-3 bg-white rounded-lg shadow-md">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="date-input-group flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700">Start:</label>
+                <input 
+                  type="date" 
+                  value={startDate} 
+                  onChange={(e) => { setStartDate(e.target.value); }}
+                  className="form-input rounded-md border-gray-300 shadow-sm h-9"
+                />
+              </div>
+              <div className="date-input-group flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700">End:</label>
+                <input 
+                  type="date" 
+                  value={endDate} 
+                  onChange={(e) => { setEndDate(e.target.value); }}
+                  className="form-input rounded-md border-gray-300 shadow-sm h-9" 
+                />
+              </div>
+              <button 
+                className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+                onClick={() => { 
+                  setStartDate(new Date().toISOString().split('T')[0]); 
+                  setEndDate(new Date().toISOString().split('T')[0]) 
+                }}
+              >
+                Today
+              </button>
+              <button 
+                className="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
+                onClick={() => { setStartDate(""); setEndDate("") }}
+              >
+                Clear Dates
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <label htmlFor="status" className="text-sm font-medium text-gray-700">Status:</label>
+                <select 
+                  id="status" 
+                  value={filterStatus} 
+                  onChange={(e) => { setFilterStatus(e.target.value) }}
+                  className="form-select rounded-md border-gray-300 shadow-sm h-9"
+                >
+                  <option value="all">All</option>
+                  <option value="CREATED">Created</option>
+                  <option value="ASSIGNED">Assigned</option>
+                  <option value="ACCEPTED">Accepted</option>
+                  <option value="CANCELLED">Cancelled</option>
+                  <option value="UNASSIGNED">Unassigned</option>
+                  <option value="DELIVERED">Delivered</option>
+                  <option value="PICKED_UP">Picked Up</option>
+                  <option value="DEPARTED">Departed</option>
+                  <option value="ARRIVED">Arrived</option>
+                </select>
+              </div>
+              <button 
+                className="px-3 py-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors"
+                onClick={() => { 
+                  setStartDate(""); 
+                  setEndDate(""); 
+                  setFilterStatus("all"); 
+                }}
+              >
+                Clear All Filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+      <div className=" w-100 mt-3">
         <div className="table-responsive">
           <table
             className="table-borderless w-100 text-center bg-light"
@@ -291,8 +434,6 @@ const TrashedMultiOrder = () => {
                                     Delivery Address (PostCode)
                                   </th>
                                   <th className="p-3">Delivery Date</th>
-                                  <th className="p-3">Parcel Type</th>
-
                                   <th className="p-3">Invoice</th>
                                   <th className="p-3">Status</th>
                                   <th className="p-3">Action</th>
@@ -348,9 +489,7 @@ const TrashedMultiOrder = () => {
                                           "-"}
                                       </td>
                                       <td className="p-3">-</td>
-                                      <td className="p-3">{parcelTypeDetail.find(type => type.parcelTypeId === subOrder?.parcelType)?.label ?? "-"}</td> 
                                       <td className="p-3">-</td>
-
                                       <td className="p-3">
                                         <button
                                           className={`${getColorClass(
@@ -423,8 +562,28 @@ const TrashedMultiOrder = () => {
             </tbody>
           </table>
         </div>
-        <div className="pagination-container d-flex justify-content-end mt-3">
-          <ul className="pagination">{renderPageNumbers()}</ul>
+        
+        <div className={`justify-content-end align-items-center mt-3 ${filteredOrders.length ==0 ? "d-none" : "d-flex"}`}>
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+            />
+          </Stack>
+          <select
+            className="form-select ms-3 w-20"
+            value={itemsPerPage}
+            onChange={(e) => { setCurrentPage(1); setItemsPerPage(Number(e.target.value)) }}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={75}>75</option>
+            <option value={100}>100</option>
+          </select>
         </div>
       </div>
 

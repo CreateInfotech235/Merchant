@@ -83,18 +83,22 @@ const Customers = () => {
   useEffect(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedCustomers = allCustomers.slice(startIndex, endIndex);
+    const paginatedCustomers = allCustomers.filter(c => !c.trashed).slice(startIndex, endIndex);
     setCustomers(paginatedCustomers);
-    
+
     // Apply search filter to paginated data
     if (searchQuery) {
       filterCustomers(paginatedCustomers);
     } else {
       setFilteredCustomers(paginatedCustomers);
     }
-    
     setTotalPages(Math.ceil(allCustomers.length / itemsPerPage));
-  }, [itemsPerPage, currentPage, allCustomers]);
+  }, [itemsPerPage, allCustomers, currentPage]);
+
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, itemsPerPage]);
 
   function filterCustomers(customersToFilter = customers) {
     const query = searchQuery.toLowerCase();
@@ -111,7 +115,7 @@ const Customers = () => {
           customer.showCustomerNumber?.toString().includes(query))
       );
     });
-    
+
     // Update pagination based on filtered results
     setTotalPages(Math.ceil(data.length / itemsPerPage));
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -285,13 +289,13 @@ const Customers = () => {
               </tbody>
             </table>
 
-            <div className="d-flex justify-content-end align-items-end">
+            <div className={`justify-content-end align-items-end ${filteredCustomers.length == 0 ? "d-none" : "d-flex"}`}>
               <Stack spacing={2}>
-                <Pagination 
+                <Pagination
                   count={totalPages}
                   page={currentPage}
                   onChange={handleClick}
-                  variant="outlined" 
+                  variant="outlined"
                   shape="rounded"
                 />
               </Stack>

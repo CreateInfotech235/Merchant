@@ -48,7 +48,6 @@ const MultiOrder = () => {
   const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
 
-
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
   const [filterStatus, setFilterStatus] = useState("all");
@@ -67,9 +66,16 @@ const MultiOrder = () => {
       console.log("response", response);
 
       if (response?.data) {
-        setOrderData(response.data);
-        setFilteredOrders(response.data.slice(0, itemsPerPage));
-        setTotalPages(Math.ceil(response.data.length / itemsPerPage));
+        // Filter out trashed orders first
+        const nonTrashedOrders = response.data.filter(order => !order.trashed);
+        setOrderData(nonTrashedOrders);
+        
+        // Calculate initial filtered orders based on itemsPerPage
+        const initialOrders = nonTrashedOrders.slice(0, itemsPerPage);
+        setFilteredOrders(initialOrders);
+        
+        // Calculate total pages based on non-trashed orders
+        setTotalPages(Math.ceil(nonTrashedOrders.length / itemsPerPage));
       } else {
         setOrderData([]);
         setFilteredOrders([]);
@@ -81,12 +87,9 @@ const MultiOrder = () => {
     }
   };
 
-
   useEffect(() => {
-    setFilteredOrders(orderData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-    setTotalPages(Math.ceil(orderData.length / itemsPerPage));
+    filterOrders(searchQuery);
   }, [currentPage, itemsPerPage]);
-
 
   useEffect(() => {
     fetchData();
@@ -99,42 +102,31 @@ const MultiOrder = () => {
 
   const closeModel = () => setShowModel(false);
 
-
   const filterOrders = (query) => {
-    setCurrentPage(1); // Reset to first page when searching
+    // Start with non-trashed orders only
+    var data = orderData.filter((order) => !order.trashed);
 
-    setSearchQuery(query);
-    var data = orderData;
-    const filteredData = orderData.filter((order) => {
-      const query = searchQuery.toLowerCase();
-
+    const filteredData = data.filter((order) => {
+      const searchLower = query.toLowerCase();
       return (
-        !order.trashed &&
-        (order.showOrderNumber?.toString().includes(query) ||
-          order.customerName?.toLowerCase().includes(query) ||
-          order.pickupAddress?.address?.toLowerCase().includes(query) ||
-          order.deliveryAddress?.address?.toLowerCase().includes(query) ||
-          order.status?.toLowerCase().includes(query))
+        order.showOrderNumber?.toString().includes(searchLower) ||
+        order.customerName?.toLowerCase().includes(searchLower) ||
+        order.pickupAddress?.address?.toLowerCase().includes(searchLower) ||
+        order.deliveryAddress?.address?.toLowerCase().includes(searchLower) ||
+        order.status?.toLowerCase().includes(searchLower)
       );
     });
     data = filteredData;
 
-
-
     if (filterStatus !== "all") {
-      console.log("filterStatus", filterStatus);
-      console.log("data", );
-
       data = data.filter((order) => order.status?.toLowerCase() === filterStatus.toLowerCase());
     }
 
-
     if (startDate || endDate) {
       if (startDate && endDate) {
-        // If both dates are same, include orders from that entire day
         const startFilterDate = new Date(startDate);
         const endFilterDate = new Date(endDate);
-        endFilterDate.setHours(23, 59, 59); // Set end date to end of day
+        endFilterDate.setHours(23, 59, 59);
 
         data = data.filter((order) => {
           const [datePart, timePart] = order.createdDate.split(" , ");
@@ -144,25 +136,28 @@ const MultiOrder = () => {
           return orderDate >= startFilterDate && orderDate <= endFilterDate;
         });
       } else {
-        // Handle single date filters
         if (startDate) {
+          const filterDate = new Date(startDate);
+          filterDate.setHours(0, 0, 0);
+
           data = data.filter((order) => {
             const [datePart, timePart] = order.createdDate.split(" , ");
             const [day, month, year] = datePart.split("-");
             const [hours, minutes] = timePart.split(":");
             const orderDate = new Date(year, month - 1, day, hours, minutes);
-            const filterDate = new Date(startDate);
             return orderDate >= filterDate;
           });
         }
+
         if (endDate) {
+          const filterDate = new Date(endDate);
+          filterDate.setHours(23, 59, 59);
+
           data = data.filter((order) => {
             const [datePart, timePart] = order.createdDate.split(" , ");
             const [day, month, year] = datePart.split("-");
             const [hours, minutes] = timePart.split(":");
             const orderDate = new Date(year, month - 1, day, hours, minutes);
-            const filterDate = new Date(endDate);
-            filterDate.setHours(23, 59, 59); // Set end date to end of day
             return orderDate <= filterDate;
           });
         }
@@ -171,9 +166,9 @@ const MultiOrder = () => {
 
     // Sort data by exact match on showOrderNumber
     const sortedData = data.sort((a, b) => {
-      const aMatch = String(a.showOrderNumber).toLowerCase() === query;
-      const bMatch = String(b.showOrderNumber).toLowerCase() === query;
-      return bMatch - aMatch; // Exact matches appear first
+      const aMatch = String(a.showOrderNumber).toLowerCase() === query.toLowerCase();
+      const bMatch = String(b.showOrderNumber).toLowerCase() === query.toLowerCase();
+      return bMatch - aMatch;
     });
 
     // Update pagination based on filtered results
@@ -185,11 +180,12 @@ const MultiOrder = () => {
 
   useEffect(() => {
     filterOrders(searchQuery);
-  }, [searchQuery, startDate, endDate, filterStatus])
-
+    setCurrentPage(1);
+  }, [searchQuery, startDate, endDate, filterStatus]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+    filterOrders(searchQuery);
   };
 
   const hadleTrackOrder = async (
@@ -277,7 +273,7 @@ const MultiOrder = () => {
 
   const statusColors = {
     CREATED: "gray",
-    ASSIGNED: "blue",
+    ASSIGNED: "blue", 
     ACCEPTED: "green",
     CANCELLED: "red",
     UNASSIGNED: "red",

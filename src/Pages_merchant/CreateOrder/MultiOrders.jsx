@@ -14,6 +14,7 @@ import Select from "react-select";
 import { getMapApi } from "../../Components_admin/Api/MapApi";
 import { toast } from "react-toastify";
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
+import { FixedSizeList as List } from 'react-window';
 
 const MultiOrders = () => {
   const naviagte = useNavigate();
@@ -318,7 +319,7 @@ console.log("customer", customer);
         mobileNumber: Yup.string(),
         email: Yup.string(),
         description: Yup.string(),
-        postCode: Yup.string().required("Required Delivery Postcode"),
+        postCode: Yup.string().required("Required Delivery Postcode").matches(/^[A-Za-z0-9\s-]+$/, "Invalid Postcode"),
         parcelsCount: Yup.number()
           .required("Required Delivery Parcel Count")
           .positive("Must be positive")
@@ -515,6 +516,25 @@ console.log(apiKey);
       setIsOrderCreated(false);
     }
     setIsOrderCreated(false);
+  };
+
+  // Custom MenuList component for react-select using react-window
+  const MenuList = (props) => {
+    const { options, children, maxHeight, getValue } = props;
+    const height = 50;
+    const [value] = getValue();
+    const initialOffset = options.indexOf(value) * height;
+
+    return (
+      <List
+        height={maxHeight}
+        itemCount={children.length}
+        itemSize={height}
+        initialScrollOffset={initialOffset}
+      >
+        {({ index, style }) => <div style={style}>{children[index]}</div>}
+      </List>
+    );
   };
 
   return (
@@ -887,7 +907,7 @@ console.log(apiKey);
                             </div>
                           </div>
 
-                          <div className="input-error mb-1 col-4 ">
+                          <div className="input-error mb-1 col-5 ">
                             <label className="fw-thin p-0 pb-1 ">
                               Select Customer :
                             </label>
@@ -895,7 +915,6 @@ console.log(apiKey);
                               name={`deliveryDetails.${index}.customerId`}
                               className="form-control mb-1 p-0"
                               isDisabled={isOrderCreated}
-
                               styles={{
                                 control: (base) => ({ ...base, height: "3em",backgroundColor: isOrderCreated ? "#e9ecef" : "white",}),
                               }}
@@ -906,6 +925,7 @@ console.log(apiKey);
                               }))}
                               placeholder="Select Customer"
                               isClearable
+                              components={{ MenuList }}
                               filterOption={(option, inputValue) => {
                                 const data = option.data;
                                 const searchValue = inputValue.toLowerCase();
@@ -920,7 +940,6 @@ console.log(apiKey);
                               }}
                               onChange={(selectedOption) => {
                                 if (selectedOption) {
-
                                   setInitialValues(prev => ({
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, customerId: selectedOption.value } : item)
@@ -929,28 +948,22 @@ console.log(apiKey);
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: selectedOption.address } : item)
                                   }));
-
                                   setInitialValues(prev => ({
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: selectedOption.mobileNumber } : item)
                                   }));
-
-
                                   setInitialValues(prev => ({
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: selectedOption.email } : item)
                                   }));
-
                                   setInitialValues(prev => ({
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: selectedOption.description } : item)
                                   }));
-
                                   setInitialValues(prev => ({
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: selectedOption.postCode } : item)
                                   }));
-
                                   setInitialValues(prev => ({
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: selectedOption.firstName + " " + selectedOption.lastName } : item)
@@ -1000,7 +1013,7 @@ console.log(apiKey);
                             key="cashOnDelivery"
                             className="input-error col-12 col-sm-2 mb-1"
                           >
-                            <label className="fw-thin p-0 pb-1 ">
+                            <label className="fw-thin p-0 pb-1  ">
                               Cash on Delivery :
                             </label>
 
@@ -1055,10 +1068,10 @@ console.log(apiKey);
                           {values?.deliveryDetails[index]?.cashOnDelivery === "true" && (
                             <div
                               key={"paymentCollectionRupees"}
-                              className="input-error col-12 col-sm-3 mb-1"
+                              className="input-error col-12 col-sm-2 mb-1"
                             >
                               <label className="fw-thin p-0 pb-1 ">
-                                Payment Collection : Amount
+                                Payment Amount
                               </label>
                               <Field
                                 as="input"
