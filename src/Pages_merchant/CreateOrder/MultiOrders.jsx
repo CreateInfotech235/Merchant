@@ -929,13 +929,14 @@ console.log(apiKey);
                               filterOption={(option, inputValue) => {
                                 const data = option.data;
                                 const searchValue = inputValue.toLowerCase();
-
-                                return (
-                                  data.NHS_Number.toLowerCase().includes(searchValue) ||
-                                  data.firstName.toLowerCase().includes(searchValue) ||
-                                  data.lastName.toLowerCase().includes(searchValue) ||
-                                  data.email.toLowerCase().includes(searchValue) ||
-                                  data.mobileNumber.toLowerCase().includes(searchValue)
+                                const searchTerms = searchValue.split(" ");
+                                
+                                return searchTerms.some(term => 
+                                  data.NHS_Number.toLowerCase().includes(term) ||
+                                  data.firstName.toLowerCase().includes(term) ||
+                                  data.lastName.toLowerCase().includes(term) ||
+                                  data.email.toLowerCase().includes(term) ||
+                                  data.mobileNumber.toLowerCase().includes(term)
                                 );
                               }}
                               onChange={(selectedOption) => {

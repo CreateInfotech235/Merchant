@@ -5,19 +5,16 @@ import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { updateDeliveryBoy } from "../../Components_merchant/Api/DeliveryMan";
 import countryList from "react-select-country-list";
-import { sendOtpOneEmail, verifyOTP, changePassword } from "../../Components_admin/Api/deliveryManForgotpassword";
+import { changePassword } from "../../Components_admin/Api/deliveryManForgotpassword";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
 const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
   const navigate = useNavigate();
   const [isforgotPassword, setIsforgotPassword] = useState(false);
   const [isUpdate, setisUpdate] = useState(false);
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPasswordValues, setForgotPasswordValues] = useState({
     email: deliveryBoy?.email || "",
-    otp: "",
     password: "",
     confirmPassword: ""
   });
@@ -124,35 +121,11 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
     setisUpdate(false);
   };
 
-  const sendOtp = async () => {
-    console.log("otp sent");
-    const res = await sendOtpOneEmail(deliveryBoy.email);
-    console.log(res);
-    if(res==="SUCCESS"){
-      setIsOtpSent(true);
-    }
-  }
-
   const handleForgotPassword = () => {
     if (!window.confirm("Are you sure you want to reset password?")) {
       return;
     }
     setIsforgotPassword(true);
-    sendOtp();
-  }
-
-  const handleVerifyOtp = async () => {
-    try {
-      const res = await verifyOTP(forgotPasswordValues.email, forgotPasswordValues.otp);
-      if (res.status) {
-        setIsOtpVerified(true);
-      } else {
-        alert("Invalid OTP. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-      alert("An error occurred while verifying OTP.");
-    }
   }
 
   const handleChangePassword = async () => {
@@ -402,82 +375,47 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
         )}
         {isforgotPassword && (
           <div className="p-4">
-            {!isOtpVerified ? (
-              <>
-                <div className="mb-4">
-                  <label className="mb-2">Enter OTP sent to {deliveryBoy.email}</label>
-                  <div className="d-flex">
-                    <input
-                      type="text"
-                      value={forgotPasswordValues.otp}
-                      onChange={(e) => setForgotPasswordValues({...forgotPasswordValues, otp: e.target.value})}
-                      className="form-control me-2"
-                      placeholder="Enter OTP"
-                      disabled={!isOtpSent}
-                    />
-                    <button
-                      onClick={sendOtp}
-                      className="btn"
-                      style={{ backgroundColor: "#D65246", color: "white", minWidth: "120px" }}
-                    >
-                      {isOtpSent ? "Resend OTP" : "Send OTP"}
-                    </button>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-end">
-                  <button
-                    onClick={handleVerifyOtp}
-                    className="btn"
-                    style={{ backgroundColor: "#D65246", color: "white" }}
-                    disabled={!forgotPasswordValues.otp}
-                  >
-                    Verify OTP
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div>
-                <div className="mb-3">
-                  <label className="mb-2">New Password</label>
-                  <div className="position-relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={forgotPasswordValues.password}
-                      onChange={(e) => setForgotPasswordValues({...forgotPasswordValues, password: e.target.value})}
-                      className="form-control"
-                      placeholder="Enter new password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="btn position-absolute end-0 top-50 translate-middle-y"
-                    >
-                      {showPassword ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label className="mb-2">Confirm Password</label>
+            <div>
+              <div className="mb-3">
+                <label className="mb-2">New Password</label>
+                <div className="position-relative">
                   <input
-                    type="password"
-                    value={forgotPasswordValues.confirmPassword}
-                    onChange={(e) => setForgotPasswordValues({...forgotPasswordValues, confirmPassword: e.target.value})}
+                    type={showPassword ? "text" : "password"}
+                    value={forgotPasswordValues.password}
+                    onChange={(e) => setForgotPasswordValues({...forgotPasswordValues, password: e.target.value})}
                     className="form-control"
-                    placeholder="Confirm new password"
+                    placeholder="Enter new password"
                   />
-                </div>
-                <div className="d-flex justify-content-end">
                   <button
-                    onClick={handleChangePassword}
-                    className="btn"
-                    style={{ backgroundColor: "#D65246", color: "white" }}
-                    disabled={!forgotPasswordValues.password || !forgotPasswordValues.confirmPassword}
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="btn position-absolute end-0 top-50 translate-middle-y"
                   >
-                    Change Password
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
               </div>
-            )}
+              <div className="mb-4">
+                <label className="mb-2">Confirm Password</label>
+                <input
+                  type="password"
+                  value={forgotPasswordValues.confirmPassword}
+                  onChange={(e) => setForgotPasswordValues({...forgotPasswordValues, confirmPassword: e.target.value})}
+                  className="form-control"
+                  placeholder="Confirm new password"
+                />
+              </div>
+              <div className="d-flex justify-content-end">
+                <button
+                  onClick={handleChangePassword}
+                  className="btn"
+                  style={{ backgroundColor: "#D65246", color: "white" }}
+                  disabled={!forgotPasswordValues.password || !forgotPasswordValues.confirmPassword}
+                >
+                  Change Password
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </Modal.Body>

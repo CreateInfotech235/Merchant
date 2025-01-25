@@ -107,15 +107,25 @@ const MultiOrder = () => {
     var data = orderData.filter((order) => !order.trashed);
 
     const filteredData = data.filter((order) => {
+      console.log("order",  order.deliveryAddress);
       const searchLower = query.toLowerCase();
-      return (
-        order.showOrderNumber?.toString().includes(searchLower) ||
-        order.customerName?.toLowerCase().includes(searchLower) ||
-        order.pickupAddress?.address?.toLowerCase().includes(searchLower) ||
-        order.deliveryAddress?.address?.toLowerCase().includes(searchLower) ||
-        order.status?.toLowerCase().includes(searchLower)
+      const searchTerms = searchLower.split(" ");
+      return searchTerms.some(term => 
+        order.showOrderNumber?.toString().includes(term) ||
+        order.deliveryMan?.toLowerCase().includes(term) ||
+        // order.customerName?.toLowerCase().includes(term) ||
+        order.pickupAddress?.address?.toLowerCase().includes(term) ||
+        order.deliveryAddress.forEach(item => item.address?.toLowerCase().includes(term)) ||
+        order.status?.toLowerCase().includes(term)
       );
     });
+
+
+
+
+
+
+
     data = filteredData;
 
     if (filterStatus !== "all") {

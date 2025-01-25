@@ -155,6 +155,8 @@ import MultiOrder from "./Pages_merchant/AllOrder/MultiOrder";
 import TrashedMultiOrder from "./Pages_merchant/TrashedOrder/TrashedMultiOrder";
 import MultiOrderParcel from "./Pages_merchant/AllOrder/MultiOrderParcel";
 import CommonComponent from "./Pages_admin/common-component/common-component";
+import { Tr } from "react-flags-select";
+import DeliveryPersonTracking from "./Pages_merchant/AllOrder/tr";
 
 
 function App() {
@@ -479,6 +481,7 @@ function App() {
             </Formate>
           }
         />
+      
         <Route
           path="*"
           element={
@@ -531,6 +534,14 @@ function App() {
             </Formate>
           }
         />
+          {/* <Route
+          path="/tr"
+          element={
+            <Formate Login={islogin} useData={userData}>
+              <DeliveryPersonTracking />
+            </Formate>
+          }
+        /> */}
         <Route
           path="/terms-and-conditions"
           element={

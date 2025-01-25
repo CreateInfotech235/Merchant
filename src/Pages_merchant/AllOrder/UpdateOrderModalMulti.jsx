@@ -82,12 +82,12 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
 
-      const deliveryMans = await getAllDeliveryMans();
+      const deliveryMans = await getAllDeliveryMans({createdByAdmin: true});
       const deliveryManRes = await getDeliveryMan();
       if (deliveryManRes.data || deliveryMans.data) {
         // Filter active delivery men from first source
         const activeDeliveryMen =
-          deliveryManRes.data?.filter((man) => man.status !== "DISABLE") || [];
+          deliveryManRes.data?.filter((man) => man.status !== "DISABLE" && man.trashed !== true) || [];
         const formattedAdminDeliveryMen =
           deliveryMans.data?.map((man) => ({
             ...man,
