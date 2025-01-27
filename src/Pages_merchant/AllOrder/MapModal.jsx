@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, ModalBody, ModalHeader } from "react-bootstrap";
 import { loadGoogleMapsApi } from "./loadGoogleMapsApi";
+import tracking from "../../assets_mercchant/delivery-bike.png";
+
 
 const MapModal = ({
   location,
@@ -69,8 +71,12 @@ const MapModal = ({
       new window.google.maps.Marker({
         position: location,
         map: map,
+        
         title: "Delivery Boy Location",
-        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+        icon: {
+          url: tracking, // Replace with your custom icon URL
+          scaledSize: new window.google.maps.Size(32, 32), // Adjust size
+        },
       });
 
       new window.google.maps.Marker({
@@ -102,8 +108,12 @@ const MapModal = ({
             position: result.routes[0].legs[0].start_location,
             map: map,
             icon: {
-              url: "path/to/start-icon.png", // Replace with your custom icon URL
+              url: tracking, // Replace with your custom icon URL
               scaledSize: new window.google.maps.Size(32, 32), // Adjust size
+            },
+            style: {
+              width: "32px",
+              height: "32px",
             },
             title: "Start Location", // Optional tooltip
           });

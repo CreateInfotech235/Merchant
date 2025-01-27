@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { ErrorMessage, Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -8,11 +8,9 @@ import {
   getDeliveryMan,
   updateDeliveryBoy,
 } from "../../Components_merchant/Api/DeliveryMan";
-import countryList from "react-select-country-list";
 import Select from "react-select";
 import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import {
-  calculateDistancee,
   orderUpdateMulti,
 } from "../../Components_merchant/Api/Order";
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
@@ -342,7 +340,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           console.log("data", data);
           if (data.status !== "ZERO_RESULTS") {
             const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
-            distancesAndDurations.push(await calculateDistancee(pickuplocation, deliverylocation))
+            distancesAndDurations.push({status:true,distance:{value:0,text:"0 km"},duration:{value:0,text:"0 min"}})
             deliverylocations.push(deliverylocation)
           } else {
             console.log("data", data);
@@ -388,7 +386,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           postCode: delivery.postCode,
           subOrderId: delivery.subOrderId,
           paymentCollectionRupees: delivery.paymentCollectionRupees,
-          distance: calculateDistanceeinMiles(distancesAndDurations[index]),
+          distance: distancesAndDurations[index]?.distance.value,
           duration: distancesAndDurations[index]?.duration.text,
           parcelType: delivery.parcelType,
           location: {
@@ -476,6 +474,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                         defaultValue={new Date().toISOString().slice(0, 16)}
                         disabled={isUpdate}
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              dateTime: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -495,6 +502,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                         placeholder="Pickup Postcode"
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
                         disabled={isUpdate}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              postCode: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -520,6 +536,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
 
                           }}
                           disabled={isUpdate}
+                          onChange={(e)=>{
+                            setInitialValues(prev => ({
+                              ...prev,
+                              pickupDetails: {
+                                ...prev.pickupDetails,
+                                address: e.target.value
+                              }
+                            }));
+                          }}
                         />
                         <ErrorMessage
                           name="pickupDetails.address"
@@ -539,7 +564,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                             marginTop: "1.8em",
                             lineHeight: "1"
                           }}
-                          onClick={() => getCurrentLocation(setFieldValue)}
+                            onClick={() => getCurrentLocation(setFieldValue)}
                           disabled={isUpdate}
                         >
                           Use Current Location
@@ -587,6 +612,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              mobileNumber: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.mobileNumber"
@@ -610,6 +644,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              name: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.name"
@@ -633,6 +676,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              email: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.email"
@@ -657,6 +709,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           height: "3em",
                         }}
                         disabled={isUpdate}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              description: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.description"

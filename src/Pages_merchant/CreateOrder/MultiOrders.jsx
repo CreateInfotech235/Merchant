@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
+import React, { useState, useEffect} from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "./CreateOrder.css";
 import { useNavigate } from "react-router-dom";
-import { calculateDistancee, createOrder, createOrderMulti } from "../../Components_merchant/Api/Order";
+import { createOrderMulti } from "../../Components_merchant/Api/Order";
 import {
   getDeliveryMan,
   getAllDeliveryMans,
@@ -197,48 +197,6 @@ console.log("customer", customer);
     }
   };
 
-  const getCoordinatesFromAddress = async (address, setFieldValue) => {
-    // console.log(address);
-
-    if (address) {
-      // Fetch the coordinates using geocoding
-      const mapApi = await getMapApi();
-      console.log(mapApi.data[0]);
-      const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          address
-        )}&key=${apiKey}`
-      );
-      const data = await response.json();
-      console.log(data);
-
-      if (data.results && data.results.length > 0) {
-        const { lat, lng } = data.results[0].geometry.location; // Correctly extract latitude and longitude
-        const formattedAddress =
-          data.results[0]?.formatted_address || "Unable to fetch address";
-
-        // console.log(formattedAddress, lat, lng);
-        const postalCodeComponent = data.results[0].address_components.find(
-          (component) => component.types.includes("postal_code")
-        );
-        const postalCode = postalCodeComponent
-          ? postalCodeComponent.long_name
-          : "";
-
-        // Set the address and coordinates to the form
-        setFieldValue("deliveryDetails.address", formattedAddress);
-        setFieldValue("deliveryDetails.location.latitude", lat);
-        setFieldValue("deliveryDetails.location.longitude", lng);
-        setFieldValue("deliveryDetails.postCode", postalCode);
-      } else {
-        alert("Address not found. Please try again.");
-      }
-    } else {
-      alert("Please enter an address.");
-    }
-  };
-
   useEffect(() => {
     async function setInitialValuesdata() {
       await setInitialValues(
@@ -340,13 +298,6 @@ console.log("customer", customer);
     )
   });
 
-  const calculateDistanceeinMiles = (value) => {
-    console.log("value", value);
-    return ((parseFloat(value.distance.text.replace(/[^\d.]/g, "")) * 0.621371).toFixed(2));
-  }
-
-
-
 
   const onSubmit = async (values, { setFieldValue }) => {
 
@@ -441,7 +392,7 @@ console.log(apiKey);
           console.log("data", data);
           if (data.status !== "ZERO_RESULTS") {   
             const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
-            distancesAndDurations.push(await calculateDistancee(pickuplocation, deliverylocation))
+            distancesAndDurations.push({status:true,distance:{value:0,text:"0 km"},duration:{value:0,text:"0 min"}})
             deliverylocations.push(deliverylocation)
           } else {
             console.log("data", data);
@@ -487,7 +438,7 @@ console.log(apiKey);
           postCode: delivery.postCode,
           subOrderId: delivery.subOrderId,
           paymentCollectionRupees: delivery.paymentCollectionRupees,
-          distance: calculateDistanceeinMiles(distancesAndDurations[index]),
+          distance: distancesAndDurations[index]?.distance.value,
           duration: distancesAndDurations[index]?.duration.text,
           parcelType: delivery.parcelType,
           location: {
@@ -585,6 +536,15 @@ console.log(apiKey);
                         defaultValue={new Date().toISOString().slice(0, 16)}
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
                         disabled={isOrderCreated}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              dateTime: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -604,6 +564,15 @@ console.log(apiKey);
                         placeholder="Pickup Postcode"
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
                         disabled={isOrderCreated}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              postCode: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -627,7 +596,16 @@ console.log(apiKey);
                             border: "1px solid #E6E6E6",
                             fontSize: "15px"
                           }}
-                        disabled={isOrderCreated}
+                          disabled={isOrderCreated}
+                          onChange={(e)=>{
+                            setInitialValues(prev => ({
+                              ...prev,
+                              pickupDetails: {
+                                ...prev.pickupDetails,
+                                address: e.target.value
+                              }
+                            }));
+                          }}
 
                         />
                         <ErrorMessage
@@ -695,6 +673,15 @@ console.log(apiKey);
                           border: "1px solid #E6E6E6",
                           borderRadius: "5px",
                         }}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              mobileNumber: e.target.value
+                            }
+                          }));
+                        }}
                         disabled={isOrderCreated}
                       />
                       <ErrorMessage
@@ -719,6 +706,15 @@ console.log(apiKey);
                           borderRadius: "5px",
                         }}
                         disabled={isOrderCreated}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              name: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.name"
@@ -775,6 +771,15 @@ console.log(apiKey);
                           height: "3em",
                         }}
                         disabled={isOrderCreated}
+                        onChange={(e)=>{
+                          setInitialValues(prev => ({
+                            ...prev,
+                            pickupDetails: {
+                              ...prev.pickupDetails,
+                              description: e.target.value
+                            }
+                          }));
+                        }}
                       />
                       <ErrorMessage
                         name="pickupDetails.description"
