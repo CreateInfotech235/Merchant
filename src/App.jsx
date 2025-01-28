@@ -534,16 +534,8 @@ function App() {
             </Formate>
           }
         />
-          {/* <Route
-          path="/tr"
-          element={
-            <Formate Login={islogin} useData={userData}>
-              <DeliveryPersonTracking />
-            </Formate>
-          }
-        /> */}
         <Route
-          path="/terms-and-conditions"
+          path="/terms-and-conditions/:isshow"
           element={
             <Formate Login={islogin} useData={userData}>
               <TermsConditions />
