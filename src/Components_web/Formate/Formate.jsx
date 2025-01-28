@@ -8,6 +8,7 @@ const navigate=useNavigate()
 const {isshow}=useParams()
 
     // full page http://localhost:5173/terms-and-conditions/isshow
+console.log(isshow,'isshow');
 
   return (
   <>
