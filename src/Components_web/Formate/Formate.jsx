@@ -7,7 +7,7 @@ function Formate({children,Login,useData}) {
     
   return (
   <>
-    <NavBar Login={Login} userData={useData}/>
+    {/* <NavBar Login={Login} userData={useData}/> */}
     <div className=''>
       {children}
     </div>

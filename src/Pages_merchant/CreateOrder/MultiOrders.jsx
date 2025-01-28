@@ -134,7 +134,7 @@ console.log("customer", customer);
     fetchData();
   }, []);
   function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of the earth in km
+    const R = 3959; // Radius of the earth in miles
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
@@ -144,7 +144,7 @@ console.log("customer", customer);
         Math.sin(dLon / 2) *
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
+    const d = R * c; // Distance in miles
     return d.toFixed(2);
   }
 
@@ -847,7 +847,7 @@ console.log(apiKey);
                                     style={{ float: "left" }}
                                   >{`${data.firstName} ${data.lastName}`}</span>
                                   <span style={{ float: "right" }}>
-                                    {distance ? `${distance} km away` : ""}
+                                    {distance ? `${distance} miles away` : ""}
                                   </span>
                                 </option>
                               </>
@@ -875,7 +875,7 @@ console.log(apiKey);
                                   marginLeft: "5%",
                                 }}
                               >
-                                {distance ? `- (${distance} km away)` : ""}
+                                {distance ? `- (${distance} miles away)` : ""}
                               </span>
                             </option>
                           );
