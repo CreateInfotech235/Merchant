@@ -100,7 +100,7 @@ const ProtectedRoute = ({ children }) => {
   const handleCloseModel = () => {
     setShowModel(false);
   };
-
+  
   return (
     <div className={`app ${themeMode}`}>
       <div className="container-fluid p-0">

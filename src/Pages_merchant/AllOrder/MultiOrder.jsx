@@ -245,11 +245,14 @@ const MultiOrder = () => {
 
   const handleViewClick = (Order) => {
     setShowInfoModal(true);
+    console.log(Order.pickupAddress?.userSignature,"order");
     setSelectedOrder({
       ...Order,
       deliveryAddresses: Order.deliveryAddress,
+      pickupuserSignature: Order.pickupAddress?.userSignature,
     });
   };
+console.log(selectedOrder,"selectedOrder");
 
   const closeInfoModal = () => {
     setShowInfoModal(false);
@@ -649,12 +652,15 @@ const MultiOrder = () => {
                                             <td className="city-data">
                                               <button
                                                 className="edit-btn ms-1"
-                                                onClick={() =>
+                                                onClick={() =>{
+                                                  console.log(subOrder),
                                                   handleEditClick({
                                                     ...order,
                                                     deliveryAddresses: subOrder,
                                                     isSingle: subOrder?.subOrderId,
-                                                  })
+                                                    pickupSignature: subOrder?.pickupAddress?.userSignature,
+                                                    // pickupAddress: subOrder?.pickupAddress,
+                                                  })}
                                                 }
                                               >
                                                 <img

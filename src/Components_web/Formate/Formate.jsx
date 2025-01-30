@@ -7,13 +7,11 @@ function Formate({children,Login,useData}) {
 const navigate=useNavigate()
 const {isshow}=useParams()
 
-    // full page http://localhost:5173/terms-and-conditions/isshow
-console.log(isshow,'isshow');
 
   return (
   <>
 {
-  isshow ?
+  isshow==='true' ?
     null
     :
     <NavBar Login={Login} userData={useData}/>

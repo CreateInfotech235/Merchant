@@ -157,6 +157,7 @@ import MultiOrderParcel from "./Pages_merchant/AllOrder/MultiOrderParcel";
 import CommonComponent from "./Pages_admin/common-component/common-component";
 import { Tr } from "react-flags-select";
 import DeliveryPersonTracking from "./Pages_merchant/AllOrder/tr";
+import Billing from "./Pages_merchant/Billing/AllBilling";
 
 
 function App() {
@@ -290,6 +291,17 @@ function App() {
           element={
             <ProtectedRoute>
               <TrashedMultiOrder />
+            </ProtectedRoute>
+          }
+        />
+        {/* add bile  */}
+
+
+        <Route
+          path="/All-billing"
+          element={
+            <ProtectedRoute>
+              <Billing />
             </ProtectedRoute>
           }
         />
@@ -535,6 +547,7 @@ function App() {
           }
         />
         <Route
+        // terms-and-conditions
           path="/terms-and-conditions/:isshow"
           element={
             <Formate Login={islogin} useData={userData}>

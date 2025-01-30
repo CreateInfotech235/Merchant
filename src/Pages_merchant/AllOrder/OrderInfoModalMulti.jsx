@@ -15,7 +15,7 @@ import {
 import { GiPathDistance, GiDuration } from "react-icons/gi";
 
 const OrderInfoModalMulti = ({ Order, onHide }) => {
-  console.log(Order);
+  console.log(Order, "Order");
   if (!Order) return null;
 
   return (
@@ -113,7 +113,19 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
             </h6>
             {Order?.deliveryAddresses?.map((delivery, index) => (
               <div key={delivery._id} className="mb-4 p-3 border rounded">
-                <h6 className="text-secondary mb-3">Delivery Point {index + 1}</h6>
+                <div className="flex justify-between">
+                  <div>
+                    {Order?.pickupuserSignature && (
+                      <img src={Order?.pickupuserSignature} alt="pickup Signature" className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                    )}
+                  </div>
+                  <div>
+                    {
+                      delivery?.deliverysignature && (
+                        <img src={delivery?.deliverysignature} alt="Delivery Signature" className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                      )}
+                  </div>
+                </div>
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <FaUser className="me-2" />
