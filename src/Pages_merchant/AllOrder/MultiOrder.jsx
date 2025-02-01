@@ -637,7 +637,7 @@ console.log(selectedOrder,"selectedOrder");
                                               {`${subOrder?.address} (${subOrder?.postCode})` ??
                                                 "-"}
                                             </td>
-                                            <td className="p-3">-</td>
+                                            <td className="p-3">{subOrder?.time?.end ? format(new Date(subOrder.time.end), "dd-MM-yyyy") : "-"}</td>
                                             <td className="p-3">{parcelTypeDetail.find(type => type.parcelTypeId === subOrder?.parcelType)?.label ?? "-"}</td>
                                             <td className="p-3">{subOrder?.invoice ?? "-"}</td>
                                             <td className="p-3">

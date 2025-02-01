@@ -1,0 +1,198 @@
+ const BillingModal = React.memo(({ show, onHide, billingData }) => {
+    if (!billingData) return null;
+
+    return (
+      <Modal show={show} onHide={onHide} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title>Billing Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="billing-details p-4">
+            <div className="bill-header mb-4">
+              <h4 className="text-center mb-3">BILLING INVOICE</h4>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <p>
+                    <strong>Order ID:</strong> {billingData.orderId}
+                  </p>
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {billingData.createdAt
+                      ? format(new Date(billingData.createdAt), "dd-MM-yyyy")
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <strong>Delivery Man:</strong>{" "}
+                    {`${billingData.deliveryMan?.firstName} ${billingData.deliveryMan?.lastName}`}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {billingData.deliveryMan?.email}
+                  </p>
+                  <p>
+                    <strong>Phone:</strong>{" "}
+                    {billingData.deliveryMan?.contactNumber || "-"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bill-details mb-4">
+              <h5 className="mb-3">Order Summary</h5>
+              {billingData.subdata.map((subOrder, index) => (
+                <div key={index} className="border-bottom py-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>
+                      <strong>Sub Order ID:</strong> {subOrder.subOrderId}
+                    </span>
+                    <span>
+                      <strong>Status:</strong> {subOrder?.orderStatus}
+                    </span>
+                  </div>
+
+                  <div className="row mb-2">
+                    <div className="col-md-6">
+                      <p>
+                        <strong>Pickup:</strong> {subOrder?.pickupAddress}
+                      </p>
+                      <p>
+                        <strong>Delivery:</strong> {subOrder?.deliveryAddress}
+                      </p>
+                      <p>
+                        <strong>Distance:</strong>{" "}
+                        {subOrder?.distance?.toFixed(2) ?? "-"} km
+                      </p>
+                    </div>
+                    <div className="col-md-6">
+                      <p>
+                        <strong>Pickup Time:</strong>{" "}
+                        {format(new Date(subOrder?.pickupTime ?? 0), "HH:mm")}
+                      </p>
+                      <p>
+                        <strong>Delivery Time:</strong>{" "}
+                        {subOrder?.deliveryTime
+                          ? format(new Date(subOrder.deliveryTime), "HH:mm")
+                          : "-"}
+                      </p>
+                      <p>
+                        <strong>Total Time:</strong>{" "}
+                        {subOrder.deliveryTime && subOrder.pickupTime
+                          ? (() => {
+                              const timeDiff =
+                                new Date(subOrder.deliveryTime).getTime() -
+                                new Date(subOrder.pickupTime).getTime();
+                              const hours = Math.floor(
+                                timeDiff / (1000 * 60 * 60)
+                              );
+                              const minutes = Math.floor(
+                                (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
+                              );
+                              const seconds = Math.floor(
+                                (timeDiff % (1000 * 60)) / 1000
+                              );
+                              return `${hours}h ${minutes}m ${seconds}s`;
+                            })()
+                          : "-"}
+                      </p>
+                      <p>
+                        <strong>Total Average Time:</strong>{" "}
+                        {subOrder?.averageTime
+                          ? `${Math.floor(
+                              parseInt(subOrder.averageTime) / 60
+                            )}h ${parseInt(subOrder.averageTime) % 60}m`
+                          : "-"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between mt-2">
+                    <div>
+                      <p>
+                        <strong>Payment Method:</strong>{" "}
+                        {subOrder?.chargeMethod ?? "-"}
+                      </p>
+                      <p>
+                        <strong>Cash on Delivery:</strong>{" "}
+                        {subOrder?.isCashOnDelivery ? "Yes" : "No"}
+                      </p>
+                    </div>
+                    <div className="text-end">
+                      <p>
+                        <strong>Package Amount:</strong> £
+                        {subOrder?.amountOfPackage ?? "-"}
+                      </p>
+                      <div className="d-flex align-items-center justify-content-end">
+                        <strong>Delivery Charge:</strong>
+                        &nbsp;£
+                        <input
+                          type="number"
+                          style={{ width: "100px" }}
+                          value={
+                            subodercharge?.find(
+                              (item) => item.subOrderId === subOrder.subOrderId
+                            )?.charge || subOrder.charge
+                          }
+                          onChange={(e) =>
+                            handleChargeChange(e, subOrder.subOrderId)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="bill-footer">
+              <div className="d-flex justify-content-between border-top pt-3">
+                <div>
+                  <p>
+                    <strong>Total Orders:</strong>{" "}
+                    {billingData.subdata?.length || 0}
+                  </p>
+                  <p>
+                    <strong>Created By:</strong>{" "}
+                    {billingData.deliveryMan?.createdByAdmin
+                      ? "Admin"
+                      : "Merchant"}
+                  </p>
+                </div>
+                <div className="text-end">
+                  <p>
+                    <strong>Total Package Amount:</strong> £
+                    {billingData.subdata
+                      ?.reduce(
+                        (sum, order) => sum + (order.amountOfPackage || 0),
+                        0
+                      )
+                      .toFixed(2)}
+                  </p>
+                  <p>
+                    <strong>Total Delivery Charges:</strong> £
+                    {subodercharge
+                      ?.reduce((sum, item) => sum + (item.charge || 0), 0)
+                      .toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {showEditButton ? (
+              <div className="d-flex justify-content-between">
+                <div>
+                  <button className="btn btn-primary me-2">Save</button>
+                  <button className="btn btn-primary" onClick={handleCancel}>
+                    Cancel
+                  </button>
+                </div>
+                <div>
+                  <button className="btn btn-primary">Approve</button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  });

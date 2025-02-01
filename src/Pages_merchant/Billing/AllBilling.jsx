@@ -30,7 +30,7 @@ const Billing = () => {
   const [billingData, setBillingData] = useState(null);
   const [showEditButton, setShowEditButton] = useState(false);
   const [subodercharge, setSubodercharge] = useState(null);
-
+  console.log(filteredOrders, "filteredOrders");
   const handleShowBilling = (order) => {
     const data = order.subdata.map((subOrder) => ({
       subOrderId: subOrder.subOrderId,
@@ -82,15 +82,21 @@ const Billing = () => {
                   </p>
                   <p>
                     <strong>Date:</strong>{" "}
-                    {billingData.createdAt
-                      ? format(new Date(billingData?.createdAt), "dd-MM-yyyy")
+                    {billingData?.createdAt
+                      ? new Date(billingData?.createdAt) instanceof Date &&
+                        !isNaN(new Date(billingData?.createdAt))
+                          ? format(
+                              new Date(billingData?.createdAt),
+                              "dd-MM-yyyy"
+                            )
+                          : billingData?.createdAt
                       : "-"}
                   </p>
                 </div>
                 <div>
                   <p>
                     <strong>Delivery Man:</strong>{" "}
-                    {`${billingData?.deliveryMan?.firstName} ${billingData?.deliveryMan?.lastName}`}
+                    {`${billingData?.deliveryMan?.firstName} ${billingData.deliveryMan?.lastName}`}
                   </p>
                   <p>
                     <strong>Email:</strong> {billingData?.deliveryMan?.email}
@@ -109,7 +115,7 @@ const Billing = () => {
                 <div key={index} className="border-bottom py-3">
                   <div className="d-flex justify-content-between mb-2">
                     <span>
-                      <strong>Sub Order ID:</strong> {subOrder?.subOrderId}
+                      <strong>Sub Order ID:</strong> {subOrder.subOrderId}
                     </span>
                     <span>
                       <strong>Status:</strong> {subOrder?.orderStatus}
@@ -137,7 +143,10 @@ const Billing = () => {
                       <p>
                         <strong>Delivery Time:</strong>{" "}
                         {subOrder?.deliveryTime
-                          ? format(new Date(subOrder?.deliveryTime), "HH:mm")
+                          ? new Date(subOrder?.deliveryTime) instanceof Date &&
+                            !isNaN(new Date(subOrder?.deliveryTime))
+                            ? format(new Date(subOrder?.deliveryTime), "HH:mm")
+                            : subOrder?.deliveryTime
                           : "-"}
                       </p>
                       <p>
@@ -145,8 +154,8 @@ const Billing = () => {
                         {subOrder?.deliveryTime && subOrder?.pickupTime
                           ? (() => {
                               const timeDiff =
-                                new Date(subOrder?.deliveryTime).getTime() -
-                                new Date(subOrder?.pickupTime).getTime();
+                                new Date(subOrder?.deliveryTime)?.getTime() -
+                                new Date(subOrder?.pickupTime)?.getTime();
                               const hours = Math.floor(
                                 timeDiff / (1000 * 60 * 60)
                               );
@@ -190,31 +199,33 @@ const Billing = () => {
                       <div className="d-flex align-items-center justify-content-end">
                         <strong>Delivery Charge:</strong>
                         &nbsp;£
-                        <input
+                       {    subodercharge?.find(
+                                (item) => item.subOrderId === subOrder?.subOrderId
+                              )?.charge || subOrder?.charge}
+                        {/* <input
                           type="number"
                           style={{ width: "100px" }}
+                          
                           value={
-                            subodercharge?.find(
-                              (item) => item?.subOrderId === subOrder?.subOrderId
-                            )?.charge || subOrder?.charge
+                          
                           }
                           onChange={(e) =>
                             handleChargeChange(e, subOrder?.subOrderId)
                           }
-                        />
+                        /> */}
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-                </div>
+            </div>
 
             <div className="bill-footer">
               <div className="d-flex justify-content-between border-top pt-3">
                 <div>
                   <p>
                     <strong>Total Orders:</strong>{" "}
-                    {billingData?.subdata?.length || 0}
+                    {billingData.subdata?.length || 0}
                   </p>
                   <p>
                     <strong>Created By:</strong>{" "}
@@ -575,15 +586,22 @@ const Billing = () => {
                       </td>
                       <td className="p-3">
                         {order?.createdAt
-                          ? format(new Date(order.createdAt), "dd-MM-yyyy")
+                          ? new Date(order?.createdAt) instanceof Date &&
+                            !isNaN(new Date(order?.createdAt))
+                            ? format(new Date(order?.createdAt), "dd-MM-yyyy")
+                            : order?.createdAt
                           : "-"}
                       </td>
                       <td className="p-3">
-                        {order?.subdata[0]?.pickupTime
-                          ? format(
-                              new Date(order.subdata[0].pickupTime),
-                              "dd-MM-yyyy"
-                            )
+                        {order?.subdata[0]?.pickupTime  
+                          ? new Date(order?.subdata[0]?.pickupTime) instanceof
+                            Date &&
+                            !isNaN(new Date(order?.subdata[0]?.pickupTime))
+                            ? format(
+                                new Date(order?.subdata[0]?.pickupTime),
+                                "dd-MM-yyyy"
+                              )
+                            : order?.subdata[0]?.pickupTime
                           : "-"}
                       </td>
                       <td className="p-3">
@@ -633,12 +651,12 @@ const Billing = () => {
                       </td>
 
                       <td>
-                        <button onClick={() => toggleSemTable(order.orderId)}>
-                          {openSemTable[order.orderId] ? "Close" : "Open"}
+                        <button onClick={() => toggleSemTable(order?.orderId)}>
+                          {openSemTable[order?.orderId] ? "Close" : "Open"}
                         </button>
                       </td>
                     </tr>
-                    {openSemTable[order.orderId] && (
+                    {openSemTable[order?.orderId] && (
                       <tr>
                         <td colSpan="12">
                           <div className="dropdown-table">
@@ -743,7 +761,7 @@ const Billing = () => {
                                     <td className="p-3 ">
                                       <button
                                         className={`${getColorClass(
-                                          subOrder?.orderStatus
+                                          subOrder.orderStatus
                                         )} mx-2`}
                                       >
                                         {subOrder?.orderStatus ?? "-"}

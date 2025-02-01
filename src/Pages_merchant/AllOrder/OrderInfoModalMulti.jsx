@@ -127,6 +127,9 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
                       </div>
                     </div>
                   )}
+                  {
+                    console.log(delivery?.deliverysignature,"delivery")
+                  }
                   <div>
                     {delivery?.deliverysignature && (
                       <div>
