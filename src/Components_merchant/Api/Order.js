@@ -55,13 +55,26 @@ export const updateOrder = async (orderId, data) => {
 
 
 
-export const orderUpdateMulti = async (id, data) => {
+export const orderUpdateMulti = async (id, data,Order) => {
   console.log("data", data);
   try {
+
+    const newData = {
+      ...data,
+    }
+    newData.deliveryDetails = newData.deliveryDetails.map((item)=>{
+      return {
+        ...item,
+        status: Order.status
+      }
+    })
+
+
+
   
     const response = await API.patch(
       `/mobile/order/orderUpdateMulti/${id}`,
-      data
+      newData
     );
     // console.log("response", response);
 

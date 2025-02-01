@@ -399,7 +399,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
       };
       console.log("payload", payload);
 
-      const res1 = await orderUpdateMulti(Order._id, payload);
+      const res1 = await orderUpdateMulti(Order._id, payload,Order);
       console.log("res1", res1);
       if (res1.status) {
         console.log("res1", res1);

@@ -114,16 +114,30 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
             {Order?.deliveryAddresses?.map((delivery, index) => (
               <div key={delivery._id} className="mb-4 p-3 border rounded">
                 <div className="flex justify-between">
+                  {
+                    console.log(delivery,"order")
+                  }
+                  {delivery?.pickupsignature && (
+                    <div>
+                      <div>
+                        <h6>Proof of pickup</h6>
+                      </div>
+                      <div>
+                        <img src={delivery?.pickupsignature} alt="pickup Signature" className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                      </div>
+                    </div>
+                  )}
                   <div>
-                    {Order?.pickupuserSignature && (
-                      <img src={Order?.pickupuserSignature} alt="pickup Signature" className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                    {delivery?.deliverysignature && (
+                      <div>
+                        <div>
+                          <h6>Proof of delivery</h6>
+                        </div>
+                        <div>
+                          <img src={delivery?.deliverysignature} alt="Delivery Signature" className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                        </div>
+                      </div>
                     )}
-                  </div>
-                  <div>
-                    {
-                      delivery?.deliverysignature && (
-                        <img src={delivery?.deliverysignature} alt="Delivery Signature" className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
-                      )}
                   </div>
                 </div>
                 <div className="row mb-2">

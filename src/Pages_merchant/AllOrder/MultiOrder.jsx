@@ -245,7 +245,7 @@ const MultiOrder = () => {
 
   const handleViewClick = (Order) => {
     setShowInfoModal(true);
-    console.log(Order.pickupAddress?.userSignature,"order");
+    // console.log(Order.deliveryAddress,"order");
     setSelectedOrder({
       ...Order,
       deliveryAddresses: Order.deliveryAddress,

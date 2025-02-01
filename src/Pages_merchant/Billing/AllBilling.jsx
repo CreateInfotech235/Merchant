@@ -53,12 +53,12 @@ const Billing = () => {
 
   const filterOrders = (query) => {
     let data = orderData;
-    
+
     if (query) {
       const searchLower = query.toLowerCase().trim();
       const searcharr = searchLower.split(" ");
-      data = data.filter((order) => 
-        searcharr.every(word => 
+      data = data.filter((order) =>
+        searcharr.every(word =>
           order.orderId?.toString().includes(word) ||
           order.deliveryMan?.firstName?.toLowerCase().includes(word) ||
           order.deliveryMan?.lastName?.toLowerCase().includes(word) ||
@@ -121,7 +121,7 @@ const Billing = () => {
   useEffect(() => {
     filterOrders(searchQuery);
   }, [searchQuery, startDate, endDate, filterCreatedBy, currentPage, itemsPerPage, orderData]);
-  
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
@@ -147,7 +147,7 @@ const Billing = () => {
     CREATED: "gray",
     ASSIGNED: "blue",
     ACCEPTED: "green",
-    CANCELLED: "red", 
+    CANCELLED: "red",
     UNASSIGNED: "red",
     DELIVERED: "teal",
     PICKED_UP: "orange",
@@ -174,7 +174,7 @@ const Billing = () => {
           </button>
         </div>
       </div>
-      
+
       <div className="filter-container p-3 bg-white rounded-lg shadow-md">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -292,25 +292,25 @@ const Billing = () => {
                         </button>
                       </td>
                       <td className="p-3">
-                        <button onClick={() => handleViewClick(order)} style={{marginRight: "10px"}}>
+                        <button onClick={() => handleViewClick(order)} style={{ marginRight: "10px" }}>
                           <img src={show} alt="Show" className="mx-auto" />
                         </button>
-                      
-                        
+
+
                       </td>
                       <td className="p-3">
-                    
-                        <button  style={{marginLeft: "10px", backgroundColor: "green", color: "white", padding: "5px 10px", borderRadius: "5px"}}>
+
+                        <button style={{ marginLeft: "10px", backgroundColor: "green", color: "white", padding: "5px 10px", borderRadius: "5px" }}>
                           Approve
                         </button>
-                        
+
                       </td>
                       <td>
                         <button onClick={() => toggleSemTable(order.orderId)}>
                           {openSemTable[order.orderId] ? "Close" : "Open"}
                         </button>
                       </td>
-                      
+
                     </tr>
                     {openSemTable[order.orderId] && (
                       <tr>
@@ -324,8 +324,12 @@ const Billing = () => {
                                   <th className="p-3">Delivery Time</th>
                                   <th className="p-3">Average Delivery Time</th>
                                   <th className="p-3">Total Take Time</th>
-
-                                  <th className="p-3">Charge</th>
+                                  <th className="p-3">Pickup Address</th>
+                                  <th className="p-3">Delivery Address</th>
+                                  <th className="p-3">Distance</th>
+                                  <th className="p-3">Charge on take time</th>
+                                  <th className="p-3"> is Cash on Delivery</th>
+                                  <th className="p-3">Amount of package</th>
                                   <th className="p-3">Status</th>
                                   <th className="p-3">Charge Method</th>
                                   <th className="p-3">Is Approved</th>
@@ -335,33 +339,42 @@ const Billing = () => {
                               <tbody>
                                 {order.subdata.map((subOrder, subIndex) => (
                                   <tr key={subIndex}>
-                                    <td className="p-3">{subOrder.subOrderId}</td>
-                                    <td className="p-3">{format(new Date(subOrder?.pickupTime??0), "HH:mm")??"00:00"}</td>
-                                    <td className="p-3">{subOrder?.deliveryTime ? format(new Date(subOrder.deliveryTime), "HH:mm") : "00:00"}</td>
-                                    <td className="p-3">
-                                      {subOrder?.averageTime ? 
-                                        `${Math.floor(parseInt(subOrder.averageTime)/60)}h ${parseInt(subOrder.averageTime)%60}m`
+                                    <td className="p-3 ">{subOrder?.subOrderId ?? "-"}</td>
+                                    <td className="p-3 ">{format(new Date(subOrder?.pickupTime ?? 0), "HH:mm") ?? "00:00"}</td>
+                                    <td className="p-3 ">{subOrder?.deliveryTime ? format(new Date(subOrder.deliveryTime), "HH:mm") : "00:00"}</td>
+                                    <td className="p-3 ">
+                                      {subOrder?.averageTime ?
+                                        `${Math.floor(parseInt(subOrder.averageTime) / 60)}h ${parseInt(subOrder.averageTime) % 60}m`
                                         : "-"}
                                     </td>
-                                    <td className="p-3">
-                                      {subOrder?.deliveryTime && subOrder?.pickupTime ? 
-                                        format(
-                                          new Date(new Date(subOrder.deliveryTime) - new Date(subOrder.pickupTime)),
-                                          "HH:mm"
-                                        )
-                                        : "00:00"
-                                      }
+                                    <td className="p-3 ">
+                                      {subOrder.deliveryTime && subOrder.pickupTime ? (
+                                        (() => {
+                                          const timeDiff = new Date(subOrder.deliveryTime).getTime() - new Date(subOrder.pickupTime).getTime();
+                                          const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                                          const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                                          const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                                          return `${hours}h ${minutes}m ${seconds}s`;
+                                        })()
+                                      ) : "-"}
                                     </td>
-                                    <td className="p-3">{subOrder.charge}</td>
-                                    <td className="p-3">
-                                      <button className={`${getColorClass(subOrder.orderStatus)} mx-2`}>
-                                        {subOrder.orderStatus}
+                                    
+                                    <td className="p-3 ">{subOrder?.pickupAddress ?? "-"}</td>
+                                    <td className="p-3">{subOrder?.deliveryAddress ?? "-"}</td>
+                                    <td className="py-3 px-2 ">{`${subOrder?.distance?.toFixed(2)}` ?? "-"}</td>
+                                    <td className="py-3 px-2 ">{`${subOrder?.charge?.toFixed(2)}` ?? "-"}</td>
+                                    {console.log(subOrder)}
+                                    <td className="py-3 px-2 ">{subOrder?.isCashOnDelivery ? "Yes" : "No"}</td>
+                                    <td className="py-3 px-2 ">{subOrder?.amountOfPackage === undefined ? "-" : subOrder.amountOfPackage}</td>
+                                    <td className="p-3 ">
+                                      <button className={`${getColorClass(subOrder?.orderStatus)} mx-2`}>
+                                        {subOrder?.orderStatus ?? "-"}
                                       </button>
                                     </td>
-                                    <td className="p-3">{subOrder.chargeMethod}</td>
-                                    <td className="p-3">{subOrder.isApproved ? "Yes" : "No"}</td>
-                                    <td className="p-3">{subOrder.isPaid ? "Yes" : "No"}</td>
-                                    
+                                    <td className="p-3 ">{subOrder?.chargeMethod ?? "-"}</td>
+                                    <td className="p-3 ">{subOrder?.isApproved ? "Yes" : "No"}</td>
+                                    <td className="p-3 ">{subOrder?.isPaid ? "Yes" : "No"}</td>
+
                                   </tr>
                                 ))}
                               </tbody>
@@ -378,17 +391,17 @@ const Billing = () => {
         </div>
         <div className="d-flex justify-content-end align-items-center mt-3">
           <Stack spacing={2}>
-            <Pagination 
-              count={totalPages} 
-              page={currentPage} 
-              onChange={handlePageChange} 
-              variant="outlined" 
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
               shape="rounded"
             />
           </Stack>
-          <select 
-            className="form-select ms-3 w-20" 
-            value={itemsPerPage} 
+          <select
+            className="form-select ms-3 w-20"
+            value={itemsPerPage}
             onChange={(e) => {
               setItemsPerPage(Number(e.target.value));
               setCurrentPage(1);

@@ -2,9 +2,11 @@ import API from "./Api";
 
 export const getBilling = async () => {
     try {
-        const response = await API.get(`/mobile/billing/getBilling`,{params:{
-          status:"PICKED_UP",
-        }});
+        const response = await API.get(`/mobile/billing/getBilling`
+        //     ,{params:{
+        //   status:"PICKED_UP",
+        // }}
+    );
         if (response.status === 200) {
             return {
                 status: "SUCCESS",
