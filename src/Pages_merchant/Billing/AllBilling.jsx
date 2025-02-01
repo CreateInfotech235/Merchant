@@ -8,6 +8,7 @@ import { Pagination, Stack } from "@mui/material";
 import { getBilling } from "../../Components_merchant/Api/Billing";
 import Showbilling from "./Showbilling";
 import show from "../../assets_mercchant/show.png";
+import Modal from "react-bootstrap/Modal";
 
 const Billing = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -24,6 +25,242 @@ const Billing = () => {
   const [endDate, setEndDate] = useState(undefined);
   const [filterCreatedBy, setFilterCreatedBy] = useState("all");
   const [openSemTable, setOpenSemTable] = useState({});
+  const [showBillingModal, setShowBillingModal] = useState(false);
+  const [selectedBillingData, setSelectedBillingData] = useState(null);
+  const [billingData, setBillingData] = useState(null);
+  const [showEditButton, setShowEditButton] = useState(false);
+  const [subodercharge, setSubodercharge] = useState(null);
+
+  const handleShowBilling = (order) => {
+    const data = order.subdata.map((subOrder) => ({
+      subOrderId: subOrder.subOrderId,
+      charge: subOrder.charge,
+    }));
+
+    setSubodercharge(data);
+    setSelectedBillingData(order);
+    setShowBillingModal(true);
+  };
+
+  const handleCloseBilling = () => {
+    setShowBillingModal(false);
+    setSelectedBillingData(null);
+    setSubodercharge(null);
+  };
+
+  const handleCancel = () => {
+    setShowBillingModal(false);
+    setSubodercharge(null);
+  };
+
+  const handleChargeChange = (e, subOrderId) => {
+    const newCharge = parseFloat(e.target.value);
+    setSubodercharge((prev) =>
+      prev.map((item) =>
+        item.subOrderId === subOrderId ? { ...item, charge: newCharge } : item
+      )
+    );
+  };
+
+  // Memoize BillingModal component to prevent unnecessary re-renders
+  const BillingModal = React.memo(({ show, onHide, billingData }) => {
+    if (!billingData) return null;
+
+    return (
+      <Modal show={show} onHide={onHide} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title>Billing Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="billing-details p-4">
+            <div className="bill-header mb-4">
+              <h4 className="text-center mb-3">BILLING INVOICE</h4>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <p>
+                    <strong>Order ID:</strong> {billingData.orderId}
+                  </p>
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {billingData.createdAt
+                      ? format(new Date(billingData?.createdAt), "dd-MM-yyyy")
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <strong>Delivery Man:</strong>{" "}
+                    {`${billingData?.deliveryMan?.firstName} ${billingData?.deliveryMan?.lastName}`}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {billingData?.deliveryMan?.email}
+                  </p>
+                  <p>
+                    <strong>Phone:</strong>{" "}
+                    {billingData?.deliveryMan?.contactNumber || "-"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bill-details mb-4">
+              <h5 className="mb-3">Order Summary</h5>
+              {billingData?.subdata?.map((subOrder, index) => (
+                <div key={index} className="border-bottom py-3">
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>
+                      <strong>Sub Order ID:</strong> {subOrder?.subOrderId}
+                    </span>
+                    <span>
+                      <strong>Status:</strong> {subOrder?.orderStatus}
+                    </span>
+                  </div>
+
+                  <div className="row mb-2">
+                    <div className="col-md-6">
+                      <p>
+                        <strong>Pickup:</strong> {subOrder?.pickupAddress}
+                      </p>
+                      <p>
+                        <strong>Delivery:</strong> {subOrder?.deliveryAddress}
+                      </p>
+                      <p>
+                        <strong>Distance:</strong>{" "}
+                        {subOrder?.distance?.toFixed(2) ?? "-"} km
+                      </p>
+                    </div>
+                    <div className="col-md-6">
+                      <p>
+                        <strong>Pickup Time:</strong>{" "}
+                        {format(new Date(subOrder?.pickupTime ?? 0), "HH:mm")}
+                      </p>
+                      <p>
+                        <strong>Delivery Time:</strong>{" "}
+                        {subOrder?.deliveryTime
+                          ? format(new Date(subOrder?.deliveryTime), "HH:mm")
+                          : "-"}
+                      </p>
+                      <p>
+                        <strong>Total Time:</strong>{" "}
+                        {subOrder?.deliveryTime && subOrder?.pickupTime
+                          ? (() => {
+                              const timeDiff =
+                                new Date(subOrder?.deliveryTime).getTime() -
+                                new Date(subOrder?.pickupTime).getTime();
+                              const hours = Math.floor(
+                                timeDiff / (1000 * 60 * 60)
+                              );
+                              const minutes = Math.floor(
+                                (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
+                              );
+                              const seconds = Math.floor(
+                                (timeDiff % (1000 * 60)) / 1000
+                              );
+                              return `${hours}h ${minutes}m ${seconds}s`;
+                            })()
+                          : "-"}
+                      </p>
+                      <p>
+                        <strong>Total Average Time:</strong>{" "}
+                        {subOrder?.averageTime
+                          ? `${Math.floor(
+                              parseInt(subOrder?.averageTime) / 60
+                            )}h ${parseInt(subOrder?.averageTime) % 60}m`
+                          : "-"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between mt-2">
+                    <div>
+                      <p>
+                        <strong>Payment Method:</strong>{" "}
+                        {subOrder?.chargeMethod ?? "-"}
+                      </p>
+                      <p>
+                        <strong>Cash on Delivery:</strong>{" "}
+                        {subOrder?.isCashOnDelivery ? "Yes" : "No"}
+                      </p>
+                    </div>
+                    <div className="text-end">
+                      <p>
+                        <strong>Package Amount:</strong> £
+                        {subOrder?.amountOfPackage ?? "-"}
+                      </p>
+                      <div className="d-flex align-items-center justify-content-end">
+                        <strong>Delivery Charge:</strong>
+                        &nbsp;£
+                        <input
+                          type="number"
+                          style={{ width: "100px" }}
+                          value={
+                            subodercharge?.find(
+                              (item) => item?.subOrderId === subOrder?.subOrderId
+                            )?.charge || subOrder?.charge
+                          }
+                          onChange={(e) =>
+                            handleChargeChange(e, subOrder?.subOrderId)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+                </div>
+
+            <div className="bill-footer">
+              <div className="d-flex justify-content-between border-top pt-3">
+                <div>
+                  <p>
+                    <strong>Total Orders:</strong>{" "}
+                    {billingData?.subdata?.length || 0}
+                  </p>
+                  <p>
+                    <strong>Created By:</strong>{" "}
+                    {billingData?.deliveryMan?.createdByAdmin
+                      ? "Admin"
+                      : "Merchant"}
+                  </p>
+                </div>
+                <div className="text-end">
+                  <p>
+                    <strong>Total Package Amount:</strong> £
+                    {billingData?.subdata
+                      ?.reduce(
+                        (sum, order) => sum + (order.amountOfPackage || 0),
+                        0
+                      )
+                      .toFixed(2)}
+                  </p>
+                  <p>
+                    <strong>Total Delivery Charges:</strong> £
+                    {subodercharge
+                      ?.reduce((sum, item) => sum + (item.charge || 0), 0)
+                      .toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {showEditButton ? (
+              <div className="d-flex justify-content-between">
+                <div>
+                  <button className="btn btn-primary me-2">Save</button>
+                  <button className="btn btn-primary" onClick={handleCancel}>
+                    Cancel
+                  </button>
+                </div>
+                <div>
+                  <button className="btn btn-primary">Approve</button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  });
 
   const fetchData = async () => {
     setLoading(true);
@@ -32,10 +269,31 @@ const Billing = () => {
       console.log("response", response);
 
       if (response?.data) {
-        setOrderData(response.data);
-        const initialOrders = response.data.slice(0, itemsPerPage);
+        // Convert times to UK timezone
+        const dataWithUKTime = response.data.map((order) => ({
+          ...order,
+          createdAt: new Date(order.createdAt).toLocaleString("en-GB", {
+            timeZone: "Europe/London",
+          }),
+          subdata: order.subdata.map((subOrder) => ({
+            ...subOrder,
+            pickupTime: subOrder.pickupTime
+              ? new Date(subOrder.pickupTime).toLocaleString("en-GB", {
+                  timeZone: "Europe/London",
+                })
+              : null,
+            deliveryTime: subOrder.deliveryTime
+              ? new Date(subOrder.deliveryTime).toLocaleString("en-GB", {
+                  timeZone: "Europe/London",
+                })
+              : null,
+          })),
+        }));
+
+        setOrderData(dataWithUKTime);
+        const initialOrders = dataWithUKTime.slice(0, itemsPerPage);
         setFilteredOrders(initialOrders);
-        setTotalPages(Math.ceil(response.data.length / itemsPerPage));
+        setTotalPages(Math.ceil(dataWithUKTime.length / itemsPerPage));
       } else {
         setOrderData([]);
         setFilteredOrders([]);
@@ -58,11 +316,12 @@ const Billing = () => {
       const searchLower = query.toLowerCase().trim();
       const searcharr = searchLower.split(" ");
       data = data.filter((order) =>
-        searcharr.every(word =>
-          order.orderId?.toString().includes(word) ||
-          order.deliveryMan?.firstName?.toLowerCase().includes(word) ||
-          order.deliveryMan?.lastName?.toLowerCase().includes(word) ||
-          order.deliveryMan?.email?.toLowerCase().includes(word)
+        searcharr.every(
+          (word) =>
+            order.orderId?.toString().includes(word) ||
+            order.deliveryMan?.firstName?.toLowerCase().includes(word) ||
+            order.deliveryMan?.lastName?.toLowerCase().includes(word) ||
+            order.deliveryMan?.email?.toLowerCase().includes(word)
         )
       );
     }
@@ -120,7 +379,15 @@ const Billing = () => {
 
   useEffect(() => {
     filterOrders(searchQuery);
-  }, [searchQuery, startDate, endDate, filterCreatedBy, currentPage, itemsPerPage, orderData]);
+  }, [
+    searchQuery,
+    startDate,
+    endDate,
+    filterCreatedBy,
+    currentPage,
+    itemsPerPage,
+    orderData,
+  ]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -170,7 +437,11 @@ const Billing = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <button className="search-img rounded-end-4 border-0 flex justify-center items-center">
-            <img src={searchIcon} className="search w-[35px]" alt="search icon" />
+            <img
+              src={searchIcon}
+              className="search w-[35px]"
+              alt="search icon"
+            />
           </button>
         </div>
       </div>
@@ -179,7 +450,9 @@ const Billing = () => {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="date-input-group flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">Start:</label>
+              <label className="text-sm font-medium text-gray-700">
+                Start:
+              </label>
               <input
                 type="date"
                 value={startDate}
@@ -199,7 +472,7 @@ const Billing = () => {
             <button
               className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
               onClick={() => {
-                const today = new Date().toISOString().split('T')[0];
+                const today = new Date().toISOString().split("T")[0];
                 setStartDate(today);
                 setEndDate(today);
               }}
@@ -217,7 +490,12 @@ const Billing = () => {
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <label htmlFor="createdBy" className="text-sm font-medium text-gray-700 w-full">Created By:</label>
+            <label
+              htmlFor="createdBy"
+              className="text-sm font-medium text-gray-700 w-full"
+            >
+              Created By:
+            </label>
             <select
               id="createdBy"
               value={filterCreatedBy}
@@ -246,7 +524,10 @@ const Billing = () => {
       </div>
       <div className="w-100 mt-3">
         <div className="table-responsive">
-          <table className="table-borderless w-100 text-center bg-light" style={{ fontSize: "10px" }}>
+          <table
+            className="table-borderless w-100 text-center bg-light"
+            style={{ fontSize: "10px" }}
+          >
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
                 <th className="p-3"></th>
@@ -272,45 +553,90 @@ const Billing = () => {
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan="11" className="text-center p-3">No Data Found</td>
+                  <td colSpan="11" className="text-center p-3">
+                    No Data Found
+                  </td>
                 </tr>
               ) : (
                 filteredOrders.map((order, index) => (
                   <React.Fragment key={index}>
                     <tr className="country-row">
-                      <td className="city-data"><input type="checkbox" /></td>
-                      <td className="p-3 text-primary">{order?.orderId ?? "-"}</td>
-                      <td className="p-3">{`${order?.deliveryMan?.firstName ?? "-"} ${order?.deliveryMan?.lastName ?? "-"}`}</td>
-                      <td className="p-3">{order?.deliveryMan?.email ?? "-"}</td>
-                      <td className="p-3">{order?.createdAt ? format(new Date(order.createdAt), "dd-MM-yyyy") : "-"}</td>
-                      <td className="p-3">{order?.subdata[0]?.pickupTime ? format(new Date(order.subdata[0].pickupTime), "dd-MM-yyyy") : "-"}</td>
-                      <td className="p-3">{order?.deliveryMan?.createdByAdmin ? "Admin" : "Merchant"}</td>
-                      <td className="p-3">{order?.subdata[0]?.chargeMethod ?? "-"}</td>
+                      <td className="city-data">
+                        <input type="checkbox" />
+                      </td>
+                      <td className="p-3 text-primary">
+                        {order?.orderId ?? "-"}
+                      </td>
+                      <td className="p-3">{`${
+                        order?.deliveryMan?.firstName ?? "-"
+                      } ${order?.deliveryMan?.lastName ?? "-"}`}</td>
                       <td className="p-3">
-                        <button className={`${getColorClass(order?.subdata[0]?.orderStatus)} mx-2`}>
+                        {order?.deliveryMan?.email ?? "-"}
+                      </td>
+                      <td className="p-3">
+                        {order?.createdAt
+                          ? format(new Date(order.createdAt), "dd-MM-yyyy")
+                          : "-"}
+                      </td>
+                      <td className="p-3">
+                        {order?.subdata[0]?.pickupTime
+                          ? format(
+                              new Date(order.subdata[0].pickupTime),
+                              "dd-MM-yyyy"
+                            )
+                          : "-"}
+                      </td>
+                      <td className="p-3">
+                        {order?.deliveryMan?.createdByAdmin
+                          ? "Admin"
+                          : "Merchant"}
+                      </td>
+                      <td className="p-3">
+                        {order?.subdata[0]?.chargeMethod ?? "-"}
+                      </td>
+                      <td className="p-3">
+                        <button
+                          className={`${getColorClass(
+                            order?.subdata[0]?.orderStatus
+                          )} mx-2`}
+                        >
                           {order?.subdata[0]?.orderStatus ?? "-"}
                         </button>
                       </td>
                       <td className="p-3">
-                        <button onClick={() => handleViewClick(order)} style={{ marginRight: "10px" }}>
+                        <button
+                          onClick={() => {
+                            setShowEditButton(false);
+                            handleShowBilling(order);
+                          }}
+                          style={{ marginRight: "10px" }}
+                        >
                           <img src={show} alt="Show" className="mx-auto" />
                         </button>
-
-
                       </td>
-                      <td className="p-3">
-
-                        <button style={{ marginLeft: "10px", backgroundColor: "green", color: "white", padding: "5px 10px", borderRadius: "5px" }}>
+                      <td>
+                        <button
+                          onClick={() => {
+                            handleShowBilling(order);
+                            setShowEditButton(true);
+                          }}
+                          style={{
+                            marginRight: "10px",
+                            backgroundColor: "green",
+                            color: "white",
+                            padding: "5px 10px",
+                            borderRadius: "5px",
+                          }}
+                        >
                           Approve
                         </button>
-
                       </td>
+
                       <td>
                         <button onClick={() => toggleSemTable(order.orderId)}>
                           {openSemTable[order.orderId] ? "Close" : "Open"}
                         </button>
                       </td>
-
                     </tr>
                     {openSemTable[order.orderId] && (
                       <tr>
@@ -339,42 +665,99 @@ const Billing = () => {
                               <tbody>
                                 {order.subdata.map((subOrder, subIndex) => (
                                   <tr key={subIndex}>
-                                    <td className="p-3 ">{subOrder?.subOrderId ?? "-"}</td>
-                                    <td className="p-3 ">{format(new Date(subOrder?.pickupTime ?? 0), "HH:mm") ?? "00:00"}</td>
-                                    <td className="p-3 ">{subOrder?.deliveryTime ? format(new Date(subOrder.deliveryTime), "HH:mm") : "00:00"}</td>
                                     <td className="p-3 ">
-                                      {subOrder?.averageTime ?
-                                        `${Math.floor(parseInt(subOrder.averageTime) / 60)}h ${parseInt(subOrder.averageTime) % 60}m`
+                                      {subOrder?.subOrderId ?? "-"}
+                                    </td>
+                                    <td className="p-3 ">
+                                      {format(
+                                        new Date(subOrder?.pickupTime ?? 0),
+                                        "HH:mm"
+                                      ) ?? "00:00"}
+                                    </td>
+                                    <td className="p-3 ">
+                                      {subOrder?.deliveryTime
+                                        ? format(
+                                            new Date(subOrder.deliveryTime),
+                                            "HH:mm"
+                                          )
+                                        : "00:00"}
+                                    </td>
+                                    <td className="p-3 ">
+                                      {subOrder?.averageTime
+                                        ? `${Math.floor(
+                                            parseInt(subOrder.averageTime) / 60
+                                          )}h ${
+                                            parseInt(subOrder.averageTime) % 60
+                                          }m`
                                         : "-"}
                                     </td>
                                     <td className="p-3 ">
-                                      {subOrder.deliveryTime && subOrder.pickupTime ? (
-                                        (() => {
-                                          const timeDiff = new Date(subOrder.deliveryTime).getTime() - new Date(subOrder.pickupTime).getTime();
-                                          const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-                                          const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                                          const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-                                          return `${hours}h ${minutes}m ${seconds}s`;
-                                        })()
-                                      ) : "-"}
+                                      {subOrder.deliveryTime &&
+                                      subOrder.pickupTime
+                                        ? (() => {
+                                            const timeDiff =
+                                              new Date(
+                                                subOrder.deliveryTime
+                                              ).getTime() -
+                                              new Date(
+                                                subOrder.pickupTime
+                                              ).getTime();
+                                            const hours = Math.floor(
+                                              timeDiff / (1000 * 60 * 60)
+                                            );
+                                            const minutes = Math.floor(
+                                              (timeDiff % (1000 * 60 * 60)) /
+                                                (1000 * 60)
+                                            );
+                                            const seconds = Math.floor(
+                                              (timeDiff % (1000 * 60)) / 1000
+                                            );
+                                            return `${hours}h ${minutes}m ${seconds}s`;
+                                          })()
+                                        : "-"}
                                     </td>
-                                    
-                                    <td className="p-3 ">{subOrder?.pickupAddress ?? "-"}</td>
-                                    <td className="p-3">{subOrder?.deliveryAddress ?? "-"}</td>
-                                    <td className="py-3 px-2 ">{`${subOrder?.distance?.toFixed(2)}` ?? "-"}</td>
-                                    <td className="py-3 px-2 ">{`${subOrder?.charge?.toFixed(2)}` ?? "-"}</td>
-                                    {console.log(subOrder)}
-                                    <td className="py-3 px-2 ">{subOrder?.isCashOnDelivery ? "Yes" : "No"}</td>
-                                    <td className="py-3 px-2 ">{subOrder?.amountOfPackage === undefined ? "-" : subOrder.amountOfPackage}</td>
+
                                     <td className="p-3 ">
-                                      <button className={`${getColorClass(subOrder?.orderStatus)} mx-2`}>
+                                      {subOrder?.pickupAddress ?? "-"}
+                                    </td>
+                                    <td className="p-3">
+                                      {subOrder?.deliveryAddress ?? "-"}
+                                    </td>
+                                    <td className="py-3 px-2 ">
+                                      {`${subOrder?.distance?.toFixed(2)}` ??
+                                        "-"}
+                                    </td>
+                                    <td className="py-3 px-2 ">
+                                      {`${subOrder?.charge?.toFixed(2)}` ?? "-"}
+                                    </td>
+                                    <td className="py-3 px-2 ">
+                                      {subOrder?.isCashOnDelivery
+                                        ? "Yes"
+                                        : "No"}
+                                    </td>
+                                    <td className="py-3 px-2 ">
+                                      {subOrder?.amountOfPackage === undefined
+                                        ? "-"
+                                        : subOrder.amountOfPackage}
+                                    </td>
+                                    <td className="p-3 ">
+                                      <button
+                                        className={`${getColorClass(
+                                          subOrder?.orderStatus
+                                        )} mx-2`}
+                                      >
                                         {subOrder?.orderStatus ?? "-"}
                                       </button>
                                     </td>
-                                    <td className="p-3 ">{subOrder?.chargeMethod ?? "-"}</td>
-                                    <td className="p-3 ">{subOrder?.isApproved ? "Yes" : "No"}</td>
-                                    <td className="p-3 ">{subOrder?.isPaid ? "Yes" : "No"}</td>
-
+                                    <td className="p-3 ">
+                                      {subOrder?.chargeMethod ?? "-"}
+                                    </td>
+                                    <td className="p-3 ">
+                                      {subOrder?.isApproved ? "Yes" : "No"}
+                                    </td>
+                                    <td className="p-3 ">
+                                      {subOrder?.isPaid ? "Yes" : "No"}
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -415,6 +798,14 @@ const Billing = () => {
           </select>
         </div>
       </div>
+
+      {showBillingModal && (
+        <BillingModal
+          show={showBillingModal}
+          onHide={handleCloseBilling}
+          billingData={selectedBillingData}
+        />
+      )}
 
       {showInfoModal && (
         <Showbilling order={selectedOrder} onHide={closeInfoModal} />

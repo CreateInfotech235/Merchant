@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Modal, ModalBody, ModalHeader } from "react-bootstrap";
 import { loadGoogleMapsApi } from "./loadGoogleMapsApi";
 import { getDeliveryManLocations } from "../../Components_merchant/Api/DeliveryMan";
+import tracking from "../../assets_mercchant/delivery-bike.png";
 
 const MapModal = ({ location, onHide }) => {
   const [deliveryManLocations, setDeliveryManLocations] = useState(null);
@@ -59,7 +60,10 @@ const MapModal = ({ location, onHide }) => {
           position: { lat, lng },
           map: mapRef.current,
           title: "Delivery Location",
-          icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+          icon: {
+            url: tracking, // Replace with your custom icon URL
+            scaledSize: new window.google.maps.Size(32, 32), // Adjust size
+          },
         });
       } else {
         markerRef.current.setPosition({ lat, lng });
