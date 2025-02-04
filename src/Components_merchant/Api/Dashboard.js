@@ -33,7 +33,7 @@ export const getdata = async (startDate, endDate) => {
 
   try {
     const response = await API.get(url);
-    // console.log('resdata', response);
+    console.log('resdata123', response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {

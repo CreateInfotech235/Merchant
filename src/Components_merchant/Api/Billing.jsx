@@ -4,7 +4,7 @@ export const getBilling = async () => {
     try {
         const response = await API.get(`/mobile/billing/getBilling`
         //     ,{params:{
-        //   status:"PICKED_UP",
+        //   status:"DELIVERED",
         // }}
     );
         if (response.status === 200) {

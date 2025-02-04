@@ -114,9 +114,6 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
             {Order?.deliveryAddresses?.map((delivery, index) => (
               <div key={delivery._id} className="mb-4 p-3 border rounded">
                 <div className="flex justify-between">
-                  {
-                    console.log(delivery,"order")
-                  }
                   {delivery?.pickupsignature && (
                     <div>
                       <div>
@@ -127,9 +124,6 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
                       </div>
                     </div>
                   )}
-                  {
-                    console.log(delivery?.deliverysignature,"delivery")
-                  }
                   <div>
                     {delivery?.deliverysignature && (
                       <div>
@@ -203,7 +197,7 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
                     Payment Collection:
                   </label>
                   <span className="col-6 text-end text-sm py-2">
-                    ₹{delivery.paymentCollectionRupees}
+                    £{delivery.paymentCollectionRupees}
                   </span>
                 </div>
               </div>

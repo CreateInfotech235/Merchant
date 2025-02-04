@@ -57,7 +57,7 @@ const Billing = () => {
     const newCharge = parseFloat(e.target.value);
     setSubodercharge((prev) =>
       prev.map((item) =>
-        item.subOrderId === subOrderId ? { ...item, charge: newCharge } : item
+        item.subOrderId == subOrderId ? { ...item, charge: newCharge } : item
       )
     );
   };
@@ -78,11 +78,11 @@ const Billing = () => {
               <div className="d-flex justify-content-between">
                 <div>
                   <p>
-                    <strong>Order ID:</strong> {billingData.orderId}
+                    <strong>Order ID:</strong> {billingData?.showOrderId ? billingData?.showOrderId : "-"}
                   </p>
                   <p>
                     <strong>Date:</strong>{" "}
-                    {billingData?.createdAt
+                    {/* {billingData?.createdAt
                       ? new Date(billingData?.createdAt) instanceof Date &&
                         !isNaN(new Date(billingData?.createdAt))
                           ? format(
@@ -90,13 +90,13 @@ const Billing = () => {
                               "dd-MM-yyyy"
                             )
                           : billingData?.createdAt
-                      : "-"}
+                      : "-"} */}
                   </p>
                 </div>
                 <div>
                   <p>
                     <strong>Delivery Man:</strong>{" "}
-                    {`${billingData?.deliveryMan?.firstName} ${billingData.deliveryMan?.lastName}`}
+                    {`${billingData?.deliveryMan?.firstName} ${billingData?.deliveryMan?.lastName}`}
                   </p>
                   <p>
                     <strong>Email:</strong> {billingData?.deliveryMan?.email}
@@ -115,7 +115,7 @@ const Billing = () => {
                 <div key={index} className="border-bottom py-3">
                   <div className="d-flex justify-content-between mb-2">
                     <span>
-                      <strong>Sub Order ID:</strong> {subOrder.subOrderId}
+                      <strong>Sub Order ID:</strong> {subOrder?.subOrderId}
                     </span>
                     <span>
                       <strong>Status:</strong> {subOrder?.orderStatus}
@@ -132,7 +132,10 @@ const Billing = () => {
                       </p>
                       <p>
                         <strong>Distance:</strong>{" "}
-                        {subOrder?.distance?.toFixed(2) ?? "-"} km
+                        {subOrder?.distance !== undefined
+                          ? subOrder?.distance.toFixed(2)
+                          : "-"}
+                        km
                       </p>
                     </div>
                     <div className="col-md-6">
@@ -153,28 +156,28 @@ const Billing = () => {
                         <strong>Total Time:</strong>{" "}
                         {subOrder?.deliveryTime && subOrder?.pickupTime
                           ? (() => {
-                              const timeDiff =
-                                new Date(subOrder?.deliveryTime)?.getTime() -
-                                new Date(subOrder?.pickupTime)?.getTime();
-                              const hours = Math.floor(
-                                timeDiff / (1000 * 60 * 60)
-                              );
-                              const minutes = Math.floor(
-                                (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
-                              );
-                              const seconds = Math.floor(
-                                (timeDiff % (1000 * 60)) / 1000
-                              );
-                              return `${hours}h ${minutes}m ${seconds}s`;
-                            })()
+                            const timeDiff =
+                              new Date(subOrder?.deliveryTime)?.getTime() -
+                              new Date(subOrder?.pickupTime)?.getTime();
+                            const hours = Math.floor(
+                              timeDiff / (1000 * 60 * 60)
+                            );
+                            const minutes = Math.floor(
+                              (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
+                            );
+                            const seconds = Math.floor(
+                              (timeDiff % (1000 * 60)) / 1000
+                            );
+                            return `${hours}h ${minutes}m ${seconds}s`;
+                          })()
                           : "-"}
                       </p>
                       <p>
                         <strong>Total Average Time:</strong>{" "}
                         {subOrder?.averageTime
                           ? `${Math.floor(
-                              parseInt(subOrder?.averageTime) / 60
-                            )}h ${parseInt(subOrder?.averageTime) % 60}m`
+                            parseInt(subOrder?.averageTime) / 60
+                          )}h ${parseInt(subOrder?.averageTime) % 60}m`
                           : "-"}
                       </p>
                     </div>
@@ -199,20 +202,10 @@ const Billing = () => {
                       <div className="d-flex align-items-center justify-content-end">
                         <strong>Delivery Charge:</strong>
                         &nbsp;£
-                       {    subodercharge?.find(
-                                (item) => item.subOrderId === subOrder?.subOrderId
-                              )?.charge || subOrder?.charge}
-                        {/* <input
-                          type="number"
-                          style={{ width: "100px" }}
-                          
-                          value={
-                          
-                          }
-                          onChange={(e) =>
-                            handleChargeChange(e, subOrder?.subOrderId)
-                          }
-                        /> */}
+                        {subodercharge?.find(
+                          (item) => item.subOrderId == subOrder?.subOrderId
+                        )?.charge || "0"}
+
                       </div>
                     </div>
                   </div>
@@ -290,13 +283,13 @@ const Billing = () => {
             ...subOrder,
             pickupTime: subOrder.pickupTime
               ? new Date(subOrder.pickupTime).toLocaleString("en-GB", {
-                  timeZone: "Europe/London",
-                })
+                timeZone: "Europe/London",
+              })
               : null,
             deliveryTime: subOrder.deliveryTime
               ? new Date(subOrder.deliveryTime).toLocaleString("en-GB", {
-                  timeZone: "Europe/London",
-                })
+                timeZone: "Europe/London",
+              })
               : null,
           })),
         }));
@@ -326,10 +319,11 @@ const Billing = () => {
     if (query) {
       const searchLower = query.toLowerCase().trim();
       const searcharr = searchLower.split(" ");
+      console.log(data, "data");
       data = data.filter((order) =>
         searcharr.every(
           (word) =>
-            order.orderId?.toString().includes(word) ||
+            order.showOrderId?.toString().includes(word) ||
             order.deliveryMan?.firstName?.toLowerCase().includes(word) ||
             order.deliveryMan?.lastName?.toLowerCase().includes(word) ||
             order.deliveryMan?.email?.toLowerCase().includes(word)
@@ -546,20 +540,22 @@ const Billing = () => {
                 <th className="p-3">Delivery Man</th>
                 <th className="p-3">Email</th>
                 <th className="p-3">Created Date</th>
-                <th className="p-3">Pickup Date</th>
-                <th className="p-3">Created By</th>
+                <th className="p-3">Delivery Date</th>
+                <th className="p-3">Assign To</th>
                 <th className="p-3">Charge Method</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
-                <th className="p-3">Approve</th>
+                {/* <th className="p-3">Approve</th> */}
                 <th className="p-3">Info</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="11" className="text-center p-3">
-                    <Loader />
+                  <td colSpan="12" className="text-center p-3">
+                    <div className="flex justify-center">
+                      <Loader />
+                    </div>
                   </td>
                 </tr>
               ) : filteredOrders.length === 0 ? (
@@ -578,9 +574,8 @@ const Billing = () => {
                       <td className="p-3 text-primary">
                         {order?.orderId ?? "-"}
                       </td>
-                      <td className="p-3">{`${
-                        order?.deliveryMan?.firstName ?? "-"
-                      } ${order?.deliveryMan?.lastName ?? "-"}`}</td>
+                      <td className="p-3">{`${order?.deliveryMan?.firstName ?? "-"
+                        } ${order?.deliveryMan?.lastName ?? "-"}`}</td>
                       <td className="p-3">
                         {order?.deliveryMan?.email ?? "-"}
                       </td>
@@ -593,21 +588,29 @@ const Billing = () => {
                           : "-"}
                       </td>
                       <td className="p-3">
-                        {order?.subdata[0]?.pickupTime  
-                          ? new Date(order?.subdata[0]?.pickupTime) instanceof
-                            Date &&
-                            !isNaN(new Date(order?.subdata[0]?.pickupTime))
-                            ? format(
-                                new Date(order?.subdata[0]?.pickupTime),
-                                "dd-MM-yyyy"
-                              )
-                            : order?.subdata[0]?.pickupTime
+                        {order?.subdata?.length > 0
+                          ? (() => {
+                            const lastSubOrder = order.subdata.reduce((latest, current) => {
+                              if (!latest?.deliveryTime) return current;
+                              if (!current?.deliveryTime) return latest;
+                              return new Date(current?.deliveryTime) > new Date(latest?.deliveryTime)
+                                ? current
+                                : latest;
+                            }, order.subdata[0]);
+
+                            return lastSubOrder?.deliveryTime
+                              ? new Date(lastSubOrder?.deliveryTime) instanceof Date &&
+                                !isNaN(new Date(lastSubOrder?.deliveryTime))
+                                ? format(new Date(lastSubOrder?.deliveryTime), "dd-MM-yyyy")
+                                : lastSubOrder?.deliveryTime
+                              : "-";
+                          })()
                           : "-"}
                       </td>
                       <td className="p-3">
                         {order?.deliveryMan?.createdByAdmin
-                          ? "Admin"
-                          : "Merchant"}
+                          ? "Admin "
+                          : "Merchant DeliveryMan"}
                       </td>
                       <td className="p-3">
                         {order?.subdata[0]?.chargeMethod ?? "-"}
@@ -632,7 +635,7 @@ const Billing = () => {
                           <img src={show} alt="Show" className="mx-auto" />
                         </button>
                       </td>
-                      <td>
+                      {/* <td>
                         <button
                           onClick={() => {
                             handleShowBilling(order);
@@ -648,7 +651,7 @@ const Billing = () => {
                         >
                           Approve
                         </button>
-                      </td>
+                      </td> */}
 
                       <td>
                         <button onClick={() => toggleSemTable(order?.orderId)}>
@@ -695,43 +698,42 @@ const Billing = () => {
                                     <td className="p-3 ">
                                       {subOrder?.deliveryTime
                                         ? format(
-                                            new Date(subOrder.deliveryTime),
-                                            "HH:mm"
-                                          )
+                                          new Date(subOrder.deliveryTime),
+                                          "HH:mm"
+                                        )
                                         : "00:00"}
                                     </td>
                                     <td className="p-3 ">
                                       {subOrder?.averageTime
                                         ? `${Math.floor(
-                                            parseInt(subOrder.averageTime) / 60
-                                          )}h ${
-                                            parseInt(subOrder.averageTime) % 60
-                                          }m`
+                                          parseInt(subOrder.averageTime) / 60
+                                        )}h ${parseInt(subOrder.averageTime) % 60
+                                        }m`
                                         : "-"}
                                     </td>
                                     <td className="p-3 ">
                                       {subOrder.deliveryTime &&
-                                      subOrder.pickupTime
+                                        subOrder.pickupTime
                                         ? (() => {
-                                            const timeDiff =
-                                              new Date(
-                                                subOrder.deliveryTime
-                                              ).getTime() -
-                                              new Date(
-                                                subOrder.pickupTime
-                                              ).getTime();
-                                            const hours = Math.floor(
-                                              timeDiff / (1000 * 60 * 60)
-                                            );
-                                            const minutes = Math.floor(
-                                              (timeDiff % (1000 * 60 * 60)) /
-                                                (1000 * 60)
-                                            );
-                                            const seconds = Math.floor(
-                                              (timeDiff % (1000 * 60)) / 1000
-                                            );
-                                            return `${hours}h ${minutes}m ${seconds}s`;
-                                          })()
+                                          const timeDiff =
+                                            new Date(
+                                              subOrder.deliveryTime
+                                            ).getTime() -
+                                            new Date(
+                                              subOrder.pickupTime
+                                            ).getTime();
+                                          const hours = Math.floor(
+                                            timeDiff / (1000 * 60 * 60)
+                                          );
+                                          const minutes = Math.floor(
+                                            (timeDiff % (1000 * 60 * 60)) /
+                                            (1000 * 60)
+                                          );
+                                          const seconds = Math.floor(
+                                            (timeDiff % (1000 * 60)) / 1000
+                                          );
+                                          return `${hours}h ${minutes}m ${seconds}s`;
+                                        })()
                                         : "-"}
                                     </td>
 
@@ -742,11 +744,11 @@ const Billing = () => {
                                       {subOrder?.deliveryAddress ?? "-"}
                                     </td>
                                     <td className="py-3 px-2 ">
-                                      {`${subOrder?.distance?.toFixed(2)}` ??
+                                      {`${subOrder?.distance !== undefined ? subOrder?.distance.toFixed(2) : "-"}` ??
                                         "-"}
                                     </td>
                                     <td className="py-3 px-2 ">
-                                      {`${subOrder?.charge?.toFixed(2)}` ?? "-"}
+                                      {`${subOrder?.charge !== undefined ? subOrder?.charge?.toFixed(2) : "-"}` ?? "-"}
                                     </td>
                                     <td className="py-3 px-2 ">
                                       {subOrder?.isCashOnDelivery

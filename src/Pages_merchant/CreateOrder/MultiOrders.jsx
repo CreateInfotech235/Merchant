@@ -834,7 +834,7 @@ console.log(apiKey);
                                   key={index}
                                   value={"admin"}
                                   className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
-                                  disabled={isOrderCreated} 
+                                  disabled={true} 
                                 >
                                   Admin
                                 </option>
@@ -1055,7 +1055,7 @@ console.log(apiKey);
                                   onChange={(e) => {
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value } : item)
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value, paymentCollectionRupees: 0 } : item)
                                     }));
                                   }}
                                   value="false"
@@ -1284,13 +1284,13 @@ console.log(apiKey);
 
                           <div className="input-error mb-3 col-4">
                             <label className="fw-thin p-0 pb-1 ">
-                              Delivery Instraction (Optional) :
+                              Delivery Instructions (Optional) :
                             </label>
                             <Field
                               as="textarea"
                               name={`deliveryDetails.${index}.description`}
                               className="form-control"
-                              placeholder="Delivery Instraction"
+                              placeholder="Delivery Instructions"
                               rows="2"
                               onChange={(e) => {
                                 setInitialValues(prev => ({

@@ -322,8 +322,8 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
                       <option value="" disabled>
                         Select Charge Method
                       </option>
-                      <option value="DISTANCE">Distance</option>
-                      <option value="TIME">Time</option>
+                      <option value="DISTANCE">par 1 mile</option>
+                      <option value="TIME">par 1 hour</option>
                     </Field>
                     <ErrorMessage
                       name="chargeMethod"

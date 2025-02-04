@@ -274,7 +274,7 @@ const MerchantSidebar = () => {
               <span className=" pe-4">
                 <LuBoxes style={{ fontSize: "27px", color: "#fff", fontWeight: "lighter" }} alt="order" />
               </span>
-              Multi Orders
+              Create Order
               <span className={`arrow ${currentpage === 3 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>

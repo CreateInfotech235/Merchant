@@ -374,7 +374,7 @@ console.log(totalPages);
                         <input type="checkbox" />
                       </td>
                       <td className="p-3 text-primary">
-                        {order?.showOrderNumber ?? "-"}
+                        {order?.orderId ?? "-"}
                       </td>
                       <td className="p-3">
                         {`${order?.deliveryMan}` ?? "-"}

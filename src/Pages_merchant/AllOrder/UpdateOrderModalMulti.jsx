@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ErrorMessage, Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Spinner } from "react-bootstrap";
 import {
   getAllDeliveryMans,
   getDeliveryMan,
@@ -37,7 +37,51 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   console.log(initialValues.deliveryDetails);
   const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
 
-  // const [isOrderUpdated, setIsOrderUpdated] = useState(false);
+  // Function to get current location and update form fields
+  const getCurrentLocation = async (setFieldValue) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setCurrentLocation({ latitude, longitude });
+
+          // Reverse Geocoding to get the address from coordinates
+          try {
+            const mapApi = await getMapApi();
+            const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
+            
+            const response = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+            );
+            
+            const data = await response.json();
+            
+            if (data.results && data.results.length > 0) {
+              const address = data.results[0].formatted_address;
+              
+              // Update Formik fields
+              setFieldValue('pickupDetails.address', address);
+              setFieldValue('pickupDetails.location.latitude', latitude);
+              setFieldValue('pickupDetails.location.longitude', longitude);
+              
+              // toast.success("Pickup address updated using current location.");
+            } else {
+              toast.error("Unable to retrieve address from current location.");
+            }
+          } catch (error) {
+            console.error("Error during reverse geocoding:", error);
+            toast.error("Error retrieving current location address.");
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast.error("Failed to get current location.");
+        }
+      );
+    } else {
+      toast.error("Geolocation is not supported by this browser.");
+    }
+  };
 
   useEffect(() => {
     const selectedCustomer = customer.find(
@@ -59,7 +103,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   }, []);
 
   useEffect(() => {
-    // Get current location
+    // Get current location on component mount
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -124,9 +168,6 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
     fetchData();
   }, []);
 
-
-
-
   const formatDateTime = (isoString) => {
     if (!isoString) return "";
     const date = new Date(isoString);
@@ -156,11 +197,13 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
         description: Order?.pickupAddress?.description || "",
         postCode: Order?.pickupAddress?.postCode || "",
       },
-      deliveryDetails: Order?.deliveryAddress,
+      deliveryDetails: Order?.deliveryAddress.map((delivery) => ({
+        ...delivery,
+        cashOnDelivery: delivery.cashOnDelivery ? "true" : "false",
+      })),
     });
   }, [Order]);
   console.log(initialValues.deliveryDetails, 'initialValues.deliveryDetails');
-
 
   console.log("initialValues", initialValues);
   const validationSchema = Yup.object().shape({
@@ -188,7 +231,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           "Payment collection is required when cash on delivery is Yes",
           function (value) {
             const { cashOnDelivery } = this.parent;
-            if (cashOnDelivery === true && !value) {
+            if (cashOnDelivery === "true" && !value) {
               return false;
             }
             return true;
@@ -217,10 +260,6 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
     ),
   });
 
-
-
-
-
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);
@@ -245,48 +284,51 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
     return ((parseFloat(value.distance.text.replace(/[^\d.]/g, "")) * 0.621371).toFixed(2));
   }
 
-
-
   const onSubmit = async (values, { setFieldValue }) => {
     setIsUpdate(true);
     console.log("values", values);
-    const timestamp = new Date(values.dateTime).getTime();
-    const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
-    const arrayoferror = []
+
+    const formattedValues = {
+      ...values,
+      deliveryDetails: values.deliveryDetails.map((detail) => ({
+        ...detail,
+        cashOnDelivery: detail.cashOnDelivery === "true",
+      })),
+    };
+
+    const timestamp = new Date(formattedValues.dateTime).getTime();
+    const pictimestamp = new Date(formattedValues.pickupDetails.dateTime).getTime();
+    let arrayoferror = [];
     let pickuplocation =
-      values.pickupDetails.location.latitude === null
+      formattedValues.pickupDetails.location.latitude === null
         ? null
         : {
-          latitude: values.pickupDetails.location.latitude,
-          longitude: values.pickupDetails.location.longitude,
+          latitude: formattedValues.pickupDetails.location.latitude,
+          longitude: formattedValues.pickupDetails.location.longitude,
         };
-    let deliverylocations = []
+    let deliverylocations = [];
 
-    const arrayofaddress = values.deliveryDetails.map((delivery, index) => {
+    const arrayofaddress = formattedValues.deliveryDetails.map((delivery, index) => {
       return delivery.address;
-    })
+    });
 
-
-    const arrayofpostcode = values.deliveryDetails.map((delivery, index) => {
+    const arrayofpostcode = formattedValues.deliveryDetails.map((delivery, index) => {
       return delivery.postCode;
-    })
-    const distancesAndDurations = []
-    // const deliverylocations =[]
-
+    });
+    const distancesAndDurations = [];
 
     // Handle pickup location
-
-    if (values.pickupDetails.address) {
-      console.log("pickupDetails.address", values.pickupDetails.address);
+    if (formattedValues.pickupDetails.address) {
+      console.log("pickupDetails.address", formattedValues.pickupDetails.address);
 
       const mapApi = await getMapApi();
       const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
       console.log(apiKey);
-      console.log(`${values.pickupDetails.address} ${values.pickupDetails.postCode}`);
+      console.log(`${formattedValues.pickupDetails.address} ${formattedValues.pickupDetails.postCode}`);
 
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          `${values.pickupDetails.address} ${values.pickupDetails.postCode}`
+          `${formattedValues.pickupDetails.address} ${formattedValues.pickupDetails.postCode}`
         )}&key=${apiKey}`
       );
 
@@ -297,15 +339,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
         const { lat, lng } = data.results[0].geometry.location;
         pickuplocation = { latitude: lat, longitude: lng };
         console.log("pickuplocation", pickuplocation);
-        setInitialValues(prev => ({
-          ...prev,
-          pickupDetails: {
-            ...prev.pickupDetails,
-            location: { latitude: lat, longitude: lng }
-          }
-        }));
-        // setFieldValue("pickupDetails.location.latitude", lat);
-        // setFieldValue("pickupDetails.location.longitude", lng);
+        setFieldValue("pickupDetails.location.latitude", lat);
+        setFieldValue("pickupDetails.location.longitude", lng);
       } else {
         toast.error("Pickup address not found. Please try again.");
         setIsUpdate(false);
@@ -317,22 +352,18 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
       return;
     }
 
-
     // Handle delivery location
-    const mapApi = await getMapApi();
-    const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
+    const mapApiForDelivery = await getMapApi();
+    const apiKeyForDelivery = mapApiForDelivery.data[0]?.status ? mapApiForDelivery.data[0].mapKey : "";
 
     if (arrayofaddress) {
-
-
-
       for (let index = 0; index < arrayofaddress.length; index++) {
         const address = arrayofaddress[index];
         console.log("address", `${address} ${arrayofpostcode[index]}`);
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
             `${address} ${arrayofpostcode[index]}`
-          )}&key=${apiKey}`
+          )}&key=${apiKeyForDelivery}`
         );
         const data = await response.json();
         console.log("data", data);
@@ -340,8 +371,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           console.log("data", data);
           if (data.status !== "ZERO_RESULTS") {
             const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
-            distancesAndDurations.push({status:true,distance:{value:0,text:"0 km"},duration:{value:0,text:"0 min"}})
-            deliverylocations.push(deliverylocation)
+            distancesAndDurations.push({status:true,distance:{value:0,text:"0 km"},duration:{value:0,text:"0 min"}});
+            deliverylocations.push(deliverylocation);
           } else {
             console.log("data", data);
             arrayoferror.push(`in order ${index + 1} delivery address (${address} ${arrayofpostcode[index]}) not found. Please try again.`);
@@ -349,25 +380,21 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
         } else {
           arrayoferror.push(`in order ${index + 1} delivery address (${address} ${arrayofpostcode[index]}) not found. Please try again.`);
         }
-
       }
 
       if (arrayoferror.length > 0) {
         console.log("arrayoferror", arrayoferror);
         toast.error(arrayoferror.join("\n"));
-        arrayoferror = []
+        arrayoferror = [];
         setIsUpdate(false);
         return;
       }
 
-
-
-
       var payload = {
         dateTime: timestamp,
-        deliveryManId: initialValues.deliveryManId,
+        deliveryManId: formattedValues.deliveryManId,
         pickupDetails: {
-          ...initialValues.pickupDetails,
+          ...formattedValues.pickupDetails,
           dateTime: pictimestamp,
           location: {
             latitude: pickuplocation.latitude,
@@ -375,7 +402,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           }
         },
         merchant: merchant._id,
-        deliveryDetails: initialValues.deliveryDetails.map((delivery, index) => ({
+        deliveryDetails: formattedValues.deliveryDetails.map((delivery, index) => ({
           address: delivery.address,
           cashOnDelivery: delivery.cashOnDelivery,
           description: delivery.description,
@@ -388,7 +415,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           paymentCollectionRupees: delivery.paymentCollectionRupees,
           distance: distancesAndDurations[index]?.distance.value,
           duration: distancesAndDurations[index]?.duration.text,
-          parcelType: delivery.parcelType,
+          // parcelType: delivery?.parcelType || "",
+          ...(delivery.parcelType && { parcelType: delivery.parcelType }),
           location: {
             latitude: deliverylocations[index]?.latitude,
             longitude: deliverylocations[index]?.longitude
@@ -399,7 +427,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
       };
       console.log("payload", payload);
 
-      const res1 = await orderUpdateMulti(Order._id, payload,Order);
+      const res1 = await orderUpdateMulti(Order._id, payload, Order);
       console.log("res1", res1);
       if (res1.status) {
         console.log("res1", res1);
@@ -420,12 +448,20 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
     }
     setIsUpdate(false);
   };
+
   return (
     <Modal show={true} onHide={onHide} size="xl">
       <Modal.Header closeButton>
-        <Modal.Title>Update Order {Order.showOrderNumber}</Modal.Title>
+        <Modal.Title>Update Order {Order.orderId}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {isLoading && (
+          <div className="d-flex justify-content-center align-items-center" style={{ height: "100px" }}>
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        )}
         <Formik
           enableReinitialize={true}
           initialValues={initialValues}
@@ -533,7 +569,6 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                             height: "3em",
                             border: "1px solid #E6E6E6",
                             fontSize: "15px",
-
                           }}
                           disabled={isUpdate}
                           onChange={(e)=>{
@@ -552,19 +587,18 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           className="error text-danger ps-2"
                         />
                       </div>
-                      <div className="col-4 "  >
+                      <div className="col-4">
                         {/* Use Current Location Button */}
                         <button
                           type="button"
-                          className="btn btn-primary rounded"
+                          className="btn btn-primary rounded w-100"
                           style={{
                             height: "3em",
-                            width: "w-100",
                             borderRadius: "0 5px 5px 0",
                             marginTop: "1.8em",
                             lineHeight: "1"
                           }}
-                            onClick={() => getCurrentLocation(setFieldValue)}
+                          onClick={() => getCurrentLocation(setFieldValue)}
                           disabled={isUpdate}
                         >
                           Use Current Location
@@ -572,31 +606,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                       </div>
                     </div>
 
-                    {/* <div className="input-error mb-1">
-                      <Field
-                        as="select"
-                        name="pickupDetails.countryCode"
-                        className="form-control"
-                        style={{
-                          height: "3em",
-                          border: "1px solid #E6E6E6",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        <option value="" label="Select country code" />
-                        {options.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </Field>
-                      <ErrorMessage
-                        name="pickupDetails.countryCode"
-                        component="div"
-                        className="error text-danger ps-2"
-                      />
-                    </div> */}
-
+                    {/* Additional Pickup Fields */}
                     <div className="input-error mb-1 col-3">
                       <label className="fw-thin p-0 pb-1 ">
                         Pickup Contact Number :
@@ -695,13 +705,13 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
 
                     <div className="input-error mb-1 col-3">
                       <label className="fw-thin p-0 pb-1 ">
-                        Pickup Instraction (Optional) :
+                        Pickup Instruction (Optional) :
                       </label>
                       <Field
                         as="textarea"
                         name="pickupDetails.description"
                         className="form-control h-[70px]"
-                        placeholder="Pickup Instraction"
+                        placeholder="Pickup Instruction"
                         rows="3"
                         style={{
                           border: "1px solid #E6E6E6",
@@ -726,11 +736,14 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                       />
                     </div>
                   </div>
+                  
                   {/* Delivery Information */}
                   <div className="col-12 col-lg-12 mt-2">
                     <h3 className="fw-bold text-4xl pb-1 text-center">
                       Delivery Information
                     </h3>
+                    
+                    {/* Select Delivery Man */}
                     <div className="input-error col-12 col-sm-6 mb-1">
                       <label className="fw-thin p-0 pb-1 ">
                         Select Delivery Man :
@@ -751,7 +764,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                         disabled={isUpdate}
                       >
                         <option value="" className="text-gray-500">
-                          Select Delivery Man
+                          {isLoading ? "Loading..." : "Select Delivery Man"}
                         </option>
                         {deliveryMan.map((data, index) => {
                           let distance = "";
@@ -766,17 +779,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
 
                           if (lengthofdeliverymen === index) {
                             return (
-                              <>
+                              <React.Fragment key={index}>
                                 <option
-                                  key={index}
-                                  value={"admin"}
+                                  value="admin"
                                   className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
                                   disabled
                                 >
                                   Admin
                                 </option>
                                 <option
-                                  key={`${index}-data`}
                                   value={data._id}
                                   className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between mx-auto"
                                 >
@@ -787,7 +798,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                                     {distance ? `${distance} km away` : ""}
                                   </span>
                                 </option>
-                              </>
+                              </React.Fragment>
                             );
                           }
                           return (
@@ -799,12 +810,6 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                               <span
                                 style={{ float: "left", width: "65%" }}
                               >{`${data.firstName} ${data.lastName}`}</span>
-                              <span
-                                style={{
-                                  display: "inline-block",
-                                  width: "100px",
-                                }}
-                              ></span>
                               <span
                                 style={{
                                   float: "right",
@@ -824,549 +829,473 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                         className="error text-danger ps-2"
                       />
                     </div>
-                    {
-                      initialValues?.deliveryDetails?.map((data, index) => (
-                        <div className={`row shadow  rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index} style={{ display: isSingle ? isSingle != index + 1 ? "none" : "" : "" }}>
 
-                          <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
-                            <div>
-                              {`Delivery Information ${index + 1}`}
-                            </div>
-                            <div>
-                              {
-                                index > 0 && (
-                                  <button className="btn btn-danger" disabled={isUpdate} onClick={() => {
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.filter((_, i) => i !== index)
-                                    }));
+                    {/* Delivery Details */}
+                    {values.deliveryDetails?.map((data, index) => (
+                      <div className={`row shadow rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index} style={{ display: isSingle ? (isSingle !== index + 1 ? "none" : "") : "" }}>
 
-
-                                  }}>
-                                    Delete
-                                  </button>
-                                )
-                              }
-                            </div>
+                        <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
+                          <div>
+                            {`Delivery Information ${index + 1}`}
                           </div>
-                          <div className="input-error mb-1 col-4" style={{ border: "none" }}>
-                            <label className="fw-thin p-0 pb-1">
-                              Select Customer:
-                            </label>
-                            <Autocomplete
-                              disablePortal
-                              value={customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId) ? {
-                                label: `${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).NHS_Number} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).firstName} ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).lastName} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).address} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).postCode}`,
-                                value: initialValues.deliveryDetails[index].customerId,
-                                customer: customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId)
-                              } : null}
-                              options={customer.map((cust) => ({
-                                label: `${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`,
-                                value: cust._id,
-                                customer: cust
-                              }))}
-                              sx={{ width: "100%", border: "none", borderRadius: "5px", outline: "none", "& .MuiInputBase-input": { border: "none", outline: "none" } ,"& .MuiInputBase-input:focus": { border: "none", outline: "none",boxShadow: "none" } }}
-                              onChange={(e, newValue) => {
-                                console.log(newValue, 'newValue');
-                                if (newValue) {
-                                  console.log(newValue, 'newValue');
-                                  setFieldValue(`deliveryDetails.${index}.customerId`, newValue.value);
-                                  const selectedCustomer = newValue.customer;
-
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev?.deliveryDetails?.map((item, i) =>
-                                      i === index ? {
-                                        ...item,
-                                        customerId: selectedCustomer._id,
-                                        address: selectedCustomer.address,
-                                        mobileNumber: selectedCustomer.mobileNumber,
-                                        email: selectedCustomer.email,
-                                        description: selectedCustomer.description,
-                                        postCode: selectedCustomer.postCode,
-                                        name: selectedCustomer.firstName
-                                      } : item
-                                    )
-                                  }));
-                                } else {
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) =>
-                                      i === index ? {
-                                        ...item,
-                                        address: "",
-                                        mobileNumber: "",
-                                        email: "",
-                                        description: "",
-                                        postCode: "",
-                                        name: ""
-                                      } : item
-                                    )
-                                  }));
-                                }
-                              }}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  style={{
-                                    backgroundColor: isUpdate ? "#e9ecef" : "white",
-                                    // border: "1px solid #E6E6E6",
-                                    borderRadius: "5px",
-                                    // height: "3em",
-                                  }}
-                                  label="Select Customer"
-                                  disabled={isUpdate}
-                                />
-                              )}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.customerId`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-
-                          {/*                         
-                          <div className="input-error mb-1 col-4 ">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Select Customer :
-                            </label>
-                            <Field name={`deliveryDetails.${index}.customerId`}>
-                              {({ field, form }) => (
-                                <Field
-                                  as="select"
-                                  name={`deliveryDetails.${index}.customerId`}
-                                  className="w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  onChange={(e) => {
-                                    const selectedCustomer = customer.find(cust => cust._id === e.target.value);
-                                    
-                                    if (selectedCustomer) {
-                                      setInitialValues(prev => ({
-                                        ...prev,
-                                        deliveryDetails: prev?.deliveryDetails?.map((item, i) => 
-                                          i === index ? {
-                                            ...item,
-                                            customerId: selectedCustomer._id,
-                                            address: selectedCustomer.address,
-                                            mobileNumber: selectedCustomer.mobileNumber,
-                                            email: selectedCustomer.email,
-                                            description: selectedCustomer.description,
-                                            postCode: selectedCustomer.postCode,
-                                            name: selectedCustomer.firstName
-                                          } : item
-                                        )
-                                      }));
-                                    } else {
-                                      setInitialValues(prev => ({
-                                        ...prev,
-                                        deliveryDetails: prev.deliveryDetails.map((item, i) => 
-                                          i === index ? {
-                                            ...item,
-                                            address: "",
-                                            mobileNumber: "",
-                                            email: "",
-                                            description: "",
-                                            postCode: "",
-                                            name: ""
-                                          } : item
-                                        )
-                                      }));
-                                    }
-                                  }}
-                                  style={{
-                                    backgroundColor: isUpdate ? "#e9ecef" : "white",
-                                  }}
-                                  disabled={isUpdate}
-                                >
-                                  <option value="" className="text-gray-500">
-                                    Select Customer
-                                  </option>
-                                  {customer.map((cust) => (
-                                    <option
-                                      key={cust._id}
-                                      value={cust._id}
-                                      className="py-1.5 px-3 hover:bg-gray-100 w-300px flex justify-between"
-                                    >
-                                      {`${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`}
-                                    </option>
-                                  ))}
-                                </Field>
-                              )}
-                            </Field>
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.customerId`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div> */}
-
-
-                          <div
-                            key={"parcelsCount"}
-                            className="input-error col-12 col-sm-3 mb-1"
-                          >
-                            <label className="fw-thin p-0 pb-1 ">Parcels Count :</label>
-                            <Field
-                              type="number"
-                              name={`deliveryDetails.${index}.parcelsCount`}
-                              onChange={(e) => {
-                                if (e.key === "Enter") {
-                                  e.preventDefault();
-                                }
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: e.target.value } : item)
-                                }));
-                              }}
-                              className="form-control"
-                              placeholder={`ParcelsCount`}
-                              style={{
-                                height: "3em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                              }}
-                              disabled={isUpdate}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.parcelsCount`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-                          <div
-                            key="cashOnDelivery"
-                            className="input-error col-12 col-sm-2 mb-1"
-                          >
-                            <label className="fw-thin p-0 pb-1 ">
-                              Cash on Delivery :
-                            </label>
-
-                            <div className="d-flex align-items-center justify-evenly">
-                              {/* True Option */}
-                              <label className="me-3">
-                                <Field
-                                  type="radio"
-                                  name={`deliveryDetails.${index}.cashOnDelivery`}
-                                  onChange={(e) => {
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value } : item)
-                                    }));
-                                  }}
-                                  disabled={isUpdate}
-                                  value="true"
-                                  className="form-check-input"
-                                  style={{
-                                    marginRight: "0.5em",
-                                    height: "1.2em",
-                                    width: "1.2em",
-                                  }}
-                                />
-                                Yes
-                              </label>
-
-                              {/* False Option */}
-                              <label>
-                                <Field
-                                  type="radio"
-                                  name={`deliveryDetails.${index}.cashOnDelivery`}
-                                  onChange={(e) => {
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value } : item)
-                                    }));
-                                  }}
-                                  disabled={isUpdate}
-                                  value="false"
-                                  className="form-check-input"
-                                  style={{
-                                    marginRight: "0.5em",
-                                    height: "1.2em",
-                                    width: "1.2em",
-                                  }}
-                                />
-                                No
-                              </label>
-                            </div>
-                          </div>
-                          {initialValues?.deliveryDetails[index]?.cashOnDelivery === "true" && (
-                            <div
-                              key={"paymentCollectionRupees"}
-                              className="input-error col-12 col-sm-3 mb-1"
-                            >
-                              <label className="fw-thin p-0 pb-1 ">
-                                Payment Collection : Amount
-                              </label>
-                              <Field
-                                as="input"
-                                name={`deliveryDetails.${index}.paymentCollectionRupees`}
-                                type="number"
-                                onChange={(e) => {
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, paymentCollectionRupees: e.target.value } : item)
-                                  }));
+                          <div>
+                            {initialValues.deliveryDetails.length > 1 && !isUpdate && (
+                              <button 
+                                className="btn btn-danger" 
+                                type="button"
+                                style={{
+                                  display: isSingle ? "none" : "block",
+                                  visibility: "visible"
                                 }}
-                                className="form-control mt-0"
-                                disabled={isUpdate}
-                                style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                                placeholder="Enter Payment Collection pounds  "
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  const updatedDetails = initialValues.deliveryDetails.filter((_, i) => i !== index);
+                                  setInitialValues(prev => ({
+                                    ...prev,
+                                    deliveryDetails: updatedDetails
+                                  }));
+                                  // Force re-render
+                                  setFieldValue('deliveryDetails', updatedDetails);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            )}
+                          
+                          </div>
+                        </div>
 
-                              />
-                              <ErrorMessage
-                                name={`deliveryDetails.${index}.paymentCollectionRupees`}
-                                component="div"
-                                className="error text-danger ps-2"
-                              />
-                            </div>
-                          )}
+                        {/* Select Customer */}
+                        <div className="input-error mb-1 col-4" style={{ border: "none" }}>
+                          <label className="fw-thin p-0 pb-1">
+                            Select Customer:
+                          </label>
+                          <Autocomplete
+                            disablePortal
+                            value={customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId) ? {
+                              label: `${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).NHS_Number} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).firstName} ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).lastName} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).address} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).postCode}`,
+                              value: initialValues.deliveryDetails[index].customerId,
+                              customer: customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId)
+                            } : null}
+                            options={customer.map((cust) => ({
+                              label: `${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`,
+                              value: cust._id,
+                              customer: cust
+                            }))}
+                            sx={{ width: "100%", border: "none", borderRadius: "5px", outline: "none", "& .MuiInputBase-input": { border: "none", outline: "none" }, "& .MuiInputBase-input:focus": { border: "none", outline: "none", boxShadow: "none" } }}
+                            onChange={(e, newValue) => {
+                              console.log(newValue, 'newValue');
+                              if (newValue) {
+                                console.log(newValue, 'newValue');
+                                setFieldValue(`deliveryDetails.${index}.customerId`, newValue.value);
+                                const selectedCustomer = newValue.customer;
 
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Customer Name :
-                            </label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.name`}
-                              className="form-control"
-                              placeholder="Customer Name"
-                              disabled={isUpdate}
-                              onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: e.target.value } : item)
+                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) =>
+                                    i === index ? {
+                                      ...item,
+                                      customerId: selectedCustomer._id,
+                                      address: selectedCustomer.address,
+                                      mobileNumber: selectedCustomer.mobileNumber,
+                                      email: selectedCustomer.email,
+                                      description: selectedCustomer.description,
+                                      postCode: selectedCustomer.postCode,
+                                      name: selectedCustomer.firstName
+                                    } : item
+                                  )
                                 }));
-                              }}
-                              style={{
-                                height: "3em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                              }}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.name`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-
-
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Email :
-                            </label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.email`}
-                              className="form-control"
-                              placeholder="Delivery Email"
-                              disabled={isUpdate}
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: e.target.value } : item)
-                                }));
-                              }}
-                              style={{
-                                height: "3em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                              }}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.email`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Contact Number :
-                            </label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.mobileNumber`}
-                              className="form-control"
-                              placeholder="Delivery Contact Number"
-                              disabled={isUpdate}
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: e.target.value } : item)
-                                }));
-                              }}
-                              style={{
-                                height: "3em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                              }}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.mobileNumber`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              `Select Parcel Type (Optional) :`
-                            </label>
-                            <Select
-                              name={`deliveryDetails.${index}.parcelType`}
-                              className="form-control p-0"
-                              isDisabled={isUpdate}
-                              styles={{
-                                control: (base) => ({ ...base, height: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white", }),
-                              }}
-                              options={parcelTypeDetail.map((type) => ({
-                                value: type.parcelTypeId,
-                                label: type.label
-                              }))}
-                              value={parcelTypeDetail.find(type => type.parcelTypeId === initialValues.deliveryDetails[index].parcelType)}
-                              placeholder="Select Parcel Type"
-                              onChange={(selectedOption) => {
+                              } else {
                                 setInitialValues(prev => ({
                                   ...prev,
                                   deliveryDetails: prev.deliveryDetails.map((item, i) =>
-                                    i === index ? { ...item, parcelType: selectedOption.value } : item
+                                    i === index ? {
+                                      ...item,
+                                      address: "",
+                                      mobileNumber: "",
+                                      email: "",
+                                      description: "",
+                                      postCode: "",
+                                      name: ""
+                                    } : item
                                   )
                                 }));
-                              }}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.parcelType`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Postcode :
-                            </label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.postCode`}
-                              className="form-control w-25% h-100%"
-                              disabled={isUpdate}
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: e.target.value } : item)
-                                }));
-                              }}
-                              placeholder="Delivery Postcode"
-                              style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.postCode`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Address :
-                            </label>
-                            <Field
-                              type="text"
-                              as="textarea"
-                              name={`deliveryDetails.${index}.address`}
-                              className="form-control w-25% h-100%"
-                              disabled={isUpdate}
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: e.target.value } : item)
-                                }));
-                              }}
-                              placeholder="Delivery Address"
-                              style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.address`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-
-                          <div className="input-error mb-3 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Instraction (Optional) :
-                            </label>
-                            <Field
-                              as="textarea"
-                              name={`deliveryDetails.${index}.description`}
-                              className="form-control"
-                              placeholder="Delivery Instraction"
-                              disabled={isUpdate}
-                              rows="2"
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: e.target.value } : item)
-                                }));
-                              }}
-                              style={{
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                                height: "3em"
-                              }}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.description`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
+                              }
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                style={{
+                                  backgroundColor: isUpdate ? "#e9ecef" : "white",
+                                  borderRadius: "5px",
+                                  "& .MuiInputBase-input": { border: "none", outline: "none" },
+                                }}
+                                label={isLoading ? "Loading..." : "Select Customer"}
+                                disabled={isUpdate}
+                              />
+                            )}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.customerId`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
                         </div>
-                      ))}
 
-                    <div className={`d-flex  mt-2 ${isSingle ? "justify-content-end" : "justify-content-between"}`}>
+                        {/* Parcels Count */}
+                        <div className="input-error col-12 col-sm-3 mb-1">
+                          <label className="fw-thin p-0 pb-1">Parcels Count :</label>
+                          <Field
+                            type="number"
+                            name={`deliveryDetails.${index}.parcelsCount`}
+                            onChange={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                              }
+                              setInitialValues(prev => ({
+                                ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: e.target.value } : item)
+                              }));
+                            }}
+                            className="form-control"
+                            placeholder={`ParcelsCount`}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                            disabled={isUpdate}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.parcelsCount`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        {/* Cash on Delivery */}
+                        <div className="input-error col-12 col-sm-2 mb-1">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Cash on Delivery :
+                          </label>
+
+                          <div className="d-flex align-items-center justify-evenly">
+                            {/* True Option */}
+                            <label className="me-3">
+                              <Field
+                                type="radio"
+                                name={`deliveryDetails.${index}.cashOnDelivery`}
+                                value="true"
+                                disabled={isUpdate}
+                                className="form-check-input"
+                                style={{
+                                  marginRight: "0.5em",
+                                  height: "1.2em",
+                                  width: "1.2em",
+                                }}
+                              />
+                              Yes
+                            </label>
+
+                            {/* False Option */}
+                            <label>
+                              <Field
+                                type="radio"
+                                name={`deliveryDetails.${index}.cashOnDelivery`}
+                                value="false"
+                                disabled={isUpdate}
+                                className="form-check-input"
+                                style={{
+                                  marginRight: "0.5em",
+                                  height: "1.2em",
+                                  width: "1.2em",
+                                }}
+                              />
+                              No
+                            </label>
+                          </div>
+                        </div>
+                        
+                        {/* Payment Collection */}
+                        {values.deliveryDetails[index].cashOnDelivery === "true" && (
+                          <div className="input-error col-12 col-sm-3 mb-1">
+                            <label className="fw-thin p-0 pb-1 ">
+                              Payment Collection : Amount
+                            </label>
+                            <Field
+                              as="input"
+                              name={`deliveryDetails.${index}.paymentCollectionRupees`}
+                              type="number"
+                              onChange={(e) => {
+                                setFieldValue(`deliveryDetails.${index}.paymentCollectionRupees`, e.target.value);
+                              }}
+                              className="form-control mt-0"
+                              disabled={isUpdate}
+                              style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                              placeholder="Enter Payment Collection pounds"
+                            />
+                            <ErrorMessage
+                              name={`deliveryDetails.${index}.paymentCollectionRupees`}
+                              component="div"
+                              className="error text-danger ps-2"
+                            />
+                          </div>
+                        )}
+
+                        {/* Customer Name */}
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Customer Name :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.name`}
+                            className="form-control"
+                            placeholder="Customer Name"
+                            disabled={isUpdate}
+                            onChange={(e) => {
+                              setInitialValues(prev => ({
+                                ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: e.target.value } : item)
+                              }));
+                            }}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.name`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        {/* Delivery Email */}
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Email :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.email`}
+                            className="form-control"
+                            placeholder="Delivery Email"
+                            disabled={isUpdate}
+                            onChange={(e) => {
+                              setInitialValues(prev => ({
+                                ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: e.target.value } : item)
+                              }));
+                            }}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.email`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        {/* Delivery Contact Number */}
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Contact Number :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.mobileNumber`}
+                            className="form-control"
+                            placeholder="Delivery Contact Number"
+                            disabled={isUpdate}
+                            onChange={(e) => {
+                              setInitialValues(prev => ({
+                                ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: e.target.value } : item)
+                              }));
+                            }}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.mobileNumber`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        {/* Select Parcel Type */}
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Select Parcel Type (Optional) :
+                          </label>
+                          <Select
+                            name={`deliveryDetails.${index}.parcelType`}
+                            className="form-control p-0"
+                            isDisabled={isUpdate}
+                            styles={{
+                              control: (base) => ({ ...base, height: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white" }),
+                            }}
+                            options={parcelTypeDetail.map((type) => ({
+                              value: type.parcelTypeId,
+                              label: type.label
+                            }))}
+                            value={parcelTypeDetail.find(type => type.parcelTypeId === initialValues.deliveryDetails[index].parcelType)}
+                            placeholder="Select Parcel Type"
+                            onChange={(selectedOption) => {
+                              setInitialValues(prev => ({
+                                ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) =>
+                                  i === index ? { ...item, parcelType: selectedOption.value } : item
+                                )
+                              }));
+                            }}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.parcelType`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        {/* Delivery Postcode */}
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Postcode :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.postCode`}
+                            className="form-control w-25% h-100%"
+                            disabled={isUpdate}
+                            onChange={(e) => {
+                              setInitialValues(prev => ({
+                                ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: e.target.value } : item)
+                              }));
+                            }}
+                            placeholder="Delivery Postcode"
+                            style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.postCode`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        {/* Delivery Address */}
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Address :
+                          </label>
+                          <Field
+                            type="text"
+                            as="textarea"
+                            name={`deliveryDetails.${index}.address`}
+                            className="form-control w-25% h-100%"
+                            disabled={isUpdate}
+                            onChange={(e) => {
+                              setInitialValues(prev => ({
+                                ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: e.target.value } : item)
+                              }));
+                            }}
+                            placeholder="Delivery Address"
+                            style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.address`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        {/* Delivery Instruction */}
+                        <div className="input-error mb-3 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Instruction (Optional) :
+                          </label>
+                          <Field
+                            as="textarea"
+                            name={`deliveryDetails.${index}.description`}
+                            className="form-control"
+                            placeholder="Delivery Instruction"
+                            disabled={isUpdate}
+                            rows="2"
+                            onChange={(e) => {
+                              setInitialValues(prev => ({
+                                ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: e.target.value } : item)
+                              }));
+                            }}
+                            style={{
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                              height: "3em"
+                            }}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.description`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                      </div>
+                    ))}
+
+                    {/* Add Delivery Information Button and Submit Controls */}
+                    <div className={`d-flex mt-2 ${isSingle ? "justify-content-end" : "justify-content-between"}`}>
 
                       <button className="btn btn-primary mt-3" style={{ display: isSingle ? "none" : "" }} disabled={isUpdate} type="button" onClick={() => {
                         setInitialValues(prev => ({
                           ...prev,
                           deliveryDetails: [...prev.deliveryDetails, {
                             subOrderId: prev.deliveryDetails.length + 1,
+                            index: prev.deliveryDetails.length,
                             address: "",
-                            cashOnDelivery: "false",
-                            description: "",
-                            distance: "",
+                            cashOnDelivery: "false", 
+                            // description: "",
+                            distance: 0,
                             duration: "",
                             email: "",
                             mobileNumber: "",
                             location: {
-                              latitude: null, // Initialize with null or undefined
-                              longitude: null, // Empty array or [longitude, latitude]
+                              latitude: 0,
+                              longitude: 0
                             },
                             name: "",
                             parcelsCount: 1,
-                            paymentCollectionRupees: 0,
+                            paymentCollectionRupees: "0",
                             postCode: "",
+                            customerId: "",
                             parcelType: "",
+                            trashed: false
                           }]
                         }))
                       }}>
                         + Add Delivery Information
                       </button>
+                       <ErrorMessage
+                        name="deliveryDetails" 
+                        component={({ error }) => {
+                          console.log("Delivery Details Error:", error);
+                          return (
+                            <div className="error text-danger ps-2">
+                              {error}
+                            </div>
+                          );
+                        }}
+                      />
 
                       {/* Submit Button */}
                       <div className="d-flex justify-content-end">
@@ -1389,15 +1318,11 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                       </div>
                     </div>
 
-
                   </div>
                 </div>
 
-
-
                 {/* Parcel Types */}
-
-
+                {/* ... any additional code ... */}
 
               </Form>
             );
