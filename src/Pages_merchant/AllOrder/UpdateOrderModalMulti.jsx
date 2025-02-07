@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import { Autocomplete, TextField } from "@mui/material";
 
 const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
-  console.log("Order", Order);
+  console.log("Order1234", Order);
 
   const navigate = useNavigate(); // Fixed duplicate navigate declaration
   const merchant = JSON.parse(localStorage.getItem("userData"));
@@ -36,6 +36,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
   const [initialValues, setInitialValues] = useState({});
   console.log(initialValues.deliveryDetails);
   const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
+  const [isParcelTypeLoading, setIsParcelTypeLoading] = useState(true);
 
   // Function to get current location and update form fields
   const getCurrentLocation = async (setFieldValue) => {
@@ -49,21 +50,21 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           try {
             const mapApi = await getMapApi();
             const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
-            
+
             const response = await fetch(
               `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
             );
-            
+
             const data = await response.json();
-            
+
             if (data.results && data.results.length > 0) {
               const address = data.results[0].formatted_address;
-              
+
               // Update Formik fields
               setFieldValue('pickupDetails.address', address);
               setFieldValue('pickupDetails.location.latitude', latitude);
               setFieldValue('pickupDetails.location.longitude', longitude);
-              
+
               // toast.success("Pickup address updated using current location.");
             } else {
               toast.error("Unable to retrieve address from current location.");
@@ -97,6 +98,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
       const parcelTypeRes = await getMerchantParcelType();
       if (parcelTypeRes.status) {
         setParcleTypeDetail(parcelTypeRes.data);
+        setIsParcelTypeLoading(false);
       }
     };
     fetchData();
@@ -124,7 +126,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
 
-      const deliveryMans = await getAllDeliveryMans({createdByAdmin: true});
+      const deliveryMans = await getAllDeliveryMans({ createdByAdmin: true });
       const deliveryManRes = await getDeliveryMan();
       if (deliveryManRes.data || deliveryMans.data) {
         // Filter active delivery men from first source
@@ -255,7 +257,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
         }),
         customerId: Yup.string().required("customer is required"),
         cashOnDelivery: Yup.string().required("Required"),
-        parcelType: Yup.string()
+        parcelType2: Yup.array().of(Yup.string())
       })
     ),
   });
@@ -371,7 +373,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           console.log("data", data);
           if (data.status !== "ZERO_RESULTS") {
             const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
-            distancesAndDurations.push({status:true,distance:{value:0,text:"0 km"},duration:{value:0,text:"0 min"}});
+            // distancesAndDurations.push({status:true,distance:{value:Order?.deliveryAddress,text:"0 km"},duration:{value:0,text:"0 min"}});
             deliverylocations.push(deliverylocation);
           } else {
             console.log("data", data);
@@ -413,10 +415,10 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
           postCode: delivery.postCode,
           subOrderId: delivery.subOrderId,
           paymentCollectionRupees: delivery.paymentCollectionRupees,
-          distance: distancesAndDurations[index]?.distance.value,
-          duration: distancesAndDurations[index]?.duration.text,
+          distance: Order?.deliveryAddress.find((item) => item.subOrderId === delivery.subOrderId)?.distance,
+          duration: Order?.deliveryAddress.find((item) => item.subOrderId === delivery.subOrderId)?.duration,
           // parcelType: delivery?.parcelType || "",
-          ...(delivery.parcelType && { parcelType: delivery.parcelType }),
+          parcelType2: delivery?.parcelType2 || [],
           location: {
             latitude: deliverylocations[index]?.latitude,
             longitude: deliverylocations[index]?.longitude
@@ -432,6 +434,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
       if (res1.status) {
         console.log("res1", res1);
         onHide();
+        setIsUpdate(prev => !prev);
         navigate("/all-multi-order");
       } else {
         setIsUpdate(false);
@@ -510,7 +513,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                         defaultValue={new Date().toISOString().slice(0, 16)}
                         disabled={isUpdate}
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -538,7 +541,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                         placeholder="Pickup Postcode"
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
                         disabled={isUpdate}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -571,7 +574,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                             fontSize: "15px",
                           }}
                           disabled={isUpdate}
-                          onChange={(e)=>{
+                          onChange={(e) => {
                             setInitialValues(prev => ({
                               ...prev,
                               pickupDetails: {
@@ -622,7 +625,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -654,7 +657,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -686,7 +689,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -719,7 +722,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           height: "3em",
                         }}
                         disabled={isUpdate}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -736,13 +739,13 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                       />
                     </div>
                   </div>
-                  
+
                   {/* Delivery Information */}
                   <div className="col-12 col-lg-12 mt-2">
                     <h3 className="fw-bold text-4xl pb-1 text-center">
                       Delivery Information
                     </h3>
-                    
+
                     {/* Select Delivery Man */}
                     <div className="input-error col-12 col-sm-6 mb-1">
                       <label className="fw-thin p-0 pb-1 ">
@@ -840,8 +843,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                           </div>
                           <div>
                             {initialValues.deliveryDetails.length > 1 && !isUpdate && (
-                              <button 
-                                className="btn btn-danger" 
+                              <button
+                                className="btn btn-danger"
                                 type="button"
                                 style={{
                                   display: isSingle ? "none" : "block",
@@ -861,7 +864,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                                 Delete
                               </button>
                             )}
-                          
+
                           </div>
                         </div>
 
@@ -946,16 +949,20 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                         <div className="input-error col-12 col-sm-3 mb-1">
                           <label className="fw-thin p-0 pb-1">Parcels Count :</label>
                           <Field
-                            type="number"
+                            type="text"
                             name={`deliveryDetails.${index}.parcelsCount`}
                             onChange={(e) => {
                               if (e.key === "Enter") {
                                 e.preventDefault();
                               }
-                              setInitialValues(prev => ({
-                                ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: e.target.value } : item)
-                              }));
+                              const value = e.target.value;
+                              const isValueNumber = !isNaN(value);
+                              if (isValueNumber) {
+                                setInitialValues(prev => ({
+                                  ...prev,
+                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: Number(value ? value : "0") } : item)
+                                }));
+                              }
                             }}
                             className="form-control"
                             placeholder={`ParcelsCount`}
@@ -1015,7 +1022,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                             </label>
                           </div>
                         </div>
-                        
+
                         {/* Payment Collection */}
                         {values.deliveryDetails[index].cashOnDelivery === "true" && (
                           <div className="input-error col-12 col-sm-3 mb-1">
@@ -1025,9 +1032,13 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                             <Field
                               as="input"
                               name={`deliveryDetails.${index}.paymentCollectionRupees`}
-                              type="number"
+                              type="text"
                               onChange={(e) => {
-                                setFieldValue(`deliveryDetails.${index}.paymentCollectionRupees`, e.target.value);
+                                const value = e.target.value;
+                                const isValueNumber = !isNaN(value);
+                                if (isValueNumber) {
+                                  setFieldValue(`deliveryDetails.${index}.paymentCollectionRupees`, Number(value ? value : "0"));
+                                }
                               }}
                               className="form-control mt-0"
                               disabled={isUpdate}
@@ -1133,38 +1144,49 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                         </div>
 
                         {/* Select Parcel Type */}
+
+
+
                         <div className="input-error mb-1 col-4">
                           <label className="fw-thin p-0 pb-1 ">
-                            Select Parcel Type (Optional) :
+                            Select Parcel Type (Optional):
                           </label>
                           <Select
-                            name={`deliveryDetails.${index}.parcelType`}
+                            name={`deliveryDetails.${index}.parcelType2`}
                             className="form-control p-0"
-                            isDisabled={isUpdate}
                             styles={{
-                              control: (base) => ({ ...base, height: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white" }),
+                              control: (base) => ({ ...base, minHeight: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white", }),
                             }}
                             options={parcelTypeDetail.map((type) => ({
                               value: type.parcelTypeId,
                               label: type.label
                             }))}
-                            value={parcelTypeDetail.find(type => type.parcelTypeId === initialValues.deliveryDetails[index].parcelType)}
-                            placeholder="Select Parcel Type"
-                            onChange={(selectedOption) => {
+                            value={isParcelTypeLoading ? [] : initialValues?.deliveryDetails[index]?.parcelType2?.map(id => ({
+                              value: id,
+                              label: parcelTypeDetail.find(t => t.parcelTypeId === id)?.label
+                            }))}
+                            placeholder={`${isParcelTypeLoading ? "Loading..." : "Select Parcel Types"}`}
+                            onChange={(selectedOptions) => {
                               setInitialValues(prev => ({
                                 ...prev,
                                 deliveryDetails: prev.deliveryDetails.map((item, i) =>
-                                  i === index ? { ...item, parcelType: selectedOption.value } : item
+                                  i === index ? { ...item, parcelType2: selectedOptions.map(opt => opt.value) } : item
                                 )
                               }));
                             }}
+                            isMulti={true}
                           />
                           <ErrorMessage
-                            name={`deliveryDetails.${index}.parcelType`}
+                            name={`deliveryDetails.${index}.parcelType2`}
                             component="div"
                             className="error text-danger ps-2"
                           />
                         </div>
+
+
+
+
+
 
                         {/* Delivery Postcode */}
                         <div className="input-error mb-1 col-4">
@@ -1263,7 +1285,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                             subOrderId: prev.deliveryDetails.length + 1,
                             index: prev.deliveryDetails.length,
                             address: "",
-                            cashOnDelivery: "false", 
+                            cashOnDelivery: "false",
                             // description: "",
                             distance: 0,
                             duration: "",
@@ -1285,8 +1307,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
                       }}>
                         + Add Delivery Information
                       </button>
-                       <ErrorMessage
-                        name="deliveryDetails" 
+                      <ErrorMessage
+                        name="deliveryDetails"
                         component={({ error }) => {
                           console.log("Delivery Details Error:", error);
                           return (
@@ -1334,3 +1356,18 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
 };
 
 export default UpdateOrderModalMulti;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -842,13 +842,13 @@ const CreateOrder = () => {
 
                     <div className="input-error mb-3">
                       <label className="fw-thin p-0 pb-1 ">
-                        Pickup Instraction (Optional) :
+                        Pickup Instructions (Optional) :
                       </label>
                       <Field
                         as="textarea"
                         name="pickupDetails.description"
                         className="form-control"
-                        placeholder="Pickup Instraction (Optional)"
+                        placeholder="Pickup Instructions (Optional)"
                         rows="4"
                         style={{
                           border: "1px solid #E6E6E6",
@@ -1071,13 +1071,13 @@ const CreateOrder = () => {
                     </div>
                     <div className="input-error mb-3">
                       <label className="fw-thin p-0 pb-1 ">
-                        Delivery Instraction (Optional) :
+                        Delivery Instructions (Optional) :
                       </label>
                       <Field
                         as="textarea"
                         name="deliveryDetails.description"
                         className="form-control"
-                        placeholder="Delivery Instraction (Optional)"
+                        placeholder="Delivery Instructions (Optional)"
                         rows="4"
                         style={{
                           border: "1px solid #E6E6E6",

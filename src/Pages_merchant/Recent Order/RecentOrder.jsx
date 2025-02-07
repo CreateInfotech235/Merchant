@@ -96,7 +96,7 @@ const RecentOrder = () => {
   };
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{height: "100vh"}}>
+      <div className="d-flex justify-content-center align-items-center">
         <Loader />
       </div>
     );
@@ -166,7 +166,7 @@ const RecentOrder = () => {
                         <input type="checkbox" />
                       </td>
                       <td className="p-3 text-primary">
-                        {order?.showOrderNumber ?? "-"}
+                        {order?.orderId ?? "-"}
                       </td>
                       {/* <td className="p-3 text-dark fw-bold">
                         {order?.customerName ?? "-"}

@@ -51,6 +51,7 @@ const MultiOrder = () => {
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [isUpdate, setIsUpdate] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -69,11 +70,11 @@ const MultiOrder = () => {
         // Filter out trashed orders first
         const nonTrashedOrders = response.data.filter(order => !order.trashed);
         setOrderData(nonTrashedOrders);
-        
+
         // Calculate initial filtered orders based on itemsPerPage
         const initialOrders = nonTrashedOrders.slice(0, itemsPerPage);
         setFilteredOrders(initialOrders);
-        
+
         // Calculate total pages based on non-trashed orders
         setTotalPages(Math.ceil(nonTrashedOrders.length / itemsPerPage));
       } else {
@@ -93,7 +94,7 @@ const MultiOrder = () => {
 
   useEffect(() => {
     fetchData();
-  }, [showModel, showEditModal]);
+  }, [showModel, isUpdate]);
 
   const closeEditModal = () => {
     setShowEditModal(false);
@@ -107,10 +108,10 @@ const MultiOrder = () => {
     var data = orderData.filter((order) => !order.trashed);
 
     const filteredData = data.filter((order) => {
-      console.log("order",  order.deliveryAddress);
+      console.log("order", order.deliveryAddress);
       const searchLower = query.toLowerCase();
       const searchTerms = searchLower.split(" ");
-      return searchTerms.some(term => 
+      return searchTerms.some(term =>
         order.showOrderNumber?.toString().includes(term) ||
         order.deliveryMan?.toLowerCase().includes(term) ||
         // order.customerName?.toLowerCase().includes(term) ||
@@ -245,14 +246,13 @@ const MultiOrder = () => {
 
   const handleViewClick = (Order) => {
     setShowInfoModal(true);
-    // console.log(Order.deliveryAddress,"order");
     setSelectedOrder({
       ...Order,
       deliveryAddresses: Order.deliveryAddress,
       pickupuserSignature: Order.pickupAddress?.userSignature,
     });
   };
-console.log(selectedOrder,"selectedOrder");
+  console.log(selectedOrder, "selectedOrder");
 
   const closeInfoModal = () => {
     setShowInfoModal(false);
@@ -286,7 +286,7 @@ console.log(selectedOrder,"selectedOrder");
 
   const statusColors = {
     CREATED: "gray",
-    ASSIGNED: "blue", 
+    ASSIGNED: "blue",
     ACCEPTED: "green",
     CANCELLED: "red",
     UNASSIGNED: "red",
@@ -388,32 +388,32 @@ console.log(selectedOrder,"selectedOrder");
           <div className="flex items-center gap-3">
             <div className="date-input-group flex items-center gap-2">
               <label className="text-sm font-medium text-gray-700">Start:</label>
-              <input 
-                type="date" 
-                value={startDate} 
+              <input
+                type="date"
+                value={startDate}
                 onChange={(e) => { setStartDate(e.target.value); }}
                 className="form-input rounded-md border-gray-300 shadow-sm h-9"
               />
             </div>
             <div className="date-input-group flex items-center gap-2">
               <label className="text-sm font-medium text-gray-700">End:</label>
-              <input 
-                type="date" 
-                value={endDate} 
+              <input
+                type="date"
+                value={endDate}
                 onChange={(e) => { setEndDate(e.target.value); }}
-                className="form-input rounded-md border-gray-300 shadow-sm h-9" 
+                className="form-input rounded-md border-gray-300 shadow-sm h-9"
               />
             </div>
-            <button 
+            <button
               className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
-              onClick={() => { 
-                setStartDate(new Date().toISOString().split('T')[0]); 
-                setEndDate(new Date().toISOString().split('T')[0]) 
+              onClick={() => {
+                setStartDate(new Date().toISOString().split('T')[0]);
+                setEndDate(new Date().toISOString().split('T')[0])
               }}
             >
               Today
             </button>
-            <button 
+            <button
               className="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
               onClick={() => { setStartDate(""); setEndDate("") }}
             >
@@ -424,15 +424,15 @@ console.log(selectedOrder,"selectedOrder");
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <label htmlFor="status" className="text-sm font-medium text-gray-700">Status:</label>
-              <select 
-                id="status" 
-                value={filterStatus} 
+              <select
+                id="status"
+                value={filterStatus}
                 onChange={(e) => { setFilterStatus(e.target.value) }}
                 className="form-select rounded-md border-gray-300 shadow-sm h-9"
               >
                 <option value="all">All</option>
                 <option value="CREATED">Created</option>
-                
+
                 <option value="ASSIGNED">Assigned</option>
                 <option value="ACCEPTED">Accepted</option>
                 <option value="CANCELLED">Cancelled</option>
@@ -443,12 +443,12 @@ console.log(selectedOrder,"selectedOrder");
                 <option value="ARRIVED">Arrived</option>
               </select>
             </div>
-            <button 
+            <button
               className="px-3 py-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors"
-              onClick={() => { 
-                setStartDate(""); 
-                setEndDate(""); 
-                setFilterStatus("all"); 
+              onClick={() => {
+                setStartDate("");
+                setEndDate("");
+                setFilterStatus("all");
               }}
             >
               Clear All Filters
@@ -652,15 +652,17 @@ console.log(selectedOrder,"selectedOrder");
                                             <td className="city-data">
                                               <button
                                                 className="edit-btn ms-1"
-                                                onClick={() =>{
-                                                  console.log(subOrder),
+                                                onClick={() => {
+                                                  // console.log(subOrder),
+                                                  // setIsSingle(subOrderId)
                                                   handleEditClick({
                                                     ...order,
                                                     deliveryAddresses: subOrder,
                                                     isSingle: subOrder?.subOrderId,
                                                     pickupSignature: subOrder?.pickupAddress?.userSignature,
                                                     // pickupAddress: subOrder?.pickupAddress,
-                                                  })}
+                                                  })
+                                                }
                                                 }
                                               >
                                                 <img
@@ -687,11 +689,15 @@ console.log(selectedOrder,"selectedOrder");
                                               </button>
                                               <button
                                                 className="show-btn ms-1"
-                                                onClick={() =>
+                                                onClick={() => {
+                                                  setIsSingle(
+                                                    subOrder?.subOrderId,
+                                                  )
                                                   handleViewClick({
                                                     ...order,
                                                     deliveryAddresses: subOrder,
                                                   })
+                                                }
                                                 }
                                               >
                                                 <img
@@ -776,7 +782,7 @@ console.log(selectedOrder,"selectedOrder");
         </div>
       </div>
       {showEditModal && (
-        <UpdateOrderModalMulti Order={selectedOrder} onHide={closeEditModal} isSingle={isSingle} />
+        <UpdateOrderModalMulti Order={selectedOrder} onHide={closeEditModal} isSingle={isSingle} isUpdate={isUpdate} />
       )}
 
       {showModel && (
@@ -788,9 +794,8 @@ console.log(selectedOrder,"selectedOrder");
           onHide={() => setShowModel(false)}
         />
       )}
-
       {showInfoModal && (
-        <OrderInfoModalMulti Order={selectedOrder} onHide={closeInfoModal} />
+        <OrderInfoModalMulti Order={selectedOrder} onHide={closeInfoModal} isSingle={isSingle} />
       )}
       {showMapModal && location && (
         <MapModal

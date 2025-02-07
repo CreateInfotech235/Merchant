@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "./CreateOrder.css";
@@ -32,7 +32,7 @@ const MultiOrders = () => {
   // const [isSubmit, setIsSubmit] = useState(false);
 
 
-console.log("customer", customer);
+  console.log("customer", customer);
 
   useEffect(() => {
     console.log("initialValues", initialValues);
@@ -79,10 +79,10 @@ console.log("customer", customer);
 
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
-      const deliveryMans = await getAllDeliveryMans({createdByAdmin: true});
+      const deliveryMans = await getAllDeliveryMans({ createdByAdmin: true });
       console.log("deliveryMans", deliveryMans);
       const parcelTypeRes = await getMerchantParcelType();
-      if(parcelTypeRes.status){
+      if (parcelTypeRes.status) {
         setParcelTypeDetail(parcelTypeRes.data);
       }
 
@@ -122,10 +122,10 @@ console.log("customer", customer);
         setDeliveryMen(mergedDeliveryMen);
       }
       console.log(customerRes);
-      
+
       if (customerRes?.status) {
-      const filteredCustomer = customerRes?.data?.filter(customer => customer.trashed == false);
-      console.log(filteredCustomer);
+        const filteredCustomer = customerRes?.data?.filter(customer => customer.trashed == false);
+        console.log(filteredCustomer);
         setCustomer(filteredCustomer || []);
       }
       setIsLoading(false);
@@ -140,9 +140,9 @@ console.log("customer", customer);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(deg2rad(lat1)) *
-        Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c; // Distance in miles
     return d.toFixed(2);
@@ -208,7 +208,7 @@ console.log("customer", customer);
               latitude: null, // Initialize with null or undefined
               longitude: null, // Empty array or [longitude, latitude]
             },
-            dateTime: new Date().toISOString().slice(0, 16),
+            dateTime: "",
             merchantId: merchant._id || "",
             address:
               `${merchant?.address?.street} , ${merchant?.address?.city} , ${merchant?.address?.postalCode} , ${merchant?.address?.country}` ||
@@ -232,7 +232,7 @@ console.log("customer", customer);
             address: "",
             // countryCode: "",
             mobileNumber: "",
-            parcelType: "",
+            parcelType2: [],
             name: "",
             email: "",
             description: "",
@@ -262,7 +262,7 @@ console.log("customer", customer);
     dateTime: Yup.date().required("Required"),
     deliveryManId: Yup.string().required("Required Delivery Man"),
     pickupDetails: Yup.object().shape({
-      dateTime: Yup.date().required("Required Pickup Date & Time"),
+      dateTime: Yup.date().optional(),
       address: Yup.string().required("Required Pickup Address"),
       mobileNumber: Yup.string().required("Required Pickup Contact Number"),
       email: Yup.string().email("Invalid email").required("Required Pickup Email"),
@@ -293,7 +293,7 @@ console.log("customer", customer);
             return true;
           }
         ),
-        parcelType: Yup.string().optional(),
+        parcelType2: Yup.array().optional(),
       })
     )
   });
@@ -304,7 +304,10 @@ console.log("customer", customer);
     setIsOrderCreated(true);
     console.log("values", values);
     const timestamp = new Date(values.dateTime).getTime();
-    const pictimestamp = new Date(values.pickupDetails.dateTime).getTime();
+    console.log("timestamp", timestamp);
+    console.log("values.pickupDetails.dateTime", values.pickupDetails.dateTime);
+    const pictimestamp = new Date(values.pickupDetails.dateTime ? values.pickupDetails.dateTime : new Date().toISOString().slice(0, 16)).getTime();
+    console.log("pictimestamp", pictimestamp);
     const arrayoferror = []
     let pickuplocation =
       values.pickupDetails.location.latitude === null
@@ -320,7 +323,7 @@ console.log("customer", customer);
     })
 
 
-    const arrayofpostcode= values.deliveryDetails.map((delivery, index) => {
+    const arrayofpostcode = values.deliveryDetails.map((delivery, index) => {
       return delivery.postCode;
     })
     const distancesAndDurations = []
@@ -330,13 +333,13 @@ console.log("customer", customer);
 
     // get pickup location from address
     console.log(values.pickupDetails.address);
-    
+
     if (values.pickupDetails.address) {
       console.log("pickupDetails.address", values.pickupDetails.address);
 
       const mapApi = await getMapApi();
       const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
-console.log(apiKey);
+      console.log(apiKey);
 
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -390,9 +393,9 @@ console.log(apiKey);
         const data = await response.json();
         if (data.results && data.results.length > 0) {
           console.log("data", data);
-          if (data.status !== "ZERO_RESULTS") {   
+          if (data.status !== "ZERO_RESULTS") {
             const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
-            distancesAndDurations.push({status:true,distance:{value:0,text:"0 km"},duration:{value:0,text:"0 min"}})
+            distancesAndDurations.push({ status: true, distance: { value: 0, text: "0 km" }, duration: { value: 0, text: "0 min" } })
             deliverylocations.push(deliverylocation)
           } else {
             console.log("data", data);
@@ -420,6 +423,7 @@ console.log(apiKey);
         pickupDetails: {
           ...initialValues.pickupDetails,
           dateTime: pictimestamp,
+          mobileNumber: initialValues.pickupDetails.mobileNumber.toString(),
           location: {
             latitude: pickuplocation.latitude,
             longitude: pickuplocation.longitude
@@ -440,7 +444,7 @@ console.log(apiKey);
           paymentCollectionRupees: delivery.paymentCollectionRupees,
           distance: distancesAndDurations[index]?.distance.value,
           duration: distancesAndDurations[index]?.duration.text,
-          parcelType: delivery.parcelType,
+          parcelType2: delivery.parcelType2,
           location: {
             latitude: deliverylocations[index]?.latitude,
             longitude: deliverylocations[index]?.longitude
@@ -505,11 +509,13 @@ console.log(apiKey);
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={onSubmit}
-          onKeyDown={(e)=>{if(e.key === 'Enter'){
-            e.preventDefault();
-            onSubmit(values, { setFieldValue });
-          }}}
-          
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              onSubmit(values, { setFieldValue });
+            }
+          }}
+
         >
           {({ setFieldValue, values }) => {
             return (
@@ -533,10 +539,10 @@ console.log(apiKey);
                         name="pickupDetails.dateTime"
                         className="form-control w-25% h-100%"
                         placeholder="Date and Time"
-                        defaultValue={new Date().toISOString().slice(0, 16)}
+                        // defaultValue={new Date().toISOString().slice(0, 16)}
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
                         disabled={isOrderCreated}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -564,7 +570,7 @@ console.log(apiKey);
                         placeholder="Pickup Postcode"
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
                         disabled={isOrderCreated}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -597,7 +603,7 @@ console.log(apiKey);
                             fontSize: "15px"
                           }}
                           disabled={isOrderCreated}
-                          onChange={(e)=>{
+                          onChange={(e) => {
                             setInitialValues(prev => ({
                               ...prev,
                               pickupDetails: {
@@ -673,7 +679,7 @@ console.log(apiKey);
                           border: "1px solid #E6E6E6",
                           borderRadius: "5px",
                         }}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -706,7 +712,7 @@ console.log(apiKey);
                           borderRadius: "5px",
                         }}
                         disabled={isOrderCreated}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -738,7 +744,7 @@ console.log(apiKey);
                           borderRadius: "5px",
                         }}
                         disabled={isOrderCreated}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -757,7 +763,7 @@ console.log(apiKey);
 
                     <div className="input-error mb-1 col-3">
                       <label className="fw-thin p-0 pb-1 ">
-                        Pickup Instraction (Optional) :
+                        Pickup Instructions (Optional) :
                       </label>
                       <Field
                         as="textarea"
@@ -771,7 +777,7 @@ console.log(apiKey);
                           height: "3em",
                         }}
                         disabled={isOrderCreated}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
@@ -816,7 +822,6 @@ console.log(apiKey);
                           Select Delivery Man
                         </option>
                         {deliveryMan.map((data, index) => {
-                         console.log("data1", data);
                           let distance = "";
                           if (currentLocation && data.location) {
                             distance = calculateDistance(
@@ -834,7 +839,7 @@ console.log(apiKey);
                                   key={index}
                                   value={"admin"}
                                   className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
-                                  disabled={true} 
+                                  disabled={true}
                                 >
                                   Admin
                                 </option>
@@ -921,7 +926,7 @@ console.log(apiKey);
                               className="form-control mb-1 p-0"
                               isDisabled={isOrderCreated}
                               styles={{
-                                control: (base) => ({ ...base, height: "3em",backgroundColor: isOrderCreated ? "#e9ecef" : "white",}),
+                                control: (base) => ({ ...base, height: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
                               }}
                               options={customer.map((cust) => ({
                                 value: cust._id,
@@ -935,8 +940,8 @@ console.log(apiKey);
                                 const data = option.data;
                                 const searchValue = inputValue.toLowerCase();
                                 const searchTerms = searchValue.split(" ");
-                                
-                                return searchTerms.some(term => 
+
+                                return searchTerms.some(term =>
                                   data.NHS_Number.toLowerCase().includes(term) ||
                                   data.firstName.toLowerCase().includes(term) ||
                                   data.lastName.toLowerCase().includes(term) ||
@@ -962,10 +967,10 @@ console.log(apiKey);
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: selectedOption.email } : item)
                                   }));
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: selectedOption.description } : item)
-                                  }));
+                                  // setInitialValues(prev => ({
+                                  //   ...prev,
+                                  //   deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: selectedOption.description } : item)
+                                  // }));
                                   setInitialValues(prev => ({
                                     ...prev,
                                     deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: selectedOption.postCode } : item)
@@ -977,7 +982,7 @@ console.log(apiKey);
                                 } else {
                                   setInitialValues(prev => ({
                                     ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: "", mobileNumber: "", email: "", description: "", postCode: "", name: "" } : item)
+                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: "", mobileNumber: "", email: "", postCode: "", name: "" } : item)
                                   }));
                                 }
                               }}
@@ -991,14 +996,19 @@ console.log(apiKey);
                           >
                             <label className="fw-thin p-0 pb-1 ">Parcels Count :</label>
                             <Field
-                              type="number"
+                              type="text"
                               name={`deliveryDetails.${index}.parcelsCount`}
                               onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: e.target.value } : item)
-                                }));
-                              }}
+                                const value = e.target.value;
+                                const isValueNumber = !isNaN(value);
+                                if (isValueNumber) {
+                                  setInitialValues(prev => ({
+                                    ...prev,
+                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: Number(value?value:"0") } : item)
+                                  }));
+                                }
+                              }
+                              }
                               className="form-control"
                               placeholder={`ParcelsCount`}
                               style={{
@@ -1007,6 +1017,7 @@ console.log(apiKey);
                                 borderRadius: "5px",
                               }}
                               disabled={isOrderCreated}
+
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.parcelsCount`}
@@ -1082,12 +1093,16 @@ console.log(apiKey);
                               <Field
                                 as="input"
                                 name={`deliveryDetails.${index}.paymentCollectionRupees`}
-                                type="number"
+                                type="text"
                                 onChange={(e) => {
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, paymentCollectionRupees: e.target.value } : item)
-                                  }));
+                                  const value = e.target.value;
+                                  const isValueNumber = !isNaN(value);
+                                  if (isValueNumber) {
+                                    setInitialValues(prev => ({
+                                      ...prev,
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, paymentCollectionRupees: Number(value?value:"0") } : item)
+                                    }));
+                                  }
                                 }}
                                 className="form-control mt-0"
                                 style={{ height: "3em", border: "1px solid #E6E6E6" }}
@@ -1195,35 +1210,36 @@ console.log(apiKey);
                               className="error text-danger ps-2"
                             />
                           </div>
-                          
+
                           <div className="input-error mb-1 col-4">
                             <label className="fw-thin p-0 pb-1 ">
                               Select Parcel Type (Optional):
                             </label>
                             <Select
-                              name={`deliveryDetails.${index}.parcelType`}
+                              name={`deliveryDetails.${index}.parcelType2`}
                               className="form-control p-0"
                               styles={{
-                                control: (base) => ({ ...base, height: "3em",backgroundColor: isOrderCreated ? "#e9ecef" : "white",}),
+                                control: (base) => ({ ...base, minHeight: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
                               }}
                               options={parcelTypeDetail.map((type) => ({
                                 value: type.parcelTypeId,
                                 label: type.label
                               }))}
-                              placeholder="Select Parcel Type"
-                              onChange={(selectedOption) => {
+                              placeholder="Select Multiple Parcel Types"
+                              onChange={(selectedOptions) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => 
-                                    i === index ? { ...item, parcelType: selectedOption.value } : item
+                                  deliveryDetails: prev.deliveryDetails.map((item, i) =>
+                                    i === index ? { ...item, parcelType2: selectedOptions.map(opt => opt.value) } : item
                                   )
                                 }));
                               }}
+                              isMulti={true}
                               isDisabled={isOrderCreated}
                             />
                             <ErrorMessage
-                              name={`deliveryDetails.${index}.parcelType`}
-                              component="div" 
+                              name={`deliveryDetails.${index}.parcelType2`}
+                              component="div"
                               className="error text-danger ps-2"
                             />
                           </div>
@@ -1317,8 +1333,8 @@ console.log(apiKey);
 
                     <div className="d-flex justify-content-between mt-2">
 
-                      <button className="btn btn-primary mt-3" type="button" disabled={isOrderCreated}   onClick={() => {
-                        
+                      <button className="btn btn-primary mt-3" type="button" disabled={isOrderCreated} onClick={() => {
+
                         setInitialValues(prev => ({
                           ...prev,
                           deliveryDetails: [...prev.deliveryDetails, {
@@ -1338,6 +1354,7 @@ console.log(apiKey);
                             parcelsCount: 1,
                             paymentCollectionRupees: 0,
                             postCode: "",
+                            parcelType2: []
                           }]
                         }))
                       }}>
@@ -1351,7 +1368,7 @@ console.log(apiKey);
                           className="btn btn-secondary mt-1 me-4"
                           onClick={() => naviagte("/all-multi-order")}
                           style={{ height: "3em" }}
-                          // disabled={isOrderCreated}
+                        // disabled={isOrderCreated}
                         >
                           Cancel
                         </button>

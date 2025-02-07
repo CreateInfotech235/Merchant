@@ -135,7 +135,7 @@ const Billing = () => {
                         {subOrder?.distance !== undefined
                           ? subOrder?.distance.toFixed(2)
                           : "-"}
-                        km
+                        miles
                       </p>
                     </div>
                     <div className="col-md-6">

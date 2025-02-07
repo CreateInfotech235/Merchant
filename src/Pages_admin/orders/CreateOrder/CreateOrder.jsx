@@ -860,7 +860,7 @@ const CreateOrder = () => {
 
                     <div className="input-error mb-3">
                       <label className="fw-thin p-0 pb-1 ">
-                        Pickup Instraction (Optional) :
+                        Pickup Instructions (Optional) :
                       </label>
                       <Field
                         as="textarea"
@@ -1097,7 +1097,7 @@ const CreateOrder = () => {
                     </div>
                     <div className="input-error mb-3">
                       <label className="fw-thin p-0 pb-1 ">
-                        Delivery Instraction (Optional) :
+                        Delivery Instructions (Optional) :
                       </label>
                       <Field
                         as="textarea"

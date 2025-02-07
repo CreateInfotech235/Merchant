@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { getdata } from '../../Components_merchant/Api/Dashboard';
+import Loader from '../../Components_admin/Loader/Loader';
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -54,7 +55,11 @@ const OrderCountsChart = () => {
   }, [startDate, endDate]);
 
   if (!orderCounts) {
-    return <p>Loading...</p>; // Show loading state while data is being fetched
+    return (
+      <div className='flex justify-center items-center'>
+        <Loader/>
+      </div>
+    ); // Show loading state while data is being fetched
   }
 
   // Chart.js Data Format

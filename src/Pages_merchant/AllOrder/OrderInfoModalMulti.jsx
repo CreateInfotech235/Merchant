@@ -8,13 +8,19 @@ import {
   FaCheck,
   FaTimes,
   FaUser,
-  FaPhone,
   FaEnvelope,
   FaBox,
 } from "react-icons/fa";
+import { ImPhone } from "react-icons/im";
 import { GiPathDistance, GiDuration } from "react-icons/gi";
+import { RiFileList3Line } from "react-icons/ri";
+import instructions from '../../assets_mercchant/instructions.png'
 
-const OrderInfoModalMulti = ({ Order, onHide }) => {
+
+// instructions.png
+
+
+const OrderInfoModalMulti = ({ Order, onHide ,isSingle }) => {
   console.log(Order, "Order");
   if (!Order) return null;
 
@@ -66,7 +72,7 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
           {/* Pickup Details */}
           <div className="mb-4">
             <h6 className="text-primary text-base font-medium mb-3">
-              Pickup Details
+              Delivery Man Details
             </h6>
             <div className="row mb-2">
               <label className="col-6 d-flex align-items-center text-sm">
@@ -79,16 +85,7 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
             </div>
             <div className="row mb-2">
               <label className="col-6 d-flex align-items-center text-sm">
-                <FaMapMarkerAlt className="me-2" />
-                Address:
-              </label>
-              <span className="col-6 text-end text-sm py-2">
-                {Order?.pickupAddress?.address ?? "-"}
-              </span>
-            </div>
-            <div className="row mb-2">
-              <label className="col-6 d-flex align-items-center text-sm">
-                <FaPhone className="me-2" />
+                <ImPhone className="me-2" />
                 Mobile:
               </label>
               <span className="col-6 text-end text-sm py-2">
@@ -106,14 +103,30 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
             </div>
           </div>
 
+          <div className="mb-4">
+            <h6 className="text-primary text-base font-medium mb-3">
+              Pickup Details
+            </h6>
+            <div className="row mb-2">
+              <label className="col-6 d-flex align-items-center text-sm">
+                <FaMapMarkerAlt className="me-2" />
+                Address:
+              </label>
+              <span className="col-6 text-end text-sm py-2">
+                {Order?.pickupAddress?.address ?? "-"}
+              </span>
+            </div>
+          </div>
+
           {/* Delivery Details */}
           <div className="mb-4">
             <h6 className="text-primary text-base font-medium mb-3">
               Delivery Details
             </h6>
             {Order?.deliveryAddresses?.map((delivery, index) => (
-              <div key={delivery._id} className="mb-4 p-3 border rounded">
+              <div key={delivery._id} className="mb-4 p-3 border rounded" style={{ display: isSingle ? (isSingle !== delivery.subOrderId ? "none" : "") : "" }} >
                 <div className="flex justify-between">
+                
                   {delivery?.pickupsignature && (
                     <div>
                       <div>
@@ -137,6 +150,17 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
                     )}
                   </div>
                 </div>
+
+                <div className="row mb-2">
+                  <label className="col-6 d-flex align-items-center text-sm">
+                    <RiFileList3Line className="me-2" />
+                    Status:
+                  </label>
+                  <span className="col-6 text-end text-sm py-2">
+                    {delivery.status}
+                  </span>
+                </div>
+
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <FaUser className="me-2" />
@@ -157,7 +181,7 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
                 </div>
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
-                    <FaPhone className="me-2" />
+                    <ImPhone className="me-2" />
                     Mobile:
                   </label>
                   <span className="col-6 text-end text-sm py-2">
@@ -179,7 +203,7 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
                     Distance:
                   </label>
                   <span className="col-6 text-end text-sm py-2">
-                    {`${delivery.distance} Miles`}
+                    {`${delivery?.distance ? delivery.distance.toFixed(2) : 0} Miles`}
                   </span>
                 </div>
                 <div className="row mb-2">
@@ -188,7 +212,7 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
                     Duration:
                   </label>
                   <span className="col-6 text-end text-sm py-2">
-                    {delivery.duration}
+                    {delivery?.duration ? delivery.duration : 0}
                   </span>
                 </div>
                 <div className="row mb-2">
@@ -200,32 +224,33 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
                     £{delivery.paymentCollectionRupees}
                   </span>
                 </div>
+
+                <div className="row mb-2">
+                  <label className="col-6 d-flex align-items-center text-sm">
+                    <img src={instructions} alt="" style={{ width: "19px", marginRight: "5px" }} />
+                    Instructions:
+                  </label>
+                  <span className="col-6 text-end text-sm py-2">
+                    {delivery?.description ?? "-"}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
 
           {/* Delivery Man Details */}
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <h6 className="text-primary text-base font-medium mb-3">
               Delivery Man Details
             </h6>
-            <div className="row mb-2">
-              <label className="col-6 d-flex align-items-center text-sm">
-                <FaUser className="me-2" />
-                Name:
-              </label>
-              <span className="col-6 text-end text-sm py-2">
-                {Order?.deliveryMan ?? "-"}
-              </span>
-            </div>
-          </div>
+          </div> */}
 
           {/* Dates */}
           <div>
             <h6 className="text-primary text-base font-medium mb-3">
               Date Details
             </h6>
-            <div className="row mb-2">
+            {/* <div className="row mb-2">
               <label className="col-6 d-flex align-items-center text-sm">
                 <FaCalendarAlt className="me-2" />
                 Pickup Date:
@@ -233,7 +258,7 @@ const OrderInfoModalMulti = ({ Order, onHide }) => {
               <span className="col-6 text-end text-sm py-2">
                 {Order?.pickupDate ?? "-"}
               </span>
-            </div>
+            </div> */}
             <div className="row mb-2">
               <label className="col-6 d-flex align-items-center text-sm">
                 <FaCalendarAlt className="me-2" />
