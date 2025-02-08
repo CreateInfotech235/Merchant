@@ -49,40 +49,40 @@ const MerchantDashboard = () => {
     }
   };
 
-  // const fetchSubscriptionInfo = async (id) => {
-  //   const response = await SubscriptionInfo(id);
-  //   console.log(response);
+  const fetchSubscriptionInfo = async (id) => {
+    const response = await SubscriptionInfo(id);
+    console.log(response);
 
-  //   // Function to calculate remaining days
-  //   const calculateRemainingDays = (expiryDate) => {
-  //     const currentDate = new Date();
-  //     const expirationDate = new Date(expiryDate); // Use expiryDate parameter
-  //     const timeDifference = expirationDate - currentDate;
-  //     const remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24)); // Convert time difference to days
+    // Function to calculate remaining days
+    const calculateRemainingDays = (expiryDate) => {
+      const currentDate = new Date();
+      const expirationDate = new Date(expiryDate); // Use expiryDate parameter
+      const timeDifference = expirationDate - currentDate;
+      const remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24)); // Convert time difference to days
 
-  //     if (remainingDays < 0) {
-  //       setShowModal(false);
-  //       setError("Your Plan expire");
-  //     }
-  //   };
+      if (remainingDays < 0) {
+        setShowModal(false);
+        setError("Your Plan expire");
+      }
+    };
 
-  //   if (response.status) {
-  //     setShowModal(false);
-  //   } else {
-  //     setShowModal(false);
-  //   }
+    if (response.status) {
+      setShowModal(false);
+    } else {
+      setShowModal(false);
+    }
 
-  //   // Call calculateRemainingDays with the correct expiry date
-  //   if (response.data && response.data[0] && response.data[0].expiry) {
-  //     calculateRemainingDays(response.data[0].expiry); // Pass the expiry date here
-  //   }
-  // };
+    // Call calculateRemainingDays with the correct expiry date
+    if (response.data && response.data[0] && response.data[0].expiry) {
+      calculateRemainingDays(response.data[0].expiry); // Pass the expiry date here
+    }
+  };
 
   useEffect(() => {
     const MerchantId = localStorage.getItem("merchnatId");
     fetchCount();
 
-    //   fetchSubscriptionInfo(MerchantId);
+      fetchSubscriptionInfo(MerchantId);
   }, []);
 
   const handleSearchChange = (event) => {

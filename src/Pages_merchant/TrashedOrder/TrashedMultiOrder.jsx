@@ -34,8 +34,9 @@ const TrashedMultiOrder = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [showDelete, setshowDelete] = useState(false);
 
-  const fetchData = async() => {
+  const fetchData = async () => {
     setLoading(true);
     try {
       const MerchantId = await localStorage.getItem('merchnatId');
@@ -156,7 +157,7 @@ const TrashedMultiOrder = () => {
     setCurrentPage(value);
     filterOrders(searchQuery);
   };
- 
+
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -183,9 +184,9 @@ const TrashedMultiOrder = () => {
     ));
   };
 
-  const hadleDeleteOrder = (id , subOrderId , text,undo) => {
-    console.log("subOrderId", subOrderId , "id", id , "text", text);
-    
+  const hadleDeleteOrder = (id, subOrderId, text, undo ) => {
+    console.log("subOrderId", subOrderId, "id", id, "text", text);
+
     console.log("id", id);
     setShowModel(true);
     setOrderId(id);
@@ -216,7 +217,7 @@ const TrashedMultiOrder = () => {
 
   const statusColors = {
     CREATED: "gray",
-    ASSIGNED: "blue", 
+    ASSIGNED: "blue",
     ACCEPTED: "green",
     CANCELLED: "red",
     UNASSIGNED: "red",
@@ -230,13 +231,13 @@ const TrashedMultiOrder = () => {
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
 
-console.log(totalPages);
+  console.log(totalPages);
 
   return (
     <>
       <div className="d-flex justify-content-between align-items-center pb-3 nav-bar">
         <div className="add-order-button">
-          
+
         </div>
         <div className={`navbar ${themeMode === "dark" ? "dark-mode" : ""}`}>
           <div className="navbar-options d-flex my-2 col-12 items-center">
@@ -254,79 +255,79 @@ console.log(totalPages);
         </div>
       </div>
 
-    
-        <div className="filter-container p-3 bg-white rounded-lg shadow-md">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="date-input-group flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">Start:</label>
-                <input 
-                  type="date" 
-                  value={startDate} 
-                  onChange={(e) => { setStartDate(e.target.value); }}
-                  className="form-input rounded-md border-gray-300 shadow-sm h-9"
-                />
-              </div>
-              <div className="date-input-group flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">End:</label>
-                <input 
-                  type="date" 
-                  value={endDate} 
-                  onChange={(e) => { setEndDate(e.target.value); }}
-                  className="form-input rounded-md border-gray-300 shadow-sm h-9" 
-                />
-              </div>
-              <button 
-                className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
-                onClick={() => { 
-                  setStartDate(new Date().toISOString().split('T')[0]); 
-                  setEndDate(new Date().toISOString().split('T')[0]) 
-                }}
-              >
-                Today
-              </button>
-              <button 
-                className="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
-                onClick={() => { setStartDate(""); setEndDate("") }}
-              >
-                Clear Dates
-              </button>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <label htmlFor="status" className="text-sm font-medium text-gray-700">Status:</label>
-                <select 
-                  id="status" 
-                  value={filterStatus} 
-                  onChange={(e) => { setFilterStatus(e.target.value) }}
-                  className="form-select rounded-md border-gray-300 shadow-sm h-9"
-                >
-                  <option value="all">All</option>
-                  <option value="CREATED">Created</option>
-                  <option value="ASSIGNED">Assigned</option>
-                  <option value="ACCEPTED">Accepted</option>
-                  <option value="CANCELLED">Cancelled</option>
-                  <option value="UNASSIGNED">Unassigned</option>
-                  <option value="DELIVERED">Delivered</option>
-                  <option value="PICKED_UP">Picked Up</option>
-                  <option value="DEPARTED">Departed</option>
-                  <option value="ARRIVED">Arrived</option>
-                </select>
-              </div>
-              <button 
-                className="px-3 py-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors"
-                onClick={() => { 
-                  setStartDate(""); 
-                  setEndDate(""); 
-                  setFilterStatus("all"); 
-                }}
-              >
-                Clear All Filters
-              </button>
+      <div className="filter-container p-3 bg-white rounded-lg shadow-md">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="date-input-group flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">Start:</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => { setStartDate(e.target.value); }}
+                className="form-input rounded-md border-gray-300 shadow-sm h-9"
+              />
             </div>
+            <div className="date-input-group flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">End:</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => { setEndDate(e.target.value); }}
+                className="form-input rounded-md border-gray-300 shadow-sm h-9"
+              />
+            </div>
+            <button
+              className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+              onClick={() => {
+                setStartDate(new Date().toISOString().split('T')[0]);
+                setEndDate(new Date().toISOString().split('T')[0])
+              }}
+            >
+              Today
+            </button>
+            <button
+              className="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
+              onClick={() => { setStartDate(""); setEndDate("") }}
+            >
+              Clear Dates
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <label htmlFor="status" className="text-sm font-medium text-gray-700">Status:</label>
+              <select
+                id="status"
+                value={filterStatus}
+                onChange={(e) => { setFilterStatus(e.target.value) }}
+                className="form-select rounded-md border-gray-300 shadow-sm h-9"
+              >
+                <option value="all">All</option>
+                <option value="CREATED">Created</option>
+                <option value="ASSIGNED">Assigned</option>
+                <option value="ACCEPTED">Accepted</option>
+                <option value="CANCELLED">Cancelled</option>
+                <option value="UNASSIGNED">Unassigned</option>
+                <option value="DELIVERED">Delivered</option>
+                <option value="PICKED_UP">Picked Up</option>
+                <option value="DEPARTED">Departed</option>
+                <option value="ARRIVED">Arrived</option>
+              </select>
+            </div>
+            <button
+              className="px-3 py-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors"
+              onClick={() => {
+                setStartDate("");
+                setEndDate("");
+                setFilterStatus("all");
+              }}
+            >
+              Clear All Filters
+            </button>
           </div>
         </div>
+      </div>
 
       <div className=" w-100 mt-3">
         <div className="table-responsive">
@@ -348,27 +349,27 @@ console.log(totalPages);
               </tr>
             </thead>
             <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="13" className="text-center p-3">
-                  <div className="d-flex justify-content-center">
-                    <div className="mx-auto">
-                      <Loader />
+              {loading ? (
+                <tr>
+                  <td colSpan="13" className="text-center p-3">
+                    <div className="d-flex justify-content-center">
+                      <div className="mx-auto">
+                        <Loader />
+                      </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-            ) : filteredOrders.length === 0 ? (
-              <tr>
-                <td colSpan="13" className="text-center p-3">
-                  <div className="d-flex justify-content-center">
-                    <div className="mx-auto">No Data Found</div>
-                  </div>
-                </td>
-              </tr>
-            ) : (
+                  </td>
+                </tr>
+              ) : filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="13" className="text-center p-3">
+                    <div className="d-flex justify-content-center">
+                      <div className="mx-auto">No Data Found</div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
                 filteredOrders.map((order, index) => (
-                    <React.Fragment key={index}>
+                  <React.Fragment key={index}>
                     <tr className="country-row">
                       <td className="city-data">
                         <input type="checkbox" />
@@ -403,10 +404,28 @@ console.log(totalPages);
                       <td className="city-data">
                         <button
                           className="delete-btn me-1"
-                          onClick={() => hadleDeleteOrder(order._id, null, "Order",true)}
+                          onClick={() =>{ hadleDeleteOrder(order._id, null, "Order", true)
+                            setshowDelete(false)
+                          }}
                         >
                           <FaUndo
                             alt="undo"
+
+                            className="mx-auto"
+                          />
+                        </button>
+                        <button
+                          className="delete-btn me-1"
+                          onClick={() =>{
+                            hadleDeleteOrder(order._id, null, "Order"),
+                            setshowDelete(true)}
+                          }
+                        >
+                          <img
+
+
+                            src={deleteimg}
+                            alt="Delete"
                             className="mx-auto"
                           />
                         </button>
@@ -470,86 +489,86 @@ console.log(totalPages);
                                 ) : (
                                   order.deliveryAddress.map((subOrder, index) => (
                                     subOrder.trashed === true ? (
-                                    <tr key={index} className="country-row">
-                                      <td className="city-data">
-                                        <input type="checkbox" />
-                                      </td>
-                                      <td className="p-3 text-primary">
-                                        {subOrder?.subOrderId ?? "-"}
-                                      </td>
-                                      <td className="p-3">
-                                        {subOrder?.name ?? "-"}
-                                      </td>
-                                      <td className="p-3">
-                                        {`${order.pickupAddress?.address} (${order.pickupAddress?.postCode})` ??
-                                          "-"}
-                                      </td>
-                                      <td className="p-3">
-                                        {`${subOrder?.address} (${subOrder?.postCode})` ??
-                                          "-"}
-                                      </td>
-                                      <td className="p-3">-</td>
-                                      <td className="p-3">-</td>
-                                      <td className="p-3">
-                                        <button
-                                          className={`${getColorClass(
-                                            subOrder.status
-                                          )} mx-2`}
-                                        >
-                                          {subOrder.status}
-                                        </button>
-                                      </td>
-                                      <td className="city-data">
-                                        <button
-                                          className="delete-btn me-1"
-                                          onClick={() =>
-                                            hadleDeleteOrder(order._id, subOrder.subOrderId, "SubOrder")
-                                          }
-                                        >
-                                          <img
-                                            src={deleteimg}
-                                            alt="Delete"
-                                            className="mx-auto"
-                                          />
-                                        </button>
-                                      </td>
-                                      <td className="city-data">
-                                        <button
-                                          className="delete-btn"
-                                          onClick={() => {
-                                            if (
-                                              [
-                                                "ACCEPTED",
-                                                "ASSIGNED",
-                                                "CANCELLED",
-                                                "DELIVERED",
-                                                "CREATED",
-                                              ].includes(subOrder.status)
-                                            ) {
-                                              alert(
-                                                "You are not able to track. Tracking starts from the status 'Arrived' to 'Delivered'."
-                                              );
-                                            } else {
-                                              hadleTrackOrder(
-                                                order.deliveryManId,
-                                                subOrder.location,
-                                                order.pickupAddress.location,
-                                                subOrder.status
-                                              );
+                                      <tr key={index} className="country-row">
+                                        <td className="city-data">
+                                          <input type="checkbox" />
+                                        </td>
+                                        <td className="p-3 text-primary">
+                                          {subOrder?.subOrderId ?? "-"}
+                                        </td>
+                                        <td className="p-3">
+                                          {subOrder?.name ?? "-"}
+                                        </td>
+                                        <td className="p-3">
+                                          {`${order.pickupAddress?.address} (${order.pickupAddress?.postCode})` ??
+                                            "-"}
+                                        </td>
+                                        <td className="p-3">
+                                          {`${subOrder?.address} (${subOrder?.postCode})` ??
+                                            "-"}
+                                        </td>
+                                        <td className="p-3">-</td>
+                                        <td className="p-3">-</td>
+                                        <td className="p-3">
+                                          <button
+                                            className={`${getColorClass(
+                                              subOrder.status
+                                            )} mx-2`}
+                                          >
+                                            {subOrder.status}
+                                          </button>
+                                        </td>
+                                        <td className="city-data">
+                                          <button
+                                            className="delete-btn me-1"
+                                            onClick={() =>
+                                              hadleDeleteOrder(order._id, subOrder.subOrderId, "SubOrder")
                                             }
-                                          }}
-                                        >
-                                          <img
-                                            src={tracking}
-                                            alt="Tracking"
-                                            className="mx-auto"
-                                          />
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  ) : null
-                                ))
-                              )}
+                                          >
+                                            <img
+                                              src={deleteimg}
+                                              alt="Delete"
+                                              className="mx-auto"
+                                            />
+                                          </button>
+                                        </td>
+                                        <td className="city-data">
+                                          <button
+                                            className="delete-btn"
+                                            onClick={() => {
+                                              if (
+                                                [
+                                                  "ACCEPTED",
+                                                  "ASSIGNED",
+                                                  "CANCELLED",
+                                                  "DELIVERED",
+                                                  "CREATED",
+                                                ].includes(subOrder.status)
+                                              ) {
+                                                alert(
+                                                  "You are not able to track. Tracking starts from the status 'Arrived' to 'Delivered'."
+                                                );
+                                              } else {
+                                                hadleTrackOrder(
+                                                  order.deliveryManId,
+                                                  subOrder.location,
+                                                  order.pickupAddress.location,
+                                                  subOrder.status
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <img
+                                              src={tracking}
+                                              alt="Tracking"
+                                              className="mx-auto"
+                                            />
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    ) : null
+                                  ))
+                                )}
                               </tbody>
                             </table>
                           </div>
@@ -562,8 +581,8 @@ console.log(totalPages);
             </tbody>
           </table>
         </div>
-        
-        <div className={`justify-content-end align-items-center mt-3 ${filteredOrders.length ==0 ? "d-none" : "d-flex"}`}>
+
+        <div className={`justify-content-end align-items-center mt-3 ${filteredOrders.length == 0 ? "d-none" : "d-flex"}`}>
           <Stack spacing={2}>
             <Pagination
               count={totalPages}
@@ -593,6 +612,7 @@ console.log(totalPages);
         subOrderId={subOrderId}
         onDelete={() => handleCloseModal()}
         onHide={() => setShowModel(false)}
+        showDelete={showDelete}
 
         undo={undo}
       />}

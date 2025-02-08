@@ -29,11 +29,14 @@ const MultiOrders = () => {
   const [initialValues, setInitialValues] = useState({});
   const [newarrayoflocation, setNewarrayoflocation] = useState([]);
   const [parcelTypeDetail, setParcelTypeDetail] = useState([]);
+  const [searchCustomerList, setSearchCustomerList] = useState([]);
+  const [fullCustomerList, setFullCustomerList] = useState([]);
   // const [isSubmit, setIsSubmit] = useState(false);
 
 
-  console.log("customer", customer);
-
+  useEffect(() => {
+    setSearchCustomerList(customer);
+  }, [customer]);
   useEffect(() => {
     console.log("initialValues", initialValues);
     console.log("newarrayoflocation", newarrayoflocation);
@@ -74,6 +77,9 @@ const MultiOrders = () => {
 
     //   // setNewarrayoflocation(prev => [...prev, { distance, duration, index }]);
     // }
+
+
+
 
 
 
@@ -127,6 +133,7 @@ const MultiOrders = () => {
         const filteredCustomer = customerRes?.data?.filter(customer => customer.trashed == false);
         console.log(filteredCustomer);
         setCustomer(filteredCustomer || []);
+        setFullCustomerList(filteredCustomer || []);
       }
       setIsLoading(false);
     };
@@ -490,6 +497,57 @@ const MultiOrders = () => {
         {({ index, style }) => <div style={style}>{children[index]}</div>}
       </List>
     );
+  };
+
+  // Add the filter and sort functions
+  const filterOptions = (inputValue, option) => {
+    const normalizedInput = inputValue.toLowerCase();
+    const inputParts = normalizedInput.split(' '); // Split the input by spaces
+    const normalizedFname = option.firstName.toLowerCase();
+    const normalizedLname = option.lastName.toLowerCase();
+
+    // Check if any part of the input matches either the fname or lname
+    return inputParts.some(part => 
+      normalizedFname.includes(part) || normalizedLname.includes(part)
+    );
+  };
+
+  const sortOptions = (options, inputValue) => {
+    const inputParts = inputValue.toLowerCase().split(' ');
+
+    return options.sort((a, b) => {
+      const aMatches = inputParts.reduce((count, part) => {
+        return count + (a.firstName.toLowerCase().includes(part) || a.lastName.toLowerCase().includes(part) ? 1 : 0);
+      }, 0);
+
+      const bMatches = inputParts.reduce((count, part) => {
+        return count + (b.firstName.toLowerCase().includes(part) || b.lastName.toLowerCase().includes(part) ? 1 : 0);
+      }, 0);
+
+      // Sort by number of matches first
+      if (aMatches !== bMatches) {
+        return bMatches - aMatches; // Higher match count comes first
+      }
+
+      // If match counts are equal, sort by the order of letters in the search term
+      const aFullName = `${a.firstName} ${a.lastName}`.toLowerCase();
+      const bFullName = `${b.firstName} ${b.lastName}`.toLowerCase();
+
+      // Check the position of the first matching letter in the search term
+      const aPosition = inputParts.map(part => aFullName.indexOf(part)).filter(pos => pos !== -1);
+      const bPosition = inputParts.map(part => bFullName.indexOf(part)).filter(pos => pos !== -1);
+
+      // If both have matching letters, sort by the first occurrence
+      if (aPosition.length && bPosition.length) {
+        return Math.min(...aPosition) - Math.min(...bPosition);
+      }
+
+      // If one has matches and the other doesn't, prioritize the one with matches
+      if (aPosition.length) return -1;
+      if (bPosition.length) return 1;
+
+      return aFullName.localeCompare(bFullName); // Fallback to alphabetical order
+    });
   };
 
   return (
@@ -916,77 +974,73 @@ const MultiOrders = () => {
                               }
                             </div>
                           </div>
-
                           <div className="input-error mb-1 col-5 ">
                             <label className="fw-thin p-0 pb-1 ">
                               Select Customer :
                             </label>
-                            <Select
-                              name={`deliveryDetails.${index}.customerId`}
-                              className="form-control mb-1 p-0"
-                              isDisabled={isOrderCreated}
-                              styles={{
-                                control: (base) => ({ ...base, height: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
-                              }}
-                              options={customer.map((cust) => ({
-                                value: cust._id,
-                                label: ` ${cust.NHS_Number} - ${cust.firstName}  ${cust.lastName}  -  ${cust.address}  -  ${cust.postCode}`,
-                                ...cust,
-                              }))}
-                              placeholder="Select Customer"
-                              isClearable
-                              components={{ MenuList }}
-                              filterOption={(option, inputValue) => {
-                                const data = option.data;
-                                const searchValue = inputValue.toLowerCase();
-                                const searchTerms = searchValue.split(" ");
-
-                                return searchTerms.some(term =>
-                                  data.NHS_Number.toLowerCase().includes(term) ||
-                                  data.firstName.toLowerCase().includes(term) ||
-                                  data.lastName.toLowerCase().includes(term) ||
-                                  data.email.toLowerCase().includes(term) ||
-                                  data.mobileNumber.toLowerCase().includes(term)
-                                );
-                              }}
-                              onChange={(selectedOption) => {
-                                if (selectedOption) {
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, customerId: selectedOption.value } : item)
-                                  }));
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: selectedOption.address } : item)
-                                  }));
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: selectedOption.mobileNumber } : item)
-                                  }));
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: selectedOption.email } : item)
-                                  }));
-                                  // setInitialValues(prev => ({
-                                  //   ...prev,
-                                  //   deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: selectedOption.description } : item)
-                                  // }));
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: selectedOption.postCode } : item)
-                                  }));
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: selectedOption.firstName + " " + selectedOption.lastName } : item)
-                                  }));
-                                } else {
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: "", mobileNumber: "", email: "", postCode: "", name: "" } : item)
-                                  }));
-                                }
-                              }}
-                            />
+                            <div>
+                              <Select
+                                name={`deliveryDetails.${index}.customerId`}
+                                className="form-control mb-1 p-0"
+                                isDisabled={isOrderCreated}
+                                styles={{
+                                  control: (base) => ({ ...base, height: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
+                                }}
+                                options={searchCustomerList.map((cust) => ({
+                                  value: cust._id,
+                                  label: ` ${cust.NHS_Number} - ${cust.firstName}  ${cust.lastName}  -  ${cust.address}  -  ${cust.postCode}`,
+                                  ...cust,
+                                }))}
+                                placeholder="Select Customer"
+                                isClearable
+                                components={{ MenuList }}
+                                isSearchable={true}
+                                filterOption={(option, inputValue) => filterOptions(inputValue, option.data)}
+                                onInputChange={(inputValue) => {
+                                  if (inputValue) {
+                                    const filteredOptions = fullCustomerList.filter(option => filterOptions(inputValue, option));
+                                    const sortedOptions = sortOptions(filteredOptions, inputValue);
+                                    setSearchCustomerList(sortedOptions);
+                                  } else {
+                                    // Reset to show all customers when input is empty
+                                    setSearchCustomerList(fullCustomerList);
+                                  }
+                                }}
+                                onChange={(selectedOption) => {
+                                  if (selectedOption) {
+                                    setInitialValues(prev => ({
+                                      ...prev,
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, customerId: selectedOption.value } : item)
+                                    }));
+                                    setInitialValues(prev => ({
+                                      ...prev,
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: selectedOption.address } : item)
+                                    }));
+                                    setInitialValues(prev => ({
+                                      ...prev,
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: selectedOption.mobileNumber } : item)
+                                    }));
+                                    setInitialValues(prev => ({
+                                      ...prev,
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: selectedOption.email } : item)
+                                    }));
+                                    setInitialValues(prev => ({
+                                      ...prev,
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: selectedOption.postCode } : item)
+                                    }));
+                                    setInitialValues(prev => ({
+                                      ...prev,
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: selectedOption.firstName + " " + selectedOption.lastName } : item)
+                                    }));
+                                  } else {
+                                    setInitialValues(prev => ({
+                                      ...prev,
+                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: "", mobileNumber: "", email: "", postCode: "", name: "" } : item)
+                                    }));
+                                  }
+                                }}
+                              />
+                            </div>
                           </div>
 
 
@@ -1403,3 +1457,4 @@ const MultiOrders = () => {
 };
 
 export default MultiOrders;
+

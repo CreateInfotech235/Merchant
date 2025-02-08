@@ -52,6 +52,8 @@ const MultiOrder = () => {
   const [endDate, setEndDate] = useState(undefined);
   const [filterStatus, setFilterStatus] = useState("all");
   const [isUpdate, setIsUpdate] = useState(false);
+  console.log("isUpdate", isUpdate);
+  
 
   const fetchData = async () => {
     setLoading(true);
@@ -638,7 +640,13 @@ const MultiOrder = () => {
                                                 "-"}
                                             </td>
                                             <td className="p-3">{subOrder?.time?.end ? format(new Date(subOrder.time.end), "dd-MM-yyyy") : "-"}</td>
-                                            <td className="p-3">{parcelTypeDetail.find(type => type.parcelTypeId === subOrder?.parcelType)?.label ?? "-"}</td>
+                                            <td className="p-3">
+                                              {subOrder?.parcelType2?.length > 0 
+                                                ? subOrder.parcelType2.map(id => 
+                                                    parcelTypeDetail.find(type => type.parcelTypeId === id)?.label
+                                                  ).join(", ") 
+                                                : "-"}
+                                            </td>
                                             <td className="p-3">{subOrder?.invoice ?? "-"}</td>
                                             <td className="p-3">
                                               <button
@@ -782,7 +790,7 @@ const MultiOrder = () => {
         </div>
       </div>
       {showEditModal && (
-        <UpdateOrderModalMulti Order={selectedOrder} onHide={closeEditModal} isSingle={isSingle} isUpdate={isUpdate} />
+        <UpdateOrderModalMulti Order={selectedOrder} onHide={closeEditModal} isSingle={isSingle} setIsUpdate2={setIsUpdate} />
       )}
 
       {showModel && (

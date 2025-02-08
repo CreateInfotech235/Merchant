@@ -18,7 +18,7 @@ import { getMapApi } from "../../Components_admin/Api/MapApi";
 import { toast } from "react-toastify";
 import { Autocomplete, TextField } from "@mui/material";
 
-const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
+const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
   console.log("Order1234", Order);
 
   const navigate = useNavigate(); // Fixed duplicate navigate declaration
@@ -435,6 +435,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle }) => {
         console.log("res1", res1);
         onHide();
         setIsUpdate(prev => !prev);
+        setIsUpdate2(prev => !prev);
         navigate("/all-multi-order");
       } else {
         setIsUpdate(false);

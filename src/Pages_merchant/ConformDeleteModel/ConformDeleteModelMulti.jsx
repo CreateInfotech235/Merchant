@@ -6,7 +6,7 @@ import { deleteCustomer, moveToTrashCustomer } from "../../Components_merchant/A
 import { deleteDeliveryMan, moveToTrashDeliveryMan } from "../../Components_merchant/Api/DeliveryMan";
 import { FaUndo } from "react-icons/fa";
 
-const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=false}) => {
+const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=false, showDelete}) => {
   console.log(subOrderId , Id , text);
 
 
@@ -82,18 +82,24 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
         <h2 className="disable-heading text-primary mt-2">{undo ? "Undo" : "Delete"} {text}</h2>
         <p className="disable-content text-secondary">
           Are you sure you want to {undo ? "Undo" : "Delete"} this {text}?
+
         </p>
         <div className="d-flex justify-content-center mt-3">
-          <button
+          {!showDelete && (
+            <button
+
+
             className="model-btn btn btn-primary text-white border-0 rounded-2 m-3"
             onClick={() => handleRemoveOrder(onDelete, text, Id, "Undo" , subOrderId)}
           >
             {`Undo ${text}`}
           </button>
+          )}
           <button
             className="models-btn btn btn-danger text-white   botder-black border-1 rounded-2 m-3"
             onClick={() => handleRemoveOrder(onDelete, text, Id, "Delete" , subOrderId)}
-            style={{display:undo ? "none" : ""}}
+
+            // style={{display:undo ? "none" : ""}}
           >
            Conform Delete
           </button>
