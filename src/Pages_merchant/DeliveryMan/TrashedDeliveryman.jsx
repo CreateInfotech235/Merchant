@@ -194,7 +194,7 @@ const TrashedDeliveryman = () => {
                     <td className="p-3">{deliveryman.email}</td>
                     <td className="p-3">{deliveryman.address}</td>
                     <td className="p-3">{deliveryman.postCode}</td>
-                    <td className="p-3">{`${deliveryman.charge} / ${deliveryman.chargeMethod}`}</td>
+                    <td className="p-3">{`${deliveryman.charge} / ${deliveryman.chargeMethod === "DISTANCE" ? "Per mile" : "Per hour"}`}</td>
                     <td className="p-3">
                       <button className={getColorClass(deliveryman.status)}>
                         {deliveryman.status === 'ENABLE' ? 'ONLINE' : 'OFFLINE'}

@@ -304,10 +304,13 @@ const AddDeliveryBoy = () => {
                       <option value="" disabled>
                         Select Charge Method
                       </option>
-                      <option value="DISTANCE">per mile</option>
-                      <option value="TIME">per hour</option>
+                      <option value="DISTANCE">Per mile</option>
+                      <option value="TIME">Per hour</option>
                     </Field>
                     <ErrorMessage
+
+
+
                       name="chargeMethod"
                       component="div"
                       className="error text-danger ps-2"
@@ -316,14 +319,15 @@ const AddDeliveryBoy = () => {
                   {chargeMethod && (
                   <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
                     <label className="w-100" style={{ color: "#999696" }}>
-                      Charge {chargeMethod==="DISTANCE"?"per mile":"per hour"}
+                      Charge {chargeMethod==="DISTANCE"?"Per mile":"Per hour"}
                     </label>
                     <Field
                       type="text"
                       name="charge"
                       className="form-control w-25% h-100%"
-                      placeholder={`Charge ${chargeMethod?chargeMethod==="DISTANCE"?"per mile":"per hour":""}`}
+                      placeholder={`Charge ${chargeMethod?chargeMethod==="DISTANCE"?"Per mile":"Per hour":""}`}
                       style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+
                       onChange={(e) => {
                         formik.setFieldValue("charge", e.target.value);
                       }}
