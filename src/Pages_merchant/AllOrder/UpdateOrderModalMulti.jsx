@@ -950,23 +950,24 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                         <div className="input-error col-12 col-sm-3 mb-1">
                           <label className="fw-thin p-0 pb-1">Parcels Count :</label>
                           <Field
-                            type="text"
+                            type="number"
                             name={`deliveryDetails.${index}.parcelsCount`}
                             onChange={(e) => {
                               if (e.key === "Enter") {
                                 e.preventDefault();
+
                               }
                               const value = e.target.value;
-                              const isValueNumber = !isNaN(value);
-                              if (isValueNumber) {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: Number(value ? value : "0") } : item)
-                                }));
-                              }
+                              setInitialValues(prev => ({
+
+                                    ...prev,
+                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: Number(value ? value : "0") } : item)
+                              }));
                             }}
+                            onWheel={(e) => e.currentTarget.blur()}
                             className="form-control"
                             placeholder={`ParcelsCount`}
+
                             style={{
                               height: "3em",
                               border: "1px solid #E6E6E6",
@@ -1033,18 +1034,18 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             <Field
                               as="input"
                               name={`deliveryDetails.${index}.paymentCollectionRupees`}
-                              type="text"
+                              type="number"
                               onChange={(e) => {
                                 const value = e.target.value;
-                                const isValueNumber = !isNaN(value);
-                                if (isValueNumber) {
-                                  setFieldValue(`deliveryDetails.${index}.paymentCollectionRupees`, Number(value ? value : "0"));
-                                }
+                                setFieldValue(`deliveryDetails.${index}.paymentCollectionRupees`, Number(value ? value : "0"));
                               }}
+
+                              onWheel={(e) => e.currentTarget.blur()}
                               className="form-control mt-0"
                               disabled={isUpdate}
-                              style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                              style={{ height: "3em", border: "1px solid #E6E6E6", scrollbarWidth: "none" }}
                               placeholder="Enter Payment Collection pounds"
+
                             />
                             <ErrorMessage
                               name={`deliveryDetails.${index}.paymentCollectionRupees`}

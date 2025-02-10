@@ -1147,19 +1147,17 @@ const MultiOrders = () => {
                               <Field
                                 as="input"
                                 name={`deliveryDetails.${index}.paymentCollectionRupees`}
-                                type="text"
+                                type="number"
                                 onChange={(e) => {
                                   const value = e.target.value;
-                                  const isValueNumber = !isNaN(value);
-                                  if (isValueNumber) {
                                     setInitialValues(prev => ({
                                       ...prev,
                                       deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, paymentCollectionRupees: Number(value?value:"0") } : item)
                                     }));
-                                  }
                                 }}
+                                onWheel={(e) => e.currentTarget.blur()}
                                 className="form-control mt-0"
-                                style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                                style={{ height: "3em", border: "1px solid #E6E6E6", scrollbarWidth: "none" }}
                                 placeholder="Enter Payment Collection pounds  "
                                 disabled={isOrderCreated}
 
