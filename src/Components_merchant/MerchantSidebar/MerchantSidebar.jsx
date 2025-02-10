@@ -401,7 +401,7 @@ const MerchantSidebar = () => {
               <span className=" pe-4">
                 <img src={man} style={{ width: "25px" }} alt="delivery" />
               </span>
-              Delivery Mans
+              Delivery Men
               <span className={`arrow ${currentpage === 6 ? "rotate" : ""}`}>
                 <FaAngleRight />
               </span>
@@ -410,34 +410,16 @@ const MerchantSidebar = () => {
               <div className="submenuWrapper">
                 <ul className="submenu">
                   <li className={currentPath === "/delivery-man" ? "active" : ""}>
-                    <Link to="/delivery-man" onClick={() => setSidebarVisible(false)}> All delivery Mans</Link>
+                    <Link to="/delivery-man" onClick={() => setSidebarVisible(false)}>All Delivery Men</Link>
                   </li>
                   <li className={currentPath === "/add-delivery-man" ? "active" : ""}>
-                    <Link to="/add-delivery-man" onClick={() => setSidebarVisible(false)}>Create delivery man</Link>
-                  </li>
-                  {/* <li className={currentPath === "/document" ? "active" : ""}>
-                    <Link to="/deposite">deposite</Link>
-                  </li>
-                  <li className={currentPath === "/delivery-man-document" ? "active" : ""}>
-                    <Link to="/withdraw-request">withdraw request</Link>
+                    <Link to="/add-delivery-man" onClick={() => setSidebarVisible(false)}>Create Delivery Man</Link>
                   </li>
                   <li className={currentPath === "/delivery-man-destination" ? "active" : ""}>
-                    <Link to="/pending-delivery-man">pending delivery man</Link>
-                  </li>
-                  <li className={currentPath === "/delivery-man-document" ? "active" : ""}>
-                    <Link to="/approved-delivery-man">approved delivery man</Link>
-                  </li>
-                  <li className={currentPath === "/delivery-man-destination" ? "active" : ""}>
-                    <Link to="/document-needed">document needed</Link>
-                  </li>
-                  <li className={currentPath === "/delivery-man-document" ? "active" : ""}>
-                    <Link to="/upload-document">upload document</Link>
-                  </li> */}
-                  <li className={currentPath === "/delivery-man-destination" ? "active" : ""}>
-                    <Link to="/delivery-man-location" onClick={() => setSidebarVisible(false)}>delivery man location</Link>
+                    <Link to="/delivery-man-location" onClick={() => setSidebarVisible(false)}>Delivery Men Location</Link>
                   </li>
                   <li className={currentPath === "/delivery-man-trashed" ? "active" : ""}>
-                    <Link to="/delivery-man-trashed" onClick={() => setSidebarVisible(false)}>Trashed delivery man</Link>
+                    <Link to="/delivery-man-trashed" onClick={() => setSidebarVisible(false)}>Trashed Delivery Men</Link>
                   </li>
                 </ul>
               </div>

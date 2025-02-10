@@ -42,10 +42,12 @@ const AddUser = () => {
     fetchCountriesAndCities();
 
     // Get failed customer data from localStorage if exists
-    const failedData = localStorage.getItem('failedCustomers');
+    const merchantId = localStorage.getItem("merchnatId");
+    const failedData = localStorage.getItem(`failedCustomers-${merchantId}`);
     if (failedData) {
       setFailedCustomers(JSON.parse(failedData));
     }
+
   }, []);
 
   const validationSchema = Yup.object().shape({
@@ -179,12 +181,13 @@ const AddUser = () => {
         if (res.status) {
           console.log("res.data", res.data);
           if (!res.data?.failed || res.data.failed.length === 0) {
-            localStorage.removeItem('failedCustomers');
+            localStorage.removeItem(`failedCustomers-${merchantId}`);
+
             navigate("/all-customer");
           } else {
             console.log("res.data.failed", res.data.failed);
             setFailedCustomers(res.data.failed);
-            localStorage.setItem('failedCustomers', JSON.stringify(res.data.failed));
+            localStorage.setItem(`failedCustomers-${merchantId}`, JSON.stringify(res.data.failed));
             toast.warning(`${res.data.failed.length} customers failed to upload. Click 'Download Failed Data' to get the details.`);
           }
         } else {

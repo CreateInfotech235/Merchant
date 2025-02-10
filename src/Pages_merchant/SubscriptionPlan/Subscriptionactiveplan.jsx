@@ -6,12 +6,20 @@ import Loader from "../../Components_admin/Loader/Loader";
 
 function Subscriptionactiveplan({ plans }) {
   const [subcriptionData, setSubcriptionData] = useState([]);
+  const [show, setShow] = useState(true);
   const navigate = useNavigate();
+
 
   const fetchSubscriptionInfo = async (id) => {
     const response = await SubscriptionInfo(id);
-    setSubcriptionData(response.data);
+    if (response.show) {
+      setSubcriptionData(response.data);
+    } else {
+      setShow(false);
+    }
   };
+
+
 
   useEffect(() => {
     const MerchantId = localStorage.getItem("merchnatId");
@@ -40,16 +48,20 @@ function Subscriptionactiveplan({ plans }) {
   return (
     <>
       <div className="container py-5 min-min-h-[calc(100vh-187px)]">
-        <div className="text-center mb-5">
-          <h2 className="display-4 fw-bold">Your Active Subscription</h2>
-          <div
-            className="mx-auto"
+        {show && (
+          <div className="text-center mb-5">
+            <h2 className="display-4 fw-bold">Your Active Subscription</h2>
+            <div
+              className="mx-auto"
+
             style={{ width: "100px", height: "4px", background: "#221F92" }}
           ></div>
         </div>
-
+        )}
+        {show && (
         <div className="row justify-content-center ">
           {subcriptionData && subcriptionData.length > 0 ? (
+
             subcriptionData.map((el, i) => (
               <div key={i} className="col-lg-10 mb-4">
                 <div className="card shadow-lg border-0 h-100">
@@ -125,9 +137,11 @@ function Subscriptionactiveplan({ plans }) {
             </div>
           )}
         </div>
+        )}
         <SubscriptionPlan1 plans={plans} />
       </div>
     </>
+
   );
 }
 

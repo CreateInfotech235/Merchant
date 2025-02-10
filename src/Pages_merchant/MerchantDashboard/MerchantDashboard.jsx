@@ -148,10 +148,11 @@ const arrayofdata=[
     value:counts?.totelcustomer || 0
   },
   {
-    title:"DeliveryMan",
+    title:"Delivery Men",
     icon:DeliveryMan,
     value:counts?.deliveryMan || 0
   },
+
   // {
   //   title:"Total trashed orders",
   //   icon:Totalorders,
@@ -239,7 +240,7 @@ const arrayofdata=[
             </div>
 
             <div className="mt-4">
-              <Example />
+              {/* <Example /> */}
               <div className="m-5"></div>
               <OrderCountsChart />
             </div>

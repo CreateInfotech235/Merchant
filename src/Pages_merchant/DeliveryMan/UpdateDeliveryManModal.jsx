@@ -114,9 +114,10 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
         onHide();
       }
     } catch (error) {
-      console.error("Error updating delivery boy:", error);
-      alert("An error occurred while updating the delivery boy. Please try again.");
+      console.error("Error updating delivery man:", error);
+      alert("An error occurred while updating the delivery man. Please try again.");
     }
+
 
     setisUpdate(false);
   };
@@ -150,9 +151,10 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
   return (
     <Modal show={true} onHide={onHide} size="xl">
       <Modal.Header closeButton>
-        <Modal.Title>{isforgotPassword ? "Reset Password" : "Update Delivery Boy"}</Modal.Title>
+        <Modal.Title>{isforgotPassword ? "Reset Password" : "Update Delivery Man"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+
         {!isforgotPassword && (
           <Formik
             initialValues={initialValues}

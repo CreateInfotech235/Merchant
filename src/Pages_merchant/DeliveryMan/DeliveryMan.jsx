@@ -161,10 +161,11 @@ const DeliveryMan = () => {
             <input
               type="search"
               className="search-btn rounded-start-4 p-3"
-              placeholder="Search Delivery boy"
+              placeholder="Search Delivery man"
               value={searchTerm}
               onChange={handleSearchChange}
             />
+
             <button className="search-img rounded-end-4 border-0 flex items-center justify-center">
               <img src={searchIcon} className="search" alt="search icon" />
             </button>
