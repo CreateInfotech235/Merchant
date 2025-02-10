@@ -30,8 +30,40 @@ export const SubscriptionInfo = async (data) => {
     const response = await API.get(
       `/mobile/subscription/getApproveSubscription/${data}`
     );
-    console.log(response);
+    console.log(response,"response1234");
     
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      return { status: true, data: response.data.data, show: true };
+    } else {
+      // console.log("API error", response.response.data.message);
+
+
+      toast.error(response.response.data.message || response.message);
+      return {
+        status: false,
+        message: response.response.data.message || response.message,
+        show: false,
+      };
+    }
+
+
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    toast.error(error.message);
+    return { status: false, message: error.message };
+  }
+};
+
+export const SubscriptionData = async (data) => {
+  try {
+    const response = await API.get(
+      `/mobile/auth/getApproveSubscription/${data}`
+
+    );
+    console.log(response,"response1234");
+    
+
     if (response.status === 200) {
       toast.success(response.data.message);
       return { status: true, data: response.data.data, show: true };

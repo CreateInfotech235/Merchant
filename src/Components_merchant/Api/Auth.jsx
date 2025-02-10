@@ -4,10 +4,17 @@ import { toast } from "react-toastify";
 export const login = async (data) => {
     try {
         console.log(data);
-        
-        const response = await API.post(`/mobile/auth/signIn`, data);
+        const newData = {
+            email: data.email,
+            password: data.password,
+            personType: "CUSTOMER"
+        }
+
+
+        const response = await API.post(`/mobile/auth/signIn`, newData);
         console.log(response);
-        
+
+
         if (response.status === 200) {
             toast.success(response.data.messgae)
             return { status: true, data: response.data.data }
