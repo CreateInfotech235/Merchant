@@ -59,9 +59,14 @@ const ProtectedRoute = ({ children }) => {
         navigate("/");
         window.location.reload();
       }
+      if (response.message === "User not approved by admin") {
+        navigate("/");
+        // window.location.reload();
+      }
 
-      if (response.message === "Your subcription is expired") {
+      if (response.message === "Your subcription is expired" ) {
         if (!window.location.pathname.includes("/subscription-active")) {
+
           navigate("/subscription-active");
         }
       }
