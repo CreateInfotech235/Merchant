@@ -186,7 +186,6 @@ const ForgotPassword = ({ Login, setLogin }) => {
                           type="number"
                           name="otp"
                           id="otp"
-                          disabled={isOtpSent}
                           placeholder="Enter OTP"
                           className="w-full pl-10 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
                         />

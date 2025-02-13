@@ -848,7 +848,7 @@ const CreateOrder = () => {
                         as="textarea"
                         name="pickupDetails.description"
                         className="form-control"
-                        placeholder="Pickup Instraction"
+                        placeholder="Pickup Instructions (Optional)"
                         rows="4"
                         style={{
                           border: "1px solid #E6E6E6",
@@ -1077,7 +1077,7 @@ const CreateOrder = () => {
                         as="textarea"
                         name="deliveryDetails.description"
                         className="form-control"
-                        placeholder="Delivery Instraction"
+                        placeholder="Delivery Instructions (Optional)"
                         rows="4"
                         style={{
                           border: "1px solid #E6E6E6",
