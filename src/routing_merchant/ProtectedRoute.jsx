@@ -59,12 +59,23 @@ const ProtectedRoute = ({ children }) => {
         navigate("/");
         window.location.reload();
       }
-      if (response.message === "User not approved by admin") {
+      console.log("response.message123",response.message);
+      
+      if (response.message.includes("admin rejected your request")) {
+        console.log(response.message);
+        
         navigate("/");
         // window.location.reload();
       }
 
-      if (response.message === "Your subcription is expired" ) {
+      if (response.message.includes("admin not approved your request")) {
+          console.log(response.message);
+          
+        navigate("/");
+        // window.location.reload();
+      }
+
+      if (response.message.includes("Your subcription is expired")) {
         if (!window.location.pathname.includes("/subscription-active")) {
 
           navigate("/subscription-active");
@@ -105,7 +116,7 @@ const ProtectedRoute = ({ children }) => {
   const handleCloseModel = () => {
     setShowModel(false);
   };
-  
+
   return (
     <div className={`app ${themeMode}`}>
       <div className="container-fluid p-0">

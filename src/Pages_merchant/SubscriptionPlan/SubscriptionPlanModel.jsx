@@ -47,8 +47,9 @@ const SubscriptionPlanModel = ({
   const onSubmit = async (values) => {
     const Fvalues = { ...values, userId: marchantId };
     // console.log(Fvalues);
+console.log("Fvalues",Fvalues);
 
-    const subscriptionResponse = await freeSubscription(Fvalues);
+    // const subscriptionResponse = await freeSubscription(Fvalues);
     
     if (subscriptionResponse.status) {
       const profileResponse = await getMerchantProfile();

@@ -12,6 +12,7 @@ import { forgotPassword } from "../Api/Webapi";
 
 const Login = ({ Login, setLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [iserror,setIserror]=useState("");
   const navigate = useNavigate();
   const initialValues = {
     email: "",
@@ -33,6 +34,7 @@ const Login = ({ Login, setLogin }) => {
   const onSubmit = async (values, { setSubmitting, setErrors }) => {
     setSubmitting(true);
     const response = await login(values); // Use values instead of initialValues
+console.log("response",response);
 
     if (response.status) {
       localStorage.setItem("merchnatId", response.data.userData._id);
@@ -49,6 +51,7 @@ const Login = ({ Login, setLogin }) => {
       }
       setLogin(true);
     } else {
+      setIserror(response.message);
       setErrors({ apiError: response.message });
     }
     setSubmitting(false);
@@ -76,6 +79,7 @@ const Login = ({ Login, setLogin }) => {
             <p className="text-gray-500 mb-8 text-center">
               How to get started lorem ipsum dolor at?
             </p>
+            {iserror && <p className="text-red-500 text-sm mt-1">Error: {iserror}</p>}
             {/* Form */}
             <Formik
               initialValues={initialValues}

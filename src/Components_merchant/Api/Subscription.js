@@ -4,7 +4,9 @@ import { toast } from "react-toastify";
 
 export const freeSubscription = async (data) => {
   try {
-    const response = await API.post(`/mobile/auth/activatePlan`, data);
+    console.log("data",data);
+    
+    // const response = await API.post(`/mobile/auth/activatePlan`, data);
     // console.log("response", response);
 
     if (response.status === 200) {
