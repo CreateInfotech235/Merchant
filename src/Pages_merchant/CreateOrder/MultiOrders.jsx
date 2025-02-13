@@ -86,10 +86,14 @@ const MultiOrders = () => {
     const fetchData = async () => {
       const customerRes = await getAllCustomers();
       const deliveryMans = await getAllDeliveryMans({ createdByAdmin: true });
-      console.log("deliveryMans", deliveryMans);
+      console.log("deliveryMans123", deliveryMans);
       const parcelTypeRes = await getMerchantParcelType();
+      console.log("parcelTypeRes", parcelTypeRes);
       if (parcelTypeRes.status) {
-        setParcelTypeDetail(parcelTypeRes.data);
+        console.log("parcelTypeRes", parcelTypeRes.data);
+        const nowdata = parcelTypeRes.data.filter((type) => type.status == "ENABLE");
+        console.log("nowdata", nowdata);
+        setParcelTypeDetail(nowdata);
       }
 
       const deliveryManRes = await getDeliveryMan();

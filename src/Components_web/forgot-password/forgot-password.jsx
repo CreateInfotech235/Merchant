@@ -20,6 +20,26 @@ const ForgotPassword = ({ Login, setLogin }) => {
     confirmPassword: "",
   });
 
+  
+  useEffect(() => {
+    const OtpSent = localStorage.getItem("OtpSent");
+    if (OtpSent !== null) {
+      if (OtpSent === "true") {
+        setIsOtpSent(true);
+      } else {
+        setIsOtpSent(false);
+      }
+    }
+  }, []);
+
+
+
+  useEffect(() => {
+    if (isOtpVerified) {
+      localStorage.removeItem("OtpSent");
+    }
+  }, [isOtpVerified]);
+  
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email address").required("Email is required"),
     otp: Yup.string().when("isOtpVerified", {
@@ -86,6 +106,7 @@ const ForgotPassword = ({ Login, setLogin }) => {
       setIsOtpSending(false);
       if (response == "SUCCESS") {
         setIsOtpSent(false); // OTP sent successfully
+        localStorage.setItem("OtpSent", false);
         toast.success("OTP sent successfully");
       } else {
         toast.error("Error sending OTP");
