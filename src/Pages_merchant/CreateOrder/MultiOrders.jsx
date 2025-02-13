@@ -827,7 +827,7 @@ const MultiOrders = () => {
                         as="textarea"
                         name="pickupDetails.description"
                         className="form-control h-[70px]"
-                        placeholder="Pickup Instraction"
+                        placeholder="Pickup Instruction"
                         rows="3"
                         style={{
                           border: "1px solid #E6E6E6",
