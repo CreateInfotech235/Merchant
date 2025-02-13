@@ -6,6 +6,7 @@ const StatusUpdateModal = ({ userid, currentStatus, onStatusUpdate, onClose, ini
     console.log(userid, initialReason);
     const [reason, setReason] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     // Set initial status and reason based on props
     useEffect(() => {
@@ -15,6 +16,7 @@ const StatusUpdateModal = ({ userid, currentStatus, onStatusUpdate, onClose, ini
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         console.log(reason, selectedStatus,userid);
 
         const response = await updateStatus(userid, {
@@ -23,6 +25,7 @@ const StatusUpdateModal = ({ userid, currentStatus, onStatusUpdate, onClose, ini
         });
         console.log('response', response)
         onStatusUpdate(reason, selectedStatus);
+        setIsLoading(false);
         onClose();
     };
 
@@ -84,9 +87,9 @@ const StatusUpdateModal = ({ userid, currentStatus, onStatusUpdate, onClose, ini
                         <button
                             type="submit"
                             className="btn btn-primary"
-                            disabled={!selectedStatus}
+                            disabled={!selectedStatus || isLoading}
                         >
-                            Submit
+                            {isLoading ? 'Submitting...' : 'Submit'}
                         </button>
                     </div>
                 </form>

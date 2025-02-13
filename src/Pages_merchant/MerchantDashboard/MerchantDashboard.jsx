@@ -137,10 +137,16 @@ const arrayofdata=[
     value:counts?.deliveredOrders || 0
   },
  
+  // {
+  //   title:"Cancelled orders",
+  //   icon:Cancelledorders,
+  //   value:counts?.cancelledOrders || 0
+  // },
+
   {
-    title:"Cancelled orders",
+    title:"Unassigned orders",
     icon:Cancelledorders,
-    value:counts?.cancelledOrders || 0
+    value:counts?.unassignedOrders || 0
   },
   {
     title:"Total customer",

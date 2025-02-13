@@ -1,14 +1,16 @@
 import { Modal, ModalBody } from "react-bootstrap";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import deleteuser from "../../assets_mercchant/deleteuser.png";
 import { moveToTrashOrder, moveToTrashOrderMulti, moveToTrashSubOrderMulti } from "../Api/Order";
 import { moveToTrashCustomer } from "../Api/Customer";
 import { moveToTrashDeliveryMan } from "../Api/DeliveryMan";
 
 const DeleteUserMulti = ({ onHide, onDelete, Id, text , subOrderId }) => {
+  const [isLoading, setIsLoading] = useState(false);
   console.log(Id , text , subOrderId);
   
   const handleRemoveOrder = async (onDelete, text, id) => {
+    setIsLoading(true);
     if (text === "Order") {
       const response = await moveToTrashOrderMulti(id);
       if (response.status) {
@@ -34,6 +36,7 @@ const DeleteUserMulti = ({ onHide, onDelete, Id, text , subOrderId }) => {
         onHide();
       }
     }
+    setIsLoading(false);
   };
 
   return (
@@ -48,8 +51,9 @@ const DeleteUserMulti = ({ onHide, onDelete, Id, text , subOrderId }) => {
           <button
             className="model-btn btn btn-primary text-white border-0 rounded-2 m-3"
             onClick={() => handleRemoveOrder(onDelete, text, Id)}
+            disabled={isLoading}
           >
-            Delete
+            {isLoading ? 'Deleting...' : 'Delete'}
           </button>
           <button
             className="models-btn btn text-black bg-white border  botder-black border-1 rounded-2 m-3"

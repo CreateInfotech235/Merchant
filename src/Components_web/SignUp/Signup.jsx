@@ -459,7 +459,7 @@ const Signup = ({ Login, setLogin }) => {
                           className="block text-sm font-medium border bg-white rounded-md border-gray-300 text-gray-500 mb-2"
                           htmlFor="medicalCertificate"
                         >
-                          Company Register Document
+                          Company Registration Document
                         </label>
                         <input
                           type="file"

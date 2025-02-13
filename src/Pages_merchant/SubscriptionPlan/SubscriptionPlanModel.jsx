@@ -116,7 +116,7 @@ console.log("Fvalues",Fvalues);
                         className="form-label w-100"
                         style={{ color: "#999696" }}
                       >
-                        Company Register Document
+                        Company Registration Document
                       </label>
                       <div
                         className="img d-flex flex-column-reverse bg-white p-2 justify-content-center align-items-center rounded-3"
