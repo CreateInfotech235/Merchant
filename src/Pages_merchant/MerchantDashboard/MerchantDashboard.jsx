@@ -151,8 +151,7 @@ const arrayofdata=[
   {
     title:"Unassigned orders",
     icon:Cancelledorders,
-    value:counts?.unassignedOrders || 0,
-    link:"/all-multi-order?status=Unassigned"
+    value:counts?.cancelledOrders || 0
   },
   {
     title:"Total customer",
