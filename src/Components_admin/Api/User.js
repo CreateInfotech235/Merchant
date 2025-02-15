@@ -163,3 +163,21 @@ export const deleteUser = async (id) => {
   }
 };
 
+
+
+export const updateStatus = async (id,data) => {
+  try {
+    const response = await API.post(`/users/updateStatus/${id}`,data);
+    console.log('response',response)
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      return { status: true, data: response.data.data };
+    } else {
+      toast.error(response.message);
+      return { status: false, message: response.message };
+    }
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return { status: false, message: error.message };
+  }
+}

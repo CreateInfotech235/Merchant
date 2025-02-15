@@ -131,7 +131,7 @@ const ProfilePage = () => {
 
                   <div className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
                     <p className="text-sm text-gray-500 mb-2">
-                      Company Register Document
+                      Company Registration Document
                     </p>
                     <img
                       src={

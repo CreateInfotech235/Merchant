@@ -47,8 +47,9 @@ const SubscriptionPlanModel = ({
   const onSubmit = async (values) => {
     const Fvalues = { ...values, userId: marchantId };
     // console.log(Fvalues);
+console.log("Fvalues",Fvalues);
 
-    const subscriptionResponse = await freeSubscription(Fvalues);
+    // const subscriptionResponse = await freeSubscription(Fvalues);
     
     if (subscriptionResponse.status) {
       const profileResponse = await getMerchantProfile();
@@ -115,7 +116,7 @@ const SubscriptionPlanModel = ({
                         className="form-label w-100"
                         style={{ color: "#999696" }}
                       >
-                        Company Register Document
+                        Company Registration Document
                       </label>
                       <div
                         className="img d-flex flex-column-reverse bg-white p-2 justify-content-center align-items-center rounded-3"

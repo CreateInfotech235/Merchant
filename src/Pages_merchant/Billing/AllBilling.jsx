@@ -5,7 +5,7 @@ import searchIcon from "../../assets_mercchant/search.png";
 import { format } from "date-fns";
 import Loader from "../../Components_admin/Loader/Loader";
 import { Pagination, Stack } from "@mui/material";
-import { getBilling } from "../../Components_merchant/Api/Billing";
+import { getBilling, BillingApprove } from "../../Components_merchant/Api/Billing";
 import Showbilling from "./Showbilling";
 import show from "../../assets_mercchant/show.png";
 import Modal from "react-bootstrap/Modal";
@@ -31,14 +31,12 @@ const Billing = () => {
   const [showEditButton, setShowEditButton] = useState(false);
   const [subodercharge, setSubodercharge] = useState(null);
   console.log(filteredOrders, "filteredOrders");
-  const handleShowBilling = (order) => {
-    const data = order.subdata.map((subOrder) => ({
-      subOrderId: subOrder.subOrderId,
-      charge: subOrder.charge,
-    }));
 
-    setSubodercharge(data);
+  const handleShowBilling = (order) => {
+    console.log(order, "order");
     setSelectedBillingData(order);
+    console.log("123");
+
     setShowBillingModal(true);
   };
 
@@ -62,10 +60,24 @@ const Billing = () => {
     );
   };
 
-  // Memoize BillingModal component to prevent unnecessary re-renders
-  const BillingModal = React.memo(({ show, onHide, billingData }) => {
-    if (!billingData) return null;
 
+  const handleApprove = async (orderId) => {
+    const approvedAmount = document.getElementById("approvedAmount").value;
+    const reason = document.getElementById("reason").value;
+    const data = {
+      orderId,
+      approvedAmount,
+      reason
+    }
+    console.log(data, "data");
+    const response = await BillingApprove(data);
+    // console.log(response, "response");
+    if (response?.status) {
+      setShowEditButton(false);
+    }
+  }
+
+  const BillingModal = ({ show, onHide, billingData }) => {
     return (
       <Modal show={show} onHide={onHide} size="xl">
         <Modal.Header closeButton>
@@ -96,14 +108,17 @@ const Billing = () => {
                 <div>
                   <p>
                     <strong>Delivery Man:</strong>{" "}
-                    {`${billingData?.deliveryMan?.firstName} ${billingData?.deliveryMan?.lastName}`}
+                    {`${billingData?.deliveryBoyName}`}
                   </p>
+                  {
+                    console.log(billingData, "billingData")
+                  }
                   <p>
-                    <strong>Email:</strong> {billingData?.deliveryMan?.email}
+                    <strong>Email:</strong> {billingData?.deliveryBoy?.email}
                   </p>
                   <p>
                     <strong>Phone:</strong>{" "}
-                    {billingData?.deliveryMan?.contactNumber || "-"}
+                    {billingData?.deliveryBoy?.contactNumber || "-"}
                   </p>
                 </div>
               </div>
@@ -111,7 +126,7 @@ const Billing = () => {
 
             <div className="bill-details mb-4">
               <h5 className="mb-3">Order Summary</h5>
-              {billingData?.subdata?.map((subOrder, index) => (
+              {billingData?.subOrderdata?.map((subOrder, index) => (
                 <div key={index} className="border-bottom py-3">
                   <div className="d-flex justify-content-between mb-2">
                     <span>
@@ -139,10 +154,10 @@ const Billing = () => {
                       </p>
                     </div>
                     <div className="col-md-6">
-                      <p>
+                      {/* <p>
                         <strong>Pickup Time:</strong>{" "}
                         {format(new Date(subOrder?.pickupTime ?? 0), "HH:mm")}
-                      </p>
+                      </p> */}
                       <p>
                         <strong>Delivery Time:</strong>{" "}
                         {subOrder?.deliveryTime
@@ -154,23 +169,10 @@ const Billing = () => {
                       </p>
                       <p>
                         <strong>Total Time:</strong>{" "}
-                        {subOrder?.deliveryTime && subOrder?.pickupTime
-                          ? (() => {
-                            const timeDiff =
-                              new Date(subOrder?.deliveryTime)?.getTime() -
-                              new Date(subOrder?.pickupTime)?.getTime();
-                            const hours = Math.floor(
-                              timeDiff / (1000 * 60 * 60)
-                            );
-                            const minutes = Math.floor(
-                              (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
-                            );
-                            const seconds = Math.floor(
-                              (timeDiff % (1000 * 60)) / 1000
-                            );
-                            return `${hours}h ${minutes}m ${seconds}s`;
-                          })()
+                        {subOrder?.TakeTime
+                          ? `${Math.floor(subOrder.TakeTime / 3600)}h ${Math.floor((subOrder.TakeTime % 3600) / 60)}m`
                           : "-"}
+
                       </p>
                       <p>
                         <strong>Total Average Time:</strong>{" "}
@@ -184,10 +186,13 @@ const Billing = () => {
                   </div>
 
                   <div className="d-flex justify-content-between mt-2">
+                    {
+                      console.log(subOrder, "subOrder")
+                    }
                     <div>
                       <p>
                         <strong>Payment Method:</strong>{" "}
-                        {subOrder?.chargeMethod ?? "-"}
+                        {billingData?.chargeMethod ?? "-"}
                       </p>
                       <p>
                         <strong>Cash on Delivery:</strong>{" "}
@@ -202,9 +207,9 @@ const Billing = () => {
                       <div className="d-flex align-items-center justify-content-end">
                         <strong>Delivery Charge:</strong>
                         &nbsp;£
-                        {subodercharge?.find(
-                          (item) => item.subOrderId == subOrder?.subOrderId
-                        )?.charge || "0"}
+                        {
+                          subOrder?.chargePer
+                        }
 
                       </div>
                     </div>
@@ -218,7 +223,7 @@ const Billing = () => {
                 <div>
                   <p>
                     <strong>Total Orders:</strong>{" "}
-                    {billingData.subdata?.length || 0}
+                    {billingData.subOrderdata?.length || 0}
                   </p>
                   <p>
                     <strong>Created By:</strong>{" "}
@@ -230,7 +235,7 @@ const Billing = () => {
                 <div className="text-end">
                   <p>
                     <strong>Total Package Amount:</strong> £
-                    {billingData?.subdata
+                    {billingData?.subOrderdata
                       ?.reduce(
                         (sum, order) => sum + (order.amountOfPackage || 0),
                         0
@@ -239,24 +244,62 @@ const Billing = () => {
                   </p>
                   <p>
                     <strong>Total Delivery Charges:</strong> £
-                    {subodercharge
-                      ?.reduce((sum, item) => sum + (item.charge || 0), 0)
+                    {billingData?.subOrderdata
+                      ?.reduce((sum, item) => sum + (item.chargePer || 0), 0)
                       .toFixed(2)}
                   </p>
+
                 </div>
+                {/* <p>
+                    <strong>Reason:</strong>
+                    <input 
+                      type="text" 
+                      id="reason"
+                      style={{ width: "100px", margin: "10px" }} 
+                    />
+                  </p> */}
               </div>
+              {
+                showEditButton ? (
+                  <div className="d-flex justify-content-between">
+                    <p className="w-100 d-flex items-center" >
+                      <strong>Reason:</strong>
+                      <textarea
+                        id="reason"
+                        defaultValue={billingData?.reason}
+                        style={{ width: "300px", margin: "10px" }}
+                        placeholder="Enter reason here..."
+                        rows="4"
+                      />
+                    </p>
+                    <p className="w-100 d-flex items-center justify-end" >
+                      <div>
+                        <strong>Approved Amount:</strong>
+                        <input
+                          type="number"
+                          id="approvedAmount"
+                          defaultValue={billingData?.totalCharge}
+                          style={{ width: "100px", margin: "10px" }}
+                        />
+                      </div>
+                    </p>
+
+                  </div>
+                ) : null
+              }
+
+
             </div>
 
             {showEditButton ? (
               <div className="d-flex justify-content-between">
                 <div>
-                  <button className="btn btn-primary me-2">Save</button>
                   <button className="btn btn-primary" onClick={handleCancel}>
                     Cancel
                   </button>
                 </div>
                 <div>
-                  <button className="btn btn-primary">Approve</button>
+                  <button className="btn btn-primary" onClick={() => handleApprove(billingData.orderId)}>Approve</button>
                 </div>
               </div>
             ) : null}
@@ -264,7 +307,7 @@ const Billing = () => {
         </Modal.Body>
       </Modal>
     );
-  });
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -279,7 +322,7 @@ const Billing = () => {
           createdAt: new Date(order.createdAt).toLocaleString("en-GB", {
             timeZone: "Europe/London",
           }),
-          subdata: order.subdata.map((subOrder) => ({
+          subOrderdata: order.subOrderdata.map((subOrder) => ({
             ...subOrder,
             pickupTime: subOrder.pickupTime
               ? new Date(subOrder.pickupTime).toLocaleString("en-GB", {
@@ -291,8 +334,12 @@ const Billing = () => {
                 timeZone: "Europe/London",
               })
               : null,
+            TakeTime: subOrder.deliveryTime && subOrder.pickupTime
+              ? (new Date(subOrder.deliveryTime) - new Date(subOrder.pickupTime)) / 1000 // Convert to seconds
+              : null,
           })),
         }));
+        console.log(dataWithUKTime, "dataWithUKTime");
 
         setOrderData(dataWithUKTime);
         const initialOrders = dataWithUKTime.slice(0, itemsPerPage);
@@ -315,6 +362,7 @@ const Billing = () => {
 
   const filterOrders = (query) => {
     let data = orderData;
+    console.log(data, "data");
 
     if (query) {
       const searchLower = query.toLowerCase().trim();
@@ -545,7 +593,7 @@ const Billing = () => {
                 <th className="p-3">Charge Method</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
-                {/* <th className="p-3">Approve</th> */}
+                <th className="p-3">Approve</th>
                 <th className="p-3">Info</th>
               </tr>
             </thead>
@@ -574,10 +622,9 @@ const Billing = () => {
                       <td className="p-3 text-primary">
                         {order?.orderId ?? "-"}
                       </td>
-                      <td className="p-3">{`${order?.deliveryMan?.firstName ?? "-"
-                        } ${order?.deliveryMan?.lastName ?? "-"}`}</td>
+                      <td className="p-3">{`${order?.deliveryBoyName ?? "-"}`}</td>
                       <td className="p-3">
-                        {order?.deliveryMan?.email ?? "-"}
+                        {order?.deliveryBoy?.email ?? "-"}
                       </td>
                       <td className="p-3">
                         {order?.createdAt
@@ -588,15 +635,15 @@ const Billing = () => {
                           : "-"}
                       </td>
                       <td className="p-3">
-                        {order?.subdata?.length > 0
+                        {order?.subOrderdata?.length > 0
                           ? (() => {
-                            const lastSubOrder = order.subdata.reduce((latest, current) => {
+                            const lastSubOrder = order.subOrderdata.reduce((latest, current) => {
                               if (!latest?.deliveryTime) return current;
                               if (!current?.deliveryTime) return latest;
                               return new Date(current?.deliveryTime) > new Date(latest?.deliveryTime)
                                 ? current
                                 : latest;
-                            }, order.subdata[0]);
+                            }, order.subOrderdata[0]);
 
                             return lastSubOrder?.deliveryTime
                               ? new Date(lastSubOrder?.deliveryTime) instanceof Date &&
@@ -613,34 +660,35 @@ const Billing = () => {
                           : "Merchant DeliveryMan"}
                       </td>
                       <td className="p-3">
-                        {order?.subdata[0]?.chargeMethod ?? "-"}
+                        {order?.chargeMethod ?? "-"}
                       </td>
                       <td className="p-3">
                         <button
                           className={`${getColorClass(
-                            order?.subdata[0]?.orderStatus
+                            order?.subOrderdata[0]?.orderStatus
                           )} mx-2`}
                         >
-                          {order?.subdata[0]?.orderStatus ?? "-"}
+                          {order?.subOrderdata[0]?.orderStatus ?? "-"}
                         </button>
                       </td>
                       <td className="p-3">
                         <button
                           onClick={() => {
-                            setShowEditButton(false);
                             handleShowBilling(order);
+                            setShowEditButton(false);
                           }}
                           style={{ marginRight: "10px" }}
                         >
                           <img src={show} alt="Show" className="mx-auto" />
                         </button>
                       </td>
-                      {/* <td>
+                      <td>
                         <button
                           onClick={() => {
                             handleShowBilling(order);
                             setShowEditButton(true);
                           }}
+                          // disabled={order?.isApproved}
                           style={{
                             marginRight: "10px",
                             backgroundColor: "green",
@@ -651,7 +699,7 @@ const Billing = () => {
                         >
                           Approve
                         </button>
-                      </td> */}
+                      </td>
 
                       <td>
                         <button onClick={() => toggleSemTable(order?.orderId)}>
@@ -684,25 +732,20 @@ const Billing = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                {order.subdata.map((subOrder, subIndex) => (
+                                {order.subOrderdata.map((subOrder, subIndex) => (
                                   <tr key={subIndex}>
                                     <td className="p-3 ">
                                       {subOrder?.subOrderId ?? "-"}
                                     </td>
                                     <td className="p-3 ">
-                                      {format(
-                                        new Date(subOrder?.pickupTime ?? 0),
-                                        "HH:mm"
-                                      ) ?? "00:00"}
+                                      {
+                                        subOrder?.pickupTime ?? 0
+                                      }
                                     </td>
                                     <td className="p-3 ">
-                                      {subOrder?.deliveryTime
-                                        ? format(
-                                          new Date(subOrder.deliveryTime),
-                                          "HH:mm"
-                                        )
-                                        : "00:00"}
+                                      {subOrder.deliveryTime}
                                     </td>
+
                                     <td className="p-3 ">
                                       {subOrder?.averageTime
                                         ? `${Math.floor(
@@ -711,44 +754,26 @@ const Billing = () => {
                                         }m`
                                         : "-"}
                                     </td>
-                                    <td className="p-3 ">
-                                      {subOrder.deliveryTime &&
-                                        subOrder.pickupTime
-                                        ? (() => {
-                                          const timeDiff =
-                                            new Date(
-                                              subOrder.deliveryTime
-                                            ).getTime() -
-                                            new Date(
-                                              subOrder.pickupTime
-                                            ).getTime();
-                                          const hours = Math.floor(
-                                            timeDiff / (1000 * 60 * 60)
-                                          );
-                                          const minutes = Math.floor(
-                                            (timeDiff % (1000 * 60 * 60)) /
-                                            (1000 * 60)
-                                          );
-                                          const seconds = Math.floor(
-                                            (timeDiff % (1000 * 60)) / 1000
-                                          );
-                                          return `${hours}h ${minutes}m ${seconds}s`;
-                                        })()
-                                        : "-"}
-                                    </td>
 
+                                    <td className="p-3 ">
+                                      {subOrder?.TakeTime
+                                        ? `${Math.floor(subOrder.TakeTime / 3600)}h ${Math.floor((subOrder.TakeTime % 3600) / 60)}m`
+                                        : "-"}
+
+                                    </td>
                                     <td className="p-3 ">
                                       {subOrder?.pickupAddress ?? "-"}
                                     </td>
                                     <td className="p-3">
                                       {subOrder?.deliveryAddress ?? "-"}
                                     </td>
+
                                     <td className="py-3 px-2 ">
                                       {`${subOrder?.distance !== undefined ? subOrder?.distance.toFixed(2) : "-"}` ??
                                         "-"}
                                     </td>
                                     <td className="py-3 px-2 ">
-                                      {`${subOrder?.charge !== undefined ? subOrder?.charge?.toFixed(2) : "-"}` ?? "-"}
+                                      {`${subOrder?.chargePer ?? "-"}`}
                                     </td>
                                     <td className="py-3 px-2 ">
                                       {subOrder?.isCashOnDelivery
@@ -760,6 +785,7 @@ const Billing = () => {
                                         ? "-"
                                         : subOrder.amountOfPackage}
                                     </td>
+
                                     <td className="p-3 ">
                                       <button
                                         className={`${getColorClass(

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "./CreateOrder.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createOrderMulti } from "../../Components_merchant/Api/Order";
 import {
   getDeliveryMan,
@@ -22,7 +22,7 @@ const MultiOrders = () => {
   const [deliveryMan, setDeliveryMen] = useState([]);
   const [customer, setCustomer] = useState([]);
   const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [isOrderCreated, setIsOrderCreated] = useState(false);
   const merchant = JSON.parse(localStorage.getItem("userData"));
@@ -32,6 +32,12 @@ const MultiOrders = () => {
   const [searchCustomerList, setSearchCustomerList] = useState([]);
   const [fullCustomerList, setFullCustomerList] = useState([]);
   // const [isSubmit, setIsSubmit] = useState(false);
+
+
+
+  const [isCustomerLoading, setIsCustomerLoading] = useState(false);
+  const [isDeliveryManLoading, setIsDeliveryManLoading] = useState(false);
+  const [isParcelTypeLoading, setIsParcelTypeLoading] = useState(false);
 
 
   useEffect(() => {
@@ -78,68 +84,93 @@ const MultiOrders = () => {
     //   // setNewarrayoflocation(prev => [...prev, { distance, duration, index }]);
     // }
 
-
-
-
-
-
-    const fetchData = async () => {
-      const customerRes = await getAllCustomers();
-      const deliveryMans = await getAllDeliveryMans({ createdByAdmin: true });
-      console.log("deliveryMans", deliveryMans);
-      const parcelTypeRes = await getMerchantParcelType();
-      if (parcelTypeRes.status) {
-        setParcelTypeDetail(parcelTypeRes.data);
+    const getParcelType = async () => {
+      try {
+        setIsParcelTypeLoading(true);
+        const parcelTypeRes = await getMerchantParcelType();
+    
+        if (parcelTypeRes.status) {
+          const nowdata = parcelTypeRes.data.filter((type) => type.status === "ENABLE");
+          setParcelTypeDetail(nowdata);
+          setIsParcelTypeLoading(true);
+        }        
+      } catch (error) {
+        console.error("Error fetching parcel types:", error);
+      } finally {
+        setIsParcelTypeLoading(false);
       }
+    }
 
-      const deliveryManRes = await getDeliveryMan();
-      if (deliveryManRes.data || deliveryMans.data) {
-        // Filter active delivery men from first source
-        const activeDeliveryMen =
-          deliveryManRes.data?.filter((man) => man.status !== "DISABLE" && man.trashed !== true) || [];
-        const formattedAdminDeliveryMen =
-          deliveryMans.data?.map((man) => ({
+    const getCustomer = async () => {
+      try {
+        setIsCustomerLoading(true);
+        const customerRes = await getAllCustomers();
+        if (customerRes?.status) {
+          const filteredCustomer = customerRes.data.filter(customer => !customer.trashed);
+          setCustomer(filteredCustomer);
+          setFullCustomerList(filteredCustomer);
+          setIsCustomerLoading(false);
+        }
+        setIsCustomerLoading(false);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+      }
+    }
+
+    const getDeliveryMandata  = async () => {
+      try {
+        setIsDeliveryManLoading(true);
+        const deliveryMans = await getAllDeliveryMans({ createdByAdmin: true });
+        const deliveryManRes = await getDeliveryMan();
+        if (deliveryManRes.data || deliveryMans.data) {
+          const activeDeliveryMen = deliveryManRes.data?.filter((man) => man.status !== "DISABLE" && !man.trashed) || [];
+          const formattedAdminDeliveryMen = deliveryMans.data?.map((man) => ({
             ...man,
-            firstName: man.firstName || man.name?.split(" ")[0] || undefined,
-            lastName:
-              man.lastName ||
-              man.name?.split(" ").slice(1).join(" ") ||
-              undefined,
+            firstName: man.firstName || man.name?.split(" ")[0],
+            lastName: man.lastName || man.name?.split(" ").slice(1).join(" "),
             _id: man._id,
             email: man.email,
             contactNumber: man.contactNumber,
             status: man.status || "ENABLE",
           })) || [];
 
-        setLengthofdeliverymen(activeDeliveryMen.length);
-        const mergedDeliveryMen = [
-          ...activeDeliveryMen,
-          ...formattedAdminDeliveryMen,
-        ].reduce((acc, current) => {
-          const isDuplicate = acc.find(
-            (item) => item._id === current._id || item.email === current.email
-          );
-          if (!isDuplicate && current.status !== "DISABLE") {
-            return acc.concat([current]);
-          }
-          return acc;
-        }, []);
+          setLengthofdeliverymen(activeDeliveryMen.length);
+          const mergedDeliveryMen = [
+            ...activeDeliveryMen,
+            ...formattedAdminDeliveryMen,
+          ].reduce((acc, current) => {
+            const isDuplicate = acc.find((item) => item._id === current._id || item.email === current.email);
+            if (!isDuplicate && current.status !== "DISABLE") {
+              return acc.concat([current]);
+            }
+            return acc;
+          }, []);
 
-        setDeliveryMen(mergedDeliveryMen);
+          setDeliveryMen(mergedDeliveryMen);
+        }
+      } catch (error) {
+        console.error("Error fetching delivery men:", error);
+      } finally {
+        setIsDeliveryManLoading(false);
       }
-      console.log(customerRes);
+    }
 
-      if (customerRes?.status) {
-        const filteredCustomer = customerRes?.data?.filter(customer => customer.trashed == false);
-        console.log(filteredCustomer);
-        setCustomer(filteredCustomer || []);
-        setFullCustomerList(filteredCustomer || []);
-      }
+
+
+
+
+    const fetchData = async () => {
+      getParcelType(),
+      getCustomer(), 
+      getDeliveryMandata()
       setIsLoading(false);
     };
 
     fetchData();
   }, []);
+
+
+  
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 3959; // Radius of the earth in miles
     const dLat = deg2rad(lat2 - lat1);
@@ -552,16 +583,7 @@ const MultiOrders = () => {
 
   return (
     <>
-      {isLoading ? (
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "100vh" }}
-        >
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </div>
-      ) : (
+   
         <Formik
           enableReinitialize={true}
           initialValues={initialValues}
@@ -604,7 +626,7 @@ const MultiOrders = () => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
-                              ...prev.pickupDetails,
+                              ...prev?.pickupDetails,
                               dateTime: e.target.value
                             }
                           }));
@@ -632,7 +654,7 @@ const MultiOrders = () => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
-                              ...prev.pickupDetails,
+                              ...prev?.pickupDetails,
                               postCode: e.target.value
                             }
                           }));
@@ -665,7 +687,7 @@ const MultiOrders = () => {
                             setInitialValues(prev => ({
                               ...prev,
                               pickupDetails: {
-                                ...prev.pickupDetails,
+                                ...prev?.pickupDetails,
                                 address: e.target.value
                               }
                             }));
@@ -741,7 +763,7 @@ const MultiOrders = () => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
-                              ...prev.pickupDetails,
+                              ...prev?.pickupDetails,
                               mobileNumber: e.target.value
                             }
                           }));
@@ -774,7 +796,7 @@ const MultiOrders = () => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
-                              ...prev.pickupDetails,
+                              ...prev?.pickupDetails,
                               name: e.target.value
                             }
                           }));
@@ -806,7 +828,7 @@ const MultiOrders = () => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
-                              ...prev.pickupDetails,
+                              ...prev?.pickupDetails,
                               email: e.target.value
                             }
                           }));
@@ -827,7 +849,7 @@ const MultiOrders = () => {
                         as="textarea"
                         name="pickupDetails.description"
                         className="form-control h-[70px]"
-                        placeholder="Pickup Instraction"
+                        placeholder="Pickup Instructions"
                         rows="3"
                         style={{
                           border: "1px solid #E6E6E6",
@@ -839,7 +861,7 @@ const MultiOrders = () => {
                           setInitialValues(prev => ({
                             ...prev,
                             pickupDetails: {
-                              ...prev.pickupDetails,
+                              ...prev?.pickupDetails,
                               description: e.target.value
                             }
                           }));
@@ -877,16 +899,16 @@ const MultiOrders = () => {
                         }}
                       >
                         <option value="" className="text-gray-500">
-                          Select Delivery Man
+                          {isDeliveryManLoading ? "Loading..." : "Select Delivery Man"}
                         </option>
                         {deliveryMan.map((data, index) => {
                           let distance = "";
-                          if (currentLocation && data.location) {
+                          if (currentLocation && data?.location) {
                             distance = calculateDistance(
-                              currentLocation.latitude,
-                              currentLocation.longitude,
-                              data.location?.coordinates?.[1],
-                              data.location?.coordinates?.[0]
+                              currentLocation?.latitude,
+                              currentLocation?.longitude,
+                              data?.location?.coordinates?.[1],
+                              data?.location?.coordinates?.[0]
                             );
                           }
 
@@ -903,14 +925,14 @@ const MultiOrders = () => {
                                 </option>
                                 <option
                                   key={`${index}-data`}
-                                  value={data._id}
+                                  value={data?._id}
                                   className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between mx-auto"
                                 >
                                   <span
                                     style={{ float: "left" }}
-                                  >{`${data.firstName} ${data.lastName}`}</span>
-                                  <span style={{ float: "right" }}>
-                                    {distance ? `${distance} miles away` : ""}
+                                  >{`${data?.firstName} ${data?.lastName}`}</span>
+                                  <span style={{ float: "right"  ,marginLeft:"20px"}}>
+                                    {distance ? `- (${distance} miles away)` : ""}
                                   </span>
                                 </option>
                               </>
@@ -919,12 +941,12 @@ const MultiOrders = () => {
                           return (
                             <option
                               key={index}
-                              value={data._id}
+                              value={data?._id}
                               className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between"
                             >
                               <span
                                 style={{ float: "left", width: "65%" }}
-                              >{`${data.firstName} ${data.lastName}`}</span>
+                              >{`${data?.firstName} ${data?.lastName}`}</span>
                               <span
                                 style={{
                                   display: "inline-block",
@@ -935,7 +957,7 @@ const MultiOrders = () => {
                                 style={{
                                   float: "right",
                                   width: "30%",
-                                  marginLeft: "5%",
+                                  marginLeft: "20px",
                                 }}
                               >
                                 {distance ? `- (${distance} miles away)` : ""}
@@ -951,7 +973,7 @@ const MultiOrders = () => {
                       />
                     </div>
                     {
-                      values.deliveryDetails.map((data, index) => (
+                      values?.deliveryDetails?.map((data, index) => (
                         <div className={`row shadow  rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index}>
 
                           <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
@@ -965,7 +987,7 @@ const MultiOrders = () => {
                                   <button className="btn btn-danger" onClick={() => {
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.filter((_, i) => i !== index)
+                                      deliveryDetails: prev?.deliveryDetails?.filter((_, i) => i !== index)
                                     }));
                                   }} disabled={isOrderCreated}>
                                     Remove
@@ -986,19 +1008,19 @@ const MultiOrders = () => {
                                 styles={{
                                   control: (base) => ({ ...base, height: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
                                 }}
-                                options={searchCustomerList.map((cust) => ({
-                                  value: cust._id,
-                                  label: ` ${cust.NHS_Number} - ${cust.firstName}  ${cust.lastName}  -  ${cust.address}  -  ${cust.postCode}`,
+                                options={searchCustomerList?.map((cust) => ({
+                                  value: cust?._id,
+                                  label: ` ${cust?.NHS_Number} - ${cust?.firstName}  ${cust?.lastName}  -  ${cust?.address}  -  ${cust?.postCode}`,
                                   ...cust,
                                 }))}
-                                placeholder="Select Customer"
+                                placeholder={isCustomerLoading ? "Loading..." : "Select Customer"}
                                 isClearable
                                 components={{ MenuList }}
                                 isSearchable={true}
-                                filterOption={(option, inputValue) => filterOptions(inputValue, option.data)}
+                                filterOption={(option, inputValue) => filterOptions(inputValue, option?.data)}
                                 onInputChange={(inputValue) => {
                                   if (inputValue) {
-                                    const filteredOptions = fullCustomerList.filter(option => filterOptions(inputValue, option));
+                                    const filteredOptions = fullCustomerList?.filter(option => filterOptions(inputValue, option));
                                     const sortedOptions = sortOptions(filteredOptions, inputValue);
                                     setSearchCustomerList(sortedOptions);
                                   } else {
@@ -1010,32 +1032,32 @@ const MultiOrders = () => {
                                   if (selectedOption) {
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, customerId: selectedOption.value } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, customerId: selectedOption?.value } : item)
                                     }));
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: selectedOption.address } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, address: selectedOption?.address } : item)
                                     }));
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: selectedOption.mobileNumber } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, mobileNumber: selectedOption?.mobileNumber } : item)
                                     }));
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: selectedOption.email } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, email: selectedOption?.email } : item)
                                     }));
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: selectedOption.postCode } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, postCode: selectedOption?.postCode } : item)
                                     }));
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: selectedOption.firstName + " " + selectedOption.lastName } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, name: selectedOption?.firstName + " " + selectedOption?.lastName } : item)
                                     }));
                                   } else {
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: "", mobileNumber: "", email: "", postCode: "", name: "" } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, address: "", mobileNumber: "", email: "", postCode: "", name: "" } : item)
                                     }));
                                   }
                                 }}
@@ -1058,7 +1080,7 @@ const MultiOrders = () => {
                                 if (isValueNumber) {
                                   setInitialValues(prev => ({
                                     ...prev,
-                                    deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: Number(value?value:"0") } : item)
+                                    deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, parcelsCount: Number(value?value:"0") } : item)
                                   }));
                                 }
                               }
@@ -1097,7 +1119,7 @@ const MultiOrders = () => {
                                   onChange={(e) => {
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value } : item)
                                     }));
                                   }}
                                   value="true"
@@ -1120,7 +1142,7 @@ const MultiOrders = () => {
                                   onChange={(e) => {
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value, paymentCollectionRupees: 0 } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value, paymentCollectionRupees: 0 } : item)
                                     }));
                                   }}
                                   value="false"
@@ -1152,7 +1174,7 @@ const MultiOrders = () => {
                                   const value = e.target.value;
                                     setInitialValues(prev => ({
                                       ...prev,
-                                      deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, paymentCollectionRupees: Number(value?value:"0") } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, paymentCollectionRupees: Number(value?value:"0") } : item)
                                     }));
                                 }}
                                 onWheel={(e) => e.currentTarget.blur()}
@@ -1183,7 +1205,7 @@ const MultiOrders = () => {
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: e.target.value } : item)
+                                    deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, name: e.target.value } : item)
                                 }));
                               }}
                               style={{
@@ -1216,7 +1238,7 @@ const MultiOrders = () => {
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: e.target.value } : item)
+                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, email: e.target.value } : item)
                                 }));
                               }}
                               style={{
@@ -1246,7 +1268,7 @@ const MultiOrders = () => {
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: e.target.value } : item)
+                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, mobileNumber: e.target.value } : item)
                                 }));
                               }}
                               style={{
@@ -1277,11 +1299,11 @@ const MultiOrders = () => {
                                 value: type.parcelTypeId,
                                 label: type.label
                               }))}
-                              placeholder="Select Multiple Parcel Types"
+                              placeholder={isParcelTypeLoading ? "Loading..." : "Select Parcel Types"}
                               onChange={(selectedOptions) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) =>
+                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) =>
                                     i === index ? { ...item, parcelType2: selectedOptions.map(opt => opt.value) } : item
                                   )
                                 }));
@@ -1289,6 +1311,16 @@ const MultiOrders = () => {
                               isMulti={true}
                               isDisabled={isOrderCreated}
                             />
+                            {
+                            !isParcelTypeLoading &&  parcelTypeDetail.length === 0 && (
+                                <Link
+                                  to="/multi-order-parcel"
+                                  className="btn btn-primary mt-2"
+                                >
+                                  Go to create Parcel Types
+                                </Link>
+                              )
+                            }
                             <ErrorMessage
                               name={`deliveryDetails.${index}.parcelType2`}
                               component="div"
@@ -1309,7 +1341,7 @@ const MultiOrders = () => {
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: e.target.value } : item)
+                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, postCode: e.target.value } : item)
                                 }));
                               }}
                               placeholder="Delivery Postcode"
@@ -1334,7 +1366,7 @@ const MultiOrders = () => {
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: e.target.value } : item)
+                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, address: e.target.value } : item)
                                 }));
                               }}
                               placeholder="Delivery Address"
@@ -1363,7 +1395,7 @@ const MultiOrders = () => {
                               onChange={(e) => {
                                 setInitialValues(prev => ({
                                   ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: e.target.value } : item)
+                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, description: e.target.value } : item)
                                 }));
                               }}
                               style={{
@@ -1389,8 +1421,8 @@ const MultiOrders = () => {
 
                         setInitialValues(prev => ({
                           ...prev,
-                          deliveryDetails: [...prev.deliveryDetails, {
-                            subOrderId: prev.deliveryDetails.length + 1,
+                          deliveryDetails: [...prev?.deliveryDetails, {
+                            subOrderId: prev?.deliveryDetails?.length + 1,
                             address: "",
                             cashOnDelivery: "false",
                             description: "",
@@ -1449,7 +1481,6 @@ const MultiOrders = () => {
             );
           }}
         </Formik>
-      )}
     </>
   );
 };

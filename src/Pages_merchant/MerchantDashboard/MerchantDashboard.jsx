@@ -29,6 +29,7 @@ import Departedorders from "../../assets_mercchant/Departed orders.png";
 import Pickedorders from "../../assets_mercchant/Picked orders.png";
 import DeliveryMan from "../../assets_mercchant/DeliveryMan.png";
 import Loader from "../../Components_admin/Loader/Loader";
+import { Link } from "react-router-dom";
 
 const MerchantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -96,61 +97,74 @@ const MerchantDashboard = () => {
   const handleOpenModal = () => {
     setShowSubscriptionModel(true);
   }; // Function to close the modal
-
-
-
 const arrayofdata=[
   {
     title:"Total orders",
     icon:Totalorders,
-    value:counts?.maintotelOrders || 0
+    value:counts?.maintotelOrders || 0,
+    link:"/all-multi-order"
   },
   {
     title:"Total sub orders",
     icon:Totalorders,
-    value:counts?.totalOrders || 0
+    value:counts?.totalOrders || 0,
+    link:"/all-multi-order"
   },
   {
     title:"Assigned orders",
     icon:Assignedorders,
-    value:counts?.assignedOrders || 0
+    value:counts?.assignedOrders || 0,
+    link:"/all-multi-order?status=Assigned"
   },
   {
     title:"Arrived orders",
     icon:Arrivedorders,
-    value:counts?.arrivedOrders || 0
+    value:counts?.arrivedOrders || 0,
+    link:"/all-multi-order?status=Arrived"
   },
   {
     title:"Picked orders",
     icon:Pickedorders,
-    value:counts?.pickedOrders || 0
+    value:counts?.pickedOrders || 0,
+    link:"/all-multi-order?status=Picked_Up"
   },
   {
     title:"Departed orders",
     icon:Departedorders,
-    value:counts?.departedOrders || 0
+    value:counts?.departedOrders || 0,
+    link:"/all-multi-order?status=Departed"
   },
 
   {
     title:"Delivered orders",
       icon:totalorder,
-    value:counts?.deliveredOrders || 0
+    value:counts?.deliveredOrders || 0,
+    link:"/all-multi-order?status=Delivered"
   },
  
+  // {
+  //   title:"Cancelled orders",
+  //   icon:Cancelledorders,
+  //   value:counts?.cancelledOrders || 0
+  // },
+
   {
-    title:"Cancelled orders",
+    title:"Unassigned orders",
     icon:Cancelledorders,
-    value:counts?.cancelledOrders || 0
+    value:counts?.unassignedOrders || 0,
+    link:"/all-multi-order?status=Unassigned"
   },
   {
     title:"Total customer",
     icon:Totalorders,
-    value:counts?.totelcustomer || 0
+    value:counts?.totelcustomer || 0,
+    link:"/all-customer"
   },
   {
     title:"Delivery Men",
     icon:DeliveryMan,
-    value:counts?.deliveryMan || 0
+    value:counts?.deliveryMan || 0,
+    link:"/delivery-man"
   },
 
   // {
@@ -208,7 +222,7 @@ const arrayofdata=[
             >
               
               {arrayofdata.map((item,index)=>(
-              <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
+              <Link to={item.link} className="col-xxl-3 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-3 d-flex justify-content-center align-items-center">
                 <div className="box rounded-2 p-4">
                   <div className="d-flex align-items-center justify-content-between pb-4">
                     <img
@@ -234,7 +248,7 @@ const arrayofdata=[
                   </h5>
                   <p className="box-para">{item.title}</p>
                 </div>
-              </div>
+              </Link>
               ))}
               
             </div>

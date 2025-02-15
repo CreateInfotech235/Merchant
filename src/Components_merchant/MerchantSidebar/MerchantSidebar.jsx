@@ -289,7 +289,7 @@ const MerchantSidebar = () => {
                     <Link to="/all-multi-order" onClick={() => setSidebarVisible(false)}>All Orders</Link>
                   </li>
                   <li className={currentPath === "/trashed-multi-order" ? "active" : ""}>
-                    <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trashed Order</Link>
+                    <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trash Orders</Link>
                   </li>
                   {/* <li className={currentPath === "/multi-order-parcel" ? "active" : ""}>
                     <Link to="/multi-order-parcel" onClick={() => setSidebarVisible(false)}>Multi Order Parcel Details</Link>
@@ -386,7 +386,7 @@ const MerchantSidebar = () => {
                     <Link to="/add-customer" onClick={() => setSidebarVisible(false)} >Create Customer</Link>
                   </li>
                   <li className={currentPath === "/trashed-customer" ? "active" : ""}>
-                    <Link to="/trashed-customer" onClick={() => setSidebarVisible(false)}>Trashed Customer</Link>
+                    <Link to="/trashed-customer" onClick={() => setSidebarVisible(false)}>Trash Customer</Link>
                   </li>
                 </ul>
               </div>
@@ -419,7 +419,7 @@ const MerchantSidebar = () => {
                     <Link to="/delivery-man-location" onClick={() => setSidebarVisible(false)}>Delivery Men Location</Link>
                   </li>
                   <li className={currentPath === "/delivery-man-trashed" ? "active" : ""}>
-                    <Link to="/delivery-man-trashed" onClick={() => setSidebarVisible(false)}>Trashed Delivery Men</Link>
+                    <Link to="/delivery-man-trashed" onClick={() => setSidebarVisible(false)}>Trash Delivery Men</Link>
                   </li>
                 </ul>
               </div>

@@ -53,8 +53,6 @@ const MultiOrder = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [isUpdate, setIsUpdate] = useState(false);
   console.log("isUpdate", isUpdate);
-  
-
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -75,6 +73,8 @@ const MultiOrder = () => {
 
         // Calculate initial filtered orders based on itemsPerPage
         const initialOrders = nonTrashedOrders.slice(0, itemsPerPage);
+      console.log("initialOrders15", initialOrders);
+      
         setFilteredOrders(initialOrders);
 
         // Calculate total pages based on non-trashed orders
@@ -95,7 +95,13 @@ const MultiOrder = () => {
   }, [currentPage, itemsPerPage]);
 
   useEffect(() => {
-    fetchData();
+    const fetchDataWithDelay = async () => {
+      console.log("showModel123", showModel);
+      console.log("isUpdate123", isUpdate);
+      await fetchData();
+    };
+    const timer = setTimeout(fetchDataWithDelay, 1000); // Delay of 1 second
+    return () => clearTimeout(timer); // Cleanup the timer on unmount
   }, [showModel, isUpdate]);
 
   const closeEditModal = () => {
@@ -347,6 +353,16 @@ const MultiOrder = () => {
     }
   };
 
+  useEffect(() => {
+    if(!loading){
+      setTimeout(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+        setFilterStatus(status.toUpperCase());
+        filterOrders(searchQuery);
+      }, 10);
+    }
+  }, [loading]);
   return (
     <div >
       <div className="d-flex justify-content-between align-items-center pb-3 nav-bar">
@@ -428,8 +444,7 @@ const MultiOrder = () => {
               <label htmlFor="status" className="text-sm font-medium text-gray-700">Status:</label>
               <select
                 id="status"
-                value={filterStatus}
-                onChange={(e) => { setFilterStatus(e.target.value) }}
+                value={filterStatus}      onChange={(e) => { setFilterStatus(e.target.value) }}
                 className="form-select rounded-md border-gray-300 shadow-sm h-9"
               >
                 <option value="all">All</option>

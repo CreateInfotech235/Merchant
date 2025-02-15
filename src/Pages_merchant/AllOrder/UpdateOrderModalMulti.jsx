@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ErrorMessage, Formik, Field, Form } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Modal, Button, Spinner } from "react-bootstrap";
 import {
   getAllDeliveryMans,
@@ -1178,6 +1178,15 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             }}
                             isMulti={true}
                           />
+                          {parcelTypeDetail.length === 0 && (
+                            <Link
+                            
+                                  to="/multi-order-parcel"
+                                  className="btn btn-primary mt-2"
+                                >
+                                  Go to create Parcel Types
+                                </Link>
+                          )}
                           <ErrorMessage
                             name={`deliveryDetails.${index}.parcelType2`}
                             component="div"
