@@ -33,14 +33,14 @@ function Tracking({ Login, setLogin }) {
         at every stage of its journey. Simply enter your tracking number to get
         real-time updates on your parcel’s location.
       </p>
-      <div className="mt-6 sm:mt-8">
-        <Link to="/about">
-          <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-md text-sm sm:text-base lg:text-lg">
-            Get Started
-            <span className="ml-2">&rarr;</span>
-          </button>
-        </Link>
-      </div>
+        {/* <div className="mt-6 sm:mt-8">
+          <Link to="/about">
+            <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-md text-sm sm:text-base lg:text-lg">
+              Get Started
+              <span className="ml-2">&rarr;</span>
+            </button>
+          </Link>
+        </div> */}
     </div>
 
     {/* Image Section */}

@@ -158,6 +158,7 @@ import CommonComponent from "./Pages_admin/common-component/common-component";
 import { Tr } from "react-flags-select";
 import DeliveryPersonTracking from "./Pages_merchant/AllOrder/tr";
 import Billing from "./Pages_merchant/Billing/AllBilling";
+import Services from "./Pages_web/Services/Services";
 
 
 function App() {
@@ -543,6 +544,14 @@ function App() {
           element={
             <Formate Login={islogin} useData={userData}>
               <Contact />
+            </Formate>
+          }
+        />
+        <Route
+          path="/Services"
+          element={
+            <Formate Login={islogin} useData={userData}>
+              <Services />
             </Formate>
           }
         />

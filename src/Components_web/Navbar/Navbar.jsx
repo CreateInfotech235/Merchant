@@ -26,6 +26,7 @@ function Navbar({ Login, userData }) {
     { to: "/tracking", text: "Tracking" },
     { to: "/about", text: "About" },
     { to: "/contact", text: "Contact" },
+    { to: "/Services", text: "Services" },
   ];
 
   const getLinkClass = (path, isMobile = false) => {
@@ -116,7 +117,7 @@ function Navbar({ Login, userData }) {
               <Link to="/" className="flex-shrink-0">
                 <img
                   src={HeaderLogo}
-                  className="h-[70px] md:h-[80px]"
+                  className={`h-[70px] md:h-[80px] ${window.innerWidth<=768?"h-[45px] md:h-[60px]":"h-[70px] md:h-[80px]"}`}
                   alt="Logo"
                 />
               </Link>
@@ -124,7 +125,7 @@ function Navbar({ Login, userData }) {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center">
-              <div className="flex lg:space-x-8 md:space-x-4">
+              <div className="flex lg:space-x-8 md:space-x-2 " style={{fontSize:window.innerWidth<=768?"14px":"16px"}}>
                 {navLinks.map((link) => (
                   <Link
                     key={link.to}
@@ -197,19 +198,23 @@ function Navbar({ Login, userData }) {
                 </div>
               ) : (
                 <>
+                <div style={{display:window.innerWidth<768 && window.innerWidth>767?"block":"flex"}}>
                   <Link
                     to="/login"
-                    className="flex items-center text-gray-900 hover:text-blue-700 lg:px-3 md:px-2 px-2 py-1 ml-5"
+                    style={{marginBottom:window.innerWidth<768?"10px":"0px"}}
+                    className="flex items-center text-gray-900 hover:text-blue-700 lg:px-3 md:px-2 px-2 py-1 ml-1"
                   >
                     <img src={LoginImg} className="h-6 w-6 mr-1" alt="" />
                     <span className="whitespace-nowrap">Login</span>
                   </Link>
                   <Link
                     to="/register"
-                    className="bg-gradient-to-b from-blue-700 to-blue-800 text-white px-[10px] py-[5px] md:px-[20px] md:py-[7px] rounded-lg hover:bg-blue-800 whitespace-nowrap ml-5"
+                    style={{margintop:window.innerWidth<768?"10px":"0px"}}
+                    className=" bg-gradient-to-b from-blue-700 to-blue-800 text-white px-[10px] py-[5px] md:px-[20px] md:py-[7px] rounded-lg hover:bg-blue-800 whitespace-nowrap ml-5"
                   >
                     Register
                   </Link>
+                </div>
                 </>
               )}
 

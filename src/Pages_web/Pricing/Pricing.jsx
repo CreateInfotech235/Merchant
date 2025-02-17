@@ -110,14 +110,14 @@ function Pricing() {
               services. Our pricing is based on factors such as parcel size,
               delivery speed, and destination.
             </p>
-            <div className="mt-6 sm:mt-8 md:mt-10 flex justify-center lg:justify-start">
+            {/* <div className="mt-6 sm:mt-8 md:mt-10 flex justify-center lg:justify-start">
               <Link to="/about">
                 <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
                   Get Started
                   <span className="ml-2">&rarr;</span>
                 </button>
               </Link>
-            </div>
+            </div> */}
           </div>
           {/* Image Content */}
           <div className="mt-8 lg:mt-0 max-w-full lg:max-w-lg">

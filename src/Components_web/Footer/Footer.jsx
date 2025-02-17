@@ -22,7 +22,7 @@ function Footer() {
                 />
                 <button
                   type="submit"
-                  className="mt-3 sm:mt-0 sm:ml-2 py-2 px-6 bg-[#1D1D37] text-white font-bold hover:bg-[#F95C19] text-sm"
+                  className="sm:mt-0 sm:ml-2 py-2 px-6 bg-[#1D1D37] text-white font-bold hover:bg-[#F95C19] text-sm"
                 >
                   SUBSCRIBE!
                 </button>

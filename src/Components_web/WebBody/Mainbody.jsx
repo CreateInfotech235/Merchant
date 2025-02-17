@@ -205,14 +205,14 @@ function Mainbody() {
                 or a large shipment, our team ensures timely and safe delivery
                 with tracking options for peace of mind.
               </p>
-              <div className="mt-6 sm:mt-8">
+              {/* <div className="mt-6 sm:mt-8">
                <Link to="/about">
                 <button className="bg-[#FF6600] hover:bg-[#e65500] transition-colors text-white px-6 py-3 rounded-md">
                   Get Started
                   <span className="ml-2">&rarr;</span>
                 </button>
                 </Link>
-              </div>
+              </div> */}
             </div>
 
             {/* Right Image */}
