@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 import { FixedSizeList as List } from 'react-window';
 
+
 const MultiOrders = () => {
   const naviagte = useNavigate();
 
@@ -38,15 +39,28 @@ const MultiOrders = () => {
   const [isCustomerLoading, setIsCustomerLoading] = useState(false);
   const [isDeliveryManLoading, setIsDeliveryManLoading] = useState(false);
   const [isParcelTypeLoading, setIsParcelTypeLoading] = useState(false);
+  const [isclicked, setIsclicked] = useState(false);
 
 
   useEffect(() => {
     setSearchCustomerList(customer);
   }, [customer]);
+  
   useEffect(() => {
     console.log("initialValues", initialValues);
     console.log("newarrayoflocation", newarrayoflocation);
   }, [initialValues, newarrayoflocation]);
+
+
+
+  const submitHandler = () => {
+    setIsclicked(true);
+    setTimeout(() => {
+      setIsclicked(false);
+    }, 10);
+  }
+
+
 
   useEffect(() => {
     // Get current location
@@ -88,12 +102,12 @@ const MultiOrders = () => {
       try {
         setIsParcelTypeLoading(true);
         const parcelTypeRes = await getMerchantParcelType();
-    
+
         if (parcelTypeRes.status) {
           const nowdata = parcelTypeRes.data.filter((type) => type.status === "ENABLE");
           setParcelTypeDetail(nowdata);
           setIsParcelTypeLoading(true);
-        }        
+        }
       } catch (error) {
         console.error("Error fetching parcel types:", error);
       } finally {
@@ -117,7 +131,7 @@ const MultiOrders = () => {
       }
     }
 
-    const getDeliveryMandata  = async () => {
+    const getDeliveryMandata = async () => {
       try {
         setIsDeliveryManLoading(true);
         const deliveryMans = await getAllDeliveryMans({ createdByAdmin: true });
@@ -161,8 +175,8 @@ const MultiOrders = () => {
 
     const fetchData = async () => {
       getParcelType(),
-      getCustomer(), 
-      getDeliveryMandata()
+        getCustomer(),
+        getDeliveryMandata()
       setIsLoading(false);
     };
 
@@ -170,7 +184,7 @@ const MultiOrders = () => {
   }, []);
 
 
-  
+
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 3959; // Radius of the earth in miles
     const dLat = deg2rad(lat2 - lat1);
@@ -205,7 +219,7 @@ const MultiOrders = () => {
           );
           const data = await response.json();
 
-          // console.log(data);
+          console.log("lodata", data);
           if (data.results && data.results.length > 0) {
             const formattedAddress =
               data.results[0].formatted_address || "Unable to fetch address";
@@ -260,7 +274,7 @@ const MultiOrders = () => {
           },
           deliveryDetails: [{
             customerId: "",
-            subOrderId: 1,
+            // subOrderId: 1,
             parcelsCount: 1,
             paymentCollectionRupees: 0,
             location: {
@@ -338,7 +352,6 @@ const MultiOrders = () => {
 
 
   const onSubmit = async (values, { setFieldValue }) => {
-
     setIsOrderCreated(true);
     console.log("values", values);
     const timestamp = new Date(values.dateTime).getTime();
@@ -360,14 +373,10 @@ const MultiOrders = () => {
       return delivery.address;
     })
 
-
     const arrayofpostcode = values.deliveryDetails.map((delivery, index) => {
       return delivery.postCode;
     })
     const distancesAndDurations = []
-    // const deliverylocations =[]
-
-
 
     // get pickup location from address
     console.log(values.pickupDetails.address);
@@ -390,17 +399,10 @@ const MultiOrders = () => {
       if (data.results && data.results.length > 0) {
         console.log("pickupdata", data);
         const { lat, lng } = data.results[0].geometry.location;
+        console.log("lat", lat);
+        console.log("lng", lng);
         pickuplocation = { latitude: lat, longitude: lng };
-        console.log("pickuplocation", pickuplocation);
-        setInitialValues(prev => ({
-          ...prev,
-          pickupDetails: {
-            ...prev.pickupDetails,
-            location: { latitude: lat, longitude: lng }
-          }
-        }));
-        // setFieldValue("pickupDetails.location.latitude", lat);
-        // setFieldValue("pickupDetails.location.longitude", lng);
+        // Removed setInitialValues as we are using values directly
       } else {
         toast.error("Pickup address not found. Please try again.");
         setIsOrderCreated(false);
@@ -417,20 +419,19 @@ const MultiOrders = () => {
     const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
 
     if (arrayofaddress) {
-
-
-
       for (let index = 0; index < arrayofaddress.length; index++) {
         const address = arrayofaddress[index];
         console.log("address", `${address} ${arrayofpostcode[index]}`);
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            `${address} ${arrayofpostcode[index]}`
+            `${address.replace("-", ' ')} `
           )}&key=${apiKey}`
         );
+        // ${arrayofpostcode[index]}
         const data = await response.json();
+        console.log("data1451", data);
         if (data.results && data.results.length > 0) {
-          console.log("data", data);
+          console.log("data145", data);
           if (data.status !== "ZERO_RESULTS") {
             const deliverylocation = { latitude: data.results[0].geometry.location.lat, longitude: data.results[0].geometry.location.lng };
             distancesAndDurations.push({ status: true, distance: { value: 0, text: "0 km" }, duration: { value: 0, text: "0 min" } })
@@ -442,7 +443,6 @@ const MultiOrders = () => {
         } else {
           arrayoferror.push(`in order ${index + 1} delivery address (${address}) not found. Please try again.`);
         }
-
       }
 
       if (arrayoferror.length > 0) {
@@ -452,23 +452,20 @@ const MultiOrders = () => {
         return;
       }
 
-
-
-
       var payload = {
         dateTime: timestamp,
-        deliveryManId: initialValues.deliveryManId,
+        deliveryManId: values.deliveryManId, // Use values directly
         pickupDetails: {
-          ...initialValues.pickupDetails,
+          ...values.pickupDetails,
           dateTime: pictimestamp,
-          mobileNumber: initialValues.pickupDetails.mobileNumber.toString(),
+          mobileNumber: values.pickupDetails.mobileNumber.toString(),
           location: {
             latitude: pickuplocation.latitude,
             longitude: pickuplocation.longitude
           }
         },
         merchant: merchant._id,
-        deliveryDetails: initialValues.deliveryDetails.map((delivery, index) => ({
+        deliveryDetails: values.deliveryDetails.map((delivery, index) => ({
           customerId: delivery.customerId,
           address: delivery.address,
           cashOnDelivery: delivery.cashOnDelivery,
@@ -478,7 +475,7 @@ const MultiOrders = () => {
           name: delivery.name,
           parcelsCount: delivery.parcelsCount,
           postCode: delivery.postCode,
-          subOrderId: delivery.subOrderId,
+          // subOrderId: delivery.subOrderId,
           paymentCollectionRupees: delivery.paymentCollectionRupees,
           distance: distancesAndDurations[index]?.distance.value,
           duration: distancesAndDurations[index]?.duration.text,
@@ -536,10 +533,12 @@ const MultiOrders = () => {
     const inputParts = normalizedInput.split(' '); // Split the input by spaces
     const normalizedFname = option.firstName.toLowerCase();
     const normalizedLname = option.lastName.toLowerCase();
+    const normalizedNHS_Number = option.NHS_Number.toLowerCase();
+    const normalizedaddress = option.address.toLowerCase();
 
     // Check if any part of the input matches either the fname or lname
-    return inputParts.some(part => 
-      normalizedFname.includes(part) || normalizedLname.includes(part)
+    return inputParts.some(part =>
+      normalizedFname.includes(part) || normalizedLname.includes(part) || normalizedNHS_Number.includes(part) || normalizedaddress.includes(part)
     );
   };
 
@@ -583,144 +582,146 @@ const MultiOrders = () => {
 
   return (
     <>
-   
-        <Formik
-          enableReinitialize={true}
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              onSubmit(values, { setFieldValue });
+
+      <Formik
+        enableReinitialize={true}
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={onSubmit}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            onSubmit(values, { setFieldValue });
+          }
+        }}
+
+      >
+        {({ setFieldValue, values, errors }) => {
+          console.log("errors", errors);
+          if (Object.keys(errors).length > 0) {
+            if (isclicked) {
+              console.log("errors", errors);
+            
+              if (errors?.pickupDetails) {
+                document.getElementById("pickup-information")?.scrollIntoView({ behavior: 'smooth' });
+              } else if (errors?.deliveryManId) {
+                document.getElementById("delivery-information")?.scrollIntoView({ behavior: 'smooth' });
+              } else if (errors?.deliveryDetails) {
+                var fas = false;
+                errors?.deliveryDetails.forEach((error, index) => {
+                  if (error && !fas) {
+                    document.getElementById(`delivery-information-${index}`)?.scrollIntoView({ behavior: 'smooth' });
+                    fas = true;
+                  }
+                });
+              }
             }
-          }}
+          }
 
-        >
-          {({ setFieldValue, values }) => {
-            return (
-              <Form className="create-order">
+          return (
+            <Form className="create-order">
 
-                <div className="pick-up mt-2 row">
+              <div className="pick-up mt-2 row">
 
-                  {/* Pickup Information */}
-                  <div className="col-12 col-lg-12 row">
-                    <h3 className="fw-bold text-4xl pb-1 text-center">
-                      Pickup Information
-                    </h3>
+                {/* Pickup Information */}
+                <div className="col-12 col-lg-12 row">
+                  <h3 className="fw-bold text-4xl pb-1 text-center" id="pickup-information">
+                    Pickup Information
+                  </h3>
 
-                    {/* Pickup Details Fields */}
-                    <div className="input-error mb-1 col-3">
+                  {/* Pickup Details Fields */}
+                  <div className="input-error mb-1 col-3">
+                    <label className="fw-thin p-0 pb-1 ">
+                      Pickup Date & Time :
+                    </label>
+                    <Field
+                      type="datetime-local"
+                      name="pickupDetails.dateTime"
+                      className="form-control w-25% h-100%"
+                      placeholder="Date and Time"
+                      style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                      disabled={isOrderCreated}
+                      // onChange={(e) => {
+                      //   setFieldValue("pickupDetails.dateTime", e.target.value);
+                      // }}
+                    />
+                    <ErrorMessage
+                      name="pickupDetails.dateTime"
+                      component="div"
+                      className="error text-danger ps-2"
+                    />
+                  </div>
+
+                  <div className="input-error mb-1 col-3">
+                    <label className="fw-thin p-0 pb-1 ">
+                      Pickup Postcode :
+                    </label>
+                    <Field
+                      type="text"
+                      name="pickupDetails.postCode"
+                      className="form-control w-25% h-100%"
+                      placeholder="Pickup Postcode"
+                      style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                      disabled={isOrderCreated}
+                      // onChange={(e) => {
+                      //   setFieldValue("pickupDetails.postCode", e.target.value);
+                      // }}
+                    />
+                    <ErrorMessage
+                      name="pickupDetails.postCode"
+                      component="div"
+                      id="pickup-postcode-error"
+                      className="error text-danger ps-2"
+                    />
+                  </div>
+                  <div className="row col-6">
+                    <div className="input-error mb-1 col-9">
                       <label className="fw-thin p-0 pb-1 ">
-                        Pickup Date & Time :
-                      </label>
-                      <Field
-                        type="datetime-local"
-                        name="pickupDetails.dateTime"
-                        className="form-control w-25% h-100%"
-                        placeholder="Date and Time"
-                        // defaultValue={new Date().toISOString().slice(0, 16)}
-                        style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                        disabled={isOrderCreated}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev?.pickupDetails,
-                              dateTime: e.target.value
-                            }
-                          }));
-                        }}
-                      />
-                      <ErrorMessage
-                        name="pickupDetails.dateTime"
-                        component="div"
-                        className="error text-danger ps-2"
-                      />
-                    </div>
-
-                    <div className="input-error mb-1 col-3" >
-                      <label className="fw-thin p-0 pb-1 ">
-                        Pickup Postcode :
+                        Pickup Address :
                       </label>
                       <Field
                         type="text"
-                        name="pickupDetails.postCode"
+                        as="textarea"
+                        name="pickupDetails.address"
                         className="form-control w-25% h-100%"
-                        placeholder="Pickup Postcode"
-                        style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                        disabled={isOrderCreated}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev?.pickupDetails,
-                              postCode: e.target.value
-                            }
-                          }));
+                        placeholder="Pickup Address"
+                        style={{
+                          height: "3em",
+                          border: "1px solid #E6E6E6",
+                          fontSize: "15px"
                         }}
+                        disabled={isOrderCreated}
+                        // onChange={(e) => {
+                        //   setFieldValue("pickupDetails.address", e.target.value);
+                        // }}
                       />
                       <ErrorMessage
-                        name="pickupDetails.postCode"
+                        name="pickupDetails.address"
                         component="div"
                         className="error text-danger ps-2"
                       />
                     </div>
-                    <div className="row col-6">
-                      <div className="input-error mb-1 col-9">
-                        <label className="fw-thin p-0 pb-1 ">
-                          Pickup Address :
-                        </label>
-                        <Field
-                          type="text"
-                          as="textarea"
-                          name="pickupDetails.address"
-                          className="form-control w-25% h-100%"
-                          placeholder="Pickup Address"
-                          style={{
-                            height: "3em",
-                            border: "1px solid #E6E6E6",
-                            fontSize: "15px"
-                          }}
-                          disabled={isOrderCreated}
-                          onChange={(e) => {
-                            setInitialValues(prev => ({
-                              ...prev,
-                              pickupDetails: {
-                                ...prev?.pickupDetails,
-                                address: e.target.value
-                              }
-                            }));
-                          }}
-
-                        />
-                        <ErrorMessage
-                          name="pickupDetails.address"
-                          component="div"
-                          className="error text-danger ps-2"
-                        />
-                      </div>
-                      <div className="col-3 "  >
-                        {/* Use Current Location Button */}
-                        <button
-                          type="button"
-                          className="btn btn-primary rounded"
-                          style={{
-                            height: "3em",
-                            width: "w-100",
-                            borderRadius: "0 5px 5px 0",
-                            marginTop: "1.8em",
-                            lineHeight: "1"
-                          }}
-                          onClick={() => getCurrentLocation(setFieldValue)}
-                          disabled={isOrderCreated}
-                        >
-                          Use Current Location
-                        </button>
-                      </div>
+                    <div className="col-3 "  >
+                      {/* Use Current Location Button */}
+                      <button
+                        type="button"
+                        className="btn btn-primary rounded"
+                        style={{
+                          height: "3em",
+                          width: "w-100",
+                          borderRadius: "0 5px 5px 0",
+                          marginTop: "1.8em",
+                          lineHeight: "1"
+                        }}
+                        onClick={() => getCurrentLocation(setFieldValue)}
+                        disabled={isOrderCreated}
+                      >
+                        Use Current Location
+                      </button>
                     </div>
+                  </div>
 
-                    {/* <div className="input-error mb-1">
+                  {/* <div className="input-error mb-1">
                       <Field
                         as="select"
                         name="pickupDetails.countryCode"
@@ -745,742 +746,665 @@ const MultiOrders = () => {
                       />
                     </div> */}
 
-                    <div className="input-error mb-1 col-3">
-                      <label className="fw-thin p-0 pb-1 ">
-                        Pickup Contact Number :
-                      </label>
-                      <Field
-                        type="text"
-                        name="pickupDetails.mobileNumber"
-                        className="form-control"
-                        placeholder="Pickup Contact Number"
-                        style={{
-                          height: "3em",
-                          border: "1px solid #E6E6E6",
-                          borderRadius: "5px",
-                        }}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev?.pickupDetails,
-                              mobileNumber: e.target.value
-                            }
-                          }));
-                        }}
-                        disabled={isOrderCreated}
-                      />
-                      <ErrorMessage
-                        name="pickupDetails.mobileNumber"
-                        component="div"
-                        className="error text-danger ps-2"
-                      />
-                    </div>
-
-                    <div className="input-error mb-1 col-3">
-                      <label className="fw-thin p-0 pb-1 ">
-                        Merchant Name :
-                      </label>
-                      <Field
-                        type="text"
-                        name="pickupDetails.name"
-                        className="form-control"
-                        placeholder="Merchant Name"
-                        style={{
-                          height: "3em",
-                          border: "1px solid #E6E6E6",
-                          borderRadius: "5px",
-                        }}
-                        disabled={isOrderCreated}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev?.pickupDetails,
-                              name: e.target.value
-                            }
-                          }));
-                        }}
-                      />
-                      <ErrorMessage
-                        name="pickupDetails.name"
-                        component="div"
-                        className="error text-danger ps-2"
-                      />
-                    </div>
-
-                    <div className="input-error mb-1 col-3">
-                      <label className="fw-thin p-0 pb-1 ">
-                        Pickup Email :
-                      </label>
-                      <Field
-                        type="email"
-                        name="pickupDetails.email"
-                        className="form-control"
-                        placeholder="Pickup Email"
-                        style={{
-                          height: "3em",
-                          border: "1px solid #E6E6E6",
-                          borderRadius: "5px",
-                        }}
-                        disabled={isOrderCreated}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev?.pickupDetails,
-                              email: e.target.value
-                            }
-                          }));
-                        }}
-                      />
-                      <ErrorMessage
-                        name="pickupDetails.email"
-                        component="div"
-                        className="error text-danger ps-2"
-                      />
-                    </div>
-
-                    <div className="input-error mb-1 col-3">
-                      <label className="fw-thin p-0 pb-1 ">
-                        Pickup Instructions (Optional) :
-                      </label>
-                      <Field
-                        as="textarea"
-                        name="pickupDetails.description"
-                        className="form-control h-[70px]"
-                        placeholder="Pickup Instructions"
-                        rows="3"
-                        style={{
-                          border: "1px solid #E6E6E6",
-                          borderRadius: "5px",
-                          height: "3em",
-                        }}
-                        disabled={isOrderCreated}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev?.pickupDetails,
-                              description: e.target.value
-                            }
-                          }));
-                        }}
-                      />
-                      <ErrorMessage
-                        name="pickupDetails.description"
-                        component="div"
-                        className="error text-danger ps-2"
-                      />
-                    </div>
+                  <div className="input-error mb-1 col-3">
+                    <label className="fw-thin p-0 pb-1 ">
+                      Pickup Contact Number :
+                    </label>
+                    <Field
+                      type="text"
+                      name="pickupDetails.mobileNumber"
+                      className="form-control"
+                      placeholder="Pickup Contact Number"
+                      style={{
+                        height: "3em",
+                        border: "1px solid #E6E6E6",
+                        borderRadius: "5px",
+                      }}
+                      // onChange={(e) => {
+                      //   setFieldValue("pickupDetails.mobileNumber", e.target.value);
+                      // }}
+                      disabled={isOrderCreated}
+                    />
+                    <ErrorMessage
+                      name="pickupDetails.mobileNumber"
+                      component="div"
+                      className="error text-danger ps-2"
+                    />
                   </div>
-                  {/* Delivery Information */}
-                  <div className="col-12 col-lg-12 mt-2">
-                    <h3 className="fw-bold text-4xl pb-1 text-center">
-                      Delivery Information
-                    </h3>
-                    <div className="input-error col-12 col-sm-6 mb-1">
-                      <label className="fw-thin p-0 pb-1 ">
-                        Select Delivery Man :
-                      </label>
-                      <Field
-                        as="select"
-                        name={`deliveryManId`}
-                        className="w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            deliveryManId: e.target.value
-                          }));
-                        }}
-                        disabled={isOrderCreated}
-                        style={{
-                          backgroundColor: isOrderCreated ? "#e9ecef" : "white",
-                        }}
-                      >
-                        <option value="" className="text-gray-500">
-                          {isDeliveryManLoading ? "Loading..." : "Select Delivery Man"}
-                        </option>
-                        {deliveryMan.map((data, index) => {
-                          let distance = "";
-                          if (currentLocation && data?.location) {
-                            distance = calculateDistance(
-                              currentLocation?.latitude,
-                              currentLocation?.longitude,
-                              data?.location?.coordinates?.[1],
-                              data?.location?.coordinates?.[0]
-                            );
-                          }
 
-                          if (lengthofdeliverymen === index) {
-                            return (
-                              <>
-                                <option
-                                  key={index}
-                                  value={"admin"}
-                                  className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
-                                  disabled={true}
-                                >
-                                  Admin
-                                </option>
-                                <option
-                                  key={`${index}-data`}
-                                  value={data?._id}
-                                  className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between mx-auto"
-                                >
-                                  <span
-                                    style={{ float: "left" }}
-                                  >{`${data?.firstName} ${data?.lastName}`}</span>
-                                  <span style={{ float: "right"  ,marginLeft:"20px"}}>
-                                    {distance ? `- (${distance} miles away)` : ""}
-                                  </span>
-                                </option>
-                              </>
-                            );
-                          }
-                          return (
-                            <option
-                              key={index}
-                              value={data?._id}
-                              className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between"
-                            >
-                              <span
-                                style={{ float: "left", width: "65%" }}
-                              >{`${data?.firstName} ${data?.lastName}`}</span>
-                              <span
-                                style={{
-                                  display: "inline-block",
-                                  width: "100px",
-                                }}
-                              ></span>
-                              <span
-                                style={{
-                                  float: "right",
-                                  width: "30%",
-                                  marginLeft: "20px",
-                                }}
-                              >
-                                {distance ? `- (${distance} miles away)` : ""}
-                              </span>
-                            </option>
-                          );
-                        })}
-                      </Field>
-                      <ErrorMessage
-                        name={`deliveryManId`}
-                        component="div"
-                        className="error text-danger ps-2"
-                      />
-                    </div>
-                    {
-                      values?.deliveryDetails?.map((data, index) => (
-                        <div className={`row shadow  rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index}>
+                  <div className="input-error mb-1 col-3">
+                    <label className="fw-thin p-0 pb-1 ">
+                      Merchant Name :
+                    </label>
+                    <Field
+                      type="text"
+                      name="pickupDetails.name"
+                      className="form-control"
+                      placeholder="Merchant Name"
+                      style={{
+                        height: "3em",
+                        border: "1px solid #E6E6E6",
+                        borderRadius: "5px",
+                      }}
+                      disabled={isOrderCreated}
+                      // onChange={(e) => {
+                      //   setFieldValue("pickupDetails.name", e.target.value);
+                      // }}
+                    />
+                    <ErrorMessage
+                      name="pickupDetails.name"
+                      component="div"
+                      className="error text-danger ps-2"
+                    />
+                  </div>
 
-                          <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
-                            <div>
+                  <div className="input-error mb-1 col-3">
+                    <label className="fw-thin p-0 pb-1 ">
+                      Pickup Email :
+                    </label>
+                    <Field
+                      type="email"
+                      name="pickupDetails.email"
+                      className="form-control"
+                      placeholder="Pickup Email"
+                      style={{
+                        height: "3em",
+                        border: "1px solid #E6E6E6",
+                        borderRadius: "5px",
+                      }}
+                      disabled={isOrderCreated}
+                      // onChange={(e) => {
+                      //   setFieldValue("pickupDetails.email", e.target.value);
+                      // }}
+                    />
+                    <ErrorMessage
+                      name="pickupDetails.email"
+                      component="div"
+                      className="error text-danger ps-2"
+                    />
+                  </div>
 
-                              {`Delivery Information ${index + 1}`}
-                            </div>
-                            <div>
-                              {
-                                index > 0 && (
-                                  <button className="btn btn-danger" onClick={() => {
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.filter((_, i) => i !== index)
-                                    }));
-                                  }} disabled={isOrderCreated}>
-                                    Remove
-                                  </button>
-                                )
-                              }
-                            </div>
-                          </div>
-                          <div className="input-error mb-1 col-5 ">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Select Customer :
-                            </label>
-                            <div>
-                              <Select
-                                name={`deliveryDetails.${index}.customerId`}
-                                className="form-control mb-1 p-0"
-                                isDisabled={isOrderCreated}
-                                styles={{
-                                  control: (base) => ({ ...base, height: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
-                                }}
-                                options={searchCustomerList?.map((cust) => ({
-                                  value: cust?._id,
-                                  label: ` ${cust?.NHS_Number} - ${cust?.firstName}  ${cust?.lastName}  -  ${cust?.address}  -  ${cust?.postCode}`,
-                                  ...cust,
-                                }))}
-                                placeholder={isCustomerLoading ? "Loading..." : "Select Customer"}
-                                isClearable
-                                components={{ MenuList }}
-                                isSearchable={true}
-                                filterOption={(option, inputValue) => filterOptions(inputValue, option?.data)}
-                                onInputChange={(inputValue) => {
-                                  if (inputValue) {
-                                    const filteredOptions = fullCustomerList?.filter(option => filterOptions(inputValue, option));
-                                    const sortedOptions = sortOptions(filteredOptions, inputValue);
-                                    setSearchCustomerList(sortedOptions);
-                                  } else {
-                                    // Reset to show all customers when input is empty
-                                    setSearchCustomerList(fullCustomerList);
-                                  }
-                                }}
-                                onChange={(selectedOption) => {
-                                  if (selectedOption) {
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, customerId: selectedOption?.value } : item)
-                                    }));
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, address: selectedOption?.address } : item)
-                                    }));
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, mobileNumber: selectedOption?.mobileNumber } : item)
-                                    }));
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, email: selectedOption?.email } : item)
-                                    }));
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, postCode: selectedOption?.postCode } : item)
-                                    }));
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, name: selectedOption?.firstName + " " + selectedOption?.lastName } : item)
-                                    }));
-                                  } else {
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, address: "", mobileNumber: "", email: "", postCode: "", name: "" } : item)
-                                    }));
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
-
-
-                          <div
-                            key={"parcelsCount"}
-                            className="input-error col-12 col-sm-3 mb-1"
-                          >
-                            <label className="fw-thin p-0 pb-1 ">Parcels Count :</label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.parcelsCount`}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                const isValueNumber = !isNaN(value);
-                                if (isValueNumber) {
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, parcelsCount: Number(value?value:"0") } : item)
-                                  }));
-                                }
-                              }
-                              }
-                              className="form-control"
-                              placeholder={`ParcelsCount`}
-                              style={{
-                                height: "3em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                              }}
-                              disabled={isOrderCreated}
-
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.parcelsCount`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-                          <div
-                            key="cashOnDelivery"
-                            className="input-error col-12 col-sm-2 mb-1"
-                          >
-                            <label className="fw-thin p-0 pb-1  ">
-                              Cash on Delivery :
-                            </label>
-
-                            <div className="d-flex align-items-center justify-evenly">
-                              {/* True Option */}
-                              <label className="me-3">
-                                <Field
-                                  type="radio"
-                                  name={`deliveryDetails.${index}.cashOnDelivery`}
-                                  onChange={(e) => {
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value } : item)
-                                    }));
-                                  }}
-                                  value="true"
-                                  className="form-check-input"
-                                  style={{
-                                    marginRight: "0.5em",
-                                    height: "1.2em",
-                                    width: "1.2em",
-                                  }}
-                                  disabled={isOrderCreated}
-                                />
-                                Yes
-                              </label>
-
-                              {/* False Option */}
-                              <label>
-                                <Field
-                                  type="radio"
-                                  name={`deliveryDetails.${index}.cashOnDelivery`}
-                                  onChange={(e) => {
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, cashOnDelivery: e.target.value, paymentCollectionRupees: 0 } : item)
-                                    }));
-                                  }}
-                                  value="false"
-                                  className="form-check-input"
-                                  style={{
-                                    marginRight: "0.5em",
-                                    height: "1.2em",
-                                    width: "1.2em",
-                                  }}
-                                  disabled={isOrderCreated}
-                                />
-                                No
-                              </label>
-                            </div>
-                          </div>
-                          {values?.deliveryDetails[index]?.cashOnDelivery === "true" && (
-                            <div
-                              key={"paymentCollectionRupees"}
-                              className="input-error col-12 col-sm-2 mb-1"
-                            >
-                              <label className="fw-thin p-0 pb-1 ">
-                                Payment Amount
-                              </label>
-                              <Field
-                                as="input"
-                                name={`deliveryDetails.${index}.paymentCollectionRupees`}
-                                type="number"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                    setInitialValues(prev => ({
-                                      ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, paymentCollectionRupees: Number(value?value:"0") } : item)
-                                    }));
-                                }}
-                                onWheel={(e) => e.currentTarget.blur()}
-                                className="form-control mt-0"
-                                style={{ height: "3em", border: "1px solid #E6E6E6", scrollbarWidth: "none" }}
-                                placeholder="Enter Payment Collection pounds  "
-                                disabled={isOrderCreated}
-
-                              />
-                              <ErrorMessage
-                                name={`deliveryDetails.${index}.paymentCollectionRupees`}
-                                component="div"
-                                className="error text-danger ps-2"
-                              />
-                            </div>
-                          )}
-
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Customer Name (Optional) :
-                            </label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.name`}
-                              className="form-control"
-                              placeholder="Customer Name"
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                    deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, name: e.target.value } : item)
-                                }));
-                              }}
-                              style={{
-                                height: "3em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                              }}
-                              disabled={isOrderCreated}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.name`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-
-
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Email (Optional) :
-                            </label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.email`}
-                              className="form-control"
-                              placeholder="Delivery Email"
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, email: e.target.value } : item)
-                                }));
-                              }}
-                              style={{
-                                height: "3em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                              }}
-                              disabled={isOrderCreated}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.email`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Contact Number (Optional) :
-                            </label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.mobileNumber`}
-                              className="form-control"
-                              placeholder="Delivery Contact Number"
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, mobileNumber: e.target.value } : item)
-                                }));
-                              }}
-                              style={{
-                                height: "3em",
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                              }}
-                              disabled={isOrderCreated}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.mobileNumber`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Select Parcel Type (Optional):
-                            </label>
-                            <Select
-                              name={`deliveryDetails.${index}.parcelType2`}
-                              className="form-control p-0"
-                              styles={{
-                                control: (base) => ({ ...base, minHeight: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
-                              }}
-                              options={parcelTypeDetail.map((type) => ({
-                                value: type.parcelTypeId,
-                                label: type.label
-                              }))}
-                              placeholder={isParcelTypeLoading ? "Loading..." : "Select Parcel Types"}
-                              onChange={(selectedOptions) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) =>
-                                    i === index ? { ...item, parcelType2: selectedOptions.map(opt => opt.value) } : item
-                                  )
-                                }));
-                              }}
-                              isMulti={true}
-                              isDisabled={isOrderCreated}
-                            />
-                            {
-                            !isParcelTypeLoading &&  parcelTypeDetail.length === 0 && (
-                                <Link
-                                  to="/multi-order-parcel"
-                                  className="btn btn-primary mt-2"
-                                >
-                                  Go to create Parcel Types
-                                </Link>
-                              )
-                            }
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.parcelType2`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Postcode :
-                            </label>
-                            <Field
-                              type="text"
-                              name={`deliveryDetails.${index}.postCode`}
-                              className="form-control w-25% h-100%"
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                      deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, postCode: e.target.value } : item)
-                                }));
-                              }}
-                              placeholder="Delivery Postcode"
-                              style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                              disabled={isOrderCreated}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.postCode`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-                          <div className="input-error mb-1 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Address :
-                            </label>
-                            <Field
-                              type="text"
-                              as="textarea"
-                              name={`deliveryDetails.${index}.address`}
-                              className="form-control w-25% h-100%"
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, address: e.target.value } : item)
-                                }));
-                              }}
-                              placeholder="Delivery Address"
-                              style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                              disabled={isOrderCreated}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.address`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-
-
-                          <div className="input-error mb-3 col-4">
-                            <label className="fw-thin p-0 pb-1 ">
-                              Delivery Instructions (Optional) :
-                            </label>
-                            <Field
-                              as="textarea"
-                              name={`deliveryDetails.${index}.description`}
-                              className="form-control"
-                              placeholder="Delivery Instructions"
-                              rows="2"
-                              onChange={(e) => {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) => i === index ? { ...item, description: e.target.value } : item)
-                                }));
-                              }}
-                              style={{
-                                border: "1px solid #E6E6E6",
-                                borderRadius: "5px",
-                                height: "3em"
-                              }}
-                              disabled={isOrderCreated}
-                            />
-                            <ErrorMessage
-                              name={`deliveryDetails.${index}.description`}
-                              component="div"
-                              className="error text-danger ps-2"
-                            />
-                          </div>
-
-                        </div>
-                      ))}
-
-                    <div className="d-flex justify-content-between mt-2">
-
-                      <button className="btn btn-primary mt-3" type="button" disabled={isOrderCreated} onClick={() => {
-
-                        setInitialValues(prev => ({
-                          ...prev,
-                          deliveryDetails: [...prev?.deliveryDetails, {
-                            subOrderId: prev?.deliveryDetails?.length + 1,
-                            address: "",
-                            cashOnDelivery: "false",
-                            description: "",
-                            distance: "",
-                            duration: "",
-                            email: "",
-                            mobileNumber: "",
-                            location: {
-                              latitude: null, // Initialize with null or undefined
-                              longitude: null, // Empty array or [longitude, latitude]
-                            },
-                            name: "",
-                            parcelsCount: 1,
-                            paymentCollectionRupees: 0,
-                            postCode: "",
-                            parcelType2: []
-                          }]
-                        }))
-                      }}>
-                        + Add Another Delivery
-                      </button>
-
-                      {/* Submit Button */}
-                      <div className="d-flex justify-content-end">
-                        <button
-                          type="button"
-                          className="btn btn-secondary mt-1 me-4"
-                          onClick={() => naviagte("/all-multi-order")}
-                          style={{ height: "3em" }}
-                        // disabled={isOrderCreated}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="btn btn-primary mt-1"
-                          style={{ height: "3em" }}
-                          disabled={isOrderCreated}
-                        >
-                          {isOrderCreated ? "Order creating..." : "Create Order"}
-                        </button>
-                      </div>
-                    </div>
-
-
+                  <div className="input-error mb-1 col-3">
+                    <label className="fw-thin p-0 pb-1 ">
+                      Pickup Instructions (Optional) :
+                    </label>
+                    <Field
+                      as="textarea"
+                      name="pickupDetails.description"
+                      className="form-control h-[70px]"
+                      placeholder="Pickup Instructions"
+                      rows="3"
+                      style={{
+                        border: "1px solid #E6E6E6",
+                        borderRadius: "5px",
+                        height: "3em",
+                      }}
+                      disabled={isOrderCreated}
+                      // onChange={(e) => {
+                      //   setFieldValue("pickupDetails.description", e.target.value);
+                      // }}
+                    />
+                    <ErrorMessage
+                      name="pickupDetails.description"
+                      component="div"
+                      className="error text-danger ps-2"
+                    />
                   </div>
                 </div>
+                {/* Delivery Information */}
+                <div className="col-12 col-lg-12 mt-2">
+                  <h3 className="fw-bold text-4xl pb-1 text-center" id="delivery-information">
+                    Delivery Information
+                  </h3>
+                  <div className="input-error col-12 col-sm-6 mb-1">
+                    <label className="fw-thin p-0 pb-1 ">
+                      Select Delivery Man :
+                    </label>
+                    <Field
+                      as="select"
+                      name={`deliveryManId`}
+                      className="w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      // onChange={(e) => {
+                      //   setFieldValue("deliveryManId", e.target.value);
+                      // }}
+                      disabled={isOrderCreated}
+                      style={{
+                        backgroundColor: isOrderCreated ? "#e9ecef" : "white",
+                      }}
+                    >
+                      <option value="" className="text-gray-500">
+                        {isDeliveryManLoading ? "Loading..." : "Select Delivery Man"}
+                      </option>
+                      {deliveryMan.map((data, index) => {
+                        let distance = "";
+                        if (currentLocation && data?.location) {
+                          distance = calculateDistance(
+                            currentLocation?.latitude,
+                            currentLocation?.longitude,
+                            data?.location?.coordinates?.[1],
+                            data?.location?.coordinates?.[0]
+                          );
+                        }
+
+                        if (lengthofdeliverymen === index) {
+                          return (
+                            <>
+                              <option
+                                key={index}
+                                value={"admin"}
+                                className="text-center bg-[#bbbbbb] text-[#ffffff] font-bold text-[1.25rem] py-[0.5rem]"
+                                disabled={true}
+                              >
+                                Admin
+                              </option>
+                              <option
+                                key={`${index}-data`}
+                                value={data?._id}
+                                className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between mx-auto"
+                              >
+                                <span
+                                  style={{ float: "left" }}
+                                >{`${data?.firstName} ${data?.lastName}`}</span>
+                                <span style={{ float: "right", marginLeft: "20px" }}>
+                                  {distance ? `- (${distance} miles away)` : ""}
+                                </span>
+                              </option>
+                            </>
+                          );
+                        }
+                        return (
+                          <option
+                            key={index}
+                            value={data?._id}
+                            className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between"
+                          >
+                            <span
+                              style={{ float: "left", width: "65%" }}
+                            >{`${data?.firstName} ${data?.lastName}`}</span>
+                            <span
+                              style={{
+                                display: "inline-block",
+                                width: "100px",
+                              }}
+                            ></span>
+                            <span
+                              style={{
+                                float: "right",
+                                width: "30%",
+                                marginLeft: "20px",
+                              }}
+                            >
+                              {distance ? `- (${distance} miles away)` : ""}
+                            </span>
+                          </option>
+                        );
+                      })}
+                    </Field>
+                    <ErrorMessage
+                      name={`deliveryManId`}
+                      component="div"
+                      className="error text-danger ps-2"
+                    />
+                  </div>
+                  {
+                    values?.deliveryDetails?.map((data, index) => (
+                      <div className={`row shadow  rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index} id={`delivery-information-${index}`}>
+
+                        <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
+                          <div>
+
+                            {`Delivery Information ${index + 1}`}
+                          </div>
+                          <div>
+                            {
+                              index > 0 && (
+                                <button className="btn btn-danger" type="button" onClick={() => {
+                                  setFieldValue("deliveryDetails", values.deliveryDetails.filter((_, i) => i !== index));
+                                }} disabled={isOrderCreated}>
+                                  Remove
+                                </button>
+                              )
+                            }
+                          </div>
+                        </div>
+                        <div className="input-error mb-1 col-5 ">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Select Customer :
+                          </label>
+                          <div>
+                            <Select
+                              name={`deliveryDetails.${index}.customerId`}
+                              className="form-control mb-1 p-0"
+                              isDisabled={isOrderCreated}
+                              styles={{
+                                control: (base) => ({ ...base, height: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
+                              }}
+                              options={searchCustomerList?.map((cust) => ({
+                                value: cust?._id.toString(),
+                                label: ` ${cust?.NHS_Number} - ${cust?.firstName}  ${cust?.lastName}  -  ${cust?.address}  -  ${cust?.postCode}`,
+                                ...cust,
+                              }))}
+                              placeholder={isCustomerLoading ? "Loading..." : "Select Customer"}
+                              isClearable
+                              components={{ MenuList }}
+                              isSearchable={true}
+                              filterOption={(option, inputValue) => filterOptions(inputValue, option?.data)}
+                              value={searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId) ? {
+                                label: `${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).NHS_Number} - ${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).firstName} ${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).lastName} - ${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).address} - ${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).postCode}`,
+                                value: values.deliveryDetails[index]?.customerId,
+                                customer: searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId)
+                              } : null}
+                              onChange={(selectedOption) => {
+                                console.log("Selected Option:", selectedOption);
+                                if (selectedOption) {
+                                  setFieldValue(`deliveryDetails.${index}.customerId`, selectedOption?.value.toString());
+                                  setFieldValue(`deliveryDetails.${index}.address`, selectedOption?.address);
+                                  setFieldValue(`deliveryDetails.${index}.mobileNumber`, selectedOption?.mobileNumber);
+                                  setFieldValue(`deliveryDetails.${index}.email`, selectedOption?.email);
+                                  setFieldValue(`deliveryDetails.${index}.postCode`, selectedOption?.postCode);
+                                  setFieldValue(`deliveryDetails.${index}.name`, `${selectedOption?.firstName} ${selectedOption?.lastName}`);
+                                } else {
+                                  setFieldValue(`deliveryDetails.${index}.customerId`, "");
+                                  setFieldValue(`deliveryDetails.${index}.address`, "");
+                                  setFieldValue(`deliveryDetails.${index}.mobileNumber`, "");
+                                  setFieldValue(`deliveryDetails.${index}.email`, "");
+                                  setFieldValue(`deliveryDetails.${index}.postCode`, "");
+                                  setFieldValue(`deliveryDetails.${index}.name`, "");
+                                }
+                              }}
+                            />
+                          </div>
 
 
 
-                {/* Parcel Types */}
+
+                        </div>
 
 
 
-              </Form>
-            );
-          }}
-        </Formik>
+
+                        <div
+                          key={"parcelsCount"}
+                          className="input-error col-12 col-sm-3 mb-1"
+                        >
+                          <label className="fw-thin p-0 pb-1 ">Parcels Count :</label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.parcelsCount`}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              const isValueNumber = !isNaN(value);
+                              if (isValueNumber) {
+                                setFieldValue(`deliveryDetails.${index}.parcelsCount`, Number(value ? value : "0"));
+                              }
+                            }
+                            }
+                            className="form-control"
+                            placeholder={`ParcelsCount`}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                            disabled={isOrderCreated}
+
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.parcelsCount`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        <div
+                          key="cashOnDelivery"
+                          className="input-error col-12 col-sm-2 mb-1"
+                        >
+                          <label className="fw-thin p-0 pb-1  ">
+                            Cash on Delivery :
+                          </label>
+
+                          <div className="d-flex align-items-center justify-evenly">
+                            {/* True Option */}
+                            <label className="me-3">
+                              <Field
+                                type="radio"
+                                name={`deliveryDetails.${index}.cashOnDelivery`}
+                                onChange={(e) => {
+                                  setFieldValue(`deliveryDetails.${index}.cashOnDelivery`, e.target.value);
+                                }}
+                                value="true"
+                                className="form-check-input"
+                                style={{
+                                  marginRight: "0.5em",
+                                  height: "1.2em",
+                                  width: "1.2em",
+                                }}
+                                disabled={isOrderCreated}
+                              />
+                              Yes
+                            </label>
+
+                            {/* False Option */}
+                            <label>
+                              <Field
+                                type="radio"
+                                name={`deliveryDetails.${index}.cashOnDelivery`}
+                                onChange={(e) => {
+                                  setFieldValue(`deliveryDetails.${index}.cashOnDelivery`, e.target.value);
+                                  setFieldValue(`deliveryDetails.${index}.paymentCollectionRupees`, 0);
+                                }}
+                                value="false"
+                                className="form-check-input"
+                                style={{
+                                  marginRight: "0.5em",
+                                  height: "1.2em",
+                                  width: "1.2em",
+                                }}
+                                disabled={isOrderCreated}
+                              />
+                              No
+                            </label>
+                          </div>
+                        </div>
+                        {values?.deliveryDetails[index]?.cashOnDelivery === "true" && (
+                          <div
+                            key={"paymentCollectionRupees"}
+                            className="input-error col-12 col-sm-2 mb-1"
+                          >
+                            <label className="fw-thin p-0 pb-1 ">
+                              Payment Amount
+                            </label>
+                            <Field
+                              as="input"
+                              name={`deliveryDetails.${index}.paymentCollectionRupees`}
+                              type="number"
+                              min={0}
+                              onWheel={(e) => e.currentTarget.blur()}
+                              className="form-control mt-0"
+                              style={{ height: "3em", border: "1px solid #E6E6E6", scrollbarWidth: "none" }}
+                              placeholder="Enter Payment Collection pounds  "
+                              disabled={isOrderCreated}
+
+                            />
+                            <ErrorMessage
+                              name={`deliveryDetails.${index}.paymentCollectionRupees`}
+                              component="div"
+                              className="error text-danger ps-2"
+                            />
+                          </div>
+                        )}
+
+
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Customer Name (Optional) :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.name`}
+                            className="form-control"
+                            placeholder="Customer Name"
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.name`, e.target.value);
+                            // }}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                            disabled={isOrderCreated}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.name`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+
+
+
+
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Email (Optional) :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.email`}
+                            className="form-control"
+                            placeholder="Delivery Email"
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.email`, e.target.value);
+                            // }}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                            disabled={isOrderCreated}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.email`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Contact Number (Optional) :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.mobileNumber`}
+                            className="form-control"
+                            placeholder="Delivery Contact Number"
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.mobileNumber`, e.target.value);
+                            // }}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                            disabled={isOrderCreated}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.mobileNumber`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Select Parcel Type (Optional):
+                          </label>
+                          <Select
+                            name={`deliveryDetails.${index}.parcelType2`}
+                            className="form-control p-0"
+                            styles={{
+                              control: (base) => ({ ...base, minHeight: "3em", backgroundColor: isOrderCreated ? "#e9ecef" : "white", }),
+                            }}
+                            options={parcelTypeDetail.map((type) => ({
+                              value: type.parcelTypeId,
+                              label: type.label
+                            }))}
+                            value={values?.deliveryDetails[index]?.parcelType2?.map(id => ({
+                              value: id.toString(), 
+                              label: parcelTypeDetail.find(t => t.parcelTypeId.toString() == id.toString())?.label
+                            }))}
+                            placeholder={isParcelTypeLoading ? "Loading..." : "Select Parcel Types"}
+                            onChange={(selectedOptions) => {
+                              setFieldValue(`deliveryDetails.${index}.parcelType2`, selectedOptions.map(opt => opt.value));
+                            }}
+                            isMulti={true}
+                            isDisabled={isOrderCreated}
+                          />
+                          {
+                            !isParcelTypeLoading && parcelTypeDetail.length === 0 && (
+                              <Link
+                                to="/multi-order-parcel"
+                                className="btn btn-primary mt-2"
+                              >
+                                Go to create Parcel Types
+                              </Link>
+                            )
+                          }
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.parcelType2`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+
+
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Postcode :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.postCode`}
+                            className="form-control w-25% h-100%"
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.postCode`, e.target.value);
+                            // }}
+                            placeholder="Delivery Postcode"
+                            style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                            disabled={isOrderCreated}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.postCode`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Address :
+                          </label>
+                          <Field
+                            type="text"
+                            as="textarea"
+                            name={`deliveryDetails.${index}.address`}
+                            className="form-control w-25% h-100%"
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.address`, e.target.value);
+                            // }}
+                            placeholder="Delivery Address"
+                            style={{ height: "3em", border: "1px solid #E6E6E6" }}
+                            disabled={isOrderCreated}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.address`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+
+
+                        <div className="input-error mb-3 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Delivery Instructions (Optional) :
+                          </label>
+                          <Field
+                            as="textarea"
+                            name={`deliveryDetails.${index}.description`}
+                            className="form-control"
+                            placeholder="Delivery Instructions"
+                            rows="2"
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.description`, e.target.value);
+                            // }}
+                            style={{
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                              height: "3em"
+                            }}
+                            disabled={isOrderCreated}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.description`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+                      </div>
+                    ))}
+
+                  <div className="d-flex justify-content-between mt-2">
+
+                    <button className="btn btn-primary mt-3" type="button" disabled={isOrderCreated} onClick={() => {
+
+                      setFieldValue("deliveryDetails", [...values.deliveryDetails, {
+                        // subOrderId: values.deliveryDetails.length + 1,
+                        address: "",
+                        cashOnDelivery: "false",
+                        description: "",
+                        distance: "",
+                        duration: "",
+                        email: "",
+                        mobileNumber: "",
+                        location: {
+                          latitude: null, // Initialize with null or undefined
+                          longitude: null, // Empty array or [longitude, latitude]
+                        },
+                        name: "",
+                        parcelsCount: 1,
+                        paymentCollectionRupees: 0,
+                        postCode: "",
+                        parcelType2: []
+                      }]);
+                    }}>
+                      + Add Another Delivery
+                    </button>
+
+                    {/* Submit Button */}
+                    <div className="d-flex justify-content-end">
+                      <button
+                        type="button"
+                        className="btn btn-secondary mt-1 me-4"
+                        onClick={() => naviagte("/all-multi-order")}
+                        style={{ height: "3em" }}
+                      // disabled={isOrderCreated}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn btn-primary mt-1"
+                        style={{ height: "3em" }}
+                        disabled={isOrderCreated}
+                        onClick={() => {
+                          submitHandler();
+                        }}
+                      >
+                        {isOrderCreated ? "Order creating..." : "Create Order"}
+                      </button>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+
+
+
+              {/* Parcel Types */}
+
+
+
+            </Form>
+          );
+        }}
+      </Formik>
     </>
   );
 };

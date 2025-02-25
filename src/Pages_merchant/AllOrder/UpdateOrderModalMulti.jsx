@@ -29,7 +29,6 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
   );
   const [customer, setCustomer] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [customerId, setCustomerId] = useState(null);
   const [lengthofdeliverymen, setLengthofdeliverymen] = useState(0);
   const [isUpdate, setIsUpdate] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -37,6 +36,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
   console.log(initialValues.deliveryDetails);
   const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
   const [isParcelTypeLoading, setIsParcelTypeLoading] = useState(true);
+  const [isclicked, setIsclicked] = useState(false);
 
   // Function to get current location and update form fields
   const getCurrentLocation = async (setFieldValue) => {
@@ -88,9 +88,6 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
     const selectedCustomer = customer.find(
       (c) => c.email === Order.cutomerEmail
     );
-    if (selectedCustomer?._id) {
-      setCustomerId(selectedCustomer?._id);
-    }
   }, [customer]);
 
   useEffect(() => {
@@ -262,6 +259,14 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
     ),
   });
 
+
+  const submitHandler = () => {
+    setIsclicked(true);
+    setTimeout(() => {
+      setIsclicked(false);
+    }, 10);
+  }
+
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);
@@ -377,10 +382,10 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
             deliverylocations.push(deliverylocation);
           } else {
             console.log("data", data);
-            arrayoferror.push(`in order ${index + 1} delivery address (${address} ${arrayofpostcode[index]}) not found. Please try again.`);
+            arrayoferror.push(`in order ${index + 1} delivery address (${address} ${arrayofpostcode[index+1]}) not found. Please try again.`);
           }
         } else {
-          arrayoferror.push(`in order ${index + 1} delivery address (${address} ${arrayofpostcode[index]}) not found. Please try again.`);
+          arrayoferror.push(`in order ${index + 1} delivery address (${address} ${arrayofpostcode[index+1]}) not found. Please try again.`);
         }
       }
 
@@ -472,8 +477,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
           validationSchema={validationSchema}
           onSubmit={onSubmit}
         >
-          {({ setFieldValue, values }) => {
+          {({ setFieldValue, values, errors }) => {
             // Set customer IDs when initialValues change
+
             useEffect(() => {
               console.log(initialValues, 'initialValues123');
               console.log(values, 'values123');
@@ -481,6 +487,25 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                 setFieldValue(`deliveryDetails.${index}.customerId`, detail?.customerId ?? "");
               });
             }, [initialValues, setFieldValue]);
+
+            if (Object.keys(errors).length > 0) {
+              if (isclicked) {  
+                console.log(errors, 'errors');
+                if (errors?.pickupDetails) {
+                  document.getElementById("pickup-information")?.scrollIntoView({ behavior: 'smooth' });
+                }else if (errors?.deliveryManId) {
+                  document.getElementById("delivery-information")?.scrollIntoView({ behavior: 'smooth' });
+                }else if (errors?.deliveryDetails) {
+                  var fas = false;
+                  errors?.deliveryDetails.forEach((error, index) => {
+                    if (error && !fas) {
+                      document.getElementById(`delivery-information-${index}`)?.scrollIntoView({ behavior: 'smooth' });
+                      fas = true;
+                    }
+                  });
+                }
+              }
+            }
 
             return (
               <Form
@@ -496,7 +521,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                 <div className="pick-up mt-2 row">
 
                   {/* Pickup Information */}
-                  <div className="col-12 col-lg-12 row" style={{ display: isSingle ? "none" : "" }}>
+                  <div className="col-12 col-lg-12 row" style={{ display: isSingle ? "none" : "" }} id="pickup-information">
                     <h3 className="fw-bold text-4xl pb-1 text-center">
                       Pickup Information
                     </h3>
@@ -514,15 +539,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                         defaultValue={new Date().toISOString().slice(0, 16)}
                         disabled={isUpdate}
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev.pickupDetails,
-                              dateTime: e.target.value
-                            }
-                          }));
-                        }}
+                        // onChange={(e) => {
+                        //   setFieldValue('pickupDetails.dateTime', e.target.value);
+                        // }}
                       />
                       <ErrorMessage
                         name="pickupDetails.dateTime"
@@ -542,15 +561,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                         placeholder="Pickup Postcode"
                         style={{ height: "3em", border: "1px solid #E6E6E6" }}
                         disabled={isUpdate}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev.pickupDetails,
-                              postCode: e.target.value
-                            }
-                          }));
-                        }}
+                        // onChange={(e) => {
+                        //   setFieldValue('pickupDetails.postCode', e.target.value);
+                        // }}
                       />
                       <ErrorMessage
                         name="pickupDetails.postCode"
@@ -575,15 +588,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             fontSize: "15px",
                           }}
                           disabled={isUpdate}
-                          onChange={(e) => {
-                            setInitialValues(prev => ({
-                              ...prev,
-                              pickupDetails: {
-                                ...prev.pickupDetails,
-                                address: e.target.value
-                              }
-                            }));
-                          }}
+                          // onChange={(e) => {
+                          //   setFieldValue('pickupDetails.address', e.target.value);
+                          // }}
                         />
                         <ErrorMessage
                           name="pickupDetails.address"
@@ -626,15 +633,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev.pickupDetails,
-                              mobileNumber: e.target.value
-                            }
-                          }));
-                        }}
+                        // onChange={(e) => {
+                        //   setFieldValue('pickupDetails.mobileNumber', e.target.value);
+                        // }}
                       />
                       <ErrorMessage
                         name="pickupDetails.mobileNumber"
@@ -658,15 +659,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev.pickupDetails,
-                              name: e.target.value
-                            }
-                          }));
-                        }}
+                        // onChange={(e) => {
+                        //   setFieldValue('pickupDetails.name', e.target.value);
+                        // }}
                       />
                       <ErrorMessage
                         name="pickupDetails.name"
@@ -690,15 +685,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           borderRadius: "5px",
                         }}
                         disabled={isUpdate}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev.pickupDetails,
-                              email: e.target.value
-                            }
-                          }));
-                        }}
+                        // onChange={(e) => {
+                        //   setFieldValue('pickupDetails.email', e.target.value);
+                        // }}
                       />
                       <ErrorMessage
                         name="pickupDetails.email"
@@ -723,15 +712,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           height: "3em",
                         }}
                         disabled={isUpdate}
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            pickupDetails: {
-                              ...prev.pickupDetails,
-                              description: e.target.value
-                            }
-                          }));
-                        }}
+                        // onChange={(e) => {
+                        //   setFieldValue('pickupDetails.description', e.target.value);
+                        //  }}
                       />
                       <ErrorMessage
                         name="pickupDetails.description"
@@ -742,7 +725,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                   </div>
 
                   {/* Delivery Information */}
-                  <div className="col-12 col-lg-12 mt-2">
+                  <div className="col-12 col-lg-12 mt-2" id="delivery-information">
                     <h3 className="fw-bold text-4xl pb-1 text-center">
                       Delivery Information
                     </h3>
@@ -756,12 +739,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                         as="select"
                         name={`deliveryManId`}
                         className="w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onChange={(e) => {
-                          setInitialValues(prev => ({
-                            ...prev,
-                            deliveryManId: e.target.value
-                          }));
-                        }}
+                        //  onChange={(e) => {
+                        //   setFieldValue(`deliveryManId`, e.target.value);
+                        // }}
                         style={{
                           backgroundColor: isUpdate ? "#e9ecef" : "white",
                         }}
@@ -836,14 +816,14 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
 
                     {/* Delivery Details */}
                     {values.deliveryDetails?.map((data, index) => (
-                      <div className={`row shadow rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index} style={{ display: isSingle ? (isSingle !== index + 1 ? "none" : "") : "" }}>
+                      <div className={`row shadow rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index} style={{ display: isSingle ? (isSingle !== index + 1 ? "none" : "") : "" }} id={`delivery-information-${index}`}>
 
                         <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
                           <div>
                             {`Delivery Information ${index + 1}`}
                           </div>
                           <div>
-                            {initialValues.deliveryDetails.length > 1 && !isUpdate && (
+                            {values.deliveryDetails.length > 1 && !isUpdate && (
                               <button
                                 className="btn btn-danger"
                                 type="button"
@@ -853,12 +833,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                                 }}
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  const updatedDetails = initialValues.deliveryDetails.filter((_, i) => i !== index);
-                                  setInitialValues(prev => ({
-                                    ...prev,
-                                    deliveryDetails: updatedDetails
-                                  }));
-                                  // Force re-render
+                                  const updatedDetails = values.deliveryDetails.filter((_, i) => i !== index);
                                   setFieldValue('deliveryDetails', updatedDetails);
                                 }}
                               >
@@ -872,58 +847,34 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                         {/* Select Customer */}
                         <div className="input-error mb-1 col-4" style={{ border: "none" }}>
                           <label className="fw-thin p-0 pb-1">
-                            Select Customer:
+                            Select Customer :
                           </label>
                           <Autocomplete
                             disablePortal
-                            value={customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId) ? {
-                              label: `${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).NHS_Number} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).firstName} ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).lastName} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).address} - ${customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId).postCode}`,
-                              value: initialValues.deliveryDetails[index].customerId,
-                              customer: customer.find(cust => cust._id === initialValues.deliveryDetails[index].customerId)
+                            value={customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId) ? {
+                              label: `${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).NHS_Number} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).firstName} ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).lastName} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).address} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).postCode}`,
+                              value: values.deliveryDetails[index]?.customerId,
+                              customer: customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId)
                             } : null}
                             options={customer.map((cust) => ({
                               label: `${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`,
-                              value: cust._id,
+                              value: cust._id.toString(),
                               customer: cust
                             }))}
+                            onInputChange={(e, newValue) => {
+                              console.log("search", newValue);
+
+                            }}
                             sx={{ width: "100%", border: "none", borderRadius: "5px", outline: "none", "& .MuiInputBase-input": { border: "none", outline: "none" }, "& .MuiInputBase-input:focus": { border: "none", outline: "none", boxShadow: "none" } }}
                             onChange={(e, newValue) => {
-                              console.log(newValue, 'newValue');
                               if (newValue) {
-                                console.log(newValue, 'newValue');
-                                setFieldValue(`deliveryDetails.${index}.customerId`, newValue.value);
                                 const selectedCustomer = newValue.customer;
-
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev?.deliveryDetails?.map((item, i) =>
-                                    i === index ? {
-                                      ...item,
-                                      customerId: selectedCustomer._id,
-                                      address: selectedCustomer.address,
-                                      mobileNumber: selectedCustomer.mobileNumber,
-                                      email: selectedCustomer.email,
-                                      description: selectedCustomer.description,
-                                      postCode: selectedCustomer.postCode,
-                                      name: selectedCustomer.firstName
-                                    } : item
-                                  )
-                                }));
-                              } else {
-                                setInitialValues(prev => ({
-                                  ...prev,
-                                  deliveryDetails: prev.deliveryDetails.map((item, i) =>
-                                    i === index ? {
-                                      ...item,
-                                      address: "",
-                                      mobileNumber: "",
-                                      email: "",
-                                      description: "",
-                                      postCode: "",
-                                      name: ""
-                                    } : item
-                                  )
-                                }));
+                                setFieldValue(`deliveryDetails.${index}.customerId`, selectedCustomer?._id.toString());
+                                setFieldValue(`deliveryDetails.${index}.address`, selectedCustomer?.address);
+                                setFieldValue(`deliveryDetails.${index}.mobileNumber`, selectedCustomer?.mobileNumber);
+                                setFieldValue(`deliveryDetails.${index}.email`, selectedCustomer?.email);
+                                setFieldValue(`deliveryDetails.${index}.postCode`, selectedCustomer?.postCode);
+                                setFieldValue(`deliveryDetails.${index}.name`, `${selectedCustomer?.firstName} ${selectedCustomer?.lastName}`);
                               }
                             }}
                             renderInput={(params) => (
@@ -955,14 +906,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             onChange={(e) => {
                               if (e.key === "Enter") {
                                 e.preventDefault();
-
                               }
                               const value = e.target.value;
-                              setInitialValues(prev => ({
-
-                                    ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, parcelsCount: Number(value ? value : "0") } : item)
-                              }));
+                              setFieldValue(`deliveryDetails.${index}.parcelsCount`, Number(value ? value : "0"));
                             }}
                             onWheel={(e) => e.currentTarget.blur()}
                             className="form-control"
@@ -1066,12 +1012,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             className="form-control"
                             placeholder="Customer Name"
                             disabled={isUpdate}
-                            onChange={(e) => {
-                              setInitialValues(prev => ({
-                                ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, name: e.target.value } : item)
-                              }));
-                            }}
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.name`, e.target.value);
+                            // }}
                             style={{
                               height: "3em",
                               border: "1px solid #E6E6E6",
@@ -1096,12 +1039,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             className="form-control"
                             placeholder="Delivery Email"
                             disabled={isUpdate}
-                            onChange={(e) => {
-                              setInitialValues(prev => ({
-                                ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, email: e.target.value } : item)
-                              }));
-                            }}
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.email`, e.target.value);
+                            // }}
                             style={{
                               height: "3em",
                               border: "1px solid #E6E6E6",
@@ -1127,10 +1067,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             placeholder="Delivery Contact Number"
                             disabled={isUpdate}
                             onChange={(e) => {
-                              setInitialValues(prev => ({
-                                ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, mobileNumber: e.target.value } : item)
-                              }));
+                              setFieldValue(`deliveryDetails.${index}.mobileNumber`, e.target.value.replace(/[^0-9-()]/g, ''));
                             }}
                             style={{
                               height: "3em",
@@ -1163,21 +1100,45 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                               value: type.parcelTypeId,
                               label: type.label
                             }))}
+                            value={values?.deliveryDetails[index]?.parcelType2?.map(id => ({
+                              value: id.toString(),
+                              label: parcelTypeDetail.find(t => t.parcelTypeId.toString() == id.toString())?.label
+                            }))}
+                            placeholder={isParcelTypeLoading ? "Loading..." : "Select Parcel Types"}
+                            onChange={(selectedOptions) => {
+                              setFieldValue(`deliveryDetails.${index}.parcelType2`, selectedOptions.map(opt => opt.value));
+                            }}
+                            isMulti={true}
+                            isDisabled={isUpdate}
+                          />
+
+                          {/* <Select
+                            name={`deliveryDetails.${index}.parcelType2`}
+                            className="form-control p-0"
+                            styles={{
+                              control: (base) => ({ ...base, minHeight: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white", }),
+                            }}
+                            options={parcelTypeDetail.map((type) => ({
+                              value: type.parcelTypeId,
+                              label: type.label
+                            }))}
                             value={isParcelTypeLoading ? [] : initialValues?.deliveryDetails[index]?.parcelType2?.map(id => ({
                               value: id,
                               label: parcelTypeDetail.find(t => t.parcelTypeId === id)?.label
                             }))}
                             placeholder={`${isParcelTypeLoading ? "Loading..." : "Select Parcel Types"}`}
                             onChange={(selectedOptions) => {
-                              setInitialValues(prev => ({
-                                ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) =>
-                                  i === index ? { ...item, parcelType2: selectedOptions.map(opt => opt.value) } : item
-                                )
-                              }));
+                              console.log(selectedOptions, 'selectedOptions');
+                              console.log(values.deliveryDetails[index].parcelType2, 'values.deliveryDetails[index].parcelType2');
+                              
+                              
+                              setFieldValue(`deliveryDetails.${index}.parcelType2`, selectedOptions.map(opt => opt.value));
                             }}
+                            // onChange={(selectedOptions) => {
+                            //   setFieldValue(`deliveryDetails.${index}.parcelType2`, selectedOptions.map(opt => opt.value));
+                            // }}
                             isMulti={true}
-                          />
+                          /> */}
                           {parcelTypeDetail.length === 0 && (
                             <Link
                             
@@ -1210,10 +1171,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             className="form-control w-25% h-100%"
                             disabled={isUpdate}
                             onChange={(e) => {
-                              setInitialValues(prev => ({
-                                ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, postCode: e.target.value } : item)
-                              }));
+                              setFieldValue(`deliveryDetails.${index}.postCode`, e.target.value);
                             }}
                             placeholder="Delivery Postcode"
                             style={{ height: "3em", border: "1px solid #E6E6E6" }}
@@ -1237,10 +1195,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             className="form-control w-25% h-100%"
                             disabled={isUpdate}
                             onChange={(e) => {
-                              setInitialValues(prev => ({
-                                ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, address: e.target.value } : item)
-                              }));
+                              setFieldValue(`deliveryDetails.${index}.address`, e.target.value);
                             }}
                             placeholder="Delivery Address"
                             style={{ height: "3em", border: "1px solid #E6E6E6" }}
@@ -1265,10 +1220,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             disabled={isUpdate}
                             rows="2"
                             onChange={(e) => {
-                              setInitialValues(prev => ({
-                                ...prev,
-                                deliveryDetails: prev.deliveryDetails.map((item, i) => i === index ? { ...item, description: e.target.value } : item)
-                              }));
+                              setFieldValue(`deliveryDetails.${index}.description`, e.target.value);
                             }}
                             style={{
                               border: "1px solid #E6E6E6",
@@ -1289,32 +1241,30 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                     {/* Add Delivery Information Button and Submit Controls */}
                     <div className={`d-flex mt-2 ${isSingle ? "justify-content-end" : "justify-content-between"}`}>
 
-                      <button className="btn btn-primary mt-3" style={{ display: isSingle ? "none" : "" }} disabled={isUpdate} type="button" onClick={() => {
-                        setInitialValues(prev => ({
-                          ...prev,
-                          deliveryDetails: [...prev.deliveryDetails, {
-                            subOrderId: prev.deliveryDetails.length + 1,
-                            index: prev.deliveryDetails.length,
-                            address: "",
-                            cashOnDelivery: "false",
-                            // description: "",
-                            distance: 0,
-                            duration: "",
-                            email: "",
-                            mobileNumber: "",
-                            location: {
-                              latitude: 0,
-                              longitude: 0
-                            },
-                            name: "",
-                            parcelsCount: 1,
-                            paymentCollectionRupees: "0",
-                            postCode: "",
-                            customerId: "",
-                            parcelType: "",
-                            trashed: false
-                          }]
-                        }))
+                      <button className="btn btn-primary mt-3" type="button" style={{ display: isSingle ? "none" : "" }} disabled={isUpdate} onClick={() => {
+                        setFieldValue('deliveryDetails', [...values.deliveryDetails, {
+                    //  finde big suboderid
+                          subOrderId: Math.max(...values.deliveryDetails.map(item => item.subOrderId), 0) + 1,
+                          index: values.deliveryDetails.length,
+                          address: "",
+                          cashOnDelivery: "false",
+                          // description: "",
+                          distance: 0,
+                          duration: "",
+                          email: "",
+                          mobileNumber: "",
+                          location: {
+                            latitude: 0,
+                            longitude: 0
+                          },
+                          name: "",
+                          parcelsCount: 1,
+                          paymentCollectionRupees: "0",
+                          postCode: "",
+                          customerId: "",
+                          parcelType: "",
+                          trashed: false
+                        }]);
                       }}>
                         + Add Delivery Information
                       </button>
@@ -1345,6 +1295,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           className="btn btn-primary mt-1"
                           style={{ height: "3em" }}
                           disabled={isUpdate}
+                          onClick={() => {
+                            submitHandler();
+                          }}
                         >
                           {isUpdate ? "Order updating..." : "Update Order"}
                         </button>
@@ -1367,18 +1320,3 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
 };
 
 export default UpdateOrderModalMulti;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

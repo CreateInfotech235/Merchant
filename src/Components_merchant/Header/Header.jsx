@@ -42,8 +42,8 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
     try {
       const response = await markNotificationAsRead(notificationId);
       if (response.status) {
-        setNotifications(notifications.map(notification => 
-          notification._id === notificationId 
+        setNotifications(notifications.map(notification =>
+          notification._id === notificationId
             ? { ...notification, isRead: true }
             : notification
         ));
@@ -118,12 +118,24 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
     fetchNotifications();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('userData'))
     setUserData(userData.image)
-  },[])
-  console.log(userData,"userData");
-  
+  }, [])
+  console.log(userData, "userData");
+
+  function getColor(title, isRead) {
+    const color = [
+      { title: 'picked up', color: 'text-[#ffaf1a]' },
+      { title: 'cancelled', color: 'text-[#ff0000]' },
+      { title: 'order Delivered', color: 'text-[#22FF00FF]' },
+    ];
+    if (isRead) {
+      return 'text-[#505050FF]';
+    }
+    return color.find(item => title.toLowerCase().includes(item.title.toLowerCase()))?.color || 'text-muted';
+  }
+
   return (
     <div className="d-flex justify-content-between align-items-center nav-bar pb-xxl-3 pb-xl-3 pb-lg-3 pb-md-3 pb-sm-3 pb-0">
       <div className="profile">
@@ -143,7 +155,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
                 Notifications
               </Offcanvas.Title>
               {unreadCount > 0 && (
-                <button 
+                <button
                   className="btn btn-link text-primary"
                   onClick={handleMarkAllAsRead}
                 >
@@ -155,9 +167,8 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
               {notifications.map((notification) => (
                 <div
                   key={notification._id}
-                  className={`notification-item p-3 hover-bg-light border-bottom d-flex align-items-start ${
-                    !notification.isRead ? 'bg-light' : ''
-                  }`}
+                  className={`notification-item p-3 hover-bg-light border-bottom d-flex align-items-start ${!notification.isRead ? 'bg-light' : ''
+                    }`}
                   style={{
                     transition: "background-color 0.3s",
                     cursor: "pointer",
@@ -166,7 +177,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
                   onClick={() => handleMarkAsRead(notification._id)}
                 >
                   <div className="flex-grow-1">
-                    <h6 className="mb-1 text-primary fw-semibold d-flex align-items-center">
+                    <h6 className={`mb-1 ${getColor(notification.title,notification.isRead)} fw-semibold d-flex align-items-center`}>
                       {notification.title}
                       {!notification.isRead && (
                         <span className="ms-2 badge bg-primary">New</span>
@@ -175,6 +186,13 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
                     <p className="mb-1 text-secondary small">
                       {notification.message}
                     </p>
+                    
+                      {notification.subOrderId && (
+                        <p className="mb-1 text-secondary small">
+                          Suborder ID: {notification.subOrderId.sort((a, b) => a - b).join(', ')}
+                        </p>
+                      )}
+                    
                     <small className="text-muted">
                       {new Date(notification.createdAt).toLocaleString()}
                     </small>
