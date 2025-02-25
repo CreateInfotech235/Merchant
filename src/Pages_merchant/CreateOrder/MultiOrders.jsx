@@ -1119,11 +1119,10 @@ const MultiOrders = () => {
                               as="input"
                               name={`deliveryDetails.${index}.paymentCollectionRupees`}
                               type="number"
-                              min={0}
                               onWheel={(e) => e.currentTarget.blur()}
                               className="form-control mt-0"
                               style={{ height: "3em", border: "1px solid #E6E6E6", scrollbarWidth: "none" }}
-                              placeholder="Enter Payment Collection pounds  "
+                              placeholder="Enter Payment Collection pounds"
                               disabled={isOrderCreated}
 
                             />
