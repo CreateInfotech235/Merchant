@@ -61,21 +61,21 @@ const ProtectedRoute = ({ children }) => {
       }
       console.log("response.message123",response.message);
       
-      if (response.message.includes("admin rejected your request")) {
+      if (response?.message?.includes("admin rejected your request")) {
         console.log(response.message);
         
         navigate("/");
         // window.location.reload();
       }
 
-      if (response.message.includes("admin not approved your request")) {
+      if (response?.message?.includes("admin not approved your request")) {
           console.log(response.message);
           
         navigate("/");
         // window.location.reload();
       }
 
-      if (response.message.includes("Your subcription is expired")) {
+      if (response?.message?.includes("Your subcription is expired")) {
         if (!window.location.pathname.includes("/subscription-active")) {
 
           navigate("/subscription-active");

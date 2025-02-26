@@ -15,6 +15,7 @@ import { getMapApi } from "../../Components_admin/Api/MapApi";
 import { toast } from "react-toastify";
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 import { FixedSizeList as List } from 'react-window';
+import { Autocomplete, TextField } from "@mui/material";
 
 
 const MultiOrders = () => {
@@ -45,7 +46,7 @@ const MultiOrders = () => {
   useEffect(() => {
     setSearchCustomerList(customer);
   }, [customer]);
-  
+
   useEffect(() => {
     console.log("initialValues", initialValues);
     console.log("newarrayoflocation", newarrayoflocation);
@@ -59,6 +60,7 @@ const MultiOrders = () => {
       setIsclicked(false);
     }, 10);
   }
+
 
 
 
@@ -123,13 +125,13 @@ const MultiOrders = () => {
           const filteredCustomer = customerRes.data.filter(customer => !customer.trashed);
           setCustomer(filteredCustomer);
           setFullCustomerList(filteredCustomer);
-          setIsCustomerLoading(false);
         }
-        setIsCustomerLoading(false);
       } catch (error) {
         console.error("Error fetching customers:", error);
+      } finally {
+        setIsCustomerLoading(false);
       }
-    }
+    };
 
     const getDeliveryMandata = async () => {
       try {
@@ -527,6 +529,19 @@ const MultiOrders = () => {
     );
   };
 
+
+  const renderRow = ({ data, index, style }) => {
+    const option = { ...data[index], label: `${data[index]?.NHS_Number} - ${data[index]?.firstName} ${data[index]?.lastName} - ${data[index]?.address} - ${data[index]?.postCode}` };
+    // console.log("option", option);
+    return (
+      <div style={style} key={index}>
+        {option.label}
+      </div>
+    );
+  };
+
+
+
   // Add the filter and sort functions
   const filterOptions = (inputValue, option) => {
     const normalizedInput = inputValue.toLowerCase();
@@ -580,6 +595,32 @@ const MultiOrders = () => {
     });
   };
 
+  const removeBorder = () => {
+    const customerId = document.querySelectorAll(".deliveryDetails-customerId");
+    customerId.forEach(element => {
+      element.querySelector("input").style.border = "none"; // Set border style to none
+      // element.querySelector("input").style.border.focus = "none"; // Set border style to none
+      element.querySelector("input").style.outline = "none"; // Set border style to none
+      element.querySelector("input").style.boxShadow = "none"; // Set border style to none
+      element.querySelector("input").addEventListener("focus", () => {
+        element.querySelector("input").style.border = "none"; // Set border style to none
+      });
+    });
+  }
+
+  useEffect(() => {
+    setInterval(() => {
+      removeBorder();
+    }, 1);
+  }, []);
+
+  const renderOption = ({ option }) => (
+    <div>
+      {option?.label}
+    </div>
+  );
+
+
   return (
     <>
 
@@ -596,12 +637,13 @@ const MultiOrders = () => {
         }}
 
       >
+
         {({ setFieldValue, values, errors }) => {
           console.log("errors", errors);
           if (Object.keys(errors).length > 0) {
             if (isclicked) {
               console.log("errors", errors);
-            
+
               if (errors?.pickupDetails) {
                 document.getElementById("pickup-information")?.scrollIntoView({ behavior: 'smooth' });
               } else if (errors?.deliveryManId) {
@@ -641,9 +683,9 @@ const MultiOrders = () => {
                       placeholder="Date and Time"
                       style={{ height: "3em", border: "1px solid #E6E6E6" }}
                       disabled={isOrderCreated}
-                      // onChange={(e) => {
-                      //   setFieldValue("pickupDetails.dateTime", e.target.value);
-                      // }}
+                    // onChange={(e) => {
+                    //   setFieldValue("pickupDetails.dateTime", e.target.value);
+                    // }}
                     />
                     <ErrorMessage
                       name="pickupDetails.dateTime"
@@ -663,9 +705,9 @@ const MultiOrders = () => {
                       placeholder="Pickup Postcode"
                       style={{ height: "3em", border: "1px solid #E6E6E6" }}
                       disabled={isOrderCreated}
-                      // onChange={(e) => {
-                      //   setFieldValue("pickupDetails.postCode", e.target.value);
-                      // }}
+                    // onChange={(e) => {
+                    //   setFieldValue("pickupDetails.postCode", e.target.value);
+                    // }}
                     />
                     <ErrorMessage
                       name="pickupDetails.postCode"
@@ -691,9 +733,9 @@ const MultiOrders = () => {
                           fontSize: "15px"
                         }}
                         disabled={isOrderCreated}
-                        // onChange={(e) => {
-                        //   setFieldValue("pickupDetails.address", e.target.value);
-                        // }}
+                      // onChange={(e) => {
+                      //   setFieldValue("pickupDetails.address", e.target.value);
+                      // }}
                       />
                       <ErrorMessage
                         name="pickupDetails.address"
@@ -787,9 +829,9 @@ const MultiOrders = () => {
                         borderRadius: "5px",
                       }}
                       disabled={isOrderCreated}
-                      // onChange={(e) => {
-                      //   setFieldValue("pickupDetails.name", e.target.value);
-                      // }}
+                    // onChange={(e) => {
+                    //   setFieldValue("pickupDetails.name", e.target.value);
+                    // }}
                     />
                     <ErrorMessage
                       name="pickupDetails.name"
@@ -813,9 +855,9 @@ const MultiOrders = () => {
                         borderRadius: "5px",
                       }}
                       disabled={isOrderCreated}
-                      // onChange={(e) => {
-                      //   setFieldValue("pickupDetails.email", e.target.value);
-                      // }}
+                    // onChange={(e) => {
+                    //   setFieldValue("pickupDetails.email", e.target.value);
+                    // }}
                     />
                     <ErrorMessage
                       name="pickupDetails.email"
@@ -840,9 +882,9 @@ const MultiOrders = () => {
                         height: "3em",
                       }}
                       disabled={isOrderCreated}
-                      // onChange={(e) => {
-                      //   setFieldValue("pickupDetails.description", e.target.value);
-                      // }}
+                    // onChange={(e) => {
+                    //   setFieldValue("pickupDetails.description", e.target.value);
+                    // }}
                     />
                     <ErrorMessage
                       name="pickupDetails.description"
@@ -972,7 +1014,7 @@ const MultiOrders = () => {
                             Select Customer :
                           </label>
                           <div>
-                            <Select
+                            {/* <Select
                               name={`deliveryDetails.${index}.customerId`}
                               className="form-control mb-1 p-0"
                               isDisabled={isOrderCreated}
@@ -986,7 +1028,6 @@ const MultiOrders = () => {
                               }))}
                               placeholder={isCustomerLoading ? "Loading..." : "Select Customer"}
                               isClearable
-                              components={{ MenuList }}
                               isSearchable={true}
                               filterOption={(option, inputValue) => filterOptions(inputValue, option?.data)}
                               value={searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId) ? {
@@ -1013,16 +1054,75 @@ const MultiOrders = () => {
                                 }
                               }}
                             />
+ */}
+
+                            <Autocomplete
+                              disablePortal
+                              className={`deliveryDetails-customerId`}
+                              name={`deliveryDetails.${index}.customerId`}
+                              options={customer?.map((cust) => ({
+                                label: `${cust?.NHS_Number} - ${cust?.firstName} ${cust?.lastName} - ${cust?.address} - ${cust?.postCode}`,
+                                value: cust?._id?.toString(),
+                                ...cust,
+                              }))}
+
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  style={{
+                                    backgroundColor: isOrderCreated ? "#e9ecef" : "white",
+                                    borderRadius: "5px",
+                                    "& .MuiInputBase-input": { border: "none", outline: "none" },
+                                  }}
+                                  label={isCustomerLoading ? "Loading..." : "Select Customer"}
+                                  disabled={isOrderCreated}
+                                />
+                              )}
+                              onChange={(event, newValue) => {
+                                console.log("Selected Option:", newValue);
+                                if (newValue) {
+                                  setFieldValue(`deliveryDetails.${index}.customerId`, newValue.value);
+                                  setFieldValue(`deliveryDetails.${index}.address`, newValue.address);
+                                  setFieldValue(`deliveryDetails.${index}.mobileNumber`, newValue.mobileNumber);
+                                  setFieldValue(`deliveryDetails.${index}.email`, newValue.email);
+                                  setFieldValue(`deliveryDetails.${index}.postCode`, newValue.postCode);
+                                  setFieldValue(`deliveryDetails.${index}.name`, `${newValue.firstName} ${newValue.lastName}`);
+                                } else {
+                                  setFieldValue(`deliveryDetails.${index}.customerId`, "");
+                                  setFieldValue(`deliveryDetails.${index}.address`, "");
+                                  setFieldValue(`deliveryDetails.${index}.mobileNumber`, "");
+                                  setFieldValue(`deliveryDetails.${index}.email`, "");
+                                  setFieldValue(`deliveryDetails.${index}.postCode`, "");
+                                  setFieldValue(`deliveryDetails.${index}.name`, "");
+                                }
+                              }}
+                              renderOption={(props, option) => (
+                                <li {...props} key={option.value}>
+                                  {option.label}
+                                </li>
+                              )}
+                              filterOptions={(options, state) => {
+                                const query = state?.inputValue?.toLowerCase().trim();
+                                // array of search words
+                                const words = query?.split(' ');
+
+                                const data = options.filter(option => {
+                                  // array of label words
+                                  for (const word of words) {
+                                    if (!option.label.toLowerCase().trim().includes(word)) {
+                                      return false;
+                                    }
+                                  }
+                                  return true;
+                                }).map((option, index) => ({
+                                  ...option,
+                                  label: `${option.label}`
+                                }));
+                                return data;
+                              }}
+                            />
                           </div>
-
-
-
-
                         </div>
-
-
-
-
                         <div
                           key={"parcelsCount"}
                           className="input-error col-12 col-sm-3 mb-1"
@@ -1233,7 +1333,7 @@ const MultiOrders = () => {
                               label: type.label
                             }))}
                             value={values?.deliveryDetails[index]?.parcelType2?.map(id => ({
-                              value: id.toString(), 
+                              value: id.toString(),
                               label: parcelTypeDetail.find(t => t.parcelTypeId.toString() == id.toString())?.label
                             }))}
                             placeholder={isParcelTypeLoading ? "Loading..." : "Select Parcel Types"}
@@ -1406,6 +1506,9 @@ const MultiOrders = () => {
       </Formik>
     </>
   );
+
+
+
 };
 
 export default MultiOrders;

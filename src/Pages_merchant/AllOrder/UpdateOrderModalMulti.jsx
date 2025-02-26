@@ -856,15 +856,33 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                               value: values.deliveryDetails[index]?.customerId,
                               customer: customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId)
                             } : null}
-                            options={customer.map((cust) => ({
-                              label: `${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`,
+                            options={customer.map((cust,index) => ({
+                              label: `${index+1} ${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`,
                               value: cust._id.toString(),
                               customer: cust
                             }))}
-                            onInputChange={(e, newValue) => {
-                              console.log("search", newValue);
+                            filterOptions={(options, state) => {
+                              const query = state.inputValue.toLowerCase().trim();
+                              // array of search words
+                              const words = query.split(' ');
+                              
+                              const data = options.filter(option => {
+                                // array of label words
+                                for (const word of words) {
+                                  if (!option.label.toLowerCase().trim().includes(word)) {
+                                    return false;
+                                  }
+                                }
+                                return true;
+                              }).map((option, index) => ({
+                                ...option,
+                                label: `${option.label}`
+                              }));
 
+                              return data;
                             }}
+
+
                             sx={{ width: "100%", border: "none", borderRadius: "5px", outline: "none", "& .MuiInputBase-input": { border: "none", outline: "none" }, "& .MuiInputBase-input:focus": { border: "none", outline: "none", boxShadow: "none" } }}
                             onChange={(e, newValue) => {
                               if (newValue) {
