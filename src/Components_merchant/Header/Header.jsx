@@ -128,7 +128,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
     const color = [
       { title: 'picked up', color: 'text-[#ffaf1a]' },
       { title: 'cancelled', color: 'text-[#ff0000]' },
-      { title: 'order Delivered', color: 'text-[#22FF00FF]' },
+      { title: 'order Delivered', color: 'text-[#217d13]' },
     ];
     if (isRead) {
       return 'text-[#505050FF]';
@@ -190,6 +190,16 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
                       {notification.subOrderId && (
                         <p className="mb-1 text-secondary small">
                           Suborder ID: {notification.subOrderId.sort((a, b) => a - b).join(', ')}
+                        </p>
+                      )}
+                      {notification.deliveryBoyname && (
+                        <p className="mb-1 text-secondary small">
+                          Delivery Boy: {notification.deliveryBoyname}
+                        </p>
+                      )}
+                      {notification.ismerchantdeliveryboy && (
+                        <p className="mb-1 text-secondary small">
+                          Created By: {notification.ismerchantdeliveryboy ? 'Merchant' : 'Admin'}
                         </p>
                       )}
                     
