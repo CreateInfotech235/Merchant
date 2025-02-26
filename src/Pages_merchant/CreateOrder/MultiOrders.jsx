@@ -424,7 +424,7 @@ const MultiOrders = () => {
         console.log("address", `${address} ${arrayofpostcode[index]}`);
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            `${address.replace("-", ' ')} `
+            `${address} ${arrayofpostcode[index]}`
           )}&key=${apiKey}`
         );
         // ${arrayofpostcode[index]}
