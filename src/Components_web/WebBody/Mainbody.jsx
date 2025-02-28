@@ -103,7 +103,7 @@ function Mainbody() {
 
 
   useEffect(() => {
-    const cleanup = createFunksen('#welcome-text', ["Welcome To Create Courier"]);
+    const cleanup = createFunksen('#welcome-text', ["","Welcome To Create Courier"]);
     return cleanup; // Ensure cleanup function is returned to avoid multiple instances
   }, []);
 
