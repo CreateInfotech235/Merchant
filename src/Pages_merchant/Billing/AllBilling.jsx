@@ -662,13 +662,14 @@ const Billing = () => {
                       <td className="p-3">
                         {order?.chargeMethod ?? "-"}
                       </td>
+                      
                       <td className="p-3">
                         <button
                           className={`${getColorClass(
-                            order?.subOrderdata[0]?.orderStatus
+                            order?.orderStatus
                           )} mx-2`}
                         >
-                          {order?.subOrderdata[0]?.orderStatus ?? "-"}
+                          {order?.orderStatus ?? "-"}
                         </button>
                       </td>
                       <td className="p-3">
@@ -732,7 +733,7 @@ const Billing = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                {order.subOrderdata.map((subOrder, subIndex) => (
+                                {order?.subOrderdata?.map((subOrder, subIndex) => (
                                   <tr key={subIndex}>
                                     <td className="p-3 ">
                                       {subOrder?.subOrderId ?? "-"}
@@ -796,7 +797,7 @@ const Billing = () => {
                                       </button>
                                     </td>
                                     <td className="p-3 ">
-                                      {subOrder?.chargeMethod ?? "-"}
+                                      {order?.chargeMethod ?? "-"}
                                     </td>
                                     <td className="p-3 ">
                                       {subOrder?.isApproved ? "Yes" : "No"}

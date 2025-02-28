@@ -1,35 +1,20 @@
 import React, { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Importing useNavigate for navigation
-import bgimg from "../../assets_web/Pricingbgimg.jpg";
-import tracking from "../../assets_web/Group (4).png";
-import bgImage from "../../assets_web/image (41).png";
-import effect from "../../assets_web/image (42).png";
-import ServicesImage from "../../assets_web/Services.png"; // Renamed to avoid conflict
+import bgImage from "../../assets_web/image41.png";
 import flatcoloriconsservices from "../../assets_web/flat-color-icons_services.png";
 
-import dubleCheckW from "../../assets_web/akar-icons_double-check (1).png";
-import dubleCheck from "../../assets_web/akar-icons_double-check.png";
-import van from "../../assets_web/van.jpg";
 import ExpressDelivery from "../../assets_web/Express Delivery.webp";
 import StandardDelivery from "../../assets_web/Standard Delivery.webp";
 import BulkTransport from "../../assets_web/Bulk Transport.jpg";
 import truck from "../../assets_web/material-truck.png";
 import SpecialCare from "../../assets_web/Special Care.jpg";
 import Gotop from "./../../Components_web/Gotop/Gotop";
-import { PiTruckDuotone } from "react-icons/pi";
-import { BsBoxSeam } from "react-icons/bs";
-import { TbClock } from "react-icons/tb";
-import { FaPoundSign } from "react-icons/fa";
-
-import { Swiper, SwiperSlide } from "swiper/react";
-
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 
 // import required modules
-import { Navigation, Autoplay } from "swiper/modules";
-import { Title } from "chart.js";
+import { createFunksen } from "../../typingef/typingef";
 
 
 
@@ -91,49 +76,47 @@ function Services() {
                 "Dedicated handling for fragile and valuable items. Extra protection and insurance for your precious cargo.",
         },
     ];
+
+
+    useEffect(() => {
+        const cleanup = createFunksen('#welcome-text-services', ["Welcome To Create Courier", "Fast, Reliable, and Secure Courier Services"]);
+        return cleanup; // Ensure cleanup function is returned to avoid multiple instances
+    }, []);
     return (
         <>
-            {/*part 1 */}
-            <div className="w-full relative isolate overflow-hidden bg-gray-900 py-12 sm:py-16 md:py-24 lg:py-32">
-                <img
-                    alt=""
-                    src={bgImage}
-                    className="absolute inset-0 -z-10 w-full h-full object-cover object-right md:object-center"
-                />
-                <div
-                    aria-hidden="true"
-                    className="absolute top-0 left-0 w-full h-full bg-[#06052D5D]/80 -z-10"
-                ></div>
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center lg:justify-between">
-                    {/* Text Content */}
-                    <div className="max-w-full lg:max-w-2xl xs:text-center lg:text-left">
-                        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-medium tracking-tight text-[#FF6600] leading-snug capitalize noto small">
-                            Fast, Reliable, and Secure Courier Services
-                        </h1>
-                        <h2 className="mt-4 md:mt-6 lg:mt-8 text-white text-base sm:text-lg md:text-xl lg:text-4xl font-bold">
-                            Reliable Courier Services  the
-                            Security & Efficiency You Can Trust!
-                        </h2>
-                        <p className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
-                            we specialise in fast, secure, and cost-effective delivery solutions tailored to
-                            your needs. Whether it's urgent same-day delivery, next-day shipping, or
-                            international courier services.
-                        </p>
-                        {/* <div className="mt-6 sm:mt-8 md:mt-10 flex justify-center lg:justify-start">
-                            <Link to="/contact">
-                                <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
-                                    Get Started
-                                    <span className="ml-2">&rarr;</span>
-                                </button>
-                            </Link>
-                        </div> */}
-                    </div>
-                    {/* Image Content */}
-                    <div className="mt-8 lg:mt-0 max-w-full lg:max-w-lg">
-                        <img src={ServicesImage} alt="Heavy Box" className="w-full h-auto" /> {/* Updated to use renamed variable */}
+
+
+
+            <div className="w-full ">
+                <div className="w-full relative isolate overflow-hidden py-12 sm:py-20 lg:py-24 shadow-md" style={{
+                    backgroundImage: `url(${bgImage})`,
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                    backgroundBlendMode: 'multiply',
+                    backgroundAttachment: "fixed",
+                    backgroundPosition: 'top center'
+                }}>
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row justify-between items-center h-[60vh]">
+                        {/* Left Content */}
+                        <div className="w-full md:text-left">
+                            <h1 id="welcome-text-services" className="text-xl h-[30px]  sm:text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight  text-[#FF6600] leading-tight capitalize">
+                                Fast, Reliable, and Secure Courier Services
+                            </h1>
+                            <h2 className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl lg:text-4xl text-white font-bold">
+                                Reliable Courier Services  the
+                                Security & Efficiency You Can Trust!
+                            </h2>
+                            <p className="mt-4 sm:mt-6 lg:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
+                                we specialise in fast, secure, and cost-effective delivery solutions tailored to
+                                your needs. Whether it's urgent same-day delivery, next-day shipping, or
+                                international courier services.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
+
 
             <div className="mx-auto max-w-7xl px-6 lg:px-8 my-12 ">
                 <div className="">
@@ -234,9 +217,9 @@ function Services() {
                                     your parcels safely and on time.
                                 </p>
                             </div>
-                            <div> 
-                                <button className="bg-[#1D1D37] text-white px-4 py-3 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg flex items-center" onClick={()=>{navigate("/contact") ; window.scrollTo({top:0,behavior:"instant"})}}>
-                                   Learn More <SlArrowRight className="ml-2 text-[15px] text-bold"  />
+                            <div>
+                                <button className="bg-[#1D1D37] text-white px-4 py-3 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg flex items-center" onClick={() => { navigate("/contact"); window.scrollTo({ top: 0, behavior: "instant" }) }}>
+                                    Learn More <SlArrowRight className="ml-2 text-[15px] text-bold" />
                                 </button>
                             </div>
                         </div>

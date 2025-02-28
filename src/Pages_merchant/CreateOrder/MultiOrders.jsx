@@ -513,7 +513,7 @@ const MultiOrders = () => {
   // Custom MenuList component for react-select using react-window
   const MenuList = (props) => {
     const { options, children, maxHeight, getValue } = props;
-    const height = 50;
+    const height = 30;
     const [value] = getValue();
     const initialOffset = options.indexOf(value) * height;
 
@@ -524,37 +524,27 @@ const MultiOrders = () => {
         itemSize={height}
         initialScrollOffset={initialOffset}
       >
-        {({ index, style }) => <div style={style}>{children[index]}</div>}
+        {({ index, style }) => <div style={style} className="leading-none">{children[index]}</div>}
       </List>
     );
   };
 
-
-  const renderRow = ({ data, index, style }) => {
-    const option = { ...data[index], label: `${data[index]?.NHS_Number} - ${data[index]?.firstName} ${data[index]?.lastName} - ${data[index]?.address} - ${data[index]?.postCode}` };
-    // console.log("option", option);
+  // Update the renderRow function to be used in Autocomplete
+  const renderRow = ({ index, style }) => {
+    const option = options[index];
     return (
-      <div style={style} key={index}>
+      <div style={style} key={option.value}>
         {option.label}
       </div>
     );
   };
 
-
-
   // Add the filter and sort functions
-  const filterOptions = (inputValue, option) => {
-    const normalizedInput = inputValue.toLowerCase();
-    const inputParts = normalizedInput.split(' '); // Split the input by spaces
-    const normalizedFname = option.firstName.toLowerCase();
-    const normalizedLname = option.lastName.toLowerCase();
-    const normalizedNHS_Number = option.NHS_Number.toLowerCase();
-    const normalizedaddress = option.address.toLowerCase();
-
-    // Check if any part of the input matches either the fname or lname
-    return inputParts.some(part =>
-      normalizedFname.includes(part) || normalizedLname.includes(part) || normalizedNHS_Number.includes(part) || normalizedaddress.includes(part)
-    );
+  const filterOptions = (option, inputValue) => {
+    const normalizedInput = inputValue?.toLowerCase().trim();
+    const inputParts = normalizedInput?.split(' '); // Split the input by spaces
+    const label = option?.label?.trim().toLowerCase();
+    return inputParts.every(part => label.includes(part)); // Check if all parts are included in the label
   };
 
   const sortOptions = (options, inputValue) => {
@@ -620,6 +610,11 @@ const MultiOrders = () => {
     </div>
   );
 
+  const options = customer?.map((cust) => ({
+    label: `${cust?.NHS_Number} - ${cust?.firstName} ${cust?.lastName} - ${cust?.address} - ${cust?.postCode}`,
+    value: cust?._id?.toString(),
+    ...cust,
+  })) || [];
 
   return (
     <>
@@ -1009,12 +1004,12 @@ const MultiOrders = () => {
                             }
                           </div>
                         </div>
-                        <div className="input-error mb-1 col-5 ">
+                        <div className="input-error mb-1 col-7">
                           <label className="fw-thin p-0 pb-1 ">
                             Select Customer :
                           </label>
                           <div>
-                            {/* <Select
+                            <Select
                               name={`deliveryDetails.${index}.customerId`}
                               className="form-control mb-1 p-0"
                               isDisabled={isOrderCreated}
@@ -1028,8 +1023,9 @@ const MultiOrders = () => {
                               }))}
                               placeholder={isCustomerLoading ? "Loading..." : "Select Customer"}
                               isClearable
-                              isSearchable={true}
-                              filterOption={(option, inputValue) => filterOptions(inputValue, option?.data)}
+                              filterOption={filterOptions}
+                              components={{ MenuList }}
+
                               value={searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId) ? {
                                 label: `${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).NHS_Number} - ${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).firstName} ${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).lastName} - ${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).address} - ${searchCustomerList.find(cust => cust._id === values.deliveryDetails[index]?.customerId).postCode}`,
                                 value: values.deliveryDetails[index]?.customerId,
@@ -1054,78 +1050,49 @@ const MultiOrders = () => {
                                 }
                               }}
                             />
- */}
-
-                            <Autocomplete
-                              disablePortal
-                              className={`deliveryDetails-customerId`}
+                            <ErrorMessage
                               name={`deliveryDetails.${index}.customerId`}
-                              options={customer?.map((cust) => ({
-                                label: `${cust?.NHS_Number} - ${cust?.firstName} ${cust?.lastName} - ${cust?.address} - ${cust?.postCode}`,
-                                value: cust?._id?.toString(),
-                                ...cust,
-                              }))}
-
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  style={{
-                                    backgroundColor: isOrderCreated ? "#e9ecef" : "white",
-                                    borderRadius: "5px",
-                                    "& .MuiInputBase-input": { border: "none", outline: "none" },
-                                  }}
-                                  label={isCustomerLoading ? "Loading..." : "Select Customer"}
-                                  disabled={isOrderCreated}
-                                />
-                              )}
-                              onChange={(event, newValue) => {
-                                console.log("Selected Option:", newValue);
-                                if (newValue) {
-                                  setFieldValue(`deliveryDetails.${index}.customerId`, newValue.value);
-                                  setFieldValue(`deliveryDetails.${index}.address`, newValue.address);
-                                  setFieldValue(`deliveryDetails.${index}.mobileNumber`, newValue.mobileNumber);
-                                  setFieldValue(`deliveryDetails.${index}.email`, newValue.email);
-                                  setFieldValue(`deliveryDetails.${index}.postCode`, newValue.postCode);
-                                  setFieldValue(`deliveryDetails.${index}.name`, `${newValue.firstName} ${newValue.lastName}`);
-                                } else {
-                                  setFieldValue(`deliveryDetails.${index}.customerId`, "");
-                                  setFieldValue(`deliveryDetails.${index}.address`, "");
-                                  setFieldValue(`deliveryDetails.${index}.mobileNumber`, "");
-                                  setFieldValue(`deliveryDetails.${index}.email`, "");
-                                  setFieldValue(`deliveryDetails.${index}.postCode`, "");
-                                  setFieldValue(`deliveryDetails.${index}.name`, "");
-                                }
-                              }}
-                              renderOption={(props, option) => (
-                                <li {...props} key={option.value}>
-                                  {option.label}
-                                </li>
-                              )}
-                              filterOptions={(options, state) => {
-                                const query = state?.inputValue?.toLowerCase().trim();
-                                // array of search words
-                                const words = query?.split(' ');
-
-                                const data = options.filter(option => {
-                                  // array of label words
-                                  for (const word of words) {
-                                    if (!option.label.toLowerCase().trim().includes(word)) {
-                                      return false;
-                                    }
-                                  }
-                                  return true;
-                                }).map((option, index) => ({
-                                  ...option,
-                                  label: `${option.label}`
-                                }));
-                                return data;
-                              }}
+                              component="div"
+                              className="error text-danger ps-2"
                             />
+
                           </div>
                         </div>
+                      <div className="mb-1 col-4">
+
+                      </div>
+
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Customer Name (Optional) :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.name`}
+                            className="form-control"
+                            placeholder="Customer Name"
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.name`, e.target.value);
+                            // }}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                            disabled={isOrderCreated}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.name`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
+
+
                         <div
                           key={"parcelsCount"}
-                          className="input-error col-12 col-sm-3 mb-1"
+                          className="input-error col-12 col-sm-4 mb-1"
                         >
                           <label className="fw-thin p-0 pb-1 ">Parcels Count :</label>
                           <Field
@@ -1235,31 +1202,6 @@ const MultiOrders = () => {
                         )}
 
 
-                        <div className="input-error mb-1 col-4">
-                          <label className="fw-thin p-0 pb-1 ">
-                            Customer Name (Optional) :
-                          </label>
-                          <Field
-                            type="text"
-                            name={`deliveryDetails.${index}.name`}
-                            className="form-control"
-                            placeholder="Customer Name"
-                            // onChange={(e) => {
-                            //   setFieldValue(`deliveryDetails.${index}.name`, e.target.value);
-                            // }}
-                            style={{
-                              height: "3em",
-                              border: "1px solid #E6E6E6",
-                              borderRadius: "5px",
-                            }}
-                            disabled={isOrderCreated}
-                          />
-                          <ErrorMessage
-                            name={`deliveryDetails.${index}.name`}
-                            component="div"
-                            className="error text-danger ps-2"
-                          />
-                        </div>
 
 
 

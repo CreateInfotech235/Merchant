@@ -37,6 +37,7 @@ import Gotop from "../Gotop/Gotop";
 import { getWebHome } from "../Api/Webapi";
 import SliderForWeb from "./SliderForWeb";
 import { Link } from "react-router-dom";
+import { createFunksen } from "../../typingef/typingef";
 const servicesdata = [
   {
     service: "Timely Delivery",
@@ -100,128 +101,51 @@ function Mainbody() {
   //   window.scrollTo({ top: 0, behavior: "instant" });
   // }, [webHome]);
 
+
+  useEffect(() => {
+    const cleanup = createFunksen('#welcome-text', ["Welcome To Create Courier"]);
+    return cleanup; // Ensure cleanup function is returned to avoid multiple instances
+  }, []);
+
+
   return (
     <>
       <div>
-        {/* {
-          webHome?.header?.isShow ?
-            <div className="w-full relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32">
-              {
-                webHome?.header?.bgImage && <img
-                  alt=""
-                  src={webHome?.header?.bgImage}
-                  className="absolute inset-0 -z-10 size-full object-cover object-right md:object-center"
-                />
-              }
+        <div className="w-full ">
+          <div className="w-full relative isolate overflow-hidden py-12 sm:py-20 lg:py-24  shadow-md" style={{
+            backgroundImage: `url(${bgImage})`,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backgroundBlendMode: 'multiply',
+            backgroundAttachment: "fixed",
+            backgroundPosition: 'center'
+          }}>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row justify-between items-center h-[60vh]">
+              {/* Left Content */}
+              <div className="w-full md:text-left">
+                <h1 id="welcome-text" className="text-xl h-[30px]  sm:text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight  text-[#FF6600] leading-tight capitalize">
+                  Welcome To Create Courier
+                </h1>
+                <h2 className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl lg:text-4xl text-white font-bold">
+                  Fast & Reliable Courier Services for All Your Shipping Needs.
+                </h2>
+                <p className="mt-4 sm:mt-6 lg:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
+                  We provide fast, reliable, and secure courier services to meet
+                  all your delivery needs. Whether you're sending a small package
+                  or a large shipment, our team ensures timely and safe delivery
+                  with tracking options for peace of mind.
+                </p>
+              </div>
 
-              <div
-                aria-hidden="true"
-                className="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl"
-              >
-                <div
-                  style={{
-                    clipPath:
-                      "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-                  }}
-                  className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
-                />
-              </div>
-              <div
-                aria-hidden="true"
-                className="absolute -top-52 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:top-[-28rem] sm:ml-16 sm:translate-x-0 sm:transform-gpu"
-              >
-                <div
-                  style={{
-                    clipPath:
-                      "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-                  }}
-                  className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20"
-                />
-              </div>
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="max-w-2xl lg:mx-0">
-                  <h3 className="text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight text-white leading-[1.2] md:leading-[1.4] capitalize">
-                    {webHome?.header?.title}
-                  </h3>
-                  <p className="mt-4 md:mt-8 text-base md:text-lg lg:text-xl text-gray-300 font-medium">
-                    {webHome?.header?.description}
-                  </p>
-                </div>
-                <div className="mx-auto mt-6 md:mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:flex gap-4 md:gap-6 lg:gap-10 text-sm md:text-base font-semibold text-white">
-                    {links.map((link) => (
-                      <a key={link.name} href={link.href} className="hover:text-blue-400 transition-colors">
-                        {link.name} <span aria-hidden="true">&rarr;</span>
-                      </a>
-                    ))}
-                  </div>
-                  <dl className="mt-8 md:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                    {webHome?.header?.status?.map((stat) => (
-                      <div key={stat.title} className="flex flex-col-reverse gap-1 bg-black/20 p-4 rounded-lg">
-                        <dt className="text-sm md:text-base text-gray-300">{stat.title}</dt>
-                        <dd className="text-2xl md:text-4xl font-bold text-white">
-                          {stat.number}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              </div>
-            </div> : <div className="space-y-8 animate-pulse">
-              {/* <!-- Hero Section Skeleton --> 
-              <div className="relative w-full h-[600px] bg-gray-300 dark:bg-gray-700">
-                {/* <!-- Title and Description --> 
-                <div className="absolute inset-0 flex flex-col items-center justify-center space-y-6 px-6">
-                  <div className="w-3/4 h-10 bg-gray-200 rounded-full dark:bg-gray-600"></div>
-                  <div className="w-2/3 h-6 bg-gray-200 rounded-full dark:bg-gray-600"></div>
-                  <div className="w-1/2 h-6 bg-gray-200 rounded-full dark:bg-gray-600"></div>
-                </div>
-              </div>
-            </div>
-
-        } */}
-        <div className="w-full relative isolate overflow-hidden bg-gray-900 py-12 sm:py-20 lg:py-24">
-          <img
-            alt=""
-            src={bgImage}
-            className="absolute inset-0 -z-10 w-full h-full object-cover object-right md:object-center"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute top-0 left-0 w-full h-full bg-[#06052D]/80 -z-10"
-          ></div>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row justify-between items-center">
-            {/* Left Content */}
-            <div className="w-full lg:w-1/2 md:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-medium tracking-tight text-[#FF6600] leading-tight capitalize">
-                Welcome To Create Courier
-              </h1>
-              <h2 className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl lg:text-4xl text-white font-bold">
-                Fast & Reliable Courier Services for All Your Shipping Needs.
-              </h2>
-              <p className="mt-4 sm:mt-6 lg:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
-                We provide fast, reliable, and secure courier services to meet
-                all your delivery needs. Whether you're sending a small package
-                or a large shipment, our team ensures timely and safe delivery
-                with tracking options for peace of mind.
-              </p>
-              {/* <div className="mt-6 sm:mt-8">
-               <Link to="/about">
-                <button className="bg-[#FF6600] hover:bg-[#e65500] transition-colors text-white px-6 py-3 rounded-md">
-                  Get Started
-                  <span className="ml-2">&rarr;</span>
-                </button>
-                </Link>
-              </div> */}
-            </div>
-
-            {/* Right Image */}
-            <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
+              {/* Right Image */}
+              {/* <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
               <img
                 src={HeavyBox}
                 alt="Courier Service"
                 className="w-full max-w-sm mx-auto lg:max-w-full"
               />
+            </div> */}
             </div>
           </div>
         </div>
@@ -490,14 +414,14 @@ function Mainbody() {
                   Next-Day Delivery for quick turnarounds, and International
                   Shipping for global reach.
                 </p>
-                <div className="flex md:justify-start justify-center">
+                {/* <div className="flex md:justify-start justify-center">
                   <a
                     href="#"
                     className="bg-orange-500 text-white px-6 py-3 rounded-md font-semibold md:text-lg text-sm hover:bg-orange-600 transition"
                   >
                     Read more
                   </a>
-                </div>
+                </div> */}
               </div>
 
               {/* Right stats */}
@@ -594,11 +518,11 @@ function Mainbody() {
                 Next-Day Delivery for quick turnarounds, and International
                 Shipping for global reach.
               </p>
-              <div>
+              {/* <div>
                 <button className="bg-[#F95C19] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md font-semibold text-base sm:text-lg hover:bg-orange-600 transition mt-6">
                   Read more
                 </button>
-              </div>
+              </div> */}
             </div>
             <div className="w-full lg:w-1/2 p-4 space-y-6">
               <div className="md:flex items-center">
@@ -643,7 +567,7 @@ function Mainbody() {
                   </p>
                 </div>
               </div>
-                <div className="md:flex items-center ">
+              <div className="md:flex items-center ">
                 <div className="w-36 h-20 sm:w-36 sm:h-20 rounded-full bg-[#1D1D37] flex justify-center items-center me-3">
                   <img src={order_confirmation} alt="" />
                 </div>

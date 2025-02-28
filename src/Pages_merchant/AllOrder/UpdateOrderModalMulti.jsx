@@ -17,7 +17,7 @@ import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType"
 import { getMapApi } from "../../Components_admin/Api/MapApi";
 import { toast } from "react-toastify";
 import { Autocomplete, TextField } from "@mui/material";
-
+import { FixedSizeList as List } from "react-window";
 const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
   console.log("Order1234", Order);
 
@@ -37,6 +37,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
   const [parcelTypeDetail, setParcleTypeDetail] = useState([]);
   const [isParcelTypeLoading, setIsParcelTypeLoading] = useState(true);
   const [isclicked, setIsclicked] = useState(false);
+  const [searchCustomerList, setSearchCustomerList] = useState([]);
+
 
   // Function to get current location and update form fields
   const getCurrentLocation = async (setFieldValue) => {
@@ -458,6 +460,36 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
     setIsUpdate(false);
   };
 
+
+
+    // Custom MenuList component for react-select using react-window
+    const MenuList = (props) => {
+      const { options, children, maxHeight, getValue } = props;
+      const height = 30;
+      const [value] = getValue();
+      const initialOffset = options.indexOf(value) * height;
+  
+      return (
+        <List
+          height={maxHeight}
+          itemCount={children.length}
+          itemSize={height}
+          initialScrollOffset={initialOffset}
+        >
+          {({ index, style }) => <div style={style}>{children[index]}</div>}
+        </List>
+      );
+    };
+
+
+
+    const filterOptions = (option, inputValue) => {
+      const normalizedInput = inputValue?.toLowerCase().trim();
+      const inputParts = normalizedInput?.split(' '); // Split the input by spaces
+      const label = option?.label?.trim().toLowerCase();
+      return inputParts.every(part => label.includes(part)); // Check if all parts are included in the label
+    };
+
   return (
     <Modal show={true} onHide={onHide} size="xl">
       <Modal.Header closeButton>
@@ -845,75 +877,102 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                         </div>
 
                         {/* Select Customer */}
-                        <div className="input-error mb-1 col-4" style={{ border: "none" }}>
+                        <div className="input-error mb-1 col-12" style={{ border: "none" }}>
                           <label className="fw-thin p-0 pb-1">
                             Select Customer :
                           </label>
-                          <Autocomplete
-                            disablePortal
-                            value={customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId) ? {
-                              label: `${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).NHS_Number} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).firstName} ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).lastName} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).address} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).postCode}`,
-                              value: values.deliveryDetails[index]?.customerId,
-                              customer: customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId)
-                            } : null}
-                            options={customer.map((cust,index) => ({
-                              label: `${index+1} ${cust.NHS_Number} - ${cust.firstName} ${cust.lastName} - ${cust.address} - ${cust.postCode}`,
-                              value: cust._id.toString(),
-                              customer: cust
-                            }))}
-                            filterOptions={(options, state) => {
-                              const query = state.inputValue.toLowerCase().trim();
-                              // array of search words
-                              const words = query.split(' ');
-                              
-                              const data = options.filter(option => {
-                                // array of label words
-                                for (const word of words) {
-                                  if (!option.label.toLowerCase().trim().includes(word)) {
-                                    return false;
-                                  }
+                          <Select
+                              name={`deliveryDetails.${index}.customerId`}
+                              className="form-control mb-1 p-0"
+                              isDisabled={isUpdate}
+                              styles={{
+                                control: (base) => ({ ...base, height: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white", }),
+                              }}
+                              options={customer?.map((cust) => ({
+                                value: cust?._id.toString(),
+                                label: ` ${cust?.NHS_Number} - ${cust?.firstName}  ${cust?.lastName}  -  ${cust?.address}  -  ${cust?.postCode}`,
+                                 ...cust
+                              }))}
+                              placeholder={isLoading ? "Loading..." : "Select Customer"}
+                              isClearable
+                              filterOption={filterOptions}
+                              components={{MenuList}}
+                              value={customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId) ? {
+                                label: `${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).NHS_Number} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).firstName} ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).lastName} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).address} - ${customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId).postCode}`,
+                                value: values.deliveryDetails[index]?.customerId,
+                                customer: customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId)
+                              } : null}
+
+                              onChange={(selectedOption) => {
+                                if (selectedOption) {
+                                  setFieldValue(`deliveryDetails.${index}.customerId`, selectedOption?.value.toString());
+                                  setFieldValue(`deliveryDetails.${index}.address`, selectedOption?.address);
+                                  setFieldValue(`deliveryDetails.${index}.mobileNumber`, selectedOption?.mobileNumber);
+                                  setFieldValue(`deliveryDetails.${index}.email`, selectedOption?.email);
+                                  setFieldValue(`deliveryDetails.${index}.postCode`, selectedOption?.postCode);
+                                  setFieldValue(`deliveryDetails.${index}.name`, `${selectedOption?.firstName} ${selectedOption?.lastName}`);
+                                } else {
+                                  setFieldValue(`deliveryDetails.${index}.customerId`, "");
+                                  setFieldValue(`deliveryDetails.${index}.address`, "");
+                                  setFieldValue(`deliveryDetails.${index}.mobileNumber`, "");
+                                  setFieldValue(`deliveryDetails.${index}.email`, "");
+                                  setFieldValue(`deliveryDetails.${index}.postCode`, "");
+                                  setFieldValue(`deliveryDetails.${index}.name`, "");
                                 }
-                                return true;
-                              }).map((option, index) => ({
-                                ...option,
-                                label: `${option.label}`
-                              }));
-
-                              return data;
-                            }}
-
-
-                            sx={{ width: "100%", border: "none", borderRadius: "5px", outline: "none", "& .MuiInputBase-input": { border: "none", outline: "none" }, "& .MuiInputBase-input:focus": { border: "none", outline: "none", boxShadow: "none" } }}
-                            onChange={(e, newValue) => {
-                              if (newValue) {
-                                const selectedCustomer = newValue.customer;
-                                setFieldValue(`deliveryDetails.${index}.customerId`, selectedCustomer?._id.toString());
-                                setFieldValue(`deliveryDetails.${index}.address`, selectedCustomer?.address);
-                                setFieldValue(`deliveryDetails.${index}.mobileNumber`, selectedCustomer?.mobileNumber);
-                                setFieldValue(`deliveryDetails.${index}.email`, selectedCustomer?.email);
-                                setFieldValue(`deliveryDetails.${index}.postCode`, selectedCustomer?.postCode);
-                                setFieldValue(`deliveryDetails.${index}.name`, `${selectedCustomer?.firstName} ${selectedCustomer?.lastName}`);
-                              }
-                            }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                style={{
-                                  backgroundColor: isUpdate ? "#e9ecef" : "white",
-                                  borderRadius: "5px",
-                                  "& .MuiInputBase-input": { border: "none", outline: "none" },
-                                }}
-                                label={isLoading ? "Loading..." : "Select Customer"}
-                                disabled={isUpdate}
-                              />
-                            )}
-                          />
+                              }}
+                              // onChange={(selectedOption) => {
+                              //   console.log("Selected Option:", selectedOption);
+                              //   if (selectedOption) {
+                              //     setFieldValue(`deliveryDetails.${index}.customerId`, selectedOption?.value.toString());
+                              //     setFieldValue(`deliveryDetails.${index}.address`, selectedOption?.address);
+                              //     setFieldValue(`deliveryDetails.${index}.mobileNumber`, selectedOption?.mobileNumber);
+                              //     setFieldValue(`deliveryDetails.${index}.email`, selectedOption?.email);
+                              //     setFieldValue(`deliveryDetails.${index}.postCode`, selectedOption?.postCode);
+                              //     setFieldValue(`deliveryDetails.${index}.name`, `${selectedOption?.firstName} ${selectedOption?.lastName}`);
+                              //   } else {
+                              //     setFieldValue(`deliveryDetails.${index}.customerId`, "");
+                              //     setFieldValue(`deliveryDetails.${index}.address`, "");
+                              //     setFieldValue(`deliveryDetails.${index}.mobileNumber`, "");
+                              //     setFieldValue(`deliveryDetails.${index}.email`, "");
+                              //     setFieldValue(`deliveryDetails.${index}.postCode`, "");
+                              //     setFieldValue(`deliveryDetails.${index}.name`, "");
+                              //   }
+                              // }}
+                            />
                           <ErrorMessage
                             name={`deliveryDetails.${index}.customerId`}
                             component="div"
                             className="error text-danger ps-2"
                           />
                         </div>
+
+                        {/* Customer Name */}
+                        <div className="input-error mb-1 col-4">
+                          <label className="fw-thin p-0 pb-1 ">
+                            Customer Name :
+                          </label>
+                          <Field
+                            type="text"
+                            name={`deliveryDetails.${index}.name`}
+                            className="form-control"
+                            placeholder="Customer Name"
+                            disabled={isUpdate}
+                            // onChange={(e) => {
+                            //   setFieldValue(`deliveryDetails.${index}.name`, e.target.value);
+                            // }}
+                            style={{
+                              height: "3em",
+                              border: "1px solid #E6E6E6",
+                              borderRadius: "5px",
+                            }}
+                          />
+                          <ErrorMessage
+                            name={`deliveryDetails.${index}.name`}
+                            component="div"
+                            className="error text-danger ps-2"
+                          />
+                        </div>
+
 
                         {/* Parcels Count */}
                         <div className="input-error col-12 col-sm-3 mb-1">
@@ -1019,33 +1078,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           </div>
                         )}
 
-                        {/* Customer Name */}
-                        <div className="input-error mb-1 col-4">
-                          <label className="fw-thin p-0 pb-1 ">
-                            Customer Name :
-                          </label>
-                          <Field
-                            type="text"
-                            name={`deliveryDetails.${index}.name`}
-                            className="form-control"
-                            placeholder="Customer Name"
-                            disabled={isUpdate}
-                            // onChange={(e) => {
-                            //   setFieldValue(`deliveryDetails.${index}.name`, e.target.value);
-                            // }}
-                            style={{
-                              height: "3em",
-                              border: "1px solid #E6E6E6",
-                              borderRadius: "5px",
-                            }}
-                          />
-                          <ErrorMessage
-                            name={`deliveryDetails.${index}.name`}
-                            component="div"
-                            className="error text-danger ps-2"
-                          />
-                        </div>
-
+                        
                         {/* Delivery Email */}
                         <div className="input-error mb-1 col-4">
                           <label className="fw-thin p-0 pb-1 ">
@@ -1157,7 +1190,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             // }}
                             isMulti={true}
                           /> */}
-                          {parcelTypeDetail.length === 0 && (
+                          {!isParcelTypeLoading && parcelTypeDetail.length === 0 && (
                             <Link
                             
                                   to="/multi-order-parcel"

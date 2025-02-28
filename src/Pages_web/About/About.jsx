@@ -4,11 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import tracking from "../../assets_web/Group (4).png";
 import oficina from "../../assets_web/Group 159.png";
 import courierman from "../../assets_web/courier man.jpg";
-import bgImage from "../../assets_web/image (41).png";
+import bgImage from "../../assets_web/image41.png";
 import effect from "../../assets_web/image (42).png";
 import HeavyBox from "../../assets_web/About us page-bro (1) 1.png";
 import Setting from "../../assets_web/fluent_people-team-32-regular.png";
 import Right from "../../assets_web/ph_seal-check.png";
+import { createFunksen } from "../../typingef/typingef";
 function About() {
   // useEffect(() => {
   //   window.scrollTo({ top: 0, behavior: "instant" });
@@ -19,45 +20,40 @@ function About() {
     navigate("/contact");
   };
 
+  useEffect(() => {
+    const cleanup = createFunksen('#welcome-text-about', ["Welcome To Create Courier", "Reliable Delivery, Trusted Service–Every Time."]);
+    return cleanup; // Ensure cleanup function is returned to avoid multiple instances
+  }, []);
+
   return (
     <>
-      <div className="w-full relative isolate overflow-hidden bg-gray-900 py-12 sm:py-16 md:py-24 lg:py-32">
-        <img
-          alt=""
-          src={bgImage}
-          className="absolute inset-0 -z-10 w-full h-full object-cover object-right md:object-center"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute top-0 left-0 w-full h-full bg-[#06052D5D]/80 -z-10"
-        ></div>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center lg:justify-between">
-          {/* Text Content */}
-          <div className="max-w-full lg:max-w-2xl xs:text-center lg:text-left">
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-medium tracking-tight text-[#FF6600] leading-snug capitalize noto small">
-              Reliable Delivery, Trusted Service–Every Time.
-            </h1>
-            <h2 className="mt-4 md:mt-6 lg:mt-8 text-white text-base sm:text-lg md:text-xl lg:text-4xl font-bold">
-              our Trusted Partner in Fast and Reliable Shipping.
-            </h2>
-            <p className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
-              we are dedicated to providing reliable, fast, and secure delivery
-              services across the UK and beyond. With years of experience in the
-              courier industry we pride ourselves on our commitment to customer
-              satisfaction.
-            </p>
-            {/* <div className="mt-6 sm:mt-8 md:mt-10 flex justify-center lg:justify-start">
-              <Link to="/contact">
-                <button className="bg-[#FF6600] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg">
-                  Get Started
-                  <span className="ml-2">&rarr;</span>
-                </button>
-              </Link>
-            </div> */}
-          </div>
-          {/* Image Content */}
-          <div className="mt-8 lg:mt-0 max-w-full lg:max-w-lg">
-            <img src={HeavyBox} alt="Heavy Box" className="w-full h-auto" />
+
+      <div className="w-full ">
+        <div className="w-full relative isolate overflow-hidden py-12 sm:py-20 lg:py-24 shadow-md" style={{
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: 'rgba(0, 0, 0, 0.75)',
+          backgroundBlendMode: 'multiply',
+          backgroundAttachment: "fixed",
+          backgroundPosition: 'top center'
+        }}>
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row justify-between items-center h-[60vh]">
+            {/* Left Content */}
+            <div className="w-full md:text-left">
+              <h1 id="welcome-text-about" className="text-xl h-[30px]  sm:text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight  text-[#FF6600] leading-tight capitalize">
+                Welcome To Create Courier
+              </h1>
+              <h2 className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl lg:text-4xl text-white font-bold">
+                Our Trusted Partner In Fast And Reliable Shipping.
+              </h2>
+              <p className="mt-4 sm:mt-6 lg:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
+                we are dedicated to providing reliable, fast, and secure delivery
+                services across the UK and beyond. With years of experience in the
+                courier industry we pride ourselves on our commitment to customer
+                satisfaction.
+              </p>
+            </div>
           </div>
         </div>
       </div>
