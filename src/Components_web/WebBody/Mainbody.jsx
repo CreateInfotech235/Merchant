@@ -8,7 +8,7 @@ import tracking_icon from "../../assets_web/tracking_icon.png";
 import happy_man from "../../assets_web/Rectangle 12.png";
 import pakage from "../../assets_web/image 1.png";
 import { FaRegPlayCircle, FaRegPauseCircle } from "react-icons/fa";
-import Video from "../../assets_web/Fastest_Deliveryvi.mp4";
+// import Video from "../../assets_web/Fastest_Deliveryvi.mp4";
 import deliveryMan from "../../assets_web/12008 1.png";
 import HeavyBox from "../../assets_web/Heavy box-amico.png";
 import Icon from "../../assets_web/Group 7.png";
@@ -230,7 +230,7 @@ function Mainbody() {
           <div className="mx-6">
             <video
               id="video"
-              src={Video}
+              src="https://videos.pexels.com/video-files/6867870/6867870-uhd_2560_1440_30fps.mp4"
               muted={true}
               loop={true}
               className="absolute w-full h-full inset-0 -z-10 object-cover"
