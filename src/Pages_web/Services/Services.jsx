@@ -217,11 +217,11 @@ function Services() {
                                     your parcels safely and on time.
                                 </p>
                             </div>
-                            <div>
+                            {/* <div>
                                 <button className="bg-[#1D1D37] text-white px-4 py-3 sm:px-6 sm:py-3 rounded-md text-sm sm:text-base md:text-lg flex items-center" onClick={() => { navigate("/contact"); window.scrollTo({ top: 0, behavior: "instant" }) }}>
                                     Learn More <SlArrowRight className="ml-2 text-[15px] text-bold" />
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

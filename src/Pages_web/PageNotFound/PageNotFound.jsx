@@ -1,5 +1,6 @@
 import React from "react";
 import pageNotFoundImage from "../../assets_web/404 Error with a cute animal-bro 1.png";
+import { Link } from "react-router";
 function PageNotFound() {
   return (
     <div>
@@ -14,6 +15,12 @@ function PageNotFound() {
         Sorry but the page you are looking for does not exist, has been removed,
         changed or is temporarily unavailable.
       </p>
+
+      <div className="flex justify-center items-center mb-10">
+        <Link to="/" className=" w-[200px] bg-[#F95C19] text-white py-2 px-4 rounded-md text-center">
+          Go to Home
+        </Link>
+      </div>
 
     
     </div>

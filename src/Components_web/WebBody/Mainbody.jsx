@@ -7,7 +7,8 @@ import international_delivery from "../../assets_web/international-delivery-svgr
 import tracking_icon from "../../assets_web/tracking_icon.png";
 import happy_man from "../../assets_web/Rectangle 12.png";
 import pakage from "../../assets_web/image 1.png";
-import VideoPlayer from "../../assets_web/Icon.png";
+import { FaRegPlayCircle, FaRegPauseCircle } from "react-icons/fa";
+import Video from "../../assets_web/Fastest_Deliveryvi.mp4";
 import deliveryMan from "../../assets_web/12008 1.png";
 import HeavyBox from "../../assets_web/Heavy box-amico.png";
 import Icon from "../../assets_web/Group 7.png";
@@ -38,6 +39,7 @@ import { getWebHome } from "../Api/Webapi";
 import SliderForWeb from "./SliderForWeb";
 import { Link } from "react-router-dom";
 import { createFunksen } from "../../typingef/typingef";
+
 const servicesdata = [
   {
     service: "Timely Delivery",
@@ -81,32 +83,28 @@ const links = [
 function Mainbody() {
   const [webHome, setWebHome] = useState(null);
   const [services, setservices] = useState([]);
-
-  // useEffect(() => {
-  //   const data = async () => {
-  //     const data = await getWebHome();
-  //     //  tamrare
-
-  //     // setWebHome(data);
-  //     // setservices(servicesdata);
-  //   };
-  //   data();
-  // }, []);
-
-  // useEffect(() => {
-  //   window.scrollTo({ top: 0, behavior: "instant" });
-  // }, []);
-
-  // useEffect(() => {
-  //   window.scrollTo({ top: 0, behavior: "instant" });
-  // }, [webHome]);
+  const [isVideoPlay, setVideoPlay] = useState(false);
 
 
   useEffect(() => {
-    const cleanup = createFunksen('#welcome-text', ["","Welcome To Create Courier"]);
+    const videoElement = document.getElementById("video");
+
+    if (videoElement) {
+      if (isVideoPlay) {
+        videoElement.play();
+      } else {
+        videoElement.pause();
+      }
+    }
+  }, [isVideoPlay]);
+
+  const toggleVideo = () => {
+    setVideoPlay((prev) => !prev);
+  };
+  useEffect(() => {
+    const cleanup = createFunksen('#welcome-text', ["", "Welcome To Create Courier"]);
     return cleanup; // Ensure cleanup function is returned to avoid multiple instances
   }, []);
-
 
   return (
     <>
@@ -137,15 +135,6 @@ function Mainbody() {
                   with tracking options for peace of mind.
                 </p>
               </div>
-
-              {/* Right Image */}
-              {/* <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
-              <img
-                src={HeavyBox}
-                alt="Courier Service"
-                className="w-full max-w-sm mx-auto lg:max-w-full"
-              />
-            </div> */}
             </div>
           </div>
         </div>
@@ -204,9 +193,9 @@ function Mainbody() {
             ].map((service, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center bg-gray-200 rounded-t-full p-4"
+                className={`flex flex-col items-center h-[450px] bg-gray-200 rounded-t-full p-4 ${index === 1 || index === 3 ? 'mt-[70px]' : ''}`}
               >
-                <div className="w-36 sm:w-48 md:w-56 lg:w-72 overflow-hidden">
+                <div className="w-72 overflow-hidden">
                   <div className="w-full flex justify-center mt-8 sm:mt-14">
                     <img
                       src={service.img}
@@ -217,8 +206,8 @@ function Mainbody() {
                   <p className="text-center text-lg sm:text-xl lg:text-2xl font-bold noto small mt-3">
                     {service.title}
                   </p>
-                  <p className="text-justify px-2 sm:px-5 mt-2 text-[#7B7A8B] text-sm sm:text-base">
-                    {service.description}
+                  <p className="text-justify px-2 sm:px-5 mt-2 text-[#7B7A8B] text-sm sm:text-base ">
+                    {service.description.trim()}
                   </p>
                   <div className="w-full flex flex-wrap px-2 sm:px-5 mt-2">
                     {service.features.map((feature, idx) => (
@@ -231,16 +220,6 @@ function Mainbody() {
                       </p>
                     ))}
                   </div>
-                  <div
-                    className="flex justify-center items-center py-2 mx-2 sm:mx-5 my-6 hover:bg-orange-500 hover:text-white transition"
-                    style={{
-                      borderColor: "#FF6600",
-                      borderWidth: "3px",
-                      borderRadius: "5px",
-                    }}
-                  >
-                    Learn More
-                  </div>
                 </div>
               </div>
             ))}
@@ -248,147 +227,37 @@ function Mainbody() {
         </div>
 
         <div className="mx-auto relative isolate max-w-7xl lg:px-8 my-24">
-          {/* <div className=""> */}
           <div className="mx-6">
-            <img
-              src={happy_man}
-              alt=""
-              width={"100%"}
-              className="absolute inset-0 -z-10 size-full "
+            <video
+              id="video"
+              src={Video}
+              muted={true}
+              loop={true}
+              className="absolute w-full h-full inset-0 -z-10 object-cover"
+              playsInline // Ensure the video plays inline on mobile devices
             />
-            {/* </div> */}
+            <div className="absolute w-full h-full inset-0 -z-10 size-full bg-black opacity-50"></div>
+
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-center">
               <div className="max-w-2xl lg:mx-0">
-                <img
-                  src={VideoPlayer}
-                  alt=""
-                  width={"20%"}
-                  className="mx-auto mt-8 sm:mt-36"
-                />
+
+                {isVideoPlay ? (
+                  <FaRegPauseCircle onClick={toggleVideo} className="text-[80px] mx-auto mt-36 cursor-pointer text-[#ffffff]" />
+                ) : (
+                  <FaRegPlayCircle onClick={toggleVideo} className="text-[80px] mx-auto mt-36 cursor-pointer text-[#ffffff]" />
+                )}
+
                 <h1 className="text-2xl noto small  mt-3 text-center  md:text-3xl lg:text-[31px] font-medium tracking-tight text-[#FF6600] leading-[1.2] md:leading-[1.4] capitalize noto small">
-                  {/* FASTEST DELIVERY */}
                   Fastest Delivery
                 </h1>
-                <h2 className="mt-4 max-w-md text-center md:mt-8 md:text-lg text-white font-medium mb-8 sm:mb-32">
-                  You can get your valuable item in the fastest period of time
-                  with safety. Because your emergency is our first priority.
+                <h2 className="mt-4 text-center md:mt-8 md:text-lg text-white font-medium mb-8 sm:mb-32">
+                  You can get your valuable item in the fastest period of
+                  time with safety. Because your emergency
+                  is our first priority.
                 </h2>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 my-12 lg:my-24">
-          {/* Section Heading */}
-          <div className="text-center">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold capitalize tracking-wide">
-              Our Delivery About
-            </h1>
-            <div className="flex justify-center items-center mt-4">
-              <div className="relative w-24 sm:w-32 md:w-36 h-[2px] bg-[#221F92] mx-3"></div>
-              <img
-                src={tracking}
-                className="w-10 sm:w-12 md:w-14"
-                alt="Tracking Icon"
-              />
-              <div className="relative w-24 sm:w-32 md:w-36 h-[2px] bg-[#221F92] mx-3"></div>
-            </div>
-          </div>
-
-          {/* Features Section */}
-          <section id="features" className="py-12 md:py-20 lg:py-28">
-            <div className="container mx-auto flex flex-col md:flex-row space-y-12 md:space-y-0 md:space-x-12">
-              {/* Left Column */}
-              <div className="flex flex-col space-y-6 md:w-1/2">
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center md:text-left">
-                  What’s different about Manage?
-                </h2>
-                <p className="text-sm sm:text-base lg:text-lg text-gray-600 text-center md:text-left">
-                  Manage provides all the functionality your team needs, without
-                  the complexity. Our software is tailor-made for modern digital
-                  product teams.
-                </p>
-                <img
-                  src={deliveryMan}
-                  className="w-full rounded-lg"
-                  alt="Delivery Man"
-                />
-              </div>
-
-              {/* Right Column */}
-              <div className="flex flex-col space-y-8 md:w-1/2">
-                {/* Feature 1 */}
-                <div className="flex flex-col md:flex-row md:space-x-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92]">
-                      01
-                    </div>
-                    <h3 className="text-lg font-bold md:hidden">
-                      Track company-wide progress
-                    </h3>
-                  </div>
-                  <div>
-                    <h3 className="hidden md:block text-lg font-bold">
-                      Track company-wide progress
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-600">
-                      See how your day-to-day tasks fit into the wider vision.
-                      Go from tracking progress at the milestone level all the
-                      way down to the smallest of details. Never lose sight of
-                      the bigger picture again.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Feature 2 */}
-                <div className="flex flex-col md:flex-row md:space-x-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92]">
-                      02
-                    </div>
-                    <h3 className="text-lg font-bold md:hidden">
-                      Advanced built-in reports
-                    </h3>
-                  </div>
-                  <div>
-                    <h3 className="hidden md:block text-lg font-bold">
-                      Advanced built-in reports
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-600">
-                      Advanced built-in reports for a courier company in London
-                      offer real-time tracking, delivery performance analysis,
-                      route optimization, traffic insights, customer feedback,
-                      and operational data to enhance efficiency and improve
-                      service.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Feature 3 */}
-                <div className="flex flex-col md:flex-row md:space-x-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="px-5 py-2 font-bold text-white rounded-full bg-[#221F92]">
-                      03
-                    </div>
-                    <h3 className="text-lg font-bold md:hidden">
-                      Everything you need in one place
-                    </h3>
-                  </div>
-                  <div>
-                    <h3 className="hidden md:block text-lg font-bold">
-                      Everything you need in one place
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-600">
-                      Courier services across all of London, providing fast,
-                      reliable, and efficient delivery solutions. We handle all
-                      your needs in one place, ensuring quick and safe
-                      transportation throughout the city.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
         </div>
 
         <div className="w-full relative">
@@ -414,52 +283,69 @@ function Mainbody() {
                   Next-Day Delivery for quick turnarounds, and International
                   Shipping for global reach.
                 </p>
-                {/* <div className="flex md:justify-start justify-center">
-                  <a
-                    href="#"
-                    className="bg-orange-500 text-white px-6 py-3 rounded-md font-semibold md:text-lg text-sm hover:bg-orange-600 transition"
-                  >
-                    Read more
-                  </a>
-                </div> */}
               </div>
 
               {/* Right stats */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 lg:mt-0 items-center">
                 {/* Stat card 1 */}
-                <div className="bg-[#1D1D37]  rounded-lg p-6 text-center text-white">
-                  <div className="text-orange-500 text-4xl mb-4">
-                    <img src={solar_box} alt="" className="mx-auto " />
+
+                <div style={{
+                  background: "linear-gradient(133deg, #1D1D37 70%, #FFFFFFFF 100%)",
+                }}
+                className="rounded-lg   p-[1px]"
+                >
+                  <div className=" bg-[#1D1D37] rounded-lg  p-6 text-center text-white">
+                    <div className="text-orange-500 text-4xl mb-4">
+                      <img src={solar_box} alt="" className="mx-auto " />
+                    </div>
+                    <p className="text-2xl font-bold">380k+</p>
+                    <p className="text-gray-300 mt-2">Delivery Packagings</p>
                   </div>
-                  <p className="text-2xl font-bold">380k+</p>
-                  <p className="text-gray-300 mt-2">Delivery Packagings</p>
                 </div>
 
                 {/* Stat card 2 */}
-                <div className="bg-[#1D1D37]  rounded-lg p-6 text-center text-white">
-                  <div className="text-orange-500 text-4xl mb-4">
-                    <img src={people} alt="" className="mx-auto " />
+                <div style={{
+                  background: "linear-gradient(133deg, #1D1D37 70%, #FFFFFFFF 100%)",
+                }}
+                className="rounded-lg   p-[1px]"
+                >
+                  <div className=" bg-[#1D1D37] rounded-lg  p-6 text-center text-white">
+                    <div className="text-orange-500 text-4xl mb-4">
+                      <img src={people} alt="" className="mx-auto " />
                   </div>
                   <p className="text-2xl font-bold">70k+</p>
-                  <p className="text-gray-300 mt-2">Happy Clients</p>
+                    <p className="text-gray-300 mt-2">Happy Clients</p>
+                  </div>
                 </div>
 
                 {/* Stat card 3 */}
-                <div className="bg-[#1D1D37]  rounded-lg p-6 text-center text-white">
-                  <div className="text-orange-500 text-4xl mb-4">
-                    <img src={earth} alt="" className="mx-auto " />
+                <div style={{
+                  background: "linear-gradient(133deg, #1D1D37 70%, #FFFFFFFF 100%)",
+                }}
+                className="rounded-lg   p-[1px]"
+                >
+                  <div className=" bg-[#1D1D37] rounded-lg  p-6 text-center text-white">
+                    <div className="text-orange-500 text-4xl mb-4">
+                      <img src={earth} alt="" className="mx-auto " />
                   </div>
                   <p className="text-2xl font-bold">380k+</p>
-                  <p className="text-gray-300 mt-2">Delivery Packagings</p>
+                    <p className="text-gray-300 mt-2">Delivery Packagings</p>
+                  </div>
                 </div>
 
                 {/* Stat card 4 */}
-                <div className="bg-[#1D1D37]  rounded-lg p-6 text-center text-white">
+                <div style={{
+                  background: "linear-gradient(133deg, #1D1D37 70%, #FFFFFFFF 100%)",
+                }}
+                className="rounded-lg   p-[1px]"
+                >
+                  <div className=" bg-[#1D1D37] rounded-lg  p-6 text-center text-white">
                   <div className="text-orange-500 text-4xl mb-4">
                     <img src={weight} alt="" className="mx-auto " />
                   </div>
                   <p className="text-2xl font-bold">50k+</p>
-                  <p className="text-gray-300 mt-2">Tons Of Goods</p>
+                    <p className="text-gray-300 mt-2">Tons Of Goods</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -518,11 +404,6 @@ function Mainbody() {
                 Next-Day Delivery for quick turnarounds, and International
                 Shipping for global reach.
               </p>
-              {/* <div>
-                <button className="bg-[#F95C19] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md font-semibold text-base sm:text-lg hover:bg-orange-600 transition mt-6">
-                  Read more
-                </button>
-              </div> */}
             </div>
             <div className="w-full lg:w-1/2 p-4 space-y-6">
               <div className="md:flex items-center">
@@ -585,7 +466,6 @@ function Mainbody() {
           </div>
         </div>
 
-        {/* <div className="loader">section 4</div> */}
       </div>
       <Gotop />
     </>

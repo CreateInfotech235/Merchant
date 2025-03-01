@@ -1,5 +1,5 @@
 import React from "react";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import Slider from "react-slick";
 import img from "../../assets_web/Avatar.png";
 
@@ -8,27 +8,28 @@ function SliderForWeb() {
     className: "center",
     centerMode: true,
     infinite: true,
-    centerPadding: "20px", // Adjusted for better responsiveness
+    centerPadding: "20px",
     slidesToShow: 1,
     speed: 500,
     dots: true,
+    slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 1024, // For medium and large screens
+        breakpoint: 1024,
         settings: {
           slidesToShow: 1,
           centerPadding: "40px",
         },
       },
       {
-        breakpoint: 768, // For tablets
+        breakpoint: 768,
         settings: {
           slidesToShow: 1,
           centerPadding: "30px",
         },
       },
       {
-        breakpoint: 480, // For small screens and mobiles
+        breakpoint: 480,
         settings: {
           slidesToShow: 1,
           centerPadding: "10px",
@@ -37,43 +38,69 @@ function SliderForWeb() {
     ],
   };
 
+  const data = [
+    {
+      name: "John Doe",
+      review: "Fantastic service!",
+      image: img,
+      position: "CEO, Company Name",
+      massage: "I purchased a phone from an e-commerce site, and this courier service provider assisted me in getting it delivered to my home. I received my phone within one day, and I was really satisfied with their service when I received it. They are really quick and dependable. They give me the option of real-time delivery status, which allows me to track the progress of my goods delivery. I get a lot of questions from call center support and key account managers. They come highly recommended. Confidently say that they are really reliable.",
+      rating: 5,
+    },
+    {
+      name: "John Doe",
+      review: "Fantastic service!",
+      image: img,
+      position: "CEO, Company Name",
+      massage: "I purchased a phone from an e-commerce site, and this courier service provider assisted me in getting it delivered to my home. I received my phone within one day, and I was really satisfied with their service when I received it. They are really quick and dependable. They give me the option of real-time delivery status, which allows me to track the progress of my goods delivery. I get a lot of questions from call center support and key account managers. They come highly recommended. Confidently say that they are really reliable.",
+      rating: 4,
+    },
+    {
+      name: "John Doe",
+      review: "Fantastic service!",
+      image: img,
+      position: "CEO, Company Name",
+      massage: "I purchased a phone from an e-commerce site, and this courier service provider assisted me in getting it delivered to my home. I received my phone within one day, and I was really satisfied with their service when I received it. They are really quick and dependable. They give me the option of real-time delivery status, which allows me to track the progress of my goods delivery. I get a lot of questions from call center support and key account managers. They come highly recommended. Confidently say that they are really reliable.",
+      rating: 3.5,
+    },
+    {
+      name: "John Doe",
+      review: "Fantastic service!",
+      image: img,
+      position: "CEO, Company Name",
+      massage: "I purchased a phone from an e-commerce site, and this courier service provider assisted me in getting it delivered to my home. I received my phone within one day, and I was really satisfied with their service when I received it. They are really quick and dependable. They give me the option of real-time delivery status, which allows me to track the progress of my goods delivery. I get a lot of questions from call center support and key account managers. They come highly recommended. Confidently say that they are really reliable.",
+      rating: 2,
+    },
+  ];
+
   return (
     <div className="slider-container max-w-screen-xl mx-auto px-4">
       <Slider {...settings}>
-        {[...Array(4)].map((_, index) => (
-          <div key={index} className="w-full border rounded-lg p-4 bg-white">
+        {data.map((item, index) => (
+          <div key={index} className="w-full border rounded-lg p-4 bg-white mx-2">
             <div>
               <h3 className="text-2xl text-[#F95C19] font-bold mb-3">
-                Fantastic service!
+                {item.review}
               </h3>
               <p className="text-sm md:text-base">
-                I purchased a phone from an e-commerce site, and this courier
-                service provider assisted me in getting it delivered to my home.
-                I received my phone within one day, and I was really satisfied
-                with their service when I received it. They are really quick and
-                dependable. They give me the option of real-time delivery status,
-                which allows me to track the progress of my goods delivery. I get
-                a lot of questions from call center support and key account
-                managers. They come highly recommended. Confidently say that
-                they are really reliable.
+                {item.massage}
               </p>
             </div>
             <div className="flex items-center gap-4 mt-4">
               <div className="rating-star flex items-center gap-1">
-                {Array(5)
-                  .fill()
-                  .map((_, i) => (
-                    <FaStar key={i} style={{ color: "#F95C19", fontSize: "20px" }} />
-                  ))}
+                {Array(Math.floor(item.rating)).fill().map((_, i) => (
+                  <FaStar key={i} style={{ color: "#F95C19", fontSize: "20px" }} />
+                ))}
+                {item.rating % 1 !== 0 && <FaStarHalfAlt style={{ color: "#F95C19", fontSize: "20px" }} />}
               </div>
               <div className="flex items-center gap-2">
                 <div className="info">
-                  <p className="font-bold">John Doe</p>
+                  <p className="font-bold">{item.name}</p>
                   <p className="text-sm text-gray-500">CEO, Company Name</p>
                 </div>
                 <div className="img">
                   <img
-                    src={img}
+                    src={item.image}
                     alt="Avatar"
                     className="w-10 h-10 rounded-full"
                   />
@@ -83,6 +110,14 @@ function SliderForWeb() {
           </div>
         ))}
       </Slider>
+      <style jsx>{`
+        .slick-list {
+          overflow: visible;
+        }
+        .slick-slide {
+          padding: 0 10px;
+        }
+      `}</style>
     </div>
   );
 }

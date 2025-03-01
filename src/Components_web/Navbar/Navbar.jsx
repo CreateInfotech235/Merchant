@@ -22,20 +22,51 @@ function Navbar({ Login, userData }) {
   // console.log(userData);
   const navLinks = [
     { to: "/", text: "Home" },
-    { to: "/pricing", text: "Pricing" },
-    { to: "/tracking", text: "Tracking" },
+    // { to: "/pricing", text: "Pricing" },
+    // { to: "/tracking", text: "Tracking" },
     { to: "/about", text: "About" },
     { to: "/contact", text: "Contact" },
     { to: "/Services", text: "Services" },
   ];
 
+
+  const contactLink = [
+    { to: "tel:02080495522", text: "0208 049 5522" , icon: <BsTelephone fontSize={17} />},
+    { to: "mailto:info@createcourier.com", text: "info@createcourier.com" , icon: <CiMail fontSize={17} />},
+  ];
+
+
+  const mediaLink = [
+    {
+      name: "Facebook",
+      link: "https://www.facebook.com/"
+    },
+    {
+      name: "Instagram",
+      link: "https://www.instagram.com/"
+    },
+    {
+      name: "LinkedIn",
+      link: "https://www.linkedin.com/"
+    },
+    {
+      name: "Twitter",
+      link: "https://www.twitter.com/"
+    },
+    {
+      name: "Youtube",
+      link: "https://www.youtube.com/"
+    },
+
+  ]
+
+
+
   const getLinkClass = (path, isMobile = false) => {
-    const baseClass = `${isMobile ? "block " : ""}px-${
-      isMobile ? "3" : "2"
-    } py-2 text-gray-900 hover:text-blue-700`;
-    return `${baseClass} ${
-      location.pathname === path ? "text-blue-700 font-bold" : ""
-    }`;
+    const baseClass = `${isMobile ? "block " : ""}px-${isMobile ? "3" : "2"
+      } py-2 text-gray-900 hover:text-blue-700`;
+    return `${baseClass} ${location.pathname === path ? "text-blue-700 font-bold" : ""
+      }`;
   };
 
   const handleLogout = () => {
@@ -63,28 +94,36 @@ function Navbar({ Login, userData }) {
             {/* Left Section */}
             <div className="text-sm font-medium w-full sm:w-auto">
               <ul className="flex flex-wrap items-center justify-center  gap-x-4 gap-y-2">
+               
+                {contactLink.map((link) => (
                 <li>
                   <p className="text-[12px] flex items-center gap-1 font-light">
-                    <BsTelephone  fontSize={17} /> 0208 049 5522
+                    <Link to={link.to} className="hover:text-[#ffd8bd] flex items-center gap-1">
+                      {link.icon}
+                      <p>
+                        {link.text}
+                      </p>
+                    </Link>
                   </p>
                 </li>
-                <li>
-                  <p className="text-[12px] flex items-center gap-1 font-light">
-                    <CiMail fontSize={17} /> info@createcourier.com
-                  </p>
-                </li>
+                ))}
               </ul>
             </div>
 
             {/* Right Section */}
             <div className="text-sm font-medium w-full sm:w-auto">
               <ul className="flex flex-wrap items-center gap-2 justify-center sm:justify-end">
+                {mediaLink.map((link) => (
                 <li>
                   <p className="text-[12px] flex items-center gap-1 font-light">
-                    <FaFacebookSquare fontSize={19} />
+                    <Link to={link.link} className="hover:text-[#ffd8bd] flex items-center gap-1">
+                    <img src={`https://logo.clearbit.com/${new URL(link.link).hostname}`} alt={link.name} className="w-6 h-6 rounded-full hover:opacity-80 transition-opacity" />
+                    </Link>
                   </p>
                 </li>
-                <li>
+                ))}
+                
+                {/* <li>
                   <p className="text-[12px] flex items-center gap-1 font-light">
                     <FaInstagramSquare fontSize={19} />
                   </p>
@@ -103,7 +142,7 @@ function Navbar({ Login, userData }) {
                   <p className="text-[12px] flex items-center gap-1 font-light">
                     <FaYoutubeSquare fontSize={19} />
                   </p>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
@@ -117,7 +156,7 @@ function Navbar({ Login, userData }) {
               <Link to="/" className="flex-shrink-0">
                 <img
                   src={HeaderLogo}
-                  className={`h-[70px] md:h-[80px] ${window.innerWidth<=768?"h-[45px] md:h-[60px]":"h-[70px] md:h-[80px]"}`}
+                  className={`h-[70px] md:h-[80px] ${window.innerWidth <= 768 ? "h-[45px] md:h-[60px]" : "h-[70px] md:h-[80px]"}`}
                   alt="Logo"
                 />
               </Link>
@@ -125,7 +164,7 @@ function Navbar({ Login, userData }) {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center">
-              <div className="flex lg:space-x-8 md:space-x-2 " style={{fontSize:window.innerWidth<=768?"14px":"16px"}}>
+              <div className="flex lg:space-x-8 md:space-x-2 " style={{ fontSize: window.innerWidth <= 768 ? "14px" : "16px" }}>
                 {navLinks.map((link) => (
                   <Link
                     key={link.to}
@@ -198,23 +237,23 @@ function Navbar({ Login, userData }) {
                 </div>
               ) : (
                 <>
-                <div style={{display:window.innerWidth<768 && window.innerWidth>767?"block":"flex"}}>
-                  <Link
-                    to="/login"
-                    style={{marginBottom:window.innerWidth<768?"10px":"0px"}}
-                    className="flex items-center text-gray-900 hover:text-blue-700 lg:px-3 md:px-2 px-2 py-1 ml-1"
-                  >
-                    <img src={LoginImg} className="h-6 w-6 mr-1" alt="" />
-                    <span className="whitespace-nowrap">Login</span>
-                  </Link>
-                  <Link
-                    to="/register"
-                    style={{margintop:window.innerWidth<768?"10px":"0px"}}
-                    className=" bg-gradient-to-b from-blue-700 to-blue-800 text-white px-[10px] py-[5px] md:px-[20px] md:py-[7px] rounded-lg hover:bg-blue-800 whitespace-nowrap ml-5"
-                  >
-                    Register
-                  </Link>
-                </div>
+                  <div style={{ display: window.innerWidth < 768 && window.innerWidth > 767 ? "block" : "flex" }}>
+                    <Link
+                      to="/login"
+                      style={{ marginBottom: window.innerWidth < 768 ? "10px" : "0px" }}
+                      className="flex items-center text-gray-900 hover:text-blue-700 lg:px-3 md:px-2 px-2 py-1 ml-1"
+                    >
+                      <img src={LoginImg} className="h-6 w-6 mr-1" alt="" />
+                      <span className="whitespace-nowrap">Login</span>
+                    </Link>
+                    <Link
+                      to="/register"
+                      style={{ margintop: window.innerWidth < 768 ? "10px" : "0px" }}
+                      className=" bg-gradient-to-b from-blue-700 to-blue-800 text-white px-[10px] py-[5px] md:px-[20px] md:py-[7px] rounded-lg hover:bg-blue-800 whitespace-nowrap ml-5"
+                    >
+                      Register
+                    </Link>
+                  </div>
                 </>
               )}
 
@@ -242,9 +281,8 @@ function Navbar({ Login, userData }) {
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden ${
-            isOpen ? "h-full" : "h-0"
-          } overflow-hidden transition-all ease-in-out`}
+          className={`md:hidden ${isOpen ? "h-full" : "h-0"
+            } overflow-hidden transition-all ease-in-out`}
         >
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
             {navLinks.map((link) => (

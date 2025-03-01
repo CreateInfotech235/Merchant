@@ -511,7 +511,7 @@ function App() {
             </Formate>
           }
         />
-
+{/* 
         <Route
           path="/pricing"
           element={
@@ -519,18 +519,18 @@ function App() {
               <Pricing />
             </Formate>
           }
-        />
+        /> */}
         <Route path="/login" element={<LoginWeb Login={islogin} setLogin={setIslogin}/>} />
         <Route path="/register" element={<SignupWeb />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route
+        {/* <Route
           path="/tracking"
           element={
             <Formate Login={islogin} useData={userData}>
               <Tracking Login={islogin} setLogin={setIslogin}/>
             </Formate>
           }
-        />
+        /> */}
         <Route
           path="/about"
           element={

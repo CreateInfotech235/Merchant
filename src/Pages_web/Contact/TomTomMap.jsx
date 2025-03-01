@@ -3,16 +3,15 @@ import tt from '@tomtom-international/web-sdk-maps';
 import '@tomtom-international/web-sdk-maps/dist/maps.css';
 import './TomTomMap.css'; // Import the external CSS file for styles
 
-const TomTomMap = () => {
+const TomTomMap = ( {longitude="-0.131788",latitude="51.505875"} ) => {
   const mapElement = useRef(null);
-  const longitude = 72.8855;
-  const latitude = 21.237194;
-
+  const lon = Number(longitude);
+  const lat = Number(latitude);
   useEffect(() => {
     const map = tt.map({
       key: 'RY2hfAAy25pdy67HQqA49trW7RiJTTRC',
       container: mapElement.current,
-      center: [longitude, latitude],
+      center: [lon, lat],
       zoom: 10,
     });
 
