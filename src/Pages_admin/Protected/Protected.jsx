@@ -60,7 +60,7 @@ const ProtectedRoute = ({ children }) => {
           {/* Show Sidebar only if authenticated */}
         <Sidebar />
         </div>
-        <div className="content col-xxl-10 col-xl-10 col-lg-12 col-md-12 p-xxl-5 p-xl-5 p-lg-4 p-md-4 p-4">
+        <div className="content min-h-screen col-xxl-10 col-xl-10 col-lg-12 col-md-12 p-xxl-5 p-xl-5 p-lg-4 p-md-4 p-4">
           <div className="d-xxl-flex justify-content-xxl-between d-xl-flex justify-content-xl-between d-lg-flex justify-content-lg-between d-md-flex justify-content-md-between d-sm-flex flex-xxl-row flex-xl-row flex-lg-row flex-md-row flex-sm-column">
             {/* Show Breadcrumb and Header only if authenticated */}
          <Breadcrumb />

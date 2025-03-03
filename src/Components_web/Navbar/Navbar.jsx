@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import HeaderLogo from "../../assets_web/logo-new.png";
 import LoginImg from "../../assets_web/post job.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -14,53 +15,86 @@ import {
 } from "react-icons/fa";
 import { BsTelephone } from "react-icons/bs";
 import { FaSquareXTwitter } from "react-icons/fa6";
+import { getWebNavbar, getWebSocialMedia } from "../../Pages_admin/webApi/webApi";
 function Navbar({ Login, userData }) {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [navLinks, setNavLinks] = useState([]);
+  const [menuData, setMenuData] = useState({
+    logo: {
+      img: "",
+      path: "",
+    },
+    menuList: [
+      {
+        name: "",
+        path: "",
+      },
+    ],
+  });
+  console.log(menuData);
+  const [mediaLink, setmediaLink] = useState([]);
+  const [contactLink, setcontactLink] = useState([]);
+
+  useEffect(() => {
+    const fetchMenuData = async () => {
+      const response = await getWebNavbar();
+      setMenuData(response.data.webNavbar);
+      setNavLinks(response.data.webNavbar.menuList);
+    };
+    fetchMenuData();
+  }, []);
   const navigate = useNavigate();
-  // console.log(userData);
-  const navLinks = [
-    { to: "/", text: "Home" },
-    // { to: "/pricing", text: "Pricing" },
-    // { to: "/tracking", text: "Tracking" },
-    { to: "/about", text: "About" },
-    { to: "/contact", text: "Contact" },
-    { to: "/Services", text: "Services" },
-  ];
+  console.log(navLinks);
 
 
-  const contactLink = [
-    { to: "tel:02080495522", text: "0208 049 5522" , icon: <BsTelephone fontSize={17} />},
-    { to: "mailto:info@createcourier.com", text: "info@createcourier.com" , icon: <CiMail fontSize={17} />},
-  ];
+
+  useEffect(() => {
+    const fetchMediaLink = async () => {
+
+      const response = await getWebSocialMedia()
+      console.log("response123", response?.webSocialMedia);
 
 
-  const mediaLink = [
-    {
-      name: "Facebook",
-      link: "https://www.facebook.com/"
-    },
-    {
-      name: "Instagram",
-      link: "https://www.instagram.com/"
-    },
-    {
-      name: "LinkedIn",
-      link: "https://www.linkedin.com/"
-    },
-    {
-      name: "Twitter",
-      link: "https://www.twitter.com/"
-    },
-    {
-      name: "Youtube",
-      link: "https://www.youtube.com/"
-    },
+      setcontactLink([
+        { to: `tel:${response?.webSocialMedia?.phoneNumber.trim()}`, text: response?.webSocialMedia?.phoneNumber, icon: <BsTelephone fontSize={17} /> },
+        { to: `mailto:${response?.webSocialMedia?.email.trim()}`, text: response?.webSocialMedia?.email, icon: <CiMail fontSize={17} /> },
+      ]);
 
-  ]
+      console.log("response?.webSocialMedia?.socialMedia", response?.webSocialMedia?.socialMedia);
+      if (1) {
+        
+        setmediaLink(response?.webSocialMedia?.socialMedia)
+      } else {
+        // setmediaLink(response.data.webSocialMedia.socialMedia)
+        setmediaLink([
+          {
+            name: "Facebook",
+            link: "https://www.facebook.com/"
+          },
+          {
+            name: "Instagram",
+            link: "https://www.instagram.com/"
+          },
+          {
+            name: "LinkedIn",
+            link: "https://www.linkedin.com/"
+          },
+          {
+            name: "Twitter",
+            link: "https://www.twitter.com/"
+          },
+          {
+            name: "Youtube",
+            link: "https://www.youtube.com/"
+          },
+        ])
+      }
 
-
+    };
+    fetchMediaLink();
+  }, []);
 
   const getLinkClass = (path, isMobile = false) => {
     const baseClass = `${isMobile ? "block " : ""}px-${isMobile ? "3" : "2"
@@ -88,24 +122,25 @@ function Navbar({ Login, userData }) {
 
   return (
     <>
+      {/* wb media */}
       <div className="bg-[#262626]">
         <div className="text-white max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center justify-between py-3 gap-y-3">
             {/* Left Section */}
             <div className="text-sm font-medium w-full sm:w-auto">
               <ul className="flex flex-wrap items-center justify-center  gap-x-4 gap-y-2">
-               
+
                 {contactLink.map((link) => (
-                <li>
-                  <p className="text-[12px] flex items-center gap-1 font-light">
-                    <Link to={link.to} className="hover:text-[#ffd8bd] flex items-center gap-1">
-                      {link.icon}
-                      <p>
-                        {link.text}
-                      </p>
-                    </Link>
-                  </p>
-                </li>
+                  <li>
+                    <p className="text-[12px] flex items-center gap-1 font-light">
+                      <Link to={link.to} className="hover:text-[#ffd8bd] flex items-center gap-1">
+                        {link.icon}
+                        <p>
+                          {link.text}
+                        </p>
+                      </Link>
+                    </p>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -114,15 +149,22 @@ function Navbar({ Login, userData }) {
             <div className="text-sm font-medium w-full sm:w-auto">
               <ul className="flex flex-wrap items-center gap-2 justify-center sm:justify-end">
                 {mediaLink.map((link) => (
-                <li>
-                  <p className="text-[12px] flex items-center gap-1 font-light">
-                    <Link to={link.link} className="hover:text-[#ffd8bd] flex items-center gap-1">
-                    <img src={`https://logo.clearbit.com/${new URL(link.link).hostname}`} alt={link.name} className="w-6 h-6 rounded-full hover:opacity-80 transition-opacity" />
-                    </Link>
-                  </p>
-                </li>
+                  <li>
+                    <p className="text-[12px] flex items-center gap-1 font-light">
+                      <Link to={link.link} className="hover:text-[#ffd8bd] flex items-center gap-1" target="_blank">
+                        <img src={(() => {
+                            try {
+                                const url = new URL(link?.link);
+                                return `https://logo.clearbit.com/${url.hostname}`;
+                            } catch (error) {
+                                return link.icon;
+                            }
+                        })()} alt={link.name} className="w-6 h-6 rounded-full hover:opacity-80 transition-opacity" />
+                      </Link>
+                    </p>
+                  </li>
                 ))}
-                
+
                 {/* <li>
                   <p className="text-[12px] flex items-center gap-1 font-light">
                     <FaInstagramSquare fontSize={19} />
@@ -148,14 +190,14 @@ function Navbar({ Login, userData }) {
           </div>
         </div>
       </div>
-
+      {/* nav */}
       <nav className="bg-white shadow sticky top-0 z-20">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-24">
             <div className="flex items-center">
               <Link to="/" className="flex-shrink-0">
                 <img
-                  src={HeaderLogo}
+                  src={menuData.logo.img}
                   className={`h-[70px] md:h-[80px] ${window.innerWidth <= 768 ? "h-[45px] md:h-[60px]" : "h-[70px] md:h-[80px]"}`}
                   alt="Logo"
                 />
@@ -168,10 +210,10 @@ function Navbar({ Login, userData }) {
                 {navLinks.map((link) => (
                   <Link
                     key={link.to}
-                    to={link.to}
-                    className={getLinkClass(link.to)}
+                    to={link.path}
+                    className={getLinkClass(link.path)}
                   >
-                    {link.text}
+                    {link.name}
                   </Link>
                 ))}
               </div>
@@ -181,8 +223,8 @@ function Navbar({ Login, userData }) {
             <div className="flex items-center lg:space-x-4 md:space-x-2">
               {Login ? (
                 <div className="navbar-option p-2 position-relative flex items-center">
-                  <Link to="/Merchant-dashboard" className=" flex items-center">
-                    <Button />
+                  <Link to={menuData?.button?.path} className=" flex items-center">
+                    <Button text={menuData?.button?.name} />
                     {/* <MdDashboardCustomize className="text-white text-2xl md:text-3xl" />
                   <span className="text-white ml-1 text-sm hidden md:inline flex-none group-hover:flex">Dashboard</span> */}
                   </Link>
@@ -195,7 +237,7 @@ function Navbar({ Login, userData }) {
                     />
                   ) : (
                     <img
-                      src={profileIcon}
+                      src={menuData?.defaultProfileImage || profileIcon}
                       alt="User Profile"
                       onClick={handleProfileClick}
                       className="h-[50px] w-[50px] md:h-[65px] md:w-[65px] lg:h-[70px] lg:w-[70px] rounded-full cursor-pointer hover:opacity-80 transition-opacity"
@@ -287,12 +329,12 @@ function Navbar({ Login, userData }) {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
             {navLinks.map((link) => (
               <Link
-                key={link.to}
-                to={link.to}
-                className={getLinkClass(link.to, true)}
+                key={link.path}
+                to={link.path}
+                className={getLinkClass(link.path, true)}
                 onClick={() => setIsOpen(false)}
               >
-                {link.text}
+                {link.name}
               </Link>
             ))}
           </div>

@@ -34,3 +34,61 @@ export const getWebNavbar = async () => {
         throw error;
     }
 };  
+
+export const createWebSocialMedia = async (data) => {
+    try {
+        const response = await API.post("/socialmedia/create", data);
+        console.log("social media response", response);
+        return response;
+    } catch (error) {
+        console.error("Error creating web social media:", error);
+        throw error;
+    }
+};  
+
+export const getWebSocialMedia = async () => {
+    try {
+        const response = await API.get("/socialmedia");
+        console.log("social media response", response);
+        return response.data;
+    } catch (error) {
+        console.error("Error getting web social media:", error);
+        throw error;
+    }
+};  
+
+
+export const createWebLandingPage = async (data) => {
+    try {
+        const response = await API.post("/home/create", data);
+        console.log("web landing page response", response);
+        return response;
+    } catch (error) {
+        console.error("Error creating web landing page:", error);
+        throw error;
+    }
+};  
+
+export const getWebLandingPage = async () => {
+    try {
+        console.log("ZSDsd");
+        
+        const response = await API.get("/home/landingpage");
+        console.log("web landing page response", response);
+        return response.data;
+    } catch (error) {
+        console.error("Error getting web landing page:", error);
+        throw error;
+    }
+};  
+
+export const updateWebLandingPage = async (data) => {
+    try {
+        const response = await API.post("/home/landingpage", data);
+        console.log("web landing page response", response);
+        return response;
+    } catch (error) {
+        console.error("Error updating web landing page:", error);
+        throw error;
+    }
+};  

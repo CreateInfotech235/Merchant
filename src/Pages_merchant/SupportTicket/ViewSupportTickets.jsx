@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import io from "socket.io-client";
-
+import { FaArrowLeft } from "react-icons/fa";
 const socket = io("https://create-courier-8.onrender.com/"); // Connect to backend server
 
 function ViewSupportTickets() {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [contextMenu, setContextMenu] = useState(null);
@@ -125,8 +126,18 @@ function ViewSupportTickets() {
 
   return (
     <div className="min-h-[calc(100vh-187px)] flex flex-col border rounded bg-white">
-      <div className="bg-blue-600 text-white p-2 text-center font-semibold">
-        Chat with Admin
+      <div className="bg-blue-600 text-white p-2 text-center font-semibold flex justify-between">
+        <div className="flex justify-center items-center">
+          <button onClick={() => navigate(-1)}>
+            <FaArrowLeft />
+          </button>
+        </div>
+        <div>
+          Chat with Admin
+        </div>
+        <div>
+
+        </div>
       </div>
 
       {/* Chat Box */}

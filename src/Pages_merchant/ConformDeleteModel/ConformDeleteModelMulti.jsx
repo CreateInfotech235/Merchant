@@ -6,7 +6,7 @@ import { deleteCustomer, moveToTrashCustomer } from "../../Components_merchant/A
 import { deleteDeliveryMan, moveToTrashDeliveryMan } from "../../Components_merchant/Api/DeliveryMan";
 import { FaUndo } from "react-icons/fa";
 
-const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=false, showDelete}) => {
+const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=false, showDelete, setIsdatachenged}) => {
   console.log(subOrderId , Id , text);
 
 
@@ -17,13 +17,15 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
         const response = await moveToTrashOrderMulti(id);
         if (response.status) {
             onDelete()
+            setIsdatachenged(true)
         }
         
       }
       else{
         const response = await deleteOrderFormMerchantMulti(id , subOrderId)
         if (response.status) {
-            onDelete()
+              onDelete()
+            setIsdatachenged(true)
         }
       }
     }
@@ -32,12 +34,14 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
         const response = await moveToTrashSubOrderMulti(id , subOrderId);
         if (response.status) {
             onDelete()
+            setIsdatachenged(true)
         }
       }
       else{
         const response = await deleteOrderFormMerchantMulti(id , subOrderId)
         if (response.status) {
             onDelete()
+            setIsdatachenged(true)
         }
       }
     }
@@ -45,7 +49,8 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
       if (type === "Undo") {
         const response = await moveToTrashCustomer(id);
         if (response.status) {
-            onDelete()
+            onDelete()  
+            setIsdatachenged(true)
         }
         
       }
@@ -53,6 +58,7 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
         const response = await deleteCustomer(id)
         if (response.status) {
             onDelete()
+            setIsdatachenged(true)
         }
       }
     }
@@ -61,6 +67,7 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
         const response = await moveToTrashDeliveryMan(id);
         if (response.status) {
             onDelete()
+            setIsdatachenged(true)
         }
         
       }
@@ -68,6 +75,7 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
         const response = await deleteDeliveryMan(id)
         if (response.status) {
             onDelete()
+            setIsdatachenged(true)
         }
       }
     }
@@ -96,12 +104,11 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
           </button>
           )}
           <button
-            className="models-btn btn btn-danger text-white   botder-black border-1 rounded-2 m-3"
+            className="models-btn btn btn-danger text-white   botder-black border-1 p-2 rounded-2 m-3 text-nowrap"
             onClick={() => handleRemoveOrder(onDelete, text, Id, "Delete" , subOrderId)}
-
             // style={{display:undo ? "none" : ""}}
           >
-           Conform Delete
+           Confirm Delete
           </button>
         </div>
       </ModalBody>

@@ -39,6 +39,8 @@ import { getWebHome } from "../Api/Webapi";
 import SliderForWeb from "./SliderForWeb";
 import { Link } from "react-router-dom";
 import { createFunksen } from "../../typingef/typingef";
+import { getWebLandingPage } from "../../Pages_admin/webApi/webApi";
+
 
 const servicesdata = [
   {
@@ -84,6 +86,23 @@ function Mainbody() {
   const [webHome, setWebHome] = useState(null);
   const [services, setservices] = useState([]);
   const [isVideoPlay, setVideoPlay] = useState(false);
+  const [typingtext,setTypingtext]=useState([]);
+  
+  useEffect(() => {
+    const fetchWebLandingPage = async () => {
+      try {
+        const response = await getWebLandingPage();
+        console.log("response",response);
+        if(response?.status===200){
+          setWebHome(response?.webLandingPage);
+          setTypingtext(response?.webLandingPage?.AutoTyperlist);
+        }
+      } catch (error) {
+        console.error("Error fetching web landing page:", error);
+      }
+    };
+    fetchWebLandingPage();
+  }, []);
 
 
   useEffect(() => {
@@ -102,16 +121,16 @@ function Mainbody() {
     setVideoPlay((prev) => !prev);
   };
   useEffect(() => {
-    const cleanup = createFunksen('#welcome-text', ["", "Welcome To Create Courier"]);
+    const cleanup = createFunksen('#welcome-text', ["", ...typingtext]);
     return cleanup; // Ensure cleanup function is returned to avoid multiple instances
-  }, []);
+  }, [typingtext]);
 
   return (
     <>
       <div>
         <div className="w-full ">
           <div className="w-full relative isolate overflow-hidden py-12 sm:py-20 lg:py-24  shadow-md" style={{
-            backgroundImage: `url(${bgImage})`,
+            backgroundImage: `url(${webHome?.bgImage})`,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             backgroundColor: 'rgba(0, 0, 0, 0.75)',
@@ -123,16 +142,13 @@ function Mainbody() {
               {/* Left Content */}
               <div className="w-full md:text-left">
                 <h1 id="welcome-text" className="text-xl h-[30px]  sm:text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight  text-[#FF6600] leading-tight capitalize">
-                  Welcome To Create Courier
+               
                 </h1>
                 <h2 className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl lg:text-4xl text-white font-bold">
-                  Fast & Reliable Courier Services for All Your Shipping Needs.
+                {webHome?.subTitle}
                 </h2>
                 <p className="mt-4 sm:mt-6 lg:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
-                  We provide fast, reliable, and secure courier services to meet
-                  all your delivery needs. Whether you're sending a small package
-                  or a large shipment, our team ensures timely and safe delivery
-                  with tracking options for peace of mind.
+                {webHome?.description}
                 </p>
               </div>
             </div>

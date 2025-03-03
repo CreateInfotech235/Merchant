@@ -116,16 +116,15 @@ const MultiOrder = () => {
     var data = orderData.filter((order) => !order.trashed);
 
     const filteredData = data.filter((order) => {
-      console.log("order", order.deliveryAddress);
       const searchLower = query.toLowerCase();
       const searchTerms = searchLower.split(" ");
       return searchTerms.some(term =>
-        order.showOrderNumber?.toString().includes(term) ||
+        order.orderId?.toString().includes(term) ||
         order.deliveryMan?.toLowerCase().includes(term) ||
         // order.customerName?.toLowerCase().includes(term) ||
         order.pickupAddress?.address?.toLowerCase().includes(term) ||
-        order.deliveryAddress.forEach(item => item.address?.toLowerCase().includes(term)) ||
-        order.status?.toLowerCase().includes(term)
+        order.status?.toLowerCase().includes(term) ||
+        order.deliveryAddress?.some(item => item.name?.toLowerCase().includes(term) || (`${item.address} (${item.postCode})`).trim()?.toLowerCase().includes(term) || item.address?.toLowerCase().includes(term)|| (item?.time?.end ? format(new Date(item.time.end), "dd-MM-yyyy") : "-").includes(term))
       );
     });
 

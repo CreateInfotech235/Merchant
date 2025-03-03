@@ -124,7 +124,7 @@ const ProtectedRoute = ({ children }) => {
           <div className="sidebarWrapper col-xxl-2 col-xl-2">
             <MerchantSidebar />
           </div>
-          <div className="content col-xxl-10 col-xl-10 col-lg-12 col-md-12 p-xxl-5 p-xl-5 p-lg-4 p-md-4 p-4">
+          <div className="content min-h-screen col-xxl-10 col-xl-10 col-lg-12 col-md-12 p-xxl-5 p-xl-5 p-lg-4 p-md-4 p-4">
             <div className="d-flex flex-xxl-row-reverse justify-content-xxl-between flex-xl-row-reverse justify-content-xl-between flex-lg-row-reverse justify-content-lg-between flex-md-row-reverse justify-content-md-between flex-sm-column justify-content-sm-center align-items-sm-center flex-column justify-content-center align-items-center">
               <Header toggleThemeMode={toggleThemeMode} themeMode={themeMode} />
               <Breadcrumb />

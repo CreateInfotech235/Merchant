@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getWebNavbar, createWebNavbar } from '../webApi/webApi';
 import { convertImageToBase64 } from "./convertImageToBase64";
+
 const Navbar = () => {
   // State initialization
   const [menuData, setMenuData] = useState({
@@ -16,8 +17,13 @@ const Navbar = () => {
     ],
     favicon: {
       img: "",
-      path: "https://create-courier-8.onrender.com/favicon.ico",
+      path: "",
     },
+    button: {
+      name: "",
+      path: "",
+    },
+    defaultProfileImage: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -87,11 +93,23 @@ const Navbar = () => {
     });
   };
 
+  const handleDefaultProfileImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const base64 = await convertImageToBase64(file);
+      setMenuData({
+        ...menuData,
+        defaultProfileImage: base64,
+      });
+    }
+  };
+
+
   // Logo image upload handler
   const handleLogoImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      try { 
+      try {
         const base64 = await convertImageToBase64(file);
         handleLogoChange("img", base64);
       } catch (err) {
@@ -173,8 +191,8 @@ const Navbar = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse space-y-8 w-full max-w-5xl">
+      <div className=" bg-gray-50 flex items-center justify-center">
+        <div className="animate-pulse space-y-8 w-full px-12">
           {/* Skeleton loading UI */}
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
@@ -182,21 +200,30 @@ const Navbar = () => {
               <div className="w-24 h-24 bg-gray-200 rounded-lg"></div>
               <div className="flex-1 h-12 bg-gray-200 rounded"></div>
             </div>
+            <div className="flex gap-6 mt-4">
+              <div className="w-24 h-24 bg-gray-200 rounded-lg"></div>
+              <div className="flex-1 h-12 bg-gray-200 rounded"></div>
+            </div>
+            <div className="flex gap-6 mt-4">
+              <div className="w-24 h-24 bg-gray-200 rounded-lg"></div>
+              <div className="flex-1 h-12 bg-gray-200 rounded"></div>
+            </div>
           </div>
+
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 md:px-8">
-      <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-6">
+    <div>
+      <div className=" bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-3xl font-semibold text-gray-800 mb-6">Menu Settings</h2>
         {error && <div className="text-red-500 mb-4">{error}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           {/* Logo Section */}
-          <div className="mb-8">
+          <div className="mb-8 ">
             <h3 className="text-xl font-semibold mb-4">Logo</h3>
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div>
@@ -248,7 +275,7 @@ const Navbar = () => {
                 </div>
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Favicon Path</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Favicon icon url</label>
                 <input
                   type="text"
                   value={menuData?.favicon?.path}
@@ -260,14 +287,64 @@ const Navbar = () => {
           </div>
 
 
+          <div className="">
+            <h3 className="text-xl font-semibold mb-4">Button</h3>
+            <div >
+              <div >
+                <label className="block text-sm font-medium text-gray-700 mb-2">Name of Button</label>
+                <input
+                  type="text"
+                  value={menuData?.button?.name}
+                  onChange={(e) => handleButtonChange("name", e.target.value)}
+                  className="w-full p-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div >
+                <label className="block text-sm font-medium text-gray-700 mb-2">Path of Button</label>
+                <input
+                  type="text"
+                  value={menuData?.button?.path}
+                  onChange={(e) => handleButtonChange("path", e.target.value)}
+                  className="w-full p-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+          </div>
+          <div className="">
+            <h3 className="text-xl font-semibold mb-4">Default Profile Image</h3>
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="flex-1">
+                <input
+                  type="file"
+                  id="defaultProfileImage"
+                  onChange={(e) => handleDefaultProfileImageChange(e)}
+                  className="w-full p-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                <div className="w-[200px] h-[200px] text-center border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-gray-400">
+                  {menuData?.defaultProfileImage ? (
+                    <label htmlFor="defaultProfileImage" className="cursor-pointer w-[200px] h-[200px] flex items-center justify-center">
+                      <img src={menuData?.defaultProfileImage} alt="Default Profile Image" className="max-w-[200px] max-h-[200px] object-contain rounded-lg" />
+                    </label>
+                  ) : (
+                    <label htmlFor="defaultProfileImage" className="cursor-pointer">
+                      <span className="text-gray-500 text-sm">Upload Default Profile Image</span>
+                    </label>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
 
           {/* Menu Items Section */}
-          <div className="mb-8">
+          <div className="mb-8 col-span-2">
             <h3 className="text-xl font-semibold mb-4">Menu Items</h3>
             {menuData?.menuList?.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col md:flex-row gap-4 mb-4 items-end bg-gray-50 p-4 rounded-lg border"
+                className="flex  flex-col md:flex-row gap-4 mb-4 items-end bg-gray-50 p-4 rounded-lg border"
               >
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
@@ -305,12 +382,11 @@ const Navbar = () => {
             </button>
           </div>
 
-          
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg text-white shadow-lg ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"}`}
+            className={`w-full col-span-2 py-3 rounded-lg text-white shadow-lg ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"}`}
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>

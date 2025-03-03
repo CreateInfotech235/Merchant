@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import './TrashedOrder.css'
 import add from "../../assets_mercchant/add.png";
-import tracking from "../../assets_mercchant/tracking.png";
 import deleteimg from "../../assets_mercchant/deleteimg.png";
 import show from "../../assets_mercchant/show.png";
 import searchIcon from "../../assets_mercchant/search.png";
@@ -12,6 +11,8 @@ import ConformDeleteModel from "../ConformDeleteModel/ConformDeleteModel";
 import Loader from "../../Components_admin/Loader/Loader";
 import ConformDeleteModelMulti from "../ConformDeleteModel/ConformDeleteModelMulti";
 import { FaUndo } from "react-icons/fa";
+import tracking from "../../assets_mercchant/delivery-bike.png";
+
 import { Stack, Pagination } from "@mui/material";
 
 
@@ -35,7 +36,7 @@ const TrashedMultiOrder = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [showDelete, setshowDelete] = useState(false);
-
+const [isdatachenged, setIsdatachenged] = useState(false);
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -64,7 +65,14 @@ const TrashedMultiOrder = () => {
 
   useEffect(() => {
     fetchData();
-  }, [showModel]);
+  },[]);
+
+
+  useEffect(() => {
+    if (isdatachenged) {
+      fetchData();
+    }
+  }, [isdatachenged]);
 
   const closeModel = () => setShowModel(false);
 
@@ -75,13 +83,17 @@ const TrashedMultiOrder = () => {
 
   const filterOrders = (query) => {
     let data = orderData;
-    const lowercasedQuery = query.toLowerCase();
+    const lowercasedQuery = query.toLowerCase().trim();
     const filteredData = data.filter((order) => {
       return (
         String(order.orderId).toLowerCase().includes(lowercasedQuery) ||
         (order.customerName ? order.customerName.toLowerCase() : "").includes(lowercasedQuery) ||
         (order.pickupAddress?.address ? String(order.pickupAddress.address).toLowerCase() : "").includes(lowercasedQuery) ||
-        (order.deliveryAddress?.address ? String(order.deliveryAddress.address).toLowerCase() : "").includes(lowercasedQuery) ||
+        (order.deliveryAddress?.some(subOrder => 
+          String(`${subOrder.address} (${subOrder.postCode})`).trim().toLowerCase().includes(lowercasedQuery) || 
+          (subOrder.name ? subOrder.name.toLowerCase() : "").includes(lowercasedQuery)||
+          (subOrder?.time?.end ? format(new Date(subOrder.time.end), "dd-MM-yyyy") : "-").includes(lowercasedQuery)
+        )) ||
         (order.status ? order.status.toLowerCase() : "").includes(lowercasedQuery)
       );
     });
@@ -507,7 +519,9 @@ const TrashedMultiOrder = () => {
                                           {`${subOrder?.address} (${subOrder?.postCode})` ??
                                             "-"}
                                         </td>
-                                        <td className="p-3">-</td>
+
+                                        <td className="p-3">{subOrder?.orderTimestamp ? new Date(subOrder.orderTimestamp).toLocaleDateString('en-GB') : "-"}</td>
+                                        
                                         <td className="p-3">-</td>
                                         <td className="p-3">
                                           <button
@@ -611,8 +625,9 @@ const TrashedMultiOrder = () => {
         Id={orderId}
         subOrderId={subOrderId}
         onDelete={() => handleCloseModal()}
-        onHide={() => setShowModel(false)}
+        onHide={(w) => {setShowModel(false)}}
         showDelete={showDelete}
+        setIsdatachenged={setIsdatachenged}
 
         undo={undo}
       />}

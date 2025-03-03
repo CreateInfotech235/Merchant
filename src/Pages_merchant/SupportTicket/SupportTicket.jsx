@@ -336,7 +336,7 @@ const SupportTicket = () => {
                     >
                       <button
                         onClick={() => setSelectedTicketId(ticket._id)}
-                        className="show-btn "
+                        className="show-btn"
                       >
                         <img src={show} alt="Show" className="mx-auto" />
                       </button>

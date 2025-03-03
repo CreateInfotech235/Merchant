@@ -374,7 +374,17 @@ const Billing = () => {
             order.showOrderId?.toString().includes(word) ||
             order.deliveryMan?.firstName?.toLowerCase().includes(word) ||
             order.deliveryMan?.lastName?.toLowerCase().includes(word) ||
-            order.deliveryMan?.email?.toLowerCase().includes(word)
+            order.deliveryMan?.email?.toLowerCase().includes(word) ||
+            order.deliveryMan?.contactNumber?.toLowerCase().includes(word) ||
+          order?.subOrderdata?.some(subOrder =>{
+            return subOrder?.pickupAddress?.toLowerCase().includes(word) ||
+            subOrder?.deliveryAddress?.toLowerCase().includes(word) ||
+            subOrder?.deliveryTime?.toLowerCase().includes(word) ||
+            subOrder?.pickupTime?.toLowerCase().includes(word) ||
+            subOrder?.deliveryTime?.toLowerCase().includes(word) ||
+            subOrder?.pickupTime?.toLowerCase().includes(word)
+          }) 
+            
         )
       );
     }
@@ -744,7 +754,7 @@ const Billing = () => {
                                       }
                                     </td>
                                     <td className="p-3 ">
-                                      {subOrder.deliveryTime}
+                                      {subOrder?.deliveryTime}
                                     </td>
 
                                     <td className="p-3 ">
