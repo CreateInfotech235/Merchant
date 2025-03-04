@@ -83,28 +83,32 @@ function SliderForWeb() {
                 {item.review}
               </h3>
               <p className="text-sm md:text-base">
-                {item.massage}
+                {
+                window.innerWidth > 780 ?  
+                item.massage: item.massage.slice(0,200)+"..."
+                }
               </p>
             </div>
-            <div className="flex items-center gap-4 mt-4">
-              <div className="rating-star flex items-center gap-1">
-                {Array(Math.floor(item.rating)).fill().map((_, i) => (
-                  <FaStar key={i} style={{ color: "#F95C19", fontSize: "20px" }} />
-                ))}
-                {item.rating % 1 !== 0 && <FaStarHalfAlt style={{ color: "#F95C19", fontSize: "20px" }} />}
-              </div>
-              <div className="flex items-center gap-2">
+            <div className="mt-3 flex">
+              <div className="gap-2">
                 <div className="info">
                   <p className="font-bold">{item.name}</p>
                   <p className="text-sm text-gray-500">CEO, Company Name</p>
                 </div>
-                <div className="img">
-                  <img
-                    src={item.image}
-                    alt="Avatar"
-                    className="w-10 h-10 rounded-full"
-                  />
+                <div className="rating-star flex items-center gap-1 mt-1">
+                  {Array(Math.floor(item.rating)).fill().map((_, i) => (
+                    <FaStar key={i} style={{ color: "#F95C19", fontSize: "20px" }} />
+                  ))}
+                  {item.rating % 1 !== 0 && <FaStarHalfAlt style={{ color: "#F95C19", fontSize: "20px" }} />}
                 </div>
+
+              </div>
+              <div className="img ml-2">
+                <img
+                  src={item.image}
+                  alt="Avatar"
+                  className="w-17 h-17 rounded-full"
+                />
               </div>
             </div>
           </div>

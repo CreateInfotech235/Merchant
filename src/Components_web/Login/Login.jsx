@@ -61,9 +61,9 @@ console.log("response",response);
     <>
       <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(50deg,_#B6C9E7,_#ffe5e1,_#939ccb,_#e6eff8)]">
         {/* Container */}
-        <div className="flex items-center justify-between w-[1100px] h-[600px] rounded-lg overflow-hidden">
+        <div className="flex items-center justify-between max:w-[1100px] max:h-[600px] rounded-lg overflow-hidden">
           {/* Left Section */}
-          <div className="w-1/2 flex flex-col items-center justify-center  p-8">
+          <div className="w-full hidden md:block  md:w-1/2 flex flex-col items-center justify-center  p-8">
             {/* Illustration */}
             <div className="relative">
               {/* Mockup Illustration */}
@@ -72,7 +72,7 @@ console.log("response",response);
           </div>
 
           {/* Right Section */}
-          <div className="w-1/2 p-12 flex flex-col justify-center bg-gradient-to-br backdrop-blur-[82px] rounded-lg from-[#ffffff9e] from-50% to-[#e3e4ff] to-100%">
+          <div className="w-[90%] mx-auto md:w-1/2 p-4 md:p-12 flex flex-col justify-center bg-gradient-to-br backdrop-blur-[82px] rounded-lg from-[#ffffff9e] from-50% to-[#e3e4ff] to-100%">
             <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">
               LOGIN
             </h1>

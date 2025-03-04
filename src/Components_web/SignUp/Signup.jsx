@@ -235,7 +235,7 @@ const Signup = ({ Login, setLogin }) => {
         {/* Container */}
         <div className="flex flex-col md:flex-row items-center justify-between max-w-5xl w-full rounded-lg overflow-hidden">
           {/* Left Section */}
-          <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8">
+          <div className="w-full hidden md:block md:w-1/2 flex items-center justify-center p-4 md:p-8">
             {/* Illustration */}
             <div className="relative">
               {/* Mockup Illustration */}
@@ -244,7 +244,7 @@ const Signup = ({ Login, setLogin }) => {
           </div>
 
           {/* Right Section */}
-          <div className="w-full md:w-1/2 p-10 flex flex-col justify-center bg-gradient-to-br backdrop-blur-[82px] rounded-lg from-[#ffffff9e] from-50% to-[#e3e4ff] to-100%">
+          <div className="w-full md:w-1/2 p-3 md:p-10 flex flex-col justify-center bg-gradient-to-br backdrop-blur-[82px] rounded-lg from-[#ffffff9e] from-50% to-[#e3e4ff] to-100%">
             <div className="max-w-md w-full space-y-8">
               <div className="text-center">
                 <h2 className="text-4xl font-extrabold text-gray-900 mb-0">

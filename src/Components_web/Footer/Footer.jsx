@@ -1,63 +1,92 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HeaderLogo from "../../assets_web/logo-new.png";
 import { data, Link } from "react-router-dom";
 import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
-function Footer() {
+function Footer({ navdata, SocialMediadata }) {
+  const [navLinks, setnavLinks] = useState([]);
+  const [mediaLink, setmediaLink] = useState([]);
+  console.log("SocialMediadata", SocialMediadata?.webSocialMedia?.socialMedia);
 
-  const navLinks = [
-    { to: "/", text: "Home" },
-    // { to: "/pricing", text: "Pricing" },
-    // { to: "/tracking", text: "Tracking" },
-    { to: "/about", text: "About" },
-    { to: "/contact", text: "Contact" },
-    { to: "/Services", text: "Services" },
-  ];
 
-  const mediaLink = [
+
+
+  useEffect(() => {
+    const navLinks2 = navdata?.data?.webNavbar?.menuList?.map(item => ({
+      to: item.path,
+      text: item.name
+    }));
+    setnavLinks(navLinks2)
+  }, [navdata])
+
+  useEffect(() => {
+    setmediaLink(SocialMediadata?.webSocialMedia?.socialMedia)
+  }, [SocialMediadata])
+
+
+
+
+  // console.log(navLinks2);
+
+  // const navLinks = [
+  //   { to: "/", text: "Home" },
+  //   // { to: "/pricing", text: "Pricing" },
+  //   // { to: "/tracking", text: "Tracking" },
+  //   { to: "/about", text: "About" },
+  //   { to: "/contact", text: "Contact" },
+  //   { to: "/Services", text: "Services" },
+  // ];
+
+
+  // useEffect(() => {
+
+  //   const mediaLinkdata = [
+  //     {
+  //       name: "Facebook",
+  //       link: "https://www.facebook.com/"
+  //     },
+  //     {
+  //       name: "Instagram",
+  //       link: "https://www.instagram.com/"
+  //     },
+  //     {
+  //       name: "LinkedIn",
+  //       link: "https://www.linkedin.com/"
+  //     },
+  //     {
+  //       name: "Twitter",
+  //       link: "https://www.twitter.com/"
+  //     },
+
+  //   ]
+  //   setmediaLink(mediaLinkdata)
+
+  // }, [])
+
+
+
+  const contactLink = [
     {
-      name: "Facebook",
-      link: "https://www.facebook.com/"
+      icon: <FaMapMarkerAlt className="text-2xl text-[#ff6600]" />,
+      name: "Address",
+      link: "https://maps.app.goo.gl/7JMR6G1Sic3ajght8",
+      data: "381 Church Lane, Kingsbury, London, NW9 8JB",
     },
     {
-      name: "Instagram",
-      link: "https://www.instagram.com/"
+      icon: <FaEnvelope className="text-2xl text-[#ff6600]" />,
+      name: "Email",
+      link: "mailto:info@britishchemist.co.uk",
+      data: "info@britishchemist.co.uk",
     },
     {
-      name: "LinkedIn",
-      link: "https://www.linkedin.com/"
+      icon: <FaPhoneAlt className="text-2xl text-[#ff6600]" />,
+      name: "Contact Us",
+      link: "tel:02080040895",
+      data: "020 8004 0895",
     },
-    {
-      name: "Twitter",
-      link: "https://www.twitter.com/"
-    },
+
 
   ]
-
-
-
-const contactLink = [
-  {
-    icon: <FaMapMarkerAlt className="text-2xl text-[#ff6600]" />,
-    name: "Address",
-    link: "https://maps.app.goo.gl/7JMR6G1Sic3ajght8",
-    data: "381 Church Lane, Kingsbury, London, NW9 8JB",
-  },
-  {
-    icon: <FaEnvelope className="text-2xl text-[#ff6600]" />,
-    name: "Email",
-    link: "mailto:info@britishchemist.co.uk",
-    data: "info@britishchemist.co.uk",
-  },
-  {
-    icon: <FaPhoneAlt  className="text-2xl text-[#ff6600]" />,
-    name: "Contact Us",
-    link: "tel:02080040895",
-    data: "020 8004 0895",
-  },
-  
-  
-]
 
   return (
     <div className="mx-auto bg-gray-100 text-gray-800">
@@ -72,15 +101,15 @@ const contactLink = [
           </div>
 
           {/* Links Section */}
-          <div className="w-full md:w-2/3 lg:w-3/4 grid grid-cols-1 sm:grid-cols-4 gap-6  text-center md:text-left items-start">
+          <div className="w-full md:w-2/3 lg:w-3/4 grid grid-cols-2 sm:grid-cols-4 gap-6  text-center md:text-left items-start">
             {/* Company */}
             <div>
               <h3 className="text-lg font-bold">Main Menu</h3>
               <ul className="mt-4 space-y-2">
-                {navLinks.map((link, index) => (
+                {navLinks?.map((link, index) => (
                   <li key={index}>
-                    <Link to={link.to} className="hover:text-gray-600">
-                      {link.text}
+                    <Link to={link?.to} className="hover:text-gray-600">
+                      {link?.text}
                     </Link>
                   </li>
                 ))}
@@ -110,25 +139,29 @@ const contactLink = [
             <div className="flex justify-center items-center flex-col">
               <h3 className="text-lg font-bold">Follow Us</h3>
               <ul className="mt-4 space-y-2">
-                {mediaLink.map((link, index) => (
-                  <li key={index} className="flex ">
+                {mediaLink?.map((link, index) => (
+                  <li key={index} className="flex">
                     <Link to={link.link} className="hover:text-gray-600 mx-2 flex items-center gap-1" target="_blank">
-                    <img src={`https://logo.clearbit.com/${new URL(link.link).hostname}`} alt={link.name} className="w-7 h-7 rounded-full" />
-                      <span> {link.name}</span>
+                      <img src={`https://logo.clearbit.com/${new URL(link.link).hostname}`} 
+                           alt={link.name} 
+                           className="w-7 h-7 rounded-full" 
+                           onError={(e) => { e.target.src = link.icon }} 
+                      />
+                      <span>{link.name}</span>
                     </Link>
                   </li>
                 ))}
 
               </ul>
             </div>
-            
-            <div className="flex justify-center items-center flex-col">
+
+            <div className="flex justify-center items-center flex-col ">
               <h3 className="text-lg font-bold">Contact Us</h3>
-              <ul className="mt-4 space-y-2">
+              <ul className="mt-4 space-y-2  w-full" >
                 {contactLink.map((link, index) => (
                   <li key={index} className="flex items-center gap-2">
-                    {link.icon} 
-                    <Link to={link.link} className="hover:text-gray-600" target="_blank">
+                    {link.icon}
+                    <Link to={link.link} className="hover:text-gray-600" style={{ wordBreak: "break-all" }} target="_blank">
                       {link.data}
                     </Link>
                   </li>

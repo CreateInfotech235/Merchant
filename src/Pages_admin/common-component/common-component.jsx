@@ -24,7 +24,7 @@ const CommonComponent = () => {
 
   return (
     <>
-      <Subnavigation components={listOfComponents} defoltindex={0} />
+      <Subnavigation components={listOfComponents} defoltindex={1} />
     </>
   );
 };

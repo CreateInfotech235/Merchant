@@ -15,8 +15,8 @@ import {
 } from "react-icons/fa";
 import { BsTelephone } from "react-icons/bs";
 import { FaSquareXTwitter } from "react-icons/fa6";
-import { getWebNavbar, getWebSocialMedia } from "../../Pages_admin/webApi/webApi";
-function Navbar({ Login, userData }) {
+import { getWebSocialMedia } from "../../Pages_admin/webApi/webApi";
+function Navbar({ Login, userData, getdataofnav, getSocialMediadata }) {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -39,7 +39,7 @@ function Navbar({ Login, userData }) {
 
   useEffect(() => {
     const fetchMenuData = async () => {
-      const response = await getWebNavbar();
+      const response = await getdataofnav();
       setMenuData(response.data.webNavbar);
       setNavLinks(response.data.webNavbar.menuList);
     };
@@ -53,7 +53,7 @@ function Navbar({ Login, userData }) {
   useEffect(() => {
     const fetchMediaLink = async () => {
 
-      const response = await getWebSocialMedia()
+      const response = await getSocialMediadata()
       console.log("response123", response?.webSocialMedia);
 
 
@@ -64,7 +64,7 @@ function Navbar({ Login, userData }) {
 
       console.log("response?.webSocialMedia?.socialMedia", response?.webSocialMedia?.socialMedia);
       if (1) {
-        
+
         setmediaLink(response?.webSocialMedia?.socialMedia)
       } else {
         // setmediaLink(response.data.webSocialMedia.socialMedia)
@@ -148,18 +148,13 @@ function Navbar({ Login, userData }) {
             {/* Right Section */}
             <div className="text-sm font-medium w-full sm:w-auto">
               <ul className="flex flex-wrap items-center gap-2 justify-center sm:justify-end">
-                {mediaLink.map((link) => (
+                {mediaLink?.map((link) => (
                   <li>
                     <p className="text-[12px] flex items-center gap-1 font-light">
                       <Link to={link.link} className="hover:text-[#ffd8bd] flex items-center gap-1" target="_blank">
-                        <img src={(() => {
-                            try {
-                                const url = new URL(link?.link);
-                                return `https://logo.clearbit.com/${url.hostname}`;
-                            } catch (error) {
-                                return link.icon;
-                            }
-                        })()} alt={link.name} className="w-6 h-6 rounded-full hover:opacity-80 transition-opacity" />
+                        <img src={`https://logo.clearbit.com/${new URL(link?.link).hostname}`}
+                          onError={(e) => { e.target.src = link.icon }}
+                          alt={link?.name} className="w-6 h-6 rounded-full hover:opacity-80 transition-opacity" />
                       </Link>
                     </p>
                   </li>
