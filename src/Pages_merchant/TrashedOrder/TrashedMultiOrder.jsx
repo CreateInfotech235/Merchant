@@ -12,8 +12,8 @@ import Loader from "../../Components_admin/Loader/Loader";
 import ConformDeleteModelMulti from "../ConformDeleteModel/ConformDeleteModelMulti";
 import { FaUndo } from "react-icons/fa";
 import tracking from "../../assets_mercchant/delivery-bike.png";
-
 import { Stack, Pagination } from "@mui/material";
+import Tooltip from "../Tooltip/Tooltip";
 
 
 const TrashedMultiOrder = () => {
@@ -36,7 +36,7 @@ const TrashedMultiOrder = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [showDelete, setshowDelete] = useState(false);
-const [isdatachenged, setIsdatachenged] = useState(false);
+  const [isdatachenged, setIsdatachenged] = useState(false);
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -65,7 +65,7 @@ const [isdatachenged, setIsdatachenged] = useState(false);
 
   useEffect(() => {
     fetchData();
-  },[]);
+  }, []);
 
 
   useEffect(() => {
@@ -89,9 +89,9 @@ const [isdatachenged, setIsdatachenged] = useState(false);
         String(order.orderId).toLowerCase().includes(lowercasedQuery) ||
         (order.customerName ? order.customerName.toLowerCase() : "").includes(lowercasedQuery) ||
         (order.pickupAddress?.address ? String(order.pickupAddress.address).toLowerCase() : "").includes(lowercasedQuery) ||
-        (order.deliveryAddress?.some(subOrder => 
-          String(`${subOrder.address} (${subOrder.postCode})`).trim().toLowerCase().includes(lowercasedQuery) || 
-          (subOrder.name ? subOrder.name.toLowerCase() : "").includes(lowercasedQuery)||
+        (order.deliveryAddress?.some(subOrder =>
+          String(`${subOrder.address} (${subOrder.postCode})`).trim().toLowerCase().includes(lowercasedQuery) ||
+          (subOrder.name ? subOrder.name.toLowerCase() : "").includes(lowercasedQuery) ||
           (subOrder?.time?.end ? format(new Date(subOrder.time.end), "dd-MM-yyyy") : "-").includes(lowercasedQuery)
         )) ||
         (order.status ? order.status.toLowerCase() : "").includes(lowercasedQuery)
@@ -196,7 +196,7 @@ const [isdatachenged, setIsdatachenged] = useState(false);
     ));
   };
 
-  const hadleDeleteOrder = (id, subOrderId, text, undo ) => {
+  const hadleDeleteOrder = (id, subOrderId, text, undo) => {
     console.log("subOrderId", subOrderId, "id", id, "text", text);
 
     console.log("id", id);
@@ -414,38 +414,45 @@ const [isdatachenged, setIsdatachenged] = useState(false);
                         </button>
                       </td>
                       <td className="city-data">
-                        <button
-                          className="delete-btn me-1"
-                          onClick={() =>{ hadleDeleteOrder(order._id, null, "Order", true)
-                            setshowDelete(false)
-                          }}
-                        >
-                          <FaUndo
-                            alt="undo"
+                        <Tooltip text="Undo Order">
+                          <button
+                            className="delete-btn me-1"
+                            onClick={() => {
+                              hadleDeleteOrder(order._id, null, "Order", true)
+                              setshowDelete(false)
+                            }}
+                          >
+                            <FaUndo
+                              alt="undo"
 
-                            className="mx-auto"
-                          />
-                        </button>
-                        <button
-                          className="delete-btn me-1"
-                          onClick={() =>{
+                              className="mx-auto"
+                            />
+                          </button>
+                        </Tooltip>
+
+                        <Tooltip text="Delete Order">
+                          <button
+                            className="delete-btn me-1"
+                          onClick={() => {
                             hadleDeleteOrder(order._id, null, "Order"),
-                            setshowDelete(true)}
+                              setshowDelete(true)
+                          }
                           }
                         >
                           <img
-
-
                             src={deleteimg}
                             alt="Delete"
                             className="mx-auto"
                           />
-                        </button>
+                          </button>
+                        </Tooltip>
                       </td>
                       <td>
-                        <button onClick={() => toggleSemTable(order._id)}>
-                          {openSemTable[order._id] ? "Close" : "Open"}
-                        </button>
+                        <Tooltip text={openSemTable[order._id] ? "Close" : "Open"}>
+                          <button onClick={() => toggleSemTable(order._id)}>
+                            {openSemTable[order._id] ? "Close" : "Open"}
+                          </button>
+                        </Tooltip>
                       </td>
                     </tr>
                     {openSemTable[order._id] && (
@@ -521,7 +528,7 @@ const [isdatachenged, setIsdatachenged] = useState(false);
                                         </td>
 
                                         <td className="p-3">{subOrder?.orderTimestamp ? new Date(subOrder.orderTimestamp).toLocaleDateString('en-GB') : "-"}</td>
-                                        
+
                                         <td className="p-3">-</td>
                                         <td className="p-3">
                                           <button
@@ -572,11 +579,13 @@ const [isdatachenged, setIsdatachenged] = useState(false);
                                               }
                                             }}
                                           >
-                                            <img
-                                              src={tracking}
-                                              alt="Tracking"
-                                              className="mx-auto"
-                                            />
+                                            <Tooltip text="Track order">
+                                              <img
+                                                src={tracking}
+                                                alt="Tracking"
+                                                className="mx-auto"
+                                              />
+                                            </Tooltip>
                                           </button>
                                         </td>
                                       </tr>
@@ -625,7 +634,7 @@ const [isdatachenged, setIsdatachenged] = useState(false);
         Id={orderId}
         subOrderId={subOrderId}
         onDelete={() => handleCloseModal()}
-        onHide={(w) => {setShowModel(false)}}
+        onHide={(w) => { setShowModel(false) }}
         showDelete={showDelete}
         setIsdatachenged={setIsdatachenged}
 

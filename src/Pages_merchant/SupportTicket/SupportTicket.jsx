@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import show from "../../assets_admin/show.png";
 import Loader from "../../Components_admin/Loader/Loader";
+import { BsChatLeftDots } from "react-icons/bs";
 
 const SupportTicket = () => {
   const [userData, setUserData] = useState({ name: "", userid: "" });
@@ -262,7 +263,7 @@ const SupportTicket = () => {
               <th className="px-4 py-2 border">Status</th>
               <th className="px-4 py-2 border">Delete</th>
               <th className="px-4 py-2 border">Update</th>
-              <th className="px-4 py-2 border">View</th>
+              <th className="px-4 py-2 border">Chat</th>
             </tr>
           </thead>
           <tbody>
@@ -329,7 +330,7 @@ const SupportTicket = () => {
                       Update
                     </button>
                   </td>
-                  <td className="px-4 py-2 border">
+                  <td className="px-4 py-2 flex justify-center items-center border">
                     <Link
                       to="/view-tickets-merchant"
                       state={{ ticketId: ticket._id }}
@@ -338,7 +339,7 @@ const SupportTicket = () => {
                         onClick={() => setSelectedTicketId(ticket._id)}
                         className="show-btn"
                       >
-                        <img src={show} alt="Show" className="mx-auto" />
+                        <BsChatLeftDots alt="Show" className="mx-auto text-2xl text-blue-500"/>
                       </button>
                     </Link>
                   </td>

@@ -58,6 +58,9 @@ export const getWebSocialMedia = async () => {
 };  
 
 
+
+
+
 export const createWebLandingPage = async (data) => {
     try {
         const response = await API.post("/home/create", data);
@@ -92,3 +95,45 @@ export const updateWebLandingPage = async (data) => {
         throw error;
     }
 };  
+
+// export const footergetdata
+
+
+
+export const createfooter  = async (data) => {
+    try {
+        const response = await API.post("/home/create", data);
+        console.log("web landing page response", response);
+        return response;
+    } catch (error) {
+        console.error("Error creating web landing page:", error);
+        throw error;
+    }
+};  
+
+
+
+
+export const getWebFooter = async () => {
+    try {
+        const response = await API.get("/footer");
+        console.log("web footer response", response);
+        return response;
+    } catch (error) {
+        console.error("Error getting web footer:", error);
+        throw error;
+    }
+};
+
+
+
+export const updateWebFooter = async (data) => {
+    try {
+        const response = await API.post("/footer/create", data);
+        console.log("web footer response", response);
+        return response;
+    } catch (error) {
+        console.error("Error updating web footer:", error);
+        throw error;
+    }
+};

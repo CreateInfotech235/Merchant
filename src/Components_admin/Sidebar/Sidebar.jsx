@@ -114,39 +114,6 @@ const Sidebar = () => {
           </li>
 
           <li className="my-2">
-            <Button
-              className={`w-100 ${activeTab === 4 ? "active" : ""}`}
-              onClick={() => toggleSubmenu(4)}
-            >
-              <span className="icon">
-                <img src={order} alt="order" />
-              </span>
-              Order
-              <span className={`arrow ${activeTab === 4 ? "rotate" : ""}`}>
-                <FaAngleRight />
-              </span>
-            </Button>
-            {activeTab === 4 && (
-              <div className="submenuWrapper">
-                <ul className="submenu">
-                  <li className={isActive("/create-order-admin") ? "active" : ""}>
-                    <Link to="/create-order-admin">Create Order</Link>
-                  </li>
-                  {/* <li className={isActive("/schedule-order") ? "active" : ""}>
-                    <Link to="/schedule-order">Schedule Order</Link>
-                  </li> */}
-                  <li className={isActive("/all-order-admin") ? "active" : ""}>
-                    <Link to="/all-order-admin">All Orders</Link>
-                  </li>
-                  <li className={isActive("/order-location-admin") ? "active" : ""}>
-                    <Link to="/order-location-admin">Orders Location</Link>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </li>
-
-          <li className="my-2">
             <Link to="/merchant" className="link">
               <Button
                 className={`w-100 ${isActive("/merchant") ? "active" : ""}`}

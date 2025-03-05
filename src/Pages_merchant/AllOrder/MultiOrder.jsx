@@ -653,7 +653,7 @@ const MultiOrder = () => {
                                               {`${subOrder?.address} (${subOrder?.postCode})` ??
                                                 "-"}
                                             </td>
-                                            <td className="p-3">{subOrder?.time?.end ? format(new Date(subOrder.time.end), "dd-MM-yyyy") : "-"}</td>
+                                            <td className="p-3">{subOrder?.time?.end ? format(new Date(subOrder.time.end), "dd-MM-yyyy HH:mm") : "-"}</td>
                                             <td className="p-3">
                                               {subOrder?.parcelType2?.length > 0 
                                                 ? subOrder.parcelType2.map(id => 

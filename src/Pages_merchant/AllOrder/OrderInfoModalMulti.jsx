@@ -10,11 +10,13 @@ import {
   FaUser,
   FaEnvelope,
   FaBox,
+  FaImage,
 } from "react-icons/fa";
 import { ImPhone } from "react-icons/im";
 import { GiPathDistance, GiDuration } from "react-icons/gi";
 import { RiFileList3Line } from "react-icons/ri";
 import instructions from '../../assets_mercchant/instructions.png'
+import { CiImageOn } from "react-icons/ci";
 
 
 // instructions.png
@@ -133,7 +135,17 @@ const OrderInfoModalMulti = ({ Order, onHide ,isSingle }) => {
                         <h6>Proof of pickup</h6>
                       </div>
                       <div>
-                        <img src={delivery?.pickupsignature} alt="pickup Signature" className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow" onClick={() => { 
+                          const imgElement = document.getElementById(`pickupSignature${delivery._id}-${index}`);
+                          imgElement.style.display = "block"; 
+                          imgElement.src = delivery?.pickupsignature; 
+
+
+                          document.getElementById(`pickupSignature${delivery._id}-${index}icon`).style.display = "none";
+                        }}>
+                          <CiImageOn  className="w-full h-full" id={`pickupSignature${delivery._id}-${index}icon`} />
+                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="pickup Signature" id={`pickupSignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                        </div>
                       </div>
                     </div>
                   )}
@@ -143,8 +155,15 @@ const OrderInfoModalMulti = ({ Order, onHide ,isSingle }) => {
                         <div>
                           <h6>Proof of delivery</h6>
                         </div>
-                        <div>
-                          <img src={delivery?.deliverysignature} alt="Delivery Signature" className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow" onClick={() => { 
+                          const imgElement = document.getElementById(`deliverySignature${delivery._id}-${index}`);
+                          imgElement.style.display = "block"; 
+                          imgElement.src = delivery?.deliverysignature; 
+
+                          document.getElementById(`deliverySignature${delivery._id}-${index}icon`).style.display = "none";
+                        }}>
+                          <CiImageOn className="w-full h-full" id={`deliverySignature${delivery._id}-${index}icon`} />
+                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="Delivery Signature" id={`deliverySignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
                         </div>
                       </div>
                     )}

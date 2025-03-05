@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "./nav";
 import Subnavigation from "../subnavigation/subnavigation";
 import SocialMedia from "./sosyalmedya";
+import Footer from "./Footer";
 const CommonComponent = () => {
   // List of components to be displayed in Subnavigation
   const listOfComponents = [
@@ -18,7 +19,7 @@ const CommonComponent = () => {
     {
       name: "Footer Settings",
       number: 3,
-      component: <div>Footer Component</div>,
+      component: <Footer/>,
     },
   ];
 

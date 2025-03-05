@@ -17,7 +17,7 @@ const AddUser = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [failedCustomers, setFailedCustomers] = useState([]);
   // const[formetdata,setFormetdata]=useState([{firstName:"1",lastName:"",country:"",city:"",address:"",postCode:"",mobileNumber:"",email:"",NHS_Number:""}])
-  
+
 
   const initialValues = {
     firstName: "",
@@ -55,7 +55,7 @@ const AddUser = () => {
     lastName: Yup.string().required("last is required"),
     mobileNumber: Yup.string(),
     email: Yup.string().optional(),
-      // .email("Invalid email format"),
+    // .email("Invalid email format"),
     country: Yup.string().required("Country is required"),
     city: Yup.string().required("City is required"),
     address: Yup.string().required("Address is required"),
@@ -110,7 +110,7 @@ const AddUser = () => {
   };
   const downloadTemplate = () => {
     const wb = XLSX.utils.book_new();
-    
+
     // Define the sheet data
     const sheetData = [
       {
@@ -125,23 +125,23 @@ const AddUser = () => {
         NHS_Number: ""
       }
     ];
-    
+
     // Create a worksheet
     const ws = XLSX.utils.json_to_sheet(sheetData);
-    
+
     // Ensure mobileNumber is set as text
     const mobileNumberCell = ws["H2"]; // H2 corresponds to the "mobileNumber" column (assuming it's the 8th column)
     if (mobileNumberCell) {
       mobileNumberCell.t = "s"; // Set the type to 's' for string
     }
-  
+
     // Append the worksheet to the workbook
     XLSX.utils.book_append_sheet(wb, ws, "Template");
-  
+
     // Write the workbook to a file
     XLSX.writeFile(wb, "template.xlsx");
   };
-  
+
 
   const handleExcelUpload = async () => {
     if (!selectedFile) {
@@ -244,7 +244,7 @@ const AddUser = () => {
             onClick={downloadTemplate}
             className="btn btn-primary ms-2"
           >
-          Download Template
+            Download Template
           </button>
         </div>
       </div>
@@ -259,7 +259,8 @@ const AddUser = () => {
             {/* Form fields for Name, Contact, Email */}
             <div className="row input-box">
               {/* Name Field */}
-              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
+                <label htmlFor="firstName" className="form-label mb-0">First Name</label>
                 <Field
                   type="text"
                   name="firstName"
@@ -277,7 +278,8 @@ const AddUser = () => {
                   className="error text-danger ps-2"
                 />
               </div>
-              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 ">
+                <label htmlFor="lastName" className="form-label mb-0">Last Name</label>
                 <Field
                   type="text"
                   name="lastName"
@@ -297,21 +299,25 @@ const AddUser = () => {
               </div>
 
               {/* Contact Field */}
-              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-                <div className="location">
-                  <Field
-                    type="text"
-                    name="mobileNumber"
-                    className="form-control"
-                    placeholder="Contact Number"
-                    style={{
-                      height: "4.5em",
-                      border: "1px solid #E6E6E6",
-                      borderRadius: "5px",
-                    }}
-                  />
-                  <div className="imgs">
-                    <img src={phone} className="location-img" alt="Phone" />
+              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
+                <div>
+
+                  <label htmlFor="mobileNumber" className="form-label mb-0">Contact Number</label>
+                  <div className="location">
+                    <Field
+                      type="text"
+                      name="mobileNumber"
+                      className="form-control"
+                      placeholder="Contact Number"
+                      style={{
+                        height: "4.5em",
+                        border: "1px solid #E6E6E6",
+                        borderRadius: "5px",
+                      }}
+                    />
+                    <div className="imgs">
+                      <img src={phone} className="location-img" alt="Phone" />
+                    </div>
                   </div>
                 </div>
                 <ErrorMessage
@@ -321,8 +327,9 @@ const AddUser = () => {
                 />
               </div>
 
-              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+              <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 ">
                 <div className="location">
+                  <label htmlFor="email" className="form-label mb-0">Email</label>
                   <Field
                     type="email"
                     name="email"
@@ -344,6 +351,7 @@ const AddUser = () => {
               </div>
               <div className="input-error col-10 mb-3">
                 <div className="location">
+                  <label htmlFor="address" className="form-label mb-0">Address</label>
                   <Field
                     type="text"
                     name="address"
@@ -363,8 +371,9 @@ const AddUser = () => {
                 />
               </div>
 
-              <div className="input-error col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+              <div className="input-error col-xxl-3 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
                 <div className="location">
+                  <label htmlFor="city" className="form-label mb-0">City</label>
                   <Field
                     type="text"
                     name="city"
@@ -383,18 +392,21 @@ const AddUser = () => {
                   className="error text-danger ps-2"
                 />
               </div>
-              <div className="input-error col-xxl-3 col-xl-3 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-                <Field
-                  type="text"
-                  name="postCode"
-                  className="form-control"
-                  placeholder="Post Code"
-                  style={{
-                    height: "4.5em",
-                    border: "1px solid #E6E6E6",
-                    borderRadius: "5px",
-                  }}
-                />
+              <div className="input-error col-xxl-3 col-xl-3 col-lg-5 col-md-6 col-sm-5 col-12 ">
+                <div className="location">
+                  <label htmlFor="postCode" className="form-label mb-0">Post Code</label>
+                  <Field
+                    type="text"
+                    name="postCode"
+                    className="form-control"
+                    placeholder="Post Code"
+                    style={{
+                      height: "4.5em",
+                      border: "1px solid #E6E6E6",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
                 <ErrorMessage
                   name="postCode"
                   component="div"
@@ -403,8 +415,9 @@ const AddUser = () => {
               </div>
 
 
-              <div className="input-error col-xxl-4 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
+              <div className="input-error col-xxl-4 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
                 <div className="location">
+                  <label htmlFor="country" className="form-label mb-0">Country</label>
                   <Field
                     type="text"
                     name="country"
@@ -423,18 +436,21 @@ const AddUser = () => {
                   className="error text-danger ps-2"
                 />
               </div>
-              <div className="input-error col-xxl-3 col-xl-3 col-lg-5 col-md-6 col-sm-5 col-12 mb-3">
-                <Field
-                  type="text"
-                  name="NHS_Number"
-                  className="form-control"
-                  placeholder="NHS_Number"
-                  style={{
-                    height: "4.5em",
-                    border: "1px solid #E6E6E6",
-                    borderRadius: "5px",
-                  }}
-                />
+              <div className="input-error col-xxl-3 col-xl-3 col-lg-5 col-md-6 col-sm-5 col-12">
+                <div className="location">
+                  <label htmlFor="NHS_Number" className="form-label mb-0">NHS Number</label>
+                  <Field
+                    type="text"
+                    name="NHS_Number"
+                    className="form-control"
+                    placeholder="NHS_Number"
+                    style={{
+                      height: "4.5em",
+                      border: "1px solid #E6E6E6",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
                 <ErrorMessage
                   name="NHS_Number"
                   component="div"

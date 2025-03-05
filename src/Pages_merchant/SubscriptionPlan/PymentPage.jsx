@@ -17,7 +17,7 @@ import { stripPayment } from "../../Components_merchant/Api/Subscription";
 
 // Set your publishable key here
 const stripePromise = loadStripe(
-  "pk_test_51QcPPDQMthVbcTznGkwg818j3f4sDxSi2uK9C9475tEoQLhIMgJFVXjWF4rD68JxXYURkLS5hVXNJoSRRXt7FgLP002Z73572F"
+  "pk_test_51QWXp5FWojz9eouiboeh9IFFnK9AFnwQwgZ1kxG7i3rIGhvb69u0ZxqL4u9fBoufp2d77c2Dmk839MWuQhK8Wzgl00z7R9RF8c"
 );
 
 const CheckoutForm = ({ plans }) => {

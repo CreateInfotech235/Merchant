@@ -36,6 +36,7 @@ function Navbar({ Login, userData, getdataofnav, getSocialMediadata }) {
   console.log(menuData);
   const [mediaLink, setmediaLink] = useState([]);
   const [contactLink, setcontactLink] = useState([]);
+  const [islogin, setislogin] = useState(true)
 
   useEffect(() => {
     const fetchMenuData = async () => {
@@ -55,6 +56,8 @@ function Navbar({ Login, userData, getdataofnav, getSocialMediadata }) {
 
       const response = await getSocialMediadata()
       console.log("response123", response?.webSocialMedia);
+
+      setislogin(false)
 
 
       setcontactLink([
@@ -119,6 +122,68 @@ function Navbar({ Login, userData, getdataofnav, getSocialMediadata }) {
   const handleNavigateToProfile = () => {
     navigate("/profile");
   };
+  if (islogin) {
+    return (
+      <>
+        <div className="bg-gray-800 animate-pulse">
+          <div className="text-gray-300 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-center justify-between py-3 gap-y-3">
+              <div className="text-sm font-medium w-full sm:w-auto">
+                <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                  {[...Array(1)].map((_, index) => (
+                    <li key={index}>
+                      <p className="text-[12px] flex items-center gap-1 font-light">
+                        <span className="bg-gray-600 w-4 h-4 rounded-full animate-pulse"></span>
+                        <p className="bg-gray-600 w-20 h-4 rounded animate-pulse"></p>
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Right Section */}
+              <div className="text-sm font-medium w-full sm:w-auto">
+                <ul className="flex flex-wrap items-center gap-2 justify-center sm:justify-end">
+                  {[...Array(5)].map((_, index) => (
+                    <li key={index}>
+                      <p className="text-[12px] flex items-center gap-1 font-light">
+                        <span className="bg-gray-600 w-6 h-6 rounded-full animate-pulse"></span>
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav className="bg-white shadow sticky top-0 z-20">
+          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-24">
+              <div className="flex items-center">
+                <div className="bg-gray-300 rounded-full  animate-pulse w-[60px] h-[60px]"></div>
+              </div>
+              <div className="hidden md:flex items-center">
+                <div className="flex lg:space-x-8 md:space-x-2" style={{ fontSize: window.innerWidth <= 768 ? "14px" : "16px" }}>
+                  {[...Array(4)].map((_, index) => (
+                    <div key={index} className="bg-gray-300 h-4 w-24 rounded animate-pulse"></div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center lg:space-x-4 md:space-x-2">
+                <div className="navbar-option p-2 position-relative flex items-center">
+                  <div className="bg-gray-300 h-4 w-24 rounded animate-pulse"></div>
+                  <div className="h-[50px] w-[50px] md:h-[65px] md:w-[65px] ml-2 lg:h-[70px] lg:w-[70px] rounded-full cursor-pointer hover:opacity-80 transition-opacity bg-gray-300 animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </nav>
+      </>
+    )
+  }
 
   return (
     <>
@@ -190,13 +255,16 @@ function Navbar({ Login, userData, getdataofnav, getSocialMediadata }) {
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-24">
             <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0">
-                <img
-                  src={menuData.logo.img}
-                  className={`h-[70px] md:h-[80px] ${window.innerWidth <= 768 ? "h-[45px] md:h-[60px]" : "h-[70px] md:h-[80px]"}`}
-                  alt="Logo"
-                />
-              </Link>
+              {menuData?.logo?.img &&
+                <Link to="/" className="flex-shrink-0">
+                  <img
+                    src={menuData?.logo?.img}
+                    className={`h-[70px] md:h-[80px] ${window.innerWidth <= 768 ? "h-[45px] md:h-[60px]" : "h-[70px] md:h-[80px]"}`}
+                    alt="Logo"
+                  />
+                </Link>
+              }
+
             </div>
 
             {/* Desktop Menu */}

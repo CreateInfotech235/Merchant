@@ -3,12 +3,13 @@ import NavBar from '../Navbar/Navbar'
 import Footer from '../Footer/Footer'
 import './Formate.css'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getWebNavbar, getWebSocialMedia } from '../../Pages_admin/webApi/webApi'
+import { getWebNavbar, getWebSocialMedia ,getWebFooter} from '../../Pages_admin/webApi/webApi'
 function Formate({ children, Login, useData }) {
   const navigate = useNavigate()
   const { isshow } = useParams()
   const [navdata,setnavdata]=useState(null)
   const [SocialMediadata,setSocialMediadata]=useState(null)
+  const [footerdata,setfooterdata]=useState(null)
 
 
 const getdataofnav = async () =>{
@@ -25,6 +26,15 @@ const getSocialMediadata = async () =>{
 }
 
 
+const getfooterdata = async () =>{
+  const data = await getWebFooter();
+  setfooterdata(data)
+  return data
+}
+
+
+
+
 
   return (
     <>
@@ -38,7 +48,7 @@ const getSocialMediadata = async () =>{
       <div className=''>
         {children}
       </div>
-      <Footer navdata={navdata} SocialMediadata={SocialMediadata} />
+      <Footer navdata={navdata} SocialMediadata={SocialMediadata} footerdata={footerdata} getfooterdata={getfooterdata} />
     </>
   )
 }
