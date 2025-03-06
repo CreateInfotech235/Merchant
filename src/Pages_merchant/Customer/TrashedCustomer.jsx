@@ -6,6 +6,8 @@ import { getAllCustomers } from "../../Components_merchant/Api/Customer";
 import ConformDeleteModel from "../ConformDeleteModel/ConformDeleteModel";
 import Loader from "../../Components_admin/Loader/Loader";
 import { Pagination, Stack } from "@mui/material";
+import Tooltip from "../Tooltip/Tooltip";
+import { FaUndo } from "react-icons/fa";
 
 const TrashedCustomer = () => {
   const [allCustomers, setAllCustomers] = useState([]);
@@ -19,7 +21,8 @@ const TrashedCustomer = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
-
+  const [undo, setUndo] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const fetchCustomers = async () => {
     setLoading(true);
     try {
@@ -47,7 +50,7 @@ const TrashedCustomer = () => {
 
   useEffect(() => {
     fetchCustomers();
-  }, [showModel]);
+  }, []);
 
   useEffect(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -107,9 +110,11 @@ const TrashedCustomer = () => {
     setCurrentPage(page);
   };
 
-  const hadleDeleteOrder = (id) => {
-    setShowModel(true);
+  const hadleDeleteOrder = (id,undo,showDelete) => {
     setCustomerId(id);
+    setUndo(undo);
+    setShowDelete(showDelete);
+    setShowModel(true);
   };
 
   const handleCloseModal = () => {
@@ -191,12 +196,29 @@ const TrashedCustomer = () => {
                       <td className="p-3">{customer.email}</td>
                       <td className="table-head2">
                         <div className="d-flex align-items-center justify-content-center">
-                          <button
-                            className="delete-btn me-1"
-                            onClick={() => hadleDeleteOrder(customer._id)}
-                          >
-                            <img src={deleteimg} alt="Delete" className="mx-auto" />
-                          </button>
+                          <Tooltip text="Undo Customer">
+                            <button
+                              className="delete-btn me-1"
+                              onClick={() =>{ 
+                                hadleDeleteOrder(customer._id,true,false)
+                              }}
+                            >
+                              <FaUndo
+                                alt="undo"
+                                className="mx-auto"
+                              />
+                            </button>
+                          </Tooltip>
+                          <Tooltip text="Delete Customer" transform="translateX(-80%)">
+                            <button
+                              className="delete-btn me-1"
+                              onClick={() =>{ 
+                                hadleDeleteOrder(customer._id,false,true)
+                              }}
+                            >
+                              <img src={deleteimg} alt="Delete" className="mx-auto" />
+                            </button>
+                          </Tooltip>
                         </div>
                       </td>
                     </tr>
@@ -231,13 +253,23 @@ const TrashedCustomer = () => {
           </>
         )}
       </div>
-
-      {showModel && (
+        {showModel  && (
         <ConformDeleteModel
           text="Customer"
           Id={customerId}
-          onDelete={() => handleCloseModal()}
-          onHide={() => setShowModel(false)}
+          onDelete={async () => {
+            setUndo(false)
+            setShowDelete(false)
+            setShowModel(false)
+            await fetchCustomers()
+          }}
+          onHide={() => {
+            setUndo(false)
+            setShowDelete(false)
+            setShowModel(false)
+          }}
+          undo={undo}
+          showDelete={showDelete}
         />
       )}
     </>

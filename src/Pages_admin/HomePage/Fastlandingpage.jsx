@@ -3,6 +3,7 @@ import { getWebLandingPage, updateWebLandingPage } from '../webApi/webApi';
 import { convertImageToBase64 } from "./convertImageToBase64";
 import { CiImageOn, CiImageOff } from "react-icons/ci";
 import { ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { uploadImageToCloudinary } from "../uploadImageToCloudinary/uploadImageToCloudinary";
 
 const Fastlandingpage = () => {
     // State initialization
@@ -44,25 +45,6 @@ const Fastlandingpage = () => {
         fetchMenuData();
     }, []);
 
-    const handleLogoChange = (field, value) => {
-        setMenuData({
-            ...menuData,
-            logo: {
-                ...menuData?.logo,
-                [field]: value,
-            },
-        });
-    };
-
-    const handleFaviconChange = (field, value) => {
-        setMenuData({
-            ...menuData,
-            favicon: {
-                ...menuData?.favicon,
-                [field]: value,
-            },
-        });
-    };
 
     const handleMenuItemChange = (field, value, index) => {
         if (index == undefined) {
@@ -79,55 +61,17 @@ const Fastlandingpage = () => {
         }
     };
 
-    const handleButtonChange = (field, value) => {
-        setMenuData({
-            ...menuData,
-            button: {
-                ...menuData?.button,
-                [field]: value,
-            },
-        });
-    };
-
     const handleDefaultProfileImageChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const base64 = await convertImageToBase64(file);
+            // const base64 = await convertImageToBase64(file);
             setMenuData({
                 ...menuData,
-                bgImage: base64,
+                bgImage: file,
             });
         }
     };
 
-
-    // Logo image upload handler
-    const handleLogoImageUpload = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            try {
-                const base64 = await convertImageToBase64(file);
-                handleLogoChange("img", base64);
-            } catch (err) {
-                setError("Error converting image to base64");
-                console.error(err);
-            }
-        }
-    };
-
-    // Favicon image upload handler
-    const handleFaviconImageUpload = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            try {
-                const base64 = await convertImageToBase64(file);
-                handleFaviconChange("img", base64);
-            } catch (err) {
-                setError("Error converting image to base64");
-                console.error(err);
-            }
-        }
-    };
 
     // Add new menu item
     const handleAddtypingtext = () => {
@@ -150,10 +94,15 @@ const Fastlandingpage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("menuData", menuData);
+
         try {
             setLoading(true);
             console.log("menuData", menuData);
-            const response = await updateWebLandingPage(menuData);
+           var url=menuData?.bgImage;
+            if (menuData?.bgImage) {
+                 url = await uploadImageToCloudinary(menuData.bgImage);
+            }
+            const response = await updateWebLandingPage({...menuData,bgImage:url});
             if (response) {
                 alert("Menu data saved successfully!");
                 fetchMenuData();
@@ -166,23 +115,6 @@ const Fastlandingpage = () => {
         }
     };
 
-    // Trigger file input for logo
-    const triggerLogoFileInput = () => {
-        const hiddenInput = document.createElement("input");
-        hiddenInput.type = "file";
-        hiddenInput.accept = "image/*";
-        hiddenInput.onchange = handleLogoImageUpload;
-        hiddenInput.click();
-    };
-
-    // Trigger file input for favicon
-    const triggerFaviconFileInput = () => {
-        const hiddenInput = document.createElement("input");
-        hiddenInput.type = "file";
-        hiddenInput.accept = "image/*";
-        hiddenInput.onchange = handleFaviconImageUpload;
-        hiddenInput.click();
-    };
 
     if (loading) {
         return (
@@ -233,7 +165,16 @@ const Fastlandingpage = () => {
                                         <div className="w-[200px] h-[200px] text-center border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-gray-400">
                                             {menuData?.bgImage ? (
                                                 <label htmlFor="bgImage" className="cursor-pointer w-[200px] h-[200px] flex items-center justify-center">
-                                                    <img src={menuData?.bgImage} alt="Default Profile Image" className="max-w-[200px] max-h-[200px] object-contain rounded-lg" />
+                                                    {console.log(menuData?.bgImage)
+                                                    }
+                                                    <img src={menuData?.bgImage
+                                                    } alt="Default Profile Image"
+                                                        onError={
+                                                            (e) => {
+                                                                e.target.src = URL.createObjectURL(menuData?.bgImage)
+                                                            }
+                                                        }
+                                                        className="max-w-[200px] max-h-[200px] object-contain rounded-lg" />
                                                 </label>
                                             ) : (
                                                 <label htmlFor="bgImage" className="cursor-pointer">

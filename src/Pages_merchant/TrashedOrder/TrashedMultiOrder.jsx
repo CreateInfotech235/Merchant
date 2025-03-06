@@ -433,17 +433,16 @@ const TrashedMultiOrder = () => {
                         <Tooltip text="Delete Order">
                           <button
                             className="delete-btn me-1"
-                          onClick={() => {
-                            hadleDeleteOrder(order._id, null, "Order"),
+                            onClick={() => {
+                              hadleDeleteOrder(order._id, null, "Order", false)
                               setshowDelete(true)
-                          }
-                          }
-                        >
-                          <img
-                            src={deleteimg}
-                            alt="Delete"
-                            className="mx-auto"
-                          />
+                            }}
+                          >
+                            <img
+                              src={deleteimg}
+                              alt="Delete"
+                              className="mx-auto"
+                            />
                           </button>
                         </Tooltip>
                       </td>
@@ -540,18 +539,35 @@ const TrashedMultiOrder = () => {
                                           </button>
                                         </td>
                                         <td className="city-data">
-                                          <button
-                                            className="delete-btn me-1"
-                                            onClick={() =>
-                                              hadleDeleteOrder(order._id, subOrder.subOrderId, "SubOrder")
-                                            }
-                                          >
-                                            <img
-                                              src={deleteimg}
-                                              alt="Delete"
-                                              className="mx-auto"
-                                            />
-                                          </button>
+                                          < Tooltip text="Undo Sub Order">
+                                            <button className="delete-btn me-1"
+                                              onClick={() => {
+                                                hadleDeleteOrder(order._id, subOrder.subOrderId, "SubOrder", true);
+                                                setshowDelete(false)
+                                              }
+                                              }
+                                            >
+                                              <FaUndo
+                                                alt="undo"
+                                                className="mx-auto"
+                                              />
+                                            </button>
+                                          </Tooltip>
+                                          <Tooltip text="Delete Sub Order">
+                                            <button
+                                              className="delete-btn me-1"
+                                              onClick={() => {
+                                                hadleDeleteOrder(order._id, subOrder.subOrderId, "SubOrder", false);
+                                                setshowDelete(true)
+                                              }}
+                                            >
+                                              <img
+                                                src={deleteimg}
+                                                alt="Delete"
+                                                className="mx-auto"
+                                              />
+                                            </button>
+                                          </Tooltip>
                                         </td>
                                         <td className="city-data">
                                           <button
@@ -633,11 +649,17 @@ const TrashedMultiOrder = () => {
         text={text}
         Id={orderId}
         subOrderId={subOrderId}
-        onDelete={() => handleCloseModal()}
-        onHide={(w) => { setShowModel(false) }}
+        onDelete={async () => {
+          handleCloseModal()
+          setshowDelete(false)
+          await fetchData()
+        }}
+        onHide={() => {
+          setShowModel(false)
+          setshowDelete(false)
+        }}
         showDelete={showDelete}
-        setIsdatachenged={setIsdatachenged}
-
+        // setIsdatachenged={setIsdatachenged}
         undo={undo}
       />}
     </>

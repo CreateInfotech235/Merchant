@@ -15,18 +15,21 @@ const DeleteUserMulti = ({ onHide, onDelete, Id, text , subOrderId }) => {
       const response = await moveToTrashOrderMulti(id);
       if (response.status) {
         onHide();
+        onDelete();
       }
     }
     if (text === "SubOrder") {
       const response = await moveToTrashSubOrderMulti(Id, subOrderId);
       if (response.status) {
         onHide();
+        onDelete();
       }
     }
     if (text === "Customer") {
       const response = await moveToTrashCustomer(id);
       if (response.status) {
         onHide();
+        onDelete();
       }
     }
     if (text === "DeliveryMan") {
@@ -34,6 +37,7 @@ const DeleteUserMulti = ({ onHide, onDelete, Id, text , subOrderId }) => {
       const response = await moveToTrashDeliveryMan(id);
       if (response.status) {
         onHide();
+        onDelete();
       }
     }
     setIsLoading(false);

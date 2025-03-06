@@ -15,6 +15,7 @@ import DeliveryManInfoModal from "./DeliveryManInfoModal";
 import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
 import ConformDeleteModel from "../ConformDeleteModel/ConformDeleteModel";
 import Loader from "../../Components_admin/Loader/Loader";
+import { FaUndo } from "react-icons/fa";
 
 const TrashedDeliveryman = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,6 +31,9 @@ const TrashedDeliveryman = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const closeModel = () => setShowModel(false);
+
+  const [showDelete, setShowDelete] = useState(false);
+  const [undo, setUndo] = useState(false);
 
   const fetchDeliveryMen = async () => {
     setLoading(true);
@@ -52,7 +56,7 @@ const TrashedDeliveryman = () => {
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [showModal, showEditModal]);
+  }, [showEditModal]);
 
   useEffect(() => {
     filterAndPaginateData(allDeliveryMen, searchTerm, currentPage);
@@ -207,9 +211,23 @@ const TrashedDeliveryman = () => {
                     </td>
                     <td className="user-table1">
                       <div className="d-flex justify-content-center align-items-center">
+                      <button
+                          className="delete-btn ms-1"
+                          onClick={() => {
+                            setUndo(true)
+                            setShowDelete(false)
+                            handleDeleteClick(deliveryman)
+                          }}
+                        >
+                          <FaUndo alt="Undo" className="mx-auto" />
+                        </button>
                         <button
                           className="delete-btn ms-1"
-                          onClick={() => handleDeleteClick(deliveryman)}
+                          onClick={() => {
+                            setUndo(false)
+                            setShowDelete(true)
+                            handleDeleteClick(deliveryman)
+                          }}
                         >
                           <img src={deleteimg} alt="Delete" className="mx-auto" />
                         </button>
@@ -251,8 +269,17 @@ const TrashedDeliveryman = () => {
       {showModal && <ConformDeleteModel
         text="DeliveryMan"
         Id={selectedDeliveryMan}
-        onDelete={() => closeModal()}
-        onHide={() => setShowModal(false)}
+        onDelete={async () => {
+          closeModal()
+          setShowModal(false)
+          await fetchDeliveryMen()
+        }}
+        onHide={() => {
+          closeModal()
+          setShowModal(false)
+        }}
+        showDelete={showDelete}
+        undo={undo}
       />}
     </>
   );

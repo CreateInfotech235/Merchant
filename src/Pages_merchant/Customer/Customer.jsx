@@ -14,6 +14,7 @@ import DeleteModal from "../../Components_merchant/DeleteUser/DeleteUser";
 import UpdateCustomerModel from "./UpdateCustomerModel";
 import Loader from "../../Components_admin/Loader/Loader";
 import { Pagination, Stack } from "@mui/material";
+import Tooltip from "../Tooltip/Tooltip";
 
 const markerIcon = new L.Icon({
   iconUrl: locationimg,
@@ -39,6 +40,10 @@ const Customers = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
+
+
+  const [showDelete, setShowDelete] = useState(false);
+
 
   useEffect(() => {
     if (themeMode === "dark") {
@@ -154,7 +159,7 @@ const Customers = () => {
   };
 
   const hadleDeleteCustomer = (id) => {
-    setShowModel(true);
+    // setShowModel(true);
     setCustomerId(id);
   };
 
@@ -258,28 +263,40 @@ const Customers = () => {
                         <td className="p-3">{customer.email}</td>
                         <td className="table-head2">
                           <div className="d-flex align-items-center justify-content-center">
-                            <button
-                              className="edit-btn ms-1"
-                              onClick={() => handleEditClick(customer)}
-                            >
-                              <img src={edit} alt="Edit" className="mx-auto" />
-                            </button>
-                            <button
-                              className="delete-btn me-1"
-                              onClick={() => hadleDeleteCustomer(customer._id)}
-                            >
-                              <img
-                                src={deleteimg}
-                                alt="Delete"
-                                className="mx-auto"
-                              />
-                            </button>
-                            <button
-                              className="show-btn m-2"
-                              onClick={() => handleShowInfo(customer)}
-                            >
-                              <img src={show} alt="Show" className="mx-auto" />
-                            </button>
+                            <Tooltip text="Edit Customer">
+
+                              <button
+                                className="edit-btn ms-1"
+                                onClick={() => handleEditClick(customer)}
+                              >
+                                <img src={edit} alt="Edit" className="mx-auto" />
+                              </button>
+                            </Tooltip>
+
+                            <Tooltip text="Delete Customer">
+                              <button
+                                className="delete-btn me-1"
+                                onClick={() => {
+                                  setShowDelete(true)
+                                  hadleDeleteCustomer(customer._id)
+                                }}
+                              >
+                                <img
+                                  src={deleteimg}
+                                  alt="Delete"
+                                  className="mx-auto"
+                                />
+                              </button>
+                            </Tooltip>
+                            <Tooltip text="Show Customer" transform="translateX(-100%)">
+
+                              <button
+                                className="show-btn m-2"
+                                onClick={() => handleShowInfo(customer)}
+                              >
+                                <img src={show} alt="Show" className="mx-auto" />
+                              </button>
+                            </Tooltip>
                           </div>
                         </td>
                       </tr>
@@ -337,12 +354,17 @@ const Customers = () => {
         </div>
       )}
 
-      {showModel && (
+      {showDelete && (
         <DeleteModal
           text="Customer"
           Id={customerId}
-          onDelete={() => hadleDeleteCustomer()}
-          onHide={() => setShowModel(false)}
+          onDelete={async () => {
+            await fetchCustomers()
+            setShowDelete(false)
+          }}
+          onHide={() => {
+            setShowDelete(false)
+          }}
         />
       )}
 

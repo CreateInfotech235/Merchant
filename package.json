@@ -26,6 +26,7 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.6",
+    "cloudinary-core": "^2.13.1",
     "date-fns": "^4.1.0",
     "flowbite": "^2.5.2",
     "formik": "^2.4.6",

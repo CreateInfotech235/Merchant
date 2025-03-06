@@ -12,15 +12,16 @@ const DeleteModal = ({ onHide, onDelete, Id, text }) => {
     if (text === "Order") {
       const response = await moveToTrashOrder(id);
       // console.log(response);
-
       if (response.status) {
         onHide();
+        onDelete();
       }
     }
     if (text === "Customer") {
       const response = await moveToTrashCustomer(id);
       if (response.status) {
         onHide();
+        onDelete();
       }
     }
     if (text === "DeliveryMan") {
@@ -28,6 +29,7 @@ const DeleteModal = ({ onHide, onDelete, Id, text }) => {
       const response = await moveToTrashDeliveryMan(id);
       if (response.status) {
         onHide();
+        onDelete();
       }
     }
   };

@@ -17,7 +17,6 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
         const response = await moveToTrashOrderMulti(id);
         if (response.status) {
             onDelete()
-            setIsdatachenged(true)
         }
         
       }
@@ -25,7 +24,6 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
         const response = await deleteOrderFormMerchantMulti(id , subOrderId)
         if (response.status) {
               onDelete()
-            setIsdatachenged(true)
         }
       }
     }
@@ -103,13 +101,16 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
             {`Undo ${text}`}
           </button>
           )}
-          <button
+          {
+            !undo ?  <button
             className="models-btn btn btn-danger text-white   botder-black border-1 p-2 rounded-2 m-3 text-nowrap"
             onClick={() => handleRemoveOrder(onDelete, text, Id, "Delete" , subOrderId)}
             // style={{display:undo ? "none" : ""}}
           >
            Confirm Delete
-          </button>
+          </button> : null
+          }
+         
         </div>
       </ModalBody>
     </Modal>

@@ -22,7 +22,7 @@ import { CiImageOn } from "react-icons/ci";
 // instructions.png
 
 
-const OrderInfoModalMulti = ({ Order, onHide ,isSingle }) => {
+const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
   console.log(Order, "Order");
   if (!Order) return null;
 
@@ -128,22 +128,22 @@ const OrderInfoModalMulti = ({ Order, onHide ,isSingle }) => {
             {Order?.deliveryAddresses?.map((delivery, index) => (
               <div key={delivery._id} className="mb-4 p-3 border rounded" style={{ display: isSingle ? (isSingle !== delivery.subOrderId ? "none" : "") : "" }} >
                 <div className="flex justify-between">
-                
+
                   {delivery?.pickupsignature && (
                     <div>
                       <div>
                         <h6>Proof of pickup</h6>
                       </div>
                       <div>
-                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow" onClick={() => { 
+                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow" onClick={() => {
                           const imgElement = document.getElementById(`pickupSignature${delivery._id}-${index}`);
-                          imgElement.style.display = "block"; 
-                          imgElement.src = delivery?.pickupsignature; 
+                          imgElement.style.display = "block";
+                          imgElement.src = delivery?.pickupsignature;
 
 
                           document.getElementById(`pickupSignature${delivery._id}-${index}icon`).style.display = "none";
                         }}>
-                          <CiImageOn  className="w-full h-full" id={`pickupSignature${delivery._id}-${index}icon`} />
+                          <CiImageOn className="w-full h-full" id={`pickupSignature${delivery._id}-${index}icon`} />
                           <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="pickup Signature" id={`pickupSignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
                         </div>
                       </div>
@@ -155,10 +155,10 @@ const OrderInfoModalMulti = ({ Order, onHide ,isSingle }) => {
                         <div>
                           <h6>Proof of delivery</h6>
                         </div>
-                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow" onClick={() => { 
+                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow" onClick={() => {
                           const imgElement = document.getElementById(`deliverySignature${delivery._id}-${index}`);
-                          imgElement.style.display = "block"; 
-                          imgElement.src = delivery?.deliverysignature; 
+                          imgElement.style.display = "block";
+                          imgElement.src = delivery?.deliverysignature;
 
                           document.getElementById(`deliverySignature${delivery._id}-${index}icon`).style.display = "none";
                         }}>
@@ -207,15 +207,36 @@ const OrderInfoModalMulti = ({ Order, onHide ,isSingle }) => {
                     {delivery.mobileNumber}
                   </span>
                 </div>
+                {
+                  delivery?.parcelType2 &&
+                  (
+                    <div className="row mb-2">
+                      <label className="col-6 d-flex align-items-center text-sm">
+                        <FaBox className="me-2" />
+                        Parcel Type:
+                      </label>
+                      <span className="col-6 text-end text-sm py-2">
+                        {delivery?.parcelType2?.length > 0
+                          ? delivery.parcelType2.map(id =>
+                            parcelTypeDetail.find(type => type.parcelTypeId === id)?.label
+                          ).join(", ")
+                          : "-"}
+                      </span>
+                    </div>
+                  )
+                }
+
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <FaBox className="me-2" />
                     Parcels:
+
                   </label>
                   <span className="col-6 text-end text-sm py-2">
                     {delivery.parcelsCount}
                   </span>
                 </div>
+
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <GiPathDistance className="me-2" />

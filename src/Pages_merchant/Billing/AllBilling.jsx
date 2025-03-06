@@ -637,12 +637,7 @@ const Billing = () => {
                         {order?.deliveryBoy?.email ?? "-"}
                       </td>
                       <td className="p-3">
-                        {order?.createdAt
-                          ? new Date(order?.createdAt) instanceof Date &&
-                            !isNaN(new Date(order?.createdAt))
-                            ? format(new Date(order?.createdAt), "dd-MM-yyyy")
-                            : order?.createdAt
-                          : "-"}
+                        {order?.createdAt??"-"}
                       </td>
                       <td className="p-3">
                         {order?.subOrderdata?.length > 0
@@ -655,12 +650,7 @@ const Billing = () => {
                                 : latest;
                             }, order.subOrderdata[0]);
 
-                            return lastSubOrder?.deliveryTime
-                              ? new Date(lastSubOrder?.deliveryTime) instanceof Date &&
-                                !isNaN(new Date(lastSubOrder?.deliveryTime))
-                                ? format(new Date(lastSubOrder?.deliveryTime), "dd-MM-yyyy")
-                                : lastSubOrder?.deliveryTime
-                              : "-";
+                            return lastSubOrder?.deliveryTime??"-";
                           })()
                           : "-"}
                       </td>

@@ -54,7 +54,7 @@ const DeliveryMan = () => {
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [showModal, showEditModal]);
+  }, [ showEditModal]);
 
   useEffect(() => {
     filterAndPaginateData(allDeliveryMen, searchTerm, currentPage);
@@ -326,8 +326,15 @@ const DeliveryMan = () => {
         <DeleteModal
           Id={selectedDeliveryMan}
           text="DeliveryMan"
-          onDelete={() => closeModal()}
-          onHide={() => setShowModal(false)}
+          onDelete={async () => {
+            closeModal()
+            setShowModal(false)
+            await fetchDeliveryMen()
+          }}
+          onHide={() => {
+            closeModal()
+            setShowModal(false)
+          }}
         />
       )}
 

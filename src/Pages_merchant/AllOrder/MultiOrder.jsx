@@ -21,6 +21,7 @@ import UpdateOrderModalMulti from "./UpdateOrderModalMulti";
 import DeleteUserMulti from "../../Components_merchant/DeleteUser/DeleteUserMulti";
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 import { Pagination, Stack } from "@mui/material";
+import Tooltip from "../Tooltip/Tooltip";
 
 const MultiOrder = () => {
   const [showModel, setShowModel] = useState(false);
@@ -52,6 +53,9 @@ const MultiOrder = () => {
   const [endDate, setEndDate] = useState(undefined);
   const [filterStatus, setFilterStatus] = useState("all");
   const [isUpdate, setIsUpdate] = useState(false);
+
+
+  const [showDelete, setShowDelete] = useState(false);
   console.log("isUpdate", isUpdate);
   const fetchData = async () => {
     setLoading(true);
@@ -73,8 +77,6 @@ const MultiOrder = () => {
 
         // Calculate initial filtered orders based on itemsPerPage
         const initialOrders = nonTrashedOrders.slice(0, itemsPerPage);
-      console.log("initialOrders15", initialOrders);
-      
         setFilteredOrders(initialOrders);
 
         // Calculate total pages based on non-trashed orders
@@ -95,6 +97,7 @@ const MultiOrder = () => {
   }, [currentPage, itemsPerPage]);
 
   useEffect(() => {
+    
     const fetchDataWithDelay = async () => {
       console.log("showModel123", showModel);
       console.log("isUpdate123", isUpdate);
@@ -124,7 +127,7 @@ const MultiOrder = () => {
         // order.customerName?.toLowerCase().includes(term) ||
         order.pickupAddress?.address?.toLowerCase().includes(term) ||
         order.status?.toLowerCase().includes(term) ||
-        order.deliveryAddress?.some(item => item.name?.toLowerCase().includes(term) || (`${item.address} (${item.postCode})`).trim()?.toLowerCase().includes(term) || item.address?.toLowerCase().includes(term)|| (item?.time?.end ? format(new Date(item.time.end), "dd-MM-yyyy") : "-").includes(term))
+        order.deliveryAddress?.some(item => item.name?.toLowerCase().includes(term) || (`${item.address} (${item.postCode})`).trim()?.toLowerCase().includes(term) || item.address?.toLowerCase().includes(term) || (item?.time?.end ? format(new Date(item.time.end), "dd-MM-yyyy") : "-").includes(term))
       );
     });
 
@@ -353,7 +356,7 @@ const MultiOrder = () => {
   };
 
   useEffect(() => {
-    if(!loading){
+    if (!loading) {
       setTimeout(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const status = urlParams.get('status');
@@ -443,7 +446,7 @@ const MultiOrder = () => {
               <label htmlFor="status" className="text-sm font-medium text-gray-700">Status:</label>
               <select
                 id="status"
-                value={filterStatus}      onChange={(e) => { setFilterStatus(e.target.value) }}
+                value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value) }}
                 className="form-select rounded-md border-gray-300 shadow-sm h-9"
               >
                 <option value="all">All</option>
@@ -546,35 +549,53 @@ const MultiOrder = () => {
                           </button>
                         </td>
                         <td className="city-data">
-                          <button
-                            className="edit-btn ms-1"
-                            onClick={() => handleEditClick(order)}
-                          >
-                            <img src={edit} alt="Edit" className="mx-auto" />
-                          </button>
-                          <button
-                            className="delete-btn me-1"
-                            onClick={() =>
-                              hadleDeleteOrder(order._id, null, "Order")
-                            }
-                          >
-                            <img
-                              src={deleteimg}
-                              alt="Delete"
-                              className="mx-auto"
-                            />
-                          </button>
-                          <button
-                            className="show-btn ms-1"
-                            onClick={() => handleViewClick(order)}
-                          >
-                            <img src={show} alt="Show" className="mx-auto" />
-                          </button>
+                          <Tooltip text={"Edit"}>
+
+                            <button
+                              className="edit-btn ms-1"
+                              onClick={() => {
+                                setShowDelete(false)
+                                handleEditClick(order)
+                              }}
+                            >
+                              <img src={edit} alt="Edit" className="mx-auto" />
+                            </button>
+                          </Tooltip>
+                          <Tooltip text={"Delete"}>
+                            <button
+                              className="delete-btn me-1"
+                              onClick={() => {
+                                setShowDelete(true)
+                                hadleDeleteOrder(order._id, null, "Order")
+                              }}
+                            >
+                              <img
+                                src={deleteimg}
+                                alt="Delete"
+                                className="mx-auto"
+                              />
+                            </button>
+                          </Tooltip>
+                          <Tooltip text={"Show data"}>
+
+                            <button
+                              className="show-btn ms-1"
+                              onClick={() => {
+                                setShowDelete(false)
+                                handleViewClick(order)
+                              }}
+                            >
+                              <img src={show} alt="Show" className="mx-auto" />
+                            </button>
+                          </Tooltip>
                         </td>
                         <td>
-                          <button onClick={() => toggleSemTable(order._id)}>
-                            {openSemTable[order._id] ? "Close" : "Open"}
-                          </button>
+                          <Tooltip text={openSemTable[order._id] ? "Close" : "Open"}>
+
+                            <button onClick={() => toggleSemTable(order._id)}>
+                              {openSemTable[order._id] ? "Close" : "Open"}
+                            </button>
+                          </Tooltip>
                         </td>
                       </tr>
                       {openSemTable[order._id] && (
@@ -655,10 +676,10 @@ const MultiOrder = () => {
                                             </td>
                                             <td className="p-3">{subOrder?.time?.end ? format(new Date(subOrder.time.end), "dd-MM-yyyy HH:mm") : "-"}</td>
                                             <td className="p-3">
-                                              {subOrder?.parcelType2?.length > 0 
-                                                ? subOrder.parcelType2.map(id => 
-                                                    parcelTypeDetail.find(type => type.parcelTypeId === id)?.label
-                                                  ).join(", ") 
+                                              {subOrder?.parcelType2?.length > 0
+                                                ? subOrder.parcelType2.map(id =>
+                                                  parcelTypeDetail.find(type => type.parcelTypeId === id)?.label
+                                                ).join(", ")
                                                 : "-"}
                                             </td>
                                             <td className="p-3">{subOrder?.invoice ?? "-"}</td>
@@ -672,96 +693,111 @@ const MultiOrder = () => {
                                               </button>
                                             </td>
                                             <td className="city-data">
-                                              <button
-                                                className="edit-btn ms-1"
-                                                onClick={() => {
-                                                  // console.log(subOrder),
-                                                  // setIsSingle(subOrderId)
-                                                  handleEditClick({
-                                                    ...order,
-                                                    deliveryAddresses: subOrder,
-                                                    isSingle: subOrder?.subOrderId,
-                                                    pickupSignature: subOrder?.pickupAddress?.userSignature,
-                                                    // pickupAddress: subOrder?.pickupAddress,
-                                                  })
-                                                }
-                                                }
-                                              >
-                                                <img
-                                                  src={edit}
-                                                  alt="Edit"
-                                                  className="mx-auto"
-                                                />
-                                              </button>
-                                              <button
-                                                className="delete-btn me-1"
-                                                onClick={() =>
-                                                  hadleDeleteOrder(
-                                                    order._id,
-                                                    subOrder.subOrderId,
-                                                    "SubOrder"
-                                                  )
-                                                }
-                                              >
-                                                <img
-                                                  src={deleteimg}
-                                                  alt="Delete"
-                                                  className="mx-auto"
-                                                />
-                                              </button>
-                                              <button
-                                                className="show-btn ms-1"
-                                                onClick={() => {
-                                                  setIsSingle(
-                                                    subOrder?.subOrderId,
-                                                  )
-                                                  handleViewClick({
-                                                    ...order,
-                                                    deliveryAddresses: subOrder,
-                                                  })
-                                                }
-                                                }
-                                              >
-                                                <img
-                                                  src={show}
-                                                  alt="Show"
-                                                  className="mx-auto"
-                                                />
-                                              </button>
+                                              <Tooltip text={"Edit suboder"}>
+                                                <button
+                                                  className="edit-btn ms-1"
+                                                  onClick={() => {
+                                                    // console.log(subOrder),
+                                                    // setIsSingle(subOrderId)
+                                                    handleEditClick({
+                                                      ...order,
+                                                      deliveryAddresses: subOrder,
+                                                      isSingle: subOrder?.subOrderId,
+                                                      pickupSignature: subOrder?.pickupAddress?.userSignature,
+                                                      // pickupAddress: subOrder?.pickupAddress,
+                                                    })
+                                                  }
+                                                  }
+                                                >
+                                                  <img
+                                                    src={edit}
+                                                    alt="Edit"
+                                                    className="mx-auto"
+                                                  />
+                                                </button>
+                                              </Tooltip>
+                                              <Tooltip text={"Delete suboder"}>
+
+                                                <button
+                                                  className="delete-btn me-1"
+                                                  onClick={() =>
+                                                    hadleDeleteOrder(
+                                                      order._id,
+                                                      subOrder.subOrderId,
+                                                      "SubOrder"
+                                                    )
+                                                  }
+                                                >
+                                                  <img
+                                                    src={deleteimg}
+                                                    alt="Delete"
+                                                    className="mx-auto"
+                                                  />
+                                                </button>
+                                              </Tooltip>
+                                              <Tooltip text={"Show suboder details"}>
+                                                <button
+                                                  className="show-btn ms-1"
+                                                  onClick={() => {
+                                                    setIsSingle(
+                                                      subOrder?.subOrderId,
+                                                    )
+                                                    handleViewClick({
+                                                      ...order,
+                                                      deliveryAddresses: subOrder,
+                                                    })
+                                                  }
+                                                  }
+                                                >
+                                                  <img
+                                                    src={show}
+                                                    alt="Show"
+                                                    className="mx-auto"
+                                                  />
+                                                </button>
+                                              </Tooltip>
                                             </td>
                                             <td className="city-data">
-                                              <button
-                                                className="delete-btn"
-                                                onClick={() => {
-                                                  if (
-                                                    [
-                                                      "ACCEPTED",
-                                                      "ASSIGNED",
-                                                      "CANCELLED",
-                                                      "DELIVERED",
-                                                      "CREATED",
-                                                    ].includes(subOrder.status)
-                                                  ) {
-                                                    alert(
-                                                      "You are not able to track. Tracking starts from the status 'Arrived' to 'Delivered'."
-                                                    );
-                                                  } else {
-                                                    hadleTrackOrder(
-                                                      order.deliveryManId,
-                                                      subOrder.location,
-                                                      order.pickupAddress
-                                                        .location,
-                                                      subOrder.status
-                                                    );
-                                                  }
-                                                }}
-                                              >
-                                                <img
-                                                  src={tracking}
-                                                  alt="Tracking"
-                                                  className="mx-auto"
-                                                />
-                                              </button>
+                                              <Tooltip transform="translateX(-100%)"  text={   [
+                                                        "ACCEPTED",
+                                                        "ASSIGNED",
+                                                        "CANCELLED",
+                                                        "DELIVERED",
+                                                        "CREATED",
+                                                      ].includes(subOrder.status)?"only tracking available from 'Arrived' to 'Delivered'":"Track order"}>
+                                                <button
+                                                  className="delete-btn"
+                                                  onClick={() => {
+                                                    if (
+                                                      [
+                                                        "ACCEPTED",
+                                                        "ASSIGNED",
+                                                        "CANCELLED",
+                                                        "DELIVERED",
+                                                        "CREATED",
+                                                      ].includes(subOrder.status)
+                                                    ) {
+                                                      alert(
+                                                        "Tracking available from 'Arrived' to 'Delivered'"
+                                                      );
+                                                    } else {
+                                                      hadleTrackOrder(
+                                                        order.deliveryManId,
+                                                        subOrder.location,
+                                                        order.pickupAddress
+                                                          .location,
+                                                        subOrder.status
+                                                      );
+                                                    }
+                                                  }}
+                                                >
+                                                  <img
+                                                    src={tracking}
+                                                    alt="Tracking"
+                                                    className="mx-auto"
+                                                  />
+                                                </button>
+                                              </Tooltip>
                                             </td>
                                           </tr>
                                         ) : null
@@ -807,17 +843,24 @@ const MultiOrder = () => {
         <UpdateOrderModalMulti Order={selectedOrder} onHide={closeEditModal} isSingle={isSingle} setIsUpdate2={setIsUpdate} />
       )}
 
-      {showModel && (
+      {showDelete && (
         <DeleteUserMulti
           text={text}
           Id={orderId}
           subOrderId={subOrderId}
-          onDelete={() => handleCloseModal()}
-          onHide={() => setShowModel(false)}
+          onDelete={async () => {
+            console.log("showDelete", showDelete);
+            
+            await fetchData()
+            setShowDelete(false)
+          }}
+          onHide={() => {
+            setShowDelete(false)
+          }}
         />
       )}
       {showInfoModal && (
-        <OrderInfoModalMulti Order={selectedOrder} onHide={closeInfoModal} isSingle={isSingle} />
+        <OrderInfoModalMulti Order={selectedOrder} onHide={closeInfoModal} parcelTypeDetail={parcelTypeDetail} isSingle={isSingle} />
       )}
       {showMapModal && location && (
         <MapModal
