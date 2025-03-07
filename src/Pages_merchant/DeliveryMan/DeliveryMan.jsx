@@ -54,7 +54,7 @@ const DeliveryMan = () => {
 
   useEffect(() => {
     fetchDeliveryMen();
-  }, [ showEditModal]);
+  }, []);
 
   useEffect(() => {
     filterAndPaginateData(allDeliveryMen, searchTerm, currentPage);
@@ -319,6 +319,10 @@ const DeliveryMan = () => {
         <UpdateDeliveryBoyModal
           deliveryBoy={selectedDeliveryMan}
           onHide={closeEditModal}
+          onUpdate={async () => {
+            setShowEditModal(false)
+            await fetchDeliveryMen()
+          }}
         />
       )}
 

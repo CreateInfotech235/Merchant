@@ -7,7 +7,7 @@ import { updateDeliveryBoy } from "../../Components_merchant/Api/DeliveryMan";
 import countryList from "react-select-country-list";
 import { updateCustomer } from "../../Components_merchant/Api/Customer";
 
-const UpdateCustomerModel = ({ onHide, customer }) => {
+const UpdateCustomerModel = ({ onHide, customer, onUpdate }) => {
   // console.log("customer", customer);
   const [isUpdate, setisUpdate] = useState(false);
 
@@ -47,6 +47,7 @@ const UpdateCustomerModel = ({ onHide, customer }) => {
     const res = await updateCustomer(customer._id, values);
     if (res.status) {
       onHide();
+      onUpdate();
     }
     setisUpdate(false)
   };

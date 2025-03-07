@@ -8,7 +8,7 @@ import countryList from "react-select-country-list";
 import { changePassword } from "../../Components_admin/Api/deliveryManForgotpassword";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
-const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
+const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy, onUpdate }) => {
   const navigate = useNavigate();
   const [isforgotPassword, setIsforgotPassword] = useState(false);
   const [isUpdate, setisUpdate] = useState(false);
@@ -112,6 +112,7 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
       const res = await updateDeliveryBoy(deliveryBoy._id, payload);
       if (res.status) {
         onHide();
+        onUpdate();
       }
     } catch (error) {
       console.error("Error updating delivery man:", error);
@@ -141,6 +142,7 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy }) => {
         alert("Password changed successfully!");
         setIsforgotPassword(false);
         onHide();
+        onUpdate();
       }
     } catch (error) {
       console.error("Error changing password:", error);

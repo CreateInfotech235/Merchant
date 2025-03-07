@@ -83,7 +83,7 @@ const Customers = () => {
 
   useEffect(() => {
     fetchCustomers();
-  }, [showModel, showEditModal]);
+  }, [showModel]);
 
   useEffect(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -372,6 +372,10 @@ const Customers = () => {
         <UpdateCustomerModel
           customer={selectedCustomer}
           onHide={closeEditModal}
+          onUpdate={async () => {
+            setShowEditModal(false)
+            await fetchCustomers()
+          }}
         />
       )}
 

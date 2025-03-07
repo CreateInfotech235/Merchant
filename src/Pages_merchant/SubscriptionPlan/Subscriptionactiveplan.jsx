@@ -42,6 +42,11 @@ function Subscriptionactiveplan({ plans }) {
     return remainingDays;
   };
 
+
+  const secondsToDays = (seconds) => {
+    return Math.floor(seconds / (24 * 60 * 60));
+  };
+
   return (
     <>
       <div className="container py-5 min-min-h-[calc(100vh-187px)]">
@@ -70,7 +75,7 @@ function Subscriptionactiveplan({ plans }) {
                             £{el.subcriptionId.amount}
                           </h2>
                           <p className="text-muted">
-                            per agent per {el.subcriptionId.seconds} days
+                            per agent per {secondsToDays(el.subcriptionId.seconds)} days
                           </p>
                         </div>
 
@@ -87,9 +92,15 @@ function Subscriptionactiveplan({ plans }) {
                         <div className="col-md-4">
                           <div className="p-3 bg-light rounded">
                             <div className="mb-3">
-                              <small className="text-muted">Created</small>
+                              <small className="text-muted">Subscription By Date</small>
                               <p className="mb-0 fw-bold">
                                 {formatDate(el.createdAt)}
+                              </p>
+                            </div>
+                            <div className="mb-3">
+                              <small className="text-muted">Start Date</small>
+                              <p className="mb-0 fw-bold">
+                                {el?.startDate ? formatDate(el?.startDate) : 'N/A'}
                               </p>
                             </div>
                             <div className="mb-3">
@@ -98,26 +109,43 @@ function Subscriptionactiveplan({ plans }) {
                                 {formatDate(el.expiry)}
                               </p>
                             </div>
-                            <div>
-                              <small className="text-muted">Time Remaining</small>
-                              <p className="mb-0 fw-bold" style={{ color: calculateRemainingDays(el.expiry) < 0 ? 'red' : 'inherit' }}>
-                                {calculateRemainingDays(el.expiry) < 0 
-                                  ? `${Math.abs(calculateRemainingDays(el.expiry))} days ago` 
-                                  : `${calculateRemainingDays(el.expiry)} days`}
-                              </p>
-                            </div>
+
+                            {calculateRemainingDays(el.expiry) > 0 ?
+                              el?.startDate ? new Date(el?.startDate) < new Date() ?
+                                ( <div>
+                                  <small className="text-muted">Time Remaining</small>
+                                  <p className="mb-0 fw-bold" style={{ color: calculateRemainingDays(el.expiry) < 0 ? 'red' : 'inherit' }}>
+                                    {calculateRemainingDays(el.expiry) < 0
+                                      ? `${Math.abs(calculateRemainingDays(el.expiry))} days ago`
+                                      : `${calculateRemainingDays(el.expiry)} days`}
+                                  </p>
+                                </div>) :
+                                (<div>
+                                  <small className="text-muted">Active after</small>
+                                  <p className="mb-0 fw-bold" style={{ color: calculateRemainingDays(el.expiry) < 0 ? 'red' : 'inherit' }}>
+                                    {el?.startDate ? `${calculateRemainingDays(el.startDate)} days left` : 'N/A'}
+                                  </p>
+                                </div>) 
+                                 :
+                                ( <div>
+                                  <small className="text-muted">Time Remaining</small>
+                                  <p className="mb-0 fw-bold" style={{ color: calculateRemainingDays(el.expiry) < 0 ? 'red' : 'inherit' }}>
+                                    {calculateRemainingDays(el.expiry) < 0
+                                      ? `${Math.abs(calculateRemainingDays(el.expiry))} days ago`
+                                      : `${calculateRemainingDays(el.expiry)} days`}
+                                  </p>
+                                </div>) :
+                              "Expired"}
                           </div>
 
                           <div className="text-center mt-3">
                             <button
-                              className={`btn ${
-                                calculateRemainingDays(el.expiry) > 0
-                                  ? "btn-success"
-                                  : "btn-danger"
-                              }`}
+                              className={`btn 
+                              ${calculateRemainingDays(el.expiry) > 0 ? el?.startDate ? new Date(el?.startDate) < new Date() ? "btn-success" : "btn-warning" : "btn-success" : "btn-danger"}  
+                              `}
 
                             >
-                              {calculateRemainingDays(el.expiry) > 0 ? "Active" : "Expired"}
+                              {calculateRemainingDays(el.expiry) > 0 ? el?.startDate ? new Date(el?.startDate) < new Date() ? "Active" : "Not Active Yet" : "Active" : "Expired"}
                             </button>
                           </div>
                         </div>
