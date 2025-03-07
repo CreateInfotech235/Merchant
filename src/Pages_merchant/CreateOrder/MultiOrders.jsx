@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "./CreateOrder.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createOrderMulti } from "../../Components_merchant/Api/Order";
 import {
   getDeliveryMan,
@@ -251,30 +251,57 @@ const MultiOrders = () => {
     }
   };
 
+
+  const location = useLocation();
   useEffect(() => {
+    console.log("location", location);
+
     async function setInitialValuesdata() {
       await setInitialValues(
         {
           dateTime: new Date(),
-          deliveryManId: "",
+          deliveryManId: location?.state?.orderData?.deliveryManId || "",
           pickupDetails: {
             location: {
               latitude: null, // Initialize with null or undefined
               longitude: null, // Empty array or [longitude, latitude]
             },
-            dateTime: "",
+            dateTime: location?.state?.orderData?.pickupDetails?.dateTime || "",
             merchantId: merchant._id || "",
             address:
-              `${merchant?.address?.street} , ${merchant?.address?.city} , ${merchant?.address?.postalCode} , ${merchant?.address?.country}` ||
+              location?.state?.orderData?.pickupAddress?.address ||
+            `${merchant?.address?.street} , ${merchant?.address?.city} , ${merchant?.address?.postalCode} , ${merchant?.address?.country}` ||
               "",
             // countryCode: merchant.countryCode || "",
-            mobileNumber: merchant.contactNumber || "",
-            email: merchant.email || "",
-            name: `${merchant.firstName} ${merchant.lastName}` || "",
-            description: "",
-            postCode: merchant?.address?.postalCode || "",
+            mobileNumber: location?.state?.orderData?.pickupAddress?.mobileNumber || merchant.contactNumber || "",
+            email: location?.state?.orderData?.pickupAddress?.email || merchant.email || "",
+            name: location?.state?.orderData?.pickupAddress?.name || `${merchant.firstName} ${merchant.lastName}` || "",
+            description: location?.state?.orderData?.pickupAddress?.description || "",
+            postCode: location?.state?.orderData?.pickupAddress?.postCode || merchant?.address?.postalCode || "",
           },
-          deliveryDetails: [{
+          deliveryDetails: location?.state?.orderData?.deliveryAddress.map((delivery) => ({
+            customerId: delivery.customerId,
+            // subOrderId: 1,
+            parcelsCount: delivery.parcelsCount || 1,
+            paymentCollectionRupees: delivery.paymentCollectionRupees || 0,
+            location: {
+              latitude: null, // Initialize with null or undefined
+              longitude: null, // Empty array or [longitude, latitude]
+            },
+            address: delivery.address,
+            // countryCode: "",
+            mobileNumber: delivery.mobileNumber,
+            parcelType2: delivery.parcelType2 || [],
+            name: delivery.name,
+            email: delivery.email,
+            description: delivery.description,
+            postCode: delivery.postCode,
+            cashOnDelivery: delivery.cashOnDelivery.toString() || "false",
+            distance: "",
+            duration: "",
+          }))
+          
+          || [{
             customerId: "",
             // subOrderId: 1,
             parcelsCount: 1,
@@ -301,15 +328,6 @@ const MultiOrders = () => {
     setInitialValuesdata();
   }, []);
 
-  // useEffect(() => {
-
-  //   var name = initialValues;
-  //   console.log("initialValues", initialValues);
-  //   // setInitialValues({
-  //   //   ...initialValues,
-  //   //   deliveryDetails: DeliveryInformation,
-  //   // });
-  // }, [DeliveryInformation]);
 
 
   const validationSchema = Yup.object().shape({
@@ -1058,9 +1076,9 @@ const MultiOrders = () => {
 
                           </div>
                         </div>
-                      <div className="mb-1 col-4">
+                        <div className="mb-1 col-4">
 
-                      </div>
+                        </div>
 
                         <div className="input-error mb-1 col-4">
                           <label className="fw-thin p-0 pb-1 ">
