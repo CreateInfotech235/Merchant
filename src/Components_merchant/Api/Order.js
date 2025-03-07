@@ -396,3 +396,31 @@ export const deleteOrderFormMerchantMulti = async (OrderID, subOrderId) => {
 };
 
 
+export const reassignOrder = async (merchantId, orderId) => {
+  console.log("merchantId", merchantId);
+  console.log("orderId", orderId);
+  try {
+    const response = await API.patch(`/mobile/order/reassignOrder?merchantId=${merchantId}&orderId=${orderId}`);
+    console.log("response", response);
+    if (response.status === 200) {
+      toast.success("Order reassigned successfully");
+      return { status: true, data: response.data };
+    } else {
+      toast.error(response.data?.message || "Failed to reassign order");
+      return { 
+        status: false, 
+        message: response.data?.message || "Failed to reassign order" 
+      };
+    }
+  } catch (error) {
+    console.error("Error reassigning order:", error);
+    toast.error(error.message || "Error reassigning order");
+    return { 
+      status: false, 
+      message: error.message || "Error reassigning order" 
+    };
+  }
+};
+
+
+

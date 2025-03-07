@@ -71,7 +71,7 @@ const CancelledOrders = () => {
 
       if (response?.data) {
         // Filter out trashed orders first
-        const nonTrashedOrders = response.data.filter(order => !order.trashed);
+        const nonTrashedOrders = response.data.filter(order => !order.trashed).sort((a, b) => a.isReassign - b.isReassign);
         setOrderData(nonTrashedOrders);
 
         // Calculate initial filtered orders based on itemsPerPage
@@ -513,13 +513,18 @@ const CancelledOrders = () => {
                           </button>
                         </td>
                         <td className="p-3">
-                          {order?.isAssigned ? "Yes" : "No"}
+                          {order?.isReassign ? "Yes" : "No"}
                         </td>
                         <td>
                         <Link
                           to="/multi-orders"
                           state={{ orderData: order }}
-                          className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors text-sm font-medium cursor-pointer"
+                          className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                            order?.isReassign 
+                              ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                              : 'bg-blue-50 text-blue-600 hover:bg-blue-100 cursor-pointer'
+                          }`}
+                          onClick={(e) => order?.isReassign && e.preventDefault()}
                         >
                           Re Assign
                         </Link>
@@ -676,7 +681,7 @@ const CancelledOrders = () => {
                                                   />
                                                 </button>
                                               </Tooltip>
-                                              <Tooltip text={"Show suboder details"}>
+                                              <Tooltip text={"Show suboder details"} transform="translateX(-100%)" >
                                                 <button
                                                   className="show-btn ms-1"
                                                   onClick={() => {

@@ -140,11 +140,11 @@ const MerchantSidebar = () => {
       num: 1,
     },
     {
-      path: ["/create-order", "/all-order", "/order-location", "/trashed-order", "/cancelled-orders"],
+      path: ["/create-order", "/all-order", "/order-location", "/trashed-order"],
       num: 2,
     },
     {
-      path: ["/multi-orders", "/all-multi-order", "/trashed-multi-order"],
+      path: ["/multi-orders", "/all-multi-order", "/trashed-multi-order", "/cancelled-orders"],
       num: 3,
     },
     {
@@ -288,11 +288,11 @@ const MerchantSidebar = () => {
                   <li className={currentPath === "/all-multi-order" ? "active" : ""}>
                     <Link to="/all-multi-order" onClick={() => setSidebarVisible(false)}>All Orders</Link>
                   </li>
-                  <li className={currentPath === "/trashed-multi-order" ? "active" : ""}>
-                    <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trash Orders</Link>
-                  </li>
                   <li className={currentPath === "/cancelled-orders" ? "active" : ""}>  
                     <Link to="/cancelled-orders" onClick={() => setSidebarVisible(false)}>Cancelled Orders</Link>
+                  </li>
+                  <li className={currentPath === "/trashed-multi-order" ? "active" : ""}>
+                    <Link to="/trashed-multi-order" onClick={() => setSidebarVisible(false)}>Trash Orders</Link>
                   </li>
                   {/* <li className={currentPath === "/multi-order-parcel" ? "active" : ""}>
                     <Link to="/multi-order-parcel" onClick={() => setSidebarVisible(false)}>Multi Order Parcel Details</Link>

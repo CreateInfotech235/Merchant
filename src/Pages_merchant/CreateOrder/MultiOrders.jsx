@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "./CreateOrder.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { createOrderMulti } from "../../Components_merchant/Api/Order";
+import { createOrderMulti, reassignOrder } from "../../Components_merchant/Api/Order";
 import {
   getDeliveryMan,
   getAllDeliveryMans,
@@ -33,6 +33,7 @@ const MultiOrders = () => {
   const [parcelTypeDetail, setParcelTypeDetail] = useState([]);
   const [searchCustomerList, setSearchCustomerList] = useState([]);
   const [fullCustomerList, setFullCustomerList] = useState([]);
+  const [isReassign, setIsReassign] = useState(false);
   // const [isSubmit, setIsSubmit] = useState(false);
 
 
@@ -253,6 +254,13 @@ const MultiOrders = () => {
 
 
   const location = useLocation();
+
+  useEffect(() => {
+    if (location?.state?.orderData) {
+      setIsReassign(true);
+    }
+  }, [location]);
+
   useEffect(() => {
     console.log("location", location);
 
@@ -513,6 +521,9 @@ const MultiOrders = () => {
       console.log("res1", res1);
       if (res1.status) {
         console.log("res1", res1);
+        if (isReassign) {
+          await reassignOrder(merchant._id, location?.state?.orderData?.orderId);
+        }
         naviagte("/all-multi-order");
       }
       return;
