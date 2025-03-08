@@ -491,7 +491,7 @@ const CancelledOrders = () => {
                 filteredOrders.map((order, index) =>
                   order.deliveryAddress.some(subOrder => subOrder.trashed === false) ? (
                     <React.Fragment key={index}>
-                      <tr className="country-row">
+                      <tr className="country-row hover:bg-gray-100 border-1 border-gray-200">
                      
                         <td className="p-3 text-primary">
                           {order?.orderId ?? "-"}

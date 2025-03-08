@@ -565,7 +565,7 @@ const MultiOrder = () => {
                 filteredOrders.map((order, index) =>
                   order.deliveryAddress.some(subOrder => subOrder.trashed === false) ? (
                     <React.Fragment key={index}>
-                      <tr className="country-row">
+                      <tr className="country-row hover:bg-gray-100 border-1 border-gray-200">
                         <td className="city-data">
                           <input type="checkbox" value={selectMultiOrder[order._id]} checked={selectMultiOrder[order._id]} onChange={() => handleSelectMultiOrder(order._id)} />
                         </td>
@@ -952,9 +952,9 @@ const MultiOrder = () => {
                 <button type="button" className="btn-close" onClick={() => setShowTrashConfirmModal(false)}></button>
               </div>
               <div className="modal-body">
-                <p>Are you sure you want to move {getSelectedMultiOrderIds().length} selected order(s) to trash?</p>
+                <p>Are you sure you want to move {getSelectedMultiOrderIds().length} selected order{getSelectedMultiOrderIds().length > 1 ? 's' : ''} to trash?</p>
                 <div className="mt-3">
-                  <strong>Selected Order IDs:</strong>
+                  <strong>Selected Order ID{getSelectedMultiOrderIds().length > 1 ? 's' : ''}:</strong>
                   <div className="mt-2" style={{ maxHeight: '150px', overflowY: 'auto' }}>
                     {getSelectedMultiOrderIds().map((id, index) => {
                       const order = orderData.find(o => o._id === id);

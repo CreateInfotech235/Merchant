@@ -215,7 +215,7 @@ const DeliveryMan = () => {
                 </tr>
               ) : (
                 deliverymen.map((deliveryman) => (
-                  <tr key={deliveryman._id}>
+                  <tr key={deliveryman._id} className="hover:bg-gray-100 border-1 border-gray-200">
                     <td className="user-table1">
                       <input type="checkbox" />
                     </td>

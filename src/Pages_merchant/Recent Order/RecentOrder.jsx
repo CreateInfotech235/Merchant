@@ -161,22 +161,16 @@ const RecentOrder = () => {
                 <>
                 {orderData.map((order, index) => (
                   <React.Fragment key={index}>
-                    <tr className="country-row">
+                    <tr className="country-row hover:bg-gray-100 border-1 border-top border-gray-200">
                       <td className="city-data">
                         <input type="checkbox" />
                       </td>
                       <td className="p-3 text-primary">
                         {order?.orderId ?? "-"}
                       </td>
-                      {/* <td className="p-3 text-dark fw-bold">
-                        {order?.customerName ?? "-"}
-                      </td> */}
                       <td className="p-3">
                         {`${order?.pickupAddress?.address} (${order?.pickupAddress?.postCode})` ?? "-"}
                       </td>
-                      {/* <td className="p-3">
-                        {`${order?.deliveryAddress?.[0]?.address} (${order?.deliveryAddress?.[0]?.postCode})` ?? "-"}
-                      </td> */}
                       <td className="p-3">{order?.deliveryMan ?? "-"}</td>
                       <td className="p-3">{order?.createdDate ?? "-"}</td>
                       <td className="p-3">{order?.pickupDate ?? "-"}</td>

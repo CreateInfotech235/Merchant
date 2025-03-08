@@ -136,3 +136,23 @@ export const stripPayment = async (amount, planId , duration , merchantId ,expir
     return { status: false, message: error.message };
   }
 };
+
+
+export const switchSubscriptionPlan = async (planId, merchantId) => {
+  try {
+    const response = await API.post('/mobile/subscription/switch-subscription-plan', {
+      planId,
+      merchantId
+    });
+
+    if (response.status === 200) {
+      return { status: true, data: response.data };
+    } else {
+      return { status: false, message: response.message };
+    } 
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    toast.error(error.message);
+    return { status: false, message: error.message };
+  }
+};

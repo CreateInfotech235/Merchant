@@ -186,7 +186,7 @@ const TrashedCustomer = () => {
                   </tr>
                 ) : (
                   filteredCustomers.map((customer, index) => (
-                    <tr key={index}>
+                    <tr key={index} className="hover:bg-gray-100 border-1 border-gray-200">
                       <td className="p-3">{customer.showCustomerNumber}</td>
                       <td className="p-3">{customer.NHS_Number}</td>
                       <td className="p-3">{customer.firstName}</td>
