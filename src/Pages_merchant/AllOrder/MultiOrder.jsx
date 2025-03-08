@@ -22,7 +22,8 @@ import DeleteUserMulti from "../../Components_merchant/DeleteUser/DeleteUserMult
 import { getMerchantParcelType } from "../../Components_merchant/Api/ParcelType";
 import { Pagination, Stack } from "@mui/material";
 import Tooltip from "../Tooltip/Tooltip";
-
+import { moveToTrashMultiOrderarray } from "../../Components_merchant/Api/Order";
+import { toast } from "react-toastify";
 const MultiOrder = () => {
   const [showModel, setShowModel] = useState(false);
   const [orderId, setOrderId] = useState(null);
@@ -53,10 +54,14 @@ const MultiOrder = () => {
   const [endDate, setEndDate] = useState(undefined);
   const [filterStatus, setFilterStatus] = useState("all");
   const [isUpdate, setIsUpdate] = useState(false);
+  const [selectMultiOrder, setSelectMultiOrder] = useState({});
+  console.log("selectMultiOrder", selectMultiOrder);
 
 
   const [showDelete, setShowDelete] = useState(false);
   console.log("isUpdate", isUpdate);
+  const [showTrashConfirmModal, setShowTrashConfirmModal] = useState(false);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -72,7 +77,8 @@ const MultiOrder = () => {
 
       if (response?.data) {
         // Filter out trashed orders first
-        const nonTrashedOrders = response.data.filter(order => !order.trashed);
+        const nonTrashedOrders = response.data.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === false));   // const trashedData = response.data.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === true));
+        console.log("nonTrashedOrders", nonTrashedOrders);
         setOrderData(nonTrashedOrders);
 
         // Calculate initial filtered orders based on itemsPerPage
@@ -97,7 +103,7 @@ const MultiOrder = () => {
   }, [currentPage, itemsPerPage]);
 
   useEffect(() => {
-    
+
     const fetchDataWithDelay = async () => {
       console.log("showModel123", showModel);
       console.log("isUpdate123", isUpdate);
@@ -116,7 +122,8 @@ const MultiOrder = () => {
 
   const filterOrders = (query) => {
     // Start with non-trashed orders only
-    var data = orderData.filter((order) => !order.trashed);
+    console.log("orderData", orderData);
+    var data = orderData.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === false));
 
     const filteredData = data.filter((order) => {
       const searchLower = query.toLowerCase();
@@ -271,7 +278,9 @@ const MultiOrder = () => {
 
   const hadleDeleteOrder = (id, subOrderId, text) => {
     console.log("id", id);
-    setShowModel(true);
+    console.log("subOrderId", subOrderId);
+    console.log("text", text);
+    setShowDelete(true);
     setOrderId(id);
     setText(text);
     setSubOrderId(subOrderId);
@@ -315,6 +324,45 @@ const MultiOrder = () => {
       [orderId]: !prev[orderId],
     }));
   };
+
+
+  const handleSelectMultiOrder = (orderId) => {
+    setSelectMultiOrder((prev) => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
+  };
+
+
+  const getSelectedMultiOrderIds = () => {
+    return Object.keys(selectMultiOrder).filter(key => selectMultiOrder[key] === true);
+  };
+
+  const handleTrashConfirm = async () => {
+    try {
+      const selectedIds = getSelectedMultiOrderIds();
+      if (selectedIds.length === 0) {
+        toast.warning("Please select orders to move to trash");
+        return;
+      }
+
+      const response = await moveToTrashMultiOrderarray(selectedIds);
+      if (response.status) {
+        toast.success(response.data.message);
+        setSelectMultiOrder({});
+        await fetchData();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setShowTrashConfirmModal(false);
+      setSelectMultiOrder({});
+      await fetchData();
+    }
+  };
+
 
   const downloadInvoice = async (order) => {
     try {
@@ -515,17 +563,17 @@ const MultiOrder = () => {
                 </tr>
               ) : (
                 filteredOrders.map((order, index) =>
-                  order.trashed === false ? (
+                  order.deliveryAddress.some(subOrder => subOrder.trashed === false) ? (
                     <React.Fragment key={index}>
                       <tr className="country-row">
                         <td className="city-data">
-                          <input type="checkbox" />
+                          <input type="checkbox" value={selectMultiOrder[order._id]} checked={selectMultiOrder[order._id]} onChange={() => handleSelectMultiOrder(order._id)} />
                         </td>
                         <td className="p-3 text-primary">
                           {order?.orderId ?? "-"}
                         </td>
                         <td className="p-3">
-                          {`${order?.deliveryMan}` ?? "-"}
+                          {`${order?.deliveryMan != null ? order?.deliveryMan : "-"}` ?? "-"}
                         </td>
                         <td className="p-3">{order?.createdDate ?? "-"}</td>
                         <td className="p-3">{order?.pickupDate ?? "-"}</td>
@@ -605,7 +653,7 @@ const MultiOrder = () => {
                               <table className="table table-bordered">
                                 <thead>
                                   <tr>
-                                    <th className="p-3"></th>
+                                    {/* <th className="p-3"></th> */}
                                     <th className="p-3">Sub Order ID</th>
                                     <th className="p-3">Customer Name</th>
                                     <th className="p-3">
@@ -618,6 +666,7 @@ const MultiOrder = () => {
                                     <th className="p-3">Parcel Type</th>
                                     <th className="p-3">Invoice</th>
                                     <th className="p-3">Status</th>
+                                    <th className="p-3">Reason</th>
                                     <th className="p-3">Action</th>
                                     <th className="p-3">Order Tracking</th>
                                   </tr>
@@ -657,9 +706,6 @@ const MultiOrder = () => {
                                             key={index}
                                             className="country-row"
                                           >
-                                            <td className="city-data">
-                                              <input type="checkbox" />
-                                            </td>
                                             <td className="p-3 text-primary">
                                               {subOrder?.subOrderId ?? "-"}
                                             </td>
@@ -692,6 +738,7 @@ const MultiOrder = () => {
                                                 {subOrder.status}
                                               </button>
                                             </td>
+                                            <td className="p-3">{subOrder?.reason ? subOrder.reason.replace(/_/g, " ") : "-"}</td>
                                             <td className="city-data">
                                               <Tooltip text={"Edit suboder"}>
                                                 <button
@@ -758,13 +805,13 @@ const MultiOrder = () => {
                                               </Tooltip>
                                             </td>
                                             <td className="city-data">
-                                              <Tooltip transform="translateX(-100%)"  text={   [
-                                                        "ACCEPTED",
-                                                        "ASSIGNED",
-                                                        "CANCELLED",
-                                                        "DELIVERED",
-                                                        "CREATED",
-                                                      ].includes(subOrder.status)?"only tracking available from 'Arrived' to 'Delivered'":"Track order"}>
+                                              <Tooltip transform="translateX(-100%)" text={[
+                                                "ACCEPTED",
+                                                "ASSIGNED",
+                                                "CANCELLED",
+                                                "DELIVERED",
+                                                "CREATED",
+                                              ].includes(subOrder.status) ? "only tracking available from 'Arrived' to 'Delivered'" : "Track order"}>
                                                 <button
                                                   className="delete-btn"
                                                   onClick={() => {
@@ -816,27 +863,49 @@ const MultiOrder = () => {
             </tbody>
           </table>
         </div>
-        <div className="d-flex justify-content-end align-items-center mt-3">
-          <Stack spacing={2}>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={handlePageChange}
-              variant="outlined"
-              shape="rounded"
-            />
-          </Stack>
-          <select
-            className="form-select ms-3 w-20"
-            value={itemsPerPage}
-            onChange={(e) => { setCurrentPage(1); setItemsPerPage(Number(e.target.value)) }}
-          >
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={75}>75</option>
-            <option value={100}>100</option>
-          </select>
+        <div className={`d-flex  align-items-center mt-3 mb-3 ${Object.values(selectMultiOrder).some(value => value) ? 'justify-content-between' : 'justify-content-end'}`}>
+          {Object.values(selectMultiOrder).some(value => value) && (
+            <>
+              <div className="d-flex align-items-center gap-2">
+                <button
+                  onClick={() => setShowTrashConfirmModal(true)}
+                  className="btn btn-danger d-flex align-items-center gap-2"
+                >
+                  <i className="fas fa-trash-alt"></i>
+                  Move Selected to Trash ({getSelectedMultiOrderIds().length})
+                </button>
+                <button
+                  onClick={() => setSelectMultiOrder({})}
+                  className="btn btn-danger d-flex align-items-center gap-2"
+                >
+                  <i className="fas fa-trash-alt"></i>
+                  Cancel Selected ({getSelectedMultiOrderIds().length})
+                </button>
+              </div>
+            </>
+          )}
+          <div className="d-flex align-items-center">
+            <Stack spacing={2}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                variant="outlined"
+                shape="rounded"
+              />
+            </Stack>
+            <select
+              className="form-select ms-3 w-20"
+              value={itemsPerPage}
+              onChange={(e) => { setCurrentPage(1); setItemsPerPage(Number(e.target.value)) }}
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={75}>75</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
         </div>
       </div>
       {showEditModal && (
@@ -849,8 +918,7 @@ const MultiOrder = () => {
           Id={orderId}
           subOrderId={subOrderId}
           onDelete={async () => {
-            console.log("showDelete", showDelete);
-            
+
             await fetchData()
             setShowDelete(false)
           }}
@@ -874,6 +942,38 @@ const MultiOrder = () => {
             setDeliveryLocation(null);
           }}
         />
+      )}
+      {showTrashConfirmModal && (
+        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Move to Trash</h5>
+                <button type="button" className="btn-close" onClick={() => setShowTrashConfirmModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <p>Are you sure you want to move {getSelectedMultiOrderIds().length} selected order(s) to trash?</p>
+                <div className="mt-3">
+                  <strong>Selected Order IDs:</strong>
+                  <div className="mt-2" style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                    {getSelectedMultiOrderIds().map((id, index) => {
+                      const order = orderData.find(o => o._id === id);
+                      return `${order?.orderId || id}${index < getSelectedMultiOrderIds().length - 1 ? ',' : ''}`;
+                    })}
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowTrashConfirmModal(false)}>
+                  Cancel
+                </button>
+                <button type="button" className="btn btn-danger" onClick={handleTrashConfirm}>
+                  Move to Trash
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -37,15 +37,16 @@ const TrashedMultiOrder = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showDelete, setshowDelete] = useState(false);
   const [isdatachenged, setIsdatachenged] = useState(false);
+  const [trashed, settrashed] = useState(undefined);
   const fetchData = async () => {
     setLoading(true);
     try {
       const MerchantId = await localStorage.getItem('merchnatId');
-      const response = await getMultiOrders(MerchantId, 1, 10000000);
+      const response = await getMultiOrders(MerchantId);
       if (response?.data) {
         const trashedData = response.data.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === true));
         setOrderData(trashedData);
-        setFilteredOrders(trashedData);
+        setFilteredOrders(trashedData.slice(0, itemsPerPage));
         // Set initial total pages based on fetched data
         setTotalPages(Math.ceil(trashedData.length / itemsPerPage));
       } else {
@@ -81,7 +82,7 @@ const TrashedMultiOrder = () => {
     filterOrders(event.target.value);
   };
 
-  const filterOrders = (query) => {
+  const filterOrders = (query, value) => {
     let data = orderData;
     const lowercasedQuery = query.toLowerCase().trim();
     const filteredData = data.filter((order) => {
@@ -154,26 +155,24 @@ const TrashedMultiOrder = () => {
     // Update total pages based on filtered data length
     const newTotalPages = Math.max(1, Math.ceil(sortedData.length / itemsPerPage));
     setTotalPages(newTotalPages);
-
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    var startIndex = (value - 1) * itemsPerPage;
+    var endIndex = startIndex + itemsPerPage;
     setFilteredOrders(sortedData.slice(startIndex, endIndex));
   };
 
   useEffect(() => {
-    filterOrders(searchQuery);
     setCurrentPage(1);
+    filterOrders(searchQuery);
   }, [searchQuery, startDate, endDate, filterStatus]);
 
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-    filterOrders(searchQuery);
+  const handlePageChange = async (event, value) => {
+    await setCurrentPage(value);
+    filterOrders(searchQuery, value);
   };
 
 
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = searchQuery.length > 0 ? filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder) : orderData.slice(indexOfFirstOrder, indexOfLastOrder);
+
+
 
   const handleClick = (event) => {
     setCurrentPage(Number(event.target.id));
@@ -544,6 +543,7 @@ const TrashedMultiOrder = () => {
                                               onClick={() => {
                                                 hadleDeleteOrder(order._id, subOrder.subOrderId, "SubOrder", true);
                                                 setshowDelete(false)
+                                                settrashed(false)
                                               }
                                               }
                                             >
@@ -654,6 +654,7 @@ const TrashedMultiOrder = () => {
           setshowDelete(false)
           await fetchData()
         }}
+        trashed={trashed}
         onHide={() => {
           setShowModel(false)
           setshowDelete(false)

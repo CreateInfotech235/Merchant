@@ -6,7 +6,7 @@ import { deleteCustomer, moveToTrashCustomer } from "../../Components_merchant/A
 import { deleteDeliveryMan, moveToTrashDeliveryMan } from "../../Components_merchant/Api/DeliveryMan";
 import { FaUndo } from "react-icons/fa";
 
-const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=false, showDelete, setIsdatachenged}) => {
+const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=false, showDelete, setIsdatachenged,trashed=undefined}) => {
   console.log(subOrderId , Id , text);
 
 
@@ -14,7 +14,7 @@ const ConformDeleteModelMulti = ({ onHide, onDelete, Id, text , subOrderId,undo=
     console.log("subOrderId", subOrderId , "id", id , "text", text);
     if (text === "Order") {
       if (type === "Undo") {
-        const response = await moveToTrashOrderMulti(id);
+        const response = await moveToTrashOrderMulti(id,trashed);
         if (response.status) {
             onDelete()
         }

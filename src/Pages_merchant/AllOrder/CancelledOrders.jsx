@@ -56,6 +56,7 @@ const CancelledOrders = () => {
   const [getallcancelledorders, setGetallcancelledorders] = useState(true);
 
 
+
   const [showDelete, setShowDelete] = useState(false);
   console.log("isUpdate", isUpdate);
   const fetchData = async () => {
@@ -71,7 +72,7 @@ const CancelledOrders = () => {
 
       if (response?.data) {
         // Filter out trashed orders first
-        const nonTrashedOrders = response.data.filter(order => !order.trashed).sort((a, b) => a.isReassign - b.isReassign);
+        const nonTrashedOrders = response.data.filter(order => !order.trashed)
         setOrderData(nonTrashedOrders);
 
         // Calculate initial filtered orders based on itemsPerPage
@@ -270,7 +271,7 @@ const CancelledOrders = () => {
 
   const hadleDeleteOrder = (id, subOrderId, text) => {
     console.log("id", id);
-    setShowModel(true);
+    setShowDelete(true);
     setOrderId(id);
     setText(text);
     setSubOrderId(subOrderId);
@@ -456,7 +457,6 @@ const CancelledOrders = () => {
           >
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
-                <th className="p-3"></th>
                 <th className="p-3">Order ID</th>
                 <th className="p-3">Delivery Man</th>
                 <th className="p-3">Created Date</th>
@@ -489,12 +489,10 @@ const CancelledOrders = () => {
                 </tr>
               ) : (
                 filteredOrders.map((order, index) =>
-                  order.trashed === false ? (
+                  order.deliveryAddress.some(subOrder => subOrder.trashed === false) ? (
                     <React.Fragment key={index}>
                       <tr className="country-row">
-                        <td className="city-data">
-                          <input type="checkbox" />
-                        </td>
+                     
                         <td className="p-3 text-primary">
                           {order?.orderId ?? "-"}
                         </td>
@@ -574,7 +572,6 @@ const CancelledOrders = () => {
                               <table className="table table-bordered">
                                 <thead>
                                   <tr>
-                                    <th className="p-3"></th>
                                     <th className="p-3">Sub Order ID</th>
                                     <th className="p-3">Customer Name</th>
                                     <th className="p-3">
@@ -625,9 +622,6 @@ const CancelledOrders = () => {
                                             key={index}
                                             className="country-row"
                                           >
-                                            <td className="city-data">
-                                              <input type="checkbox" />
-                                            </td>
                                             <td className="p-3 text-primary">
                                               {subOrder?.subOrderId ?? "-"}
                                             </td>

@@ -303,10 +303,13 @@ export const createOrderMulti = async (data) => {
 
 
 
-export const moveToTrashOrderMulti = async (OrderID) => {
+export const moveToTrashOrderMulti = async (OrderID,settrashed) => {
   try {
     const response = await API.patch(
-      `/mobile/order/moveToTrashFormMerchantMulti/${OrderID}`
+      `/mobile/order/moveToTrashFormMerchantMulti/${OrderID}`,
+      {
+        trashed: settrashed
+      }
       // {
       //   params: {
       //     user: userId,
@@ -332,6 +335,7 @@ export const moveToTrashOrderMulti = async (OrderID) => {
     return { status: false, message: error.message };
   }
 };
+
 export const moveToTrashSubOrderMulti = async (OrderID, subOrderId) => {
   try {
     const response = await API.patch(
@@ -361,6 +365,29 @@ export const moveToTrashSubOrderMulti = async (OrderID, subOrderId) => {
     return { status: false, message: error.message };
   }
 };
+
+
+export const moveToTrashMultiOrderarray = async (array) => {
+  try {
+    console.log("array", array);
+    const response = await API.patch(
+      `/mobile/order/moveToTrashMultiOrder`,
+      {
+        orderIds: array
+      }
+    );
+    console.log("response", response);
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      return { status: true, data: response.data.data };
+    }
+  }
+  catch (error) {
+    console.error("Error fetching orders:", error);
+    toast.error(error.message);
+    return { status: false, message: error.message };
+  }
+}
 
 
 export const deleteOrderFormMerchantMulti = async (OrderID, subOrderId) => {

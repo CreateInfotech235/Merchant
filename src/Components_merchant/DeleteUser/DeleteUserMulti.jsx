@@ -9,10 +9,10 @@ const DeleteUserMulti = ({ onHide, onDelete, Id, text , subOrderId }) => {
   const [isLoading, setIsLoading] = useState(false);
   console.log(Id , text , subOrderId);
   
-  const handleRemoveOrder = async (onDelete, text, id) => {
+  const handleRemoveOrder = async (onDelete, text, id,settrashed) => {
     setIsLoading(true);
     if (text === "Order") {
-      const response = await moveToTrashOrderMulti(id);
+      const response = await moveToTrashOrderMulti(id,settrashed);
       if (response.status) {
         onHide();
         onDelete();
