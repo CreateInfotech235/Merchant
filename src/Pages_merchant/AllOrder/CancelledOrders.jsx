@@ -491,7 +491,12 @@ const CancelledOrders = () => {
                 filteredOrders.map((order, index) =>
                   order.deliveryAddress.some(subOrder => subOrder.trashed === false) ? (
                     <React.Fragment key={index}>
-                      <tr className="country-row hover:bg-gray-100 border-1 border-gray-200">
+                      <tr className="country-row hover:bg-gray-100 border-1 border-gray-200" onClick={(e) => {
+                        const selection = window.getSelection();
+                        if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
+                          toggleSemTable(order._id)
+                        }
+                      }}>
                      
                         <td className="p-3 text-primary">
                           {order?.orderId ?? "-"}

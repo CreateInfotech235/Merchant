@@ -124,7 +124,7 @@ const TrashedCustomer = () => {
 
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
+      <div className="d-flex justify-content-end align-items-center nav-bar pb-3">
         <div className="navbar">
           <div className="navbar-options d-flex items-center">
             <input
@@ -186,7 +186,12 @@ const TrashedCustomer = () => {
                   </tr>
                 ) : (
                   filteredCustomers.map((customer, index) => (
-                    <tr key={index} className="hover:bg-gray-100 border-1 border-gray-200">
+                    <tr key={index} className="hover:bg-gray-100 border-1 border-gray-200" onClick={(e) => {
+                      const selection = window.getSelection();
+                      if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
+                        handleShowInfo(customer)
+                      }
+                    }}>
                       <td className="p-3">{customer.showCustomerNumber}</td>
                       <td className="p-3">{customer.NHS_Number}</td>
                       <td className="p-3">{customer.firstName}</td>
@@ -219,6 +224,7 @@ const TrashedCustomer = () => {
                               <img src={deleteimg} alt="Delete" className="mx-auto" />
                             </button>
                           </Tooltip>
+                        
                         </div>
                       </td>
                     </tr>

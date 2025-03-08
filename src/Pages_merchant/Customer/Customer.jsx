@@ -180,6 +180,18 @@ const Customers = () => {
   return (
     <>
       <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
+       
+        <div>
+          <Link to="/add-customer">
+            <button
+              className="btn text-white flex items-center"
+              style={{ background: "#D65246" }}
+            >
+              <img src={add} className="pe-2" alt="Add" />
+              Add Customer
+            </button>
+          </Link>
+        </div>
         <div className="navbar">
           <div className="navbar-options d-flex items-center">
             <input
@@ -196,17 +208,6 @@ const Customers = () => {
               <img src={searchIcon} className="search" alt="search icon" />
             </button>
           </div>
-        </div>
-        <div>
-          <Link to="/add-customer">
-            <button
-              className="btn text-white flex items-center"
-              style={{ background: "#D65246" }}
-            >
-              <img src={add} className="pe-2" alt="Add" />
-              Add Customer
-            </button>
-          </Link>
         </div>
       </div>
 
@@ -253,7 +254,12 @@ const Customers = () => {
                 ) : (
                   filteredCustomers.map((customer, index) =>
                     customer.trashed === false ? (
-                      <tr key={index} className="hover:bg-gray-100 border-1 border-gray-200">
+                      <tr key={index} className="hover:bg-gray-100 border-1 border-gray-200" onClick={(e) => {
+                        const selection = window.getSelection();
+                        if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
+                          handleShowInfo(customer)
+                        }
+                      }}>
                         <td className="p-3">{customer.showCustomerNumber}</td>
                         <td className="p-3">{customer.NHS_Number}</td>
                         <td className="p-3">{customer.firstName}</td>

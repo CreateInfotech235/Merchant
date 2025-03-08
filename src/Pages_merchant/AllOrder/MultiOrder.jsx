@@ -565,7 +565,17 @@ const MultiOrder = () => {
                 filteredOrders.map((order, index) =>
                   order.deliveryAddress.some(subOrder => subOrder.trashed === false) ? (
                     <React.Fragment key={index}>
-                      <tr className="country-row hover:bg-gray-100 border-1 border-gray-200">
+                      <tr className="country-row hover:bg-gray-100 border-1 border-gray-200" onClick={(e) => {
+                        const selection = window.getSelection();
+                        if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
+                          if(getSelectedMultiOrderIds().length > 0)
+                          {
+                            handleSelectMultiOrder(order._id)
+                          }else{
+                            toggleSemTable(order._id)
+                          }
+                        }
+                      }}>
                         <td className="city-data">
                           <input type="checkbox" value={selectMultiOrder[order._id]} checked={selectMultiOrder[order._id]} onChange={() => handleSelectMultiOrder(order._id)} />
                         </td>

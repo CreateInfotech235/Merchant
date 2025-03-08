@@ -381,7 +381,14 @@ const TrashedMultiOrder = () => {
               ) : (
                 filteredOrders.map((order, index) => (
                   <React.Fragment key={index}>
-                    <tr className="country-row hover:bg-gray-100 border-1 border-gray-200">
+                    <tr className="country-row hover:bg-gray-100 border-1 border-gray-200"
+                      onClick={(e) => {
+                        const selection = window.getSelection();
+                        if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
+                          toggleSemTable(order._id)
+                        }
+                      }}
+                    >
                       <td className="city-data">
                         <input type="checkbox" />
                       </td>

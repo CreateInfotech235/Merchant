@@ -11,9 +11,10 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import PropTypes from "prop-types";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import { stripPayment } from "../../Components_merchant/Api/Subscription";
+import { toast } from "react-toastify";
 
 // Set your publishable key here
 const stripePromise = loadStripe(
@@ -21,6 +22,7 @@ const stripePromise = loadStripe(
 );
 
 const CheckoutForm = ({ plans }) => {
+  const navigate = useNavigate();
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
   const [planId, setPlanId] = useState(null);
@@ -108,7 +110,10 @@ const CheckoutForm = ({ plans }) => {
       if (stripeError) {
         setError(stripeError.message); // Display error message
       } else if (paymentIntent.status === "succeeded") {
+
         setSucceeded(true); // Payment successful
+        toast.success("Payment successful");
+        navigate("/Merchant-dashboard");
       }
     } catch (err) {
       console.error(err);
