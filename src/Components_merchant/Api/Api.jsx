@@ -25,7 +25,8 @@ export const socket = io("https://create-courier-8.onrender.com/", {
 });
 
 // Socket event listeners
-socket.on("connect", () => {
+// conect on abc123
+socket.on("connect", (socket) => {
   console.log("Socket connected successfully");
   const userId = localStorage.getItem("merchnatId");
   if (userId) {
@@ -33,15 +34,6 @@ socket.on("connect", () => {
   }
 });
 
-socket.on("welcome", (data) => {
-  console.log("Welcome message received:", data.message);
-  toast.success(data.message);
-});
-
-socket.on("disconnect", () => {
-  console.log("Socket disconnected");
-  toast.error("Socket disconnected");
-});
 
 socket.on("notification", (data) => {
   toast.info(data.message);
