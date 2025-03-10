@@ -252,7 +252,7 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy, onUpdate }) => {
                           value="true"
                           className="form-check-input"
                           id="isVerified-yes"
-                          checked={formik.values.isVerified === true}
+                          checked={formik.values.isVerified.toString() === "true"}
                           style={{
                             marginRight: "0.5em",
                             height: "1.2em",
@@ -278,7 +278,7 @@ const UpdateDeliveryBoyModal = ({ onHide, deliveryBoy, onUpdate }) => {
                             width: "1.2em",
                           }}
                           id="isVerified-no"
-                          checked={formik.values.isVerified === false}
+                          checked={formik.values.isVerified.toString() === "false"}
                         />
                         <label
                           htmlFor="isVerified-no"

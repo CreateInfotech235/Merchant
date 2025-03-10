@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import { FaTimes, FaCheck, FaCheckDouble } from "react-icons/fa";
 import { deleteNotification, getAllNotifications, markAllNotificationsAsRead, markNotificationAsRead } from "../Api/Notification";
+import { socket } from "../Api/Api";
+import { toast } from "react-toastify";
 
 const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -116,6 +118,32 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
       }
     };
     fetchNotifications();
+
+    // Listen for new notifications
+    socket.on('notification', (newNotification) => {
+      setNotifications(prev => [newNotification, ...prev]);
+      setUnreadCount(prev => prev + 1);
+      
+      const toastConfig = {
+        autoClose: 2000 // Set toast duration to 1 second
+      };
+
+      // Show toast based on notification title
+      if (newNotification.title.toLowerCase().includes('picked up')) {
+        toast.warning(newNotification.message, toastConfig);
+      } else if (newNotification.title.toLowerCase().includes('cancelled')) {
+        toast.error(newNotification.message, toastConfig);
+      } else if (newNotification.title.toLowerCase().includes('order delivered')) {
+        toast.success(newNotification.message, toastConfig);
+      } else {
+        toast.info(newNotification.message, toastConfig);
+      }
+    });
+
+    // Cleanup socket listener on component unmount
+    return () => {
+      socket.off('notification');
+    };
   }, []);
 
   useEffect(() => {

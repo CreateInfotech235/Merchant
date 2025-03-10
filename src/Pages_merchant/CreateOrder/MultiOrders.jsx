@@ -35,6 +35,7 @@ const MultiOrders = () => {
   const [fullCustomerList, setFullCustomerList] = useState([]);
   const [isReassign, setIsReassign] = useState(false);
   // const [isSubmit, setIsSubmit] = useState(false);
+  console.log("deliveryMan", deliveryMan);
 
 
 
@@ -140,7 +141,7 @@ const MultiOrders = () => {
         const deliveryMans = await getAllDeliveryMans({ createdByAdmin: true });
         const deliveryManRes = await getDeliveryMan();
         if (deliveryManRes.data || deliveryMans.data) {
-          const activeDeliveryMen = deliveryManRes.data?.filter((man) => man.status !== "DISABLE" && !man.trashed) || [];
+          const activeDeliveryMen = deliveryManRes.data?.filter((man) => man.status !== "DISABLE" && !man.trashed).sort((b, a) => a.isVerified - b.isVerified) || [];
           const formattedAdminDeliveryMen = deliveryMans.data?.map((man) => ({
             ...man,
             firstName: man.firstName || man.name?.split(" ")[0],
@@ -149,7 +150,7 @@ const MultiOrders = () => {
             email: man.email,
             contactNumber: man.contactNumber,
             status: man.status || "ENABLE",
-          })) || [];
+          })).sort((b, a) => a?.isVerified - b?.isVerified) || [];
 
           setLengthofdeliverymen(activeDeliveryMen.length);
           const mergedDeliveryMen = [
@@ -967,12 +968,14 @@ const MultiOrders = () => {
                                 key={`${index}-data`}
                                 value={data?._id}
                                 className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between mx-auto"
+                                disabled={!data?.isVerified}
                               >
                                 <span
                                   style={{ float: "left" }}
                                 >{`${data?.firstName} ${data?.lastName}`}</span>
                                 <span style={{ float: "right", marginLeft: "20px" }}>
                                   {distance ? `- (${distance} miles away)` : ""}
+                                  {data?.isVerified ? "" : " Not Verified"}
                                 </span>
                               </option>
                             </>
@@ -982,7 +985,8 @@ const MultiOrders = () => {
                           <option
                             key={index}
                             value={data?._id}
-                            className="py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between"
+                            className={`py-1.5 px-3 hover:bg-gray-100 w-full flex justify-between`}
+                            disabled={!data?.isVerified}
                           >
                             <span
                               style={{ float: "left", width: "65%" }}
@@ -1001,6 +1005,7 @@ const MultiOrders = () => {
                               }}
                             >
                               {distance ? `- (${distance} miles away)` : ""}
+                              {data?.isVerified ? "" : " Not Verified"}
                             </span>
                           </option>
                         );
