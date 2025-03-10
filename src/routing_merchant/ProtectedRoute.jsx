@@ -88,10 +88,10 @@ const ProtectedRoute = ({ children }) => {
       setSubscriptionData(response.data);
     };
 
-    if (merchantId && userData?.freeSubscription === true) {
+    if (merchantId && userData.freeSubscription === true) {
       fetchSubscriptionInfo(merchantId);
     }
-  }, [merchantId, userData?.freeSubscription, navigate]);
+  }, [merchantId, userData.freeSubscription, navigate]);
 
   // Check for subscription expiry at specific time
   useEffect(() => {

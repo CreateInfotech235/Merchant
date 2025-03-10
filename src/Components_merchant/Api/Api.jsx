@@ -10,7 +10,7 @@ const API = axios.create({
 // Initialize socket connection
 export const socket = io("https://create-courier-8.onrender.com/", {
   transports: ["websocket"],
-  autoConnect: true,
+  autoConnect: true, // Changed to false to prevent auto-connection
   auth: {
     token: localStorage.getItem("accessToken")
   },
@@ -25,8 +25,7 @@ export const socket = io("https://create-courier-8.onrender.com/", {
 });
 
 // Socket event listeners
-// conect on abc123
-socket.on("connect", (socket) => {
+socket.on("connect", () => {
   console.log("Socket connected successfully");
   const userId = localStorage.getItem("merchnatId");
   if (userId) {
@@ -34,7 +33,14 @@ socket.on("connect", (socket) => {
   }
 });
 
+socket.on("welcome", (data) => {
+  console.log("Welcome message received:", data.message);
+});
 
+socket.on("disconnect", () => {
+  console.log("Socket disconnected");
+});
+ 
 socket.on("notification", (data) => {
   toast.info(data.message);
   console.log("New notification received:", data);

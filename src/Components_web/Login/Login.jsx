@@ -9,6 +9,7 @@ import { login } from "../../Components_merchant/Api/Auth";
 import loginImage from "../../assets_web/Computer login-amico 1.png";
 import { FaLock } from "react-icons/fa";
 import { forgotPassword } from "../Api/Webapi";
+import { socket } from "../../Components_merchant/Api/Api";
 
 const Login = ({ Login, setLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,8 +34,8 @@ const Login = ({ Login, setLogin }) => {
 
   const onSubmit = async (values, { setSubmitting, setErrors }) => {
     setSubmitting(true);
-    const response = await login(values); // Use values instead of initialValues
-console.log("response",response);
+    const response = await login(values);
+    console.log("response",response);
 
     if (response.status) {
       localStorage.setItem("merchnatId", response.data.userData._id);
@@ -43,10 +44,18 @@ console.log("response",response);
         response.data.userAuthData.accessToken
       );
       localStorage.setItem("userData", JSON.stringify(response.data.userData));
+      
+   
+
       const trackingNumber = localStorage.getItem("trackingNumber");
       if (trackingNumber) {
         navigate("/tracking");
       } else {
+           // Reconnect socket with new credentials
+      socket.auth = { token: response.data.userAuthData.accessToken };
+      socket.io.opts.query = { userId: response.data.userData._id };
+      console.log(socket.auth, 'socket.auth');
+      socket.connect();
         navigate("/");
       }
       setLogin(true);
