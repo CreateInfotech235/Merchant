@@ -24,6 +24,7 @@ import { Pagination, Stack } from "@mui/material";
 import Tooltip from "../Tooltip/Tooltip";
 import { moveToTrashMultiOrderarray } from "../../Components_merchant/Api/Order";
 import { toast } from "react-toastify";
+import { socket } from "../../Components_merchant/Api/Api";
 const MultiOrder = () => {
   const [showModel, setShowModel] = useState(false);
   const [orderId, setOrderId] = useState(null);
@@ -117,6 +118,61 @@ const MultiOrder = () => {
     setShowEditModal(false);
     setSelectedOrder(null);
   };
+
+  const handleNotificationdataupdata = (data) => {
+    console.log("Received socket data:", data);
+    if (data?.orderData) {
+      setOrderData(prevOrders => {
+        return prevOrders.map(order => {
+          if (order.orderId === data.orderData.orderId) {
+            // Create updated order object with new data
+            return {
+              ...order,
+              status: data.orderData.status,
+              deliveryMan: data.orderData.deliveryMan,
+              deliveryManId: data.orderData.deliveryManId,
+              deliveryAddress: data.orderData.deliveryDetails || order.deliveryAddress,
+              pickupAddress: data.orderData.pickupDetails || order.pickupAddress,
+              createdDate: data.orderData.createdDate || order.createdDate
+            };
+          }
+          return order;
+        });
+      });
+
+      // Also update filteredOrders to reflect changes immediately
+      setFilteredOrders(prevFiltered => {
+        return prevFiltered.map(order => {
+          if (order.orderId === data.orderData.orderId) {
+            return {
+              ...order,
+              status: data.orderData.status,
+              deliveryMan: data.orderData.deliveryMan,
+              deliveryManId: data.orderData.deliveryManId,
+              deliveryAddress: data.orderData.deliveryDetails || order.deliveryAddress,
+              pickupAddress: data.orderData.pickupDetails || order.pickupAddress,
+              createdDate: data.orderData.createdDate || order.createdDate
+            };
+          }
+          return order;
+        });
+      });
+    }
+  };
+
+  useEffect(() => {
+    // Connect to socket
+    socket.connect();
+    
+    // Listen for order updates
+    socket.on("notificationoderdataupdate", handleNotificationdataupdata);
+    
+    // Cleanup function
+    return () => {
+      socket.off("notificationoderdataupdate", handleNotificationdataupdata);
+      socket.disconnect();
+    };
+  }, []);
 
   const closeModel = () => setShowModel(false);
 
@@ -568,10 +624,9 @@ const MultiOrder = () => {
                       <tr className="country-row hover:bg-gray-100 border-1 border-gray-200" onClick={(e) => {
                         const selection = window.getSelection();
                         if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
-                          if(getSelectedMultiOrderIds().length > 0)
-                          {
+                          if (getSelectedMultiOrderIds().length > 0) {
                             handleSelectMultiOrder(order._id)
-                          }else{
+                          } else {
                             toggleSemTable(order._id)
                           }
                         }

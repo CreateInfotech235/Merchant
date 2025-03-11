@@ -17,6 +17,7 @@ import { GiPathDistance, GiDuration } from "react-icons/gi";
 import { RiFileList3Line } from "react-icons/ri";
 import instructions from '../../assets_mercchant/instructions.png'
 import { CiImageOn } from "react-icons/ci";
+import { TbHandFinger } from "react-icons/tb";
 
 
 // instructions.png
@@ -127,49 +128,7 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
             </h6>
             {Order?.deliveryAddresses?.map((delivery, index) => (
               <div key={delivery._id} className="mb-4 p-3 border rounded" style={{ display: isSingle ? (isSingle !== delivery.subOrderId ? "none" : "") : "" }} >
-                <div className="flex justify-between">
-
-                  {delivery?.pickupsignature && (
-                    <div>
-                      <div>
-                        <h6>Proof of pickup</h6>
-                      </div>
-                      <div>
-                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow" onClick={() => {
-                          const imgElement = document.getElementById(`pickupSignature${delivery._id}-${index}`);
-                          imgElement.style.display = "block";
-                          imgElement.src = delivery?.pickupsignature;
-
-
-                          document.getElementById(`pickupSignature${delivery._id}-${index}icon`).style.display = "none";
-                        }}>
-                          <CiImageOn className="w-full h-full" id={`pickupSignature${delivery._id}-${index}icon`} />
-                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="pickup Signature" id={`pickupSignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <div>
-                    {delivery?.deliverysignature && (
-                      <div>
-                        <div>
-                          <h6>Proof of delivery</h6>
-                        </div>
-                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow" onClick={() => {
-                          const imgElement = document.getElementById(`deliverySignature${delivery._id}-${index}`);
-                          imgElement.style.display = "block";
-                          imgElement.src = delivery?.deliverysignature;
-
-                          document.getElementById(`deliverySignature${delivery._id}-${index}icon`).style.display = "none";
-                        }}>
-                          <CiImageOn className="w-full h-full" id={`deliverySignature${delivery._id}-${index}icon`} />
-                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="Delivery Signature" id={`deliverySignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
+               
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <RiFileList3Line className="me-2" />
@@ -274,6 +233,61 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                     {delivery?.description ?? "-"}
                   </span>
                 </div>
+                <div className="flex justify-between">
+                  {delivery?.pickupsignature && (
+                    <div>
+                      <div>
+                        <h6>Proof of pickup</h6>
+                      </div>
+                      <div>
+                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer" onClick={() => {
+                          const imgElement = document.getElementById(`pickupSignature${delivery._id}-${index}`);
+                          const iconElement = document.getElementById(`pickupSignature${delivery._id}-${index}icon`);
+                          
+                          imgElement.style.display = "block";
+                          imgElement.src = delivery?.pickupsignature;
+                          iconElement.style.display = "none";
+
+                          // Add animation class
+                          imgElement.classList.add("fade-in");
+                        }}>
+                          <div  id={`pickupSignature${delivery._id}-${index}icon`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer relative">
+                          <CiImageOn className="w-full h-full " />
+                          <TbHandFinger className="w-[30px] h-[30px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  scaleef"  />
+                          </div>
+                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="pickup Signature" id={`pickupSignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div>
+                    {delivery?.deliverysignature && (
+                      <div>
+                        <div>
+                          <h6>Proof of delivery</h6>
+                        </div>
+                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer" onClick={() => {
+                          const imgElement = document.getElementById(`deliverySignature${delivery._id}-${index}`);
+                          const iconElement = document.getElementById(`deliverySignature${delivery._id}-${index}icon`);
+                          
+                          imgElement.style.display = "block"; 
+                          imgElement.src = delivery?.deliverysignature;
+                          iconElement.style.display = "none";
+
+                          // Add animation class
+                          imgElement.classList.add("fade-in");
+                        }}>
+                          <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer relative">
+                          <CiImageOn className="w-full h-full " id={`deliverySignature${delivery._id}-${index}icon`} />
+                          <TbHandFinger className="w-[30px] h-[30px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  scaleef"  />
+                          </div>
+                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="Delivery Signature" id={`deliverySignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
               </div>
             ))}
           </div>

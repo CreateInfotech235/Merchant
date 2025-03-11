@@ -41,10 +41,10 @@ socket.on("disconnect", () => {
   console.log("Socket disconnected");
 });
  
-socket.on("notification", (data) => {
-  toast.info(data.message);
-  console.log("New notification received:", data);
-});
+// socket.on("notification", (data) => {
+//   toast.info(data.message);
+//   console.log("New notification received:", data);
+// });
 
 socket.on("error", (error) => {
   console.error("Socket error:", error);
