@@ -9,6 +9,7 @@ import { getBilling, BillingApprove } from "../../Components_merchant/Api/Billin
 import Showbilling from "./Showbilling";
 import show from "../../assets_mercchant/show.png";
 import Modal from "react-bootstrap/Modal";
+import { socket } from "../../Components_merchant/Api/Api";
 
 const Billing = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -60,7 +61,60 @@ const Billing = () => {
     );
   };
 
+  const handleNotificationdataupdata = (data) => {
+    console.log(data, "dataofbilling");
+    if (!data) return;
+    
+    setOrderData(prevOrders => {
+      const currentOrders = Array.isArray(prevOrders) ? prevOrders : [];
+      
+      const existingOrderIndex = currentOrders.findIndex(order => order?.orderId === data.orderId);
+      
+      const formattedOrder = {
+        ...data,
+        createdAt: new Date(data.createdAt).toLocaleString("en-GB", {
+          timeZone: "Europe/London",
+        }),
+        subOrderdata: Array.isArray(data.subOrderdata) ? data.subOrderdata.map(subOrder => ({
+          ...subOrder,
+          pickupTime: subOrder?.pickupTime
+            ? new Date(subOrder.pickupTime).toLocaleString("en-GB", {
+                timeZone: "Europe/London",
+              })
+            : null,
+          deliveryTime: subOrder?.deliveryTime
+            ? new Date(subOrder.deliveryTime).toLocaleString("en-GB", {
+                timeZone: "Europe/London",
+              })
+            : null,
+          TakeTime: subOrder?.deliveryTime && subOrder?.pickupTime
+            ? (new Date(subOrder.deliveryTime) - new Date(subOrder.pickupTime)) / 1000
+            : null,
+        })) : [],
+      };
 
+      if (existingOrderIndex !== -1) {
+        const updatedOrders = [...currentOrders];
+        updatedOrders[existingOrderIndex] = formattedOrder;
+        return updatedOrders;
+      } else {
+        return [formattedOrder, ...currentOrders];
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (!socket.connected) {
+      socket.connect();
+    }
+    
+    socket.on("billingDataupdate", handleNotificationdataupdata);
+    
+    return () => {
+      socket.off("billingDataupdate", handleNotificationdataupdata);
+      socket.disconnect();
+    };
+  }, []);
   const handleApprove = async (orderId) => {
     const approvedAmount = document.getElementById("approvedAmount").value;
     const reason = document.getElementById("reason").value;

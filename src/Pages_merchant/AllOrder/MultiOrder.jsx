@@ -158,6 +158,13 @@ const MultiOrder = () => {
         });
       });
     }
+    if (selectedOrder && selectedOrder.orderId === data.orderData.orderId) {
+      setSelectedOrder({
+        ...selectedOrder,
+        deliveryAddresses: selectedOrder.deliveryAddress,
+        pickupuserSignature: selectedOrder.pickupAddress?.userSignature,
+      });
+    }
   };
 
   useEffect(() => {

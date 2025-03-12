@@ -6,10 +6,11 @@ import profileIcon from "../../assets_mercchant/profile.png";
 import logoutIcon from "../../assets_mercchant/logo1.png";
 import { useNavigate } from "react-router-dom";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import { FaTimes, FaCheck, FaCheckDouble } from "react-icons/fa";
-import { deleteNotification, getAllNotifications, markAllNotificationsAsRead, markNotificationAsRead } from "../Api/Notification";
+import { FaTimes, FaCheck, FaCheckDouble, FaTrash } from "react-icons/fa";
+import { deleteAllNotifications, deleteNotification, getAllNotifications, markAllNotificationsAsRead, markNotificationAsRead } from "../Api/Notification";
 import { socket } from "../Api/Api";
 import { toast } from "react-toastify";
+import Tooltip from "../../Pages_merchant/Tooltip/Tooltip";
 
 const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -86,6 +87,22 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
     }
   };
 
+
+  const handleDeleteAllNotifications = async (e) => {
+    e.stopPropagation();
+    try {
+      if (notifications.length > 0 && window.confirm("Are you sure you want to delete all notifications?")) {
+        const response = await deleteAllNotifications(notifications.map(notification => notification._id));
+        if (response.status) {
+          setNotifications([]);
+          setUnreadCount(0);
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting all notifications:", error);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -123,7 +140,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
     socket.on('notification', (newNotification) => {
       setNotifications(prev => [newNotification, ...prev]);
       setUnreadCount(prev => prev + 1);
-      
+
       const toastConfig = {
         autoClose: 2000 // Set toast duration to 1 second
       };
@@ -182,14 +199,28 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
               <Offcanvas.Title className="fw-bold text-dark">
                 Notifications
               </Offcanvas.Title>
-              {unreadCount > 0 && (
-                <button
-                  className="btn btn-link text-primary"
-                  onClick={handleMarkAllAsRead}
+              <div className="d-flex align-items-center gap-2 justify-content-between">
+                {unreadCount > 0 && (
+                  <button
+                    className="btn btn-link text-primary"
+                    onClick={handleMarkAllAsRead}
                 >
-                  <FaCheckDouble /> Mark all as read
+                  <Tooltip transform="translateX(-110%) translateY(100%)" text="Mark all as read">
+                    <FaCheckDouble />
+                  </Tooltip>
                 </button>
               )}
+              {notifications.length > 0 && (
+                <button
+                  className="btn btn-link text-danger flex ms-2"
+                  onClick={handleDeleteAllNotifications}
+                >
+                  <Tooltip transform="translateX(-110%) translateY(100%)" text="Delete all">
+                    <FaTrash />
+                  </Tooltip>
+                </button>
+                )}
+              </div>
             </Offcanvas.Header>
             <Offcanvas.Body className="p-0">
               {notifications.map((notification) => (
@@ -205,7 +236,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
                   onClick={() => handleMarkAsRead(notification._id)}
                 >
                   <div className="flex-grow-1">
-                    <h6 className={`mb-1 ${getColor(notification.title,notification.isRead)} fw-semibold d-flex align-items-center`}>
+                    <h6 className={`mb-1 ${getColor(notification.title, notification.isRead)} fw-semibold d-flex align-items-center`}>
                       {notification.title}
                       {!notification.isRead && (
                         <span className="ms-2 badge bg-primary">New</span>
@@ -214,23 +245,23 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
                     <p className="mb-1 text-secondary small">
                       {notification.message}
                     </p>
-                    
-                      {notification.subOrderId && (
-                        <p className="mb-1 text-secondary small">
-                          Suborder ID: {notification.subOrderId.sort((a, b) => a - b).join(', ')}
-                        </p>
-                      )}
-                      {notification.deliveryBoyname && (
-                        <p className="mb-1 text-secondary small">
-                          Delivery Boy: {notification.deliveryBoyname}
-                        </p>
-                      )}
-                      {notification.ismerchantdeliveryboy && (
-                        <p className="mb-1 text-secondary small">
-                          Created By: {notification.ismerchantdeliveryboy ? 'Merchant' : 'Admin'}
-                        </p>
-                      )}
-                    
+
+                    {notification.subOrderId && (
+                      <p className="mb-1 text-secondary small">
+                        Suborder ID: {notification.subOrderId.sort((a, b) => a - b).join(', ')}
+                      </p>
+                    )}
+                    {notification.deliveryBoyname && (
+                      <p className="mb-1 text-secondary small">
+                        Delivery Boy: {notification.deliveryBoyname}
+                      </p>
+                    )}
+                    {notification.ismerchantdeliveryboy && (
+                      <p className="mb-1 text-secondary small">
+                        Created By: {notification.ismerchantdeliveryboy ? 'Merchant' : 'Admin'}
+                      </p>
+                    )}
+
                     <small className="text-muted">
                       {new Date(notification.createdAt).toLocaleString()}
                     </small>
@@ -238,7 +269,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
                   <div className="d-flex flex-column">
                     <button
                       className="btn btn-sm text-danger p-0 mb-2"
-                      onClick={(e) => handleDeleteNotification(notification._id, e)}
+                      onClick={(e) => { handleDeleteNotification(notification._id, e) }}
                       title="Delete notification"
                     >
                       <FaTimes />

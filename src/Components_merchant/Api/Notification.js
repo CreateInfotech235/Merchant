@@ -90,6 +90,30 @@ export const deleteNotification = async (notificationId) => {
   }
 };
 
+
+
+export const deleteAllNotifications = async (notificationIds) => {
+  try {
+    const userId = localStorage.getItem("merchnatId");
+    const response = await API.delete(
+      `/mobile/auth/deleteAllNotifications/${userId}`, { data: { notificationIds } }
+    );
+
+    if (response.status === 200) {
+      return { status: true, data: response.data.data };
+    } else {
+      return {
+        status: false,
+        message: response.response.data.message || response.message,
+      };
+    }
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    toast.error(error.message);
+    return { status: false, message: error.message };
+  }
+};
+
 export const getUnreadNotificationCount = async () => {
   try {
     const userId = localStorage.getItem("merchnatId");
