@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
-import io from "socket.io-client";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
-const socket = io("https://create-courier-8.onrender.com/"); // Connect to backend server
 
 function ViewSupportTickets() {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [contextMenu, setContextMenu] = useState(null);
+  const navigate = useNavigate();
   const location = useLocation();
   const { state } = location;
   const ticketId = state?.ticketId;
@@ -19,25 +19,13 @@ function ViewSupportTickets() {
   }
 
   useEffect(() => {
-    // Join the ticket room
-    socket.emit("joinTicket", ticketId);
 
-    // Fetch messages for the selected ticket
     axios
       .get(
         `https://create-courier-8.onrender.com/admin/auth/support-tickets/${ticketId}/messages`
       )
       .then((response) => setMessages(response.data));
 
-    // Listen for new messages from the server
-    socket.on("newMessage", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    // Cleanup on unmount
-    return () => {
-      socket.off("newMessage");
-    };
   }, [ticketId]);
 
   // Function to send a message
@@ -80,9 +68,6 @@ function ViewSupportTickets() {
         `https://create-courier-8.onrender.com/admin/auth/support-tickets/${ticketId}/messages/${messageId}`
       )
       .then(() => {
-        // Emit the message deletion through socket to inform all clients
-        socket.emit("deleteMessage", ticketId, messageId);
-
         setContextMenu(null); // Close the context menu
       })
       .catch((error) => {
@@ -117,26 +102,34 @@ function ViewSupportTickets() {
 
   return (
     <div className="min-h-[calc(100vh-187px)] flex flex-col  border rounded bg-white">
-      <div className="bg-blue-600 text-white p-2 text-center font-semibold">
-        Chat with User
+
+      <div className="bg-blue-600 text-white p-2 text-center font-semibold flex justify-between">
+        <div className="flex justify-center items-center">
+          <button onClick={() => navigate(-1)}>
+            <FaArrowLeft />
+          </button>
+        </div>
+        <div>
+          Chat with User
+        </div>
+        <div>
+
+        </div>
       </div>
 
-      {/* Chat Box */}
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
         {messages.map((msg) => (
           <div
             key={msg.id} // Assuming each message has a unique `id`
-            className={`flex ${
-              msg.sender === "admin" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex ${msg.sender === "admin" ? "justify-end" : "justify-start"
+              }`}
             onContextMenu={(e) => handleContextMenu(e, msg._id, msg.sender)} // Pass sender to the handler
           >
             <div
-              className={`${
-                msg.sender === "admin"
+              className={`${msg.sender === "admin"
                   ? "bg-blue-500 text-white" // Admin messages
                   : "bg-gray-300 text-gray-800" // User messages
-              } rounded-lg p-2 max-w-xs`}
+                } rounded-lg p-2 max-w-xs`}
             >
               {msg.text}
             </div>

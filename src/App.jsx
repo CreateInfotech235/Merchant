@@ -706,7 +706,7 @@ function App() {
               <ViewSupportTickets />
             </ProtectedRouteAdmin>
           }
-        />
+        />  
         <Route
           path="/all-order-admin"
             element={

@@ -12,6 +12,9 @@ import { Link } from "react-router-dom";
 import show from "../../assets_admin/show.png";
 import Loader from "../../Components_admin/Loader/Loader";
 import { BsChatLeftDots } from "react-icons/bs";
+import { socket } from "../../Components_merchant/Api/Api";
+
+
 
 const SupportTicket = () => {
   const [userData, setUserData] = useState({ name: "", userid: "" });
@@ -73,6 +76,7 @@ const SupportTicket = () => {
 
     fetchData();
   }, []);
+
 
   const validationSchema = Yup.object({
     subject: Yup.string().required("Subject is required"),

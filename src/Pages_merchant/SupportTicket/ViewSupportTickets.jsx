@@ -20,16 +20,30 @@ function ViewSupportTickets() {
   }
 
   useEffect(() => {
-    // Join the ticket room
-    socket.emit("joinTicket", ticketId);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`
+        );
+        setMessages(response.data);
 
-    // Fetch messages for the selected ticket
-    axios
-      .get(
-        `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`
-      )
-      .then((response) => setMessages(response.data));
+        socket.connect();
+        socket.on("newMessage", (message) => {
+          setMessages((prevMessages) => [...prevMessages, message]);
+        });
 
+
+        return () => {
+          socket.off("newMessage");
+        };
+
+
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchData();
+    
     // Listen for new messages from the server
     socket.on("newMessage", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
@@ -49,18 +63,30 @@ function ViewSupportTickets() {
         sender: "merchant", // Sending message as merchant
       };
 
-      // Send message to the server
-      axios
-        .post(
-          `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`,
-          message
-        )
-        .then(() => {
-          setInputValue(""); // Clear input field
-        })
-        .catch((error) => {
-          console.error("Error sending message:", error);
-        });
+      try {
+        // Send message to the server
+        axios
+          .post(
+            `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`,
+            message
+          )
+          .then(() => {
+            setInputValue(""); // Clear input field
+            
+            // Join the ticket room after sending message
+            
+            // Emit the message to socket
+            socket.emit("send_message", {
+              ticketId,
+              message
+            });
+          })
+          .catch((error) => {
+            console.error("Error sending message:", error);
+          });
+      } catch (error) {
+        console.error("Error in try-catch:", error);
+      }
     }
   };
 
@@ -88,9 +114,6 @@ function ViewSupportTickets() {
         `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages/${messageId}`
       )
       .then(() => {
-        // Emit the message deletion through socket to inform all clients
-        socket.emit("deleteMessage", ticketId, messageId);
-
         setContextMenu(null); // Close the context menu
       })
       .catch((error) => {

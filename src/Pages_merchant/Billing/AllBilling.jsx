@@ -10,6 +10,7 @@ import Showbilling from "./Showbilling";
 import show from "../../assets_mercchant/show.png";
 import Modal from "react-bootstrap/Modal";
 import { socket } from "../../Components_merchant/Api/Api";
+import Tooltip from "../Tooltip/Tooltip";
 
 const Billing = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -60,16 +61,17 @@ const Billing = () => {
       )
     );
   };
+  console.log(orderData, "orderData");
 
   const handleNotificationdataupdata = (data) => {
     console.log(data, "dataofbilling");
     if (!data) return;
-    
+
     setOrderData(prevOrders => {
       const currentOrders = Array.isArray(prevOrders) ? prevOrders : [];
-      
+
       const existingOrderIndex = currentOrders.findIndex(order => order?.orderId === data.orderId);
-      
+
       const formattedOrder = {
         ...data,
         createdAt: new Date(data.createdAt).toLocaleString("en-GB", {
@@ -79,13 +81,13 @@ const Billing = () => {
           ...subOrder,
           pickupTime: subOrder?.pickupTime
             ? new Date(subOrder.pickupTime).toLocaleString("en-GB", {
-                timeZone: "Europe/London",
-              })
+              timeZone: "Europe/London",
+            })
             : null,
           deliveryTime: subOrder?.deliveryTime
             ? new Date(subOrder.deliveryTime).toLocaleString("en-GB", {
-                timeZone: "Europe/London",
-              })
+              timeZone: "Europe/London",
+            })
             : null,
           TakeTime: subOrder?.deliveryTime && subOrder?.pickupTime
             ? (new Date(subOrder.deliveryTime) - new Date(subOrder.pickupTime)) / 1000
@@ -107,9 +109,9 @@ const Billing = () => {
     if (!socket.connected) {
       socket.connect();
     }
-    
+
     socket.on("billingDataupdate", handleNotificationdataupdata);
-    
+
     return () => {
       socket.off("billingDataupdate", handleNotificationdataupdata);
       socket.disconnect();
@@ -430,15 +432,15 @@ const Billing = () => {
             order.deliveryMan?.lastName?.toLowerCase().includes(word) ||
             order.deliveryMan?.email?.toLowerCase().includes(word) ||
             order.deliveryMan?.contactNumber?.toLowerCase().includes(word) ||
-          order?.subOrderdata?.some(subOrder =>{
-            return subOrder?.pickupAddress?.toLowerCase().includes(word) ||
-            subOrder?.deliveryAddress?.toLowerCase().includes(word) ||
-            subOrder?.deliveryTime?.toLowerCase().includes(word) ||
-            subOrder?.pickupTime?.toLowerCase().includes(word) ||
-            subOrder?.deliveryTime?.toLowerCase().includes(word) ||
-            subOrder?.pickupTime?.toLowerCase().includes(word)
-          }) 
-            
+            order?.subOrderdata?.some(subOrder => {
+              return subOrder?.pickupAddress?.toLowerCase().includes(word) ||
+                subOrder?.deliveryAddress?.toLowerCase().includes(word) ||
+                subOrder?.deliveryTime?.toLowerCase().includes(word) ||
+                subOrder?.pickupTime?.toLowerCase().includes(word) ||
+                subOrder?.deliveryTime?.toLowerCase().includes(word) ||
+                subOrder?.pickupTime?.toLowerCase().includes(word)
+            })
+
         )
       );
     }
@@ -696,7 +698,7 @@ const Billing = () => {
                         {order?.deliveryBoy?.email ?? "-"}
                       </td>
                       <td className="p-3">
-                        {order?.createdAt??"-"}
+                        {order?.createdAt ?? "-"}
                       </td>
                       <td className="p-3">
                         {order?.subOrderdata?.length > 0
@@ -709,7 +711,7 @@ const Billing = () => {
                                 : latest;
                             }, order.subOrderdata[0]);
 
-                            return lastSubOrder?.deliveryTime??"-";
+                            return lastSubOrder?.deliveryTime ?? "-";
                           })()
                           : "-"}
                       </td>
@@ -721,7 +723,7 @@ const Billing = () => {
                       <td className="p-3">
                         {order?.chargeMethod ?? "-"}
                       </td>
-                      
+
                       <td className="p-3">
                         <button
                           className={`${getColorClass(
@@ -743,22 +745,25 @@ const Billing = () => {
                         </button>
                       </td>
                       <td>
-                        <button
-                          onClick={() => {
-                            handleShowBilling(order);
-                            setShowEditButton(true);
-                          }}
-                          // disabled={order?.isApproved}
-                          style={{
-                            marginRight: "10px",
-                            backgroundColor: "green",
-                            color: "white",
-                            padding: "5px 10px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          Approve
-                        </button>
+                        <Tooltip text={order?.isApproved ? "Approved" : "Approve"}>
+                          <button
+                            onClick={() => {
+                              handleShowBilling(order);
+                              setShowEditButton(true);
+                            }}
+                            disabled={order?.isApproved}
+                            style={{
+                              marginRight: "10px",
+                              backgroundColor: order?.isApproved ? "green" : "orange",
+                              color: "white",
+                              padding: "5px 10px",
+                              borderRadius: "5px",
+                              cursor: order?.isApproved ? "not-allowed" : "pointer",
+                            }}
+                          >
+                            {order?.isApproved ? "Approved" : "Approve"}
+                          </button>
+                        </Tooltip>
                       </td>
 
                       <td>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import searchIcon from "../../assets_mercchant/search.png";
-import edit from "../../assets_admin/edit.png"; 
+import edit from "../../assets_admin/edit.png";
 import deleteimg from "../../assets_admin/deleteimg.png";
 import show from "../../assets_admin/show.png";
 import { getSupportTicket } from "../../Components_admin/Api/SupportTicket";
 import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import { Pagination, Stack } from "@mui/material";
+import { BsChatLeftDots } from "react-icons/bs";
 
 const SupportTicket = () => {
   const [showDeleteModel, setShowDeleteModel] = useState(false);
@@ -25,7 +26,7 @@ const SupportTicket = () => {
     const fetchSupportTicket = async () => {
       const response = await getSupportTicket();
       if (response.status) {
-        setSupportTicket(response.data.data.map((ticket,index) => ({
+        setSupportTicket(response.data.data.map((ticket, index) => ({
           ...ticket,
           no: index + 1
         })));
@@ -117,43 +118,27 @@ const SupportTicket = () => {
                     <input type="checkbox" />
                   </td>
                   <td className="p-3">{ticket?.no}</td>
-                  <td className="p-3">{`${ticket?.userid?.firstName ?? "-"} ${
-                    ticket?.userid?.lastName ?? "-"
-                  }`}</td>
+                  <td className="p-3">{`${ticket?.userid?.firstName ?? "-"} ${ticket?.userid?.lastName ?? "-"
+                    }`}</td>
                   <td className="p-3">{ticket?.userid?.email ?? "-"}</td>
                   <td className="p-3">{ticket?.subject ?? "-"}</td>
                   <td className="p-3">{ticket?.problem ?? "-"}</td>
                   <td className="p-3">
                     <button
-                      className={`enable-btn ${
-                        ticket.problemSolved === true ? "green" : "red"
-                      }`}
+                      className={`enable-btn ${ticket.problemSolved === true ? "green" : "red"
+                        }`}
                     >
                       {ticket.problemSolved === true ? "SOLVED" : "UNSOLVED"}
                     </button>
                   </td>
                   <td className="p-3">
                     <div className="d-flex align-items-center justify-content-lg-center">
-                      <Link to="/edit-user">
-                        <button className="edit-btn">
-                          <img src={edit} alt="Edit" className="mx-auto" />
-                        </button>
-                      </Link>
-                      <button
-                        className="delete-btn"
-                        onClick={() => setShowDeleteModel(true)}
-                      >
-                        <img src={deleteimg} alt="Delete" className="mx-auto" />
-                      </button>
-                      {showDeleteModel && (
-                        <DeleteUser closeModel={closeDeleteModel} />
-                      )}
                       <Link to="/view-tickets" state={{ ticketId: ticket._id }}>
                         <button
                           onClick={() => setSelectedTicketId(ticket._id)}
                           className="show-btn"
                         >
-                          <img src={show} alt="Show" className="mx-auto" />
+                          <BsChatLeftDots alt="Show" className="mx-auto text-2xl text-blue-500" />
                         </button>
                       </Link>
                     </div>
