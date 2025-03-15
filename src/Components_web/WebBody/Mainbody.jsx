@@ -86,14 +86,14 @@ function Mainbody() {
   const [webHome, setWebHome] = useState(null);
   const [services, setservices] = useState([]);
   const [isVideoPlay, setVideoPlay] = useState(false);
-  const [typingtext,setTypingtext]=useState([]);
-  
+  const [typingtext, setTypingtext] = useState([]);
+
   useEffect(() => {
     const fetchWebLandingPage = async () => {
       try {
         const response = await getWebLandingPage();
-        console.log("response",response);
-        if(response?.status===200){
+        console.log("response", response);
+        if (response?.status === 200) {
           setWebHome(response?.webLandingPage);
           setTypingtext(response?.webLandingPage?.AutoTyperlist);
         }
@@ -142,19 +142,18 @@ function Mainbody() {
               {/* Left Content */}
               <div className="w-full md:text-left">
                 <h1 id="welcome-text" className="text-xl h-[30px]  sm:text-2xl md:text-3xl lg:text-5xl font-bold tracking-tight  text-[#FF6600] leading-tight capitalize">
-               
+
                 </h1>
                 <h2 className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl lg:text-4xl text-white font-bold">
-                {webHome?.subTitle}
+                  {webHome?.subTitle}
                 </h2>
                 <p className="mt-4 sm:mt-6 lg:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 font-medium">
-                {webHome?.description}
+                  {webHome?.description}
                 </p>
               </div>
             </div>
           </div>
         </div>
-
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 my-12 lg:my-24">
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl capitalize text-center font-bold tracking-wide noto small">
@@ -171,8 +170,7 @@ function Mainbody() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-8">
-            {/* Service Card */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 mt-12">
             {[
               {
                 img: fast_delivery,
@@ -203,40 +201,44 @@ function Mainbody() {
                 img: tracking_icon,
                 title: "Package Tracking",
                 description:
-                  "Stay updated with real-time tracking, providing you with complete visibility of your package’s journey from start to finish.",
+                  "Stay updated with real-time tracking, providing you with complete visibility of your package's journey from start to finish.",
                 features: ["Staying updated", "Pick-up to delivery", "Helpful"],
               },
             ].map((service, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-center h-[450px] bg-gray-200 rounded-t-full p-4 ${index === 1 || index === 3 ? 'mt-[70px]' : ''}`}
+                className={`group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white `}
               >
-                <div className="w-72 overflow-hidden">
-                  <div className="w-full flex justify-center mt-8 sm:mt-14">
-                    <img
-                      src={service.img}
-                      alt={service.title}
-                      className="max-w-full"
-                    />
+                <div className="absolute -right-12 -top-12 h-24 w-24 rounded-full bg-[#FF6600] opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="p-6">
+                  <div className="flex justify-center mb-6">
+                    <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <img
+                        src={service.img}
+                        alt={service.title}
+                        className="h-12 w-12"
+                      />
+                    </div>
                   </div>
-                  <p className="text-center text-lg sm:text-xl lg:text-2xl font-bold noto small mt-3">
+                  <h3 className="text-xl font-bold text-center mb-4 text-gray-800">
                     {service.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-6 text-center">
+                    {service.description}
                   </p>
-                  <p className="text-justify px-2 sm:px-5 mt-2 text-[#7B7A8B] text-sm sm:text-base ">
-                    {service.description.trim()}
-                  </p>
-                  <div className="w-full flex flex-wrap px-2 sm:px-5 mt-2">
+                  <div className="space-y-2">
                     {service.features.map((feature, idx) => (
-                      <p
+                      <div
                         key={idx}
-                        className="flex py-1 w-full items-center text-[#7B7A8B] text-sm"
+                        className="flex items-center text-gray-600 text-sm"
                       >
-                        <span className="w-3 h-3 block bg-[#FF6600] rounded-full mr-2"></span>
+                        <span className="h-2 w-2 rounded-full bg-[#FF6600] mr-3"></span>
                         {feature}
-                      </p>
+                      </div>
                     ))}
                   </div>
                 </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#FF6600] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
               </div>
             ))}
           </div>
@@ -308,7 +310,7 @@ function Mainbody() {
                 <div style={{
                   background: "linear-gradient(133deg, #1D1D37 70%, #FFFFFFFF 100%)",
                 }}
-                className="rounded-lg   p-[1px]"
+                  className="rounded-lg   p-[1px]"
                 >
                   <div className=" bg-[#1D1D37] rounded-lg  p-6 text-center text-white">
                     <div className="text-orange-500 text-4xl mb-4">
@@ -323,13 +325,13 @@ function Mainbody() {
                 <div style={{
                   background: "linear-gradient(133deg, #1D1D37 70%, #FFFFFFFF 100%)",
                 }}
-                className="rounded-lg   p-[1px]"
+                  className="rounded-lg   p-[1px]"
                 >
                   <div className=" bg-[#1D1D37] rounded-lg  p-6 text-center text-white">
                     <div className="text-orange-500 text-4xl mb-4">
                       <img src={people} alt="" className="mx-auto " />
-                  </div>
-                  <p className="text-2xl font-bold">70k+</p>
+                    </div>
+                    <p className="text-2xl font-bold">70k+</p>
                     <p className="text-gray-300 mt-2">Happy Clients</p>
                   </div>
                 </div>
@@ -338,13 +340,13 @@ function Mainbody() {
                 <div style={{
                   background: "linear-gradient(133deg, #1D1D37 70%, #FFFFFFFF 100%)",
                 }}
-                className="rounded-lg   p-[1px]"
+                  className="rounded-lg   p-[1px]"
                 >
                   <div className=" bg-[#1D1D37] rounded-lg  p-6 text-center text-white">
                     <div className="text-orange-500 text-4xl mb-4">
                       <img src={earth} alt="" className="mx-auto " />
-                  </div>
-                  <p className="text-2xl font-bold">380k+</p>
+                    </div>
+                    <p className="text-2xl font-bold">380k+</p>
                     <p className="text-gray-300 mt-2">Delivery Packagings</p>
                   </div>
                 </div>
@@ -353,13 +355,13 @@ function Mainbody() {
                 <div style={{
                   background: "linear-gradient(133deg, #1D1D37 70%, #FFFFFFFF 100%)",
                 }}
-                className="rounded-lg   p-[1px]"
+                  className="rounded-lg   p-[1px]"
                 >
                   <div className=" bg-[#1D1D37] rounded-lg  p-6 text-center text-white">
-                  <div className="text-orange-500 text-4xl mb-4">
-                    <img src={weight} alt="" className="mx-auto " />
-                  </div>
-                  <p className="text-2xl font-bold">50k+</p>
+                    <div className="text-orange-500 text-4xl mb-4">
+                      <img src={weight} alt="" className="mx-auto " />
+                    </div>
+                    <p className="text-2xl font-bold">50k+</p>
                     <p className="text-gray-300 mt-2">Tons Of Goods</p>
                   </div>
                 </div>

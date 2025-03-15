@@ -261,30 +261,32 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                     </div>
                   )}
                   <div>
-                    {delivery?.deliverysignature && (
+                  {delivery?.deliverysignature && (
+                    <div>
                       <div>
-                        <div>
-                          <h6>Proof of delivery</h6>
-                        </div>
+                        <h6>Proof of delivery</h6>
+                      </div>
+                      <div>
                         <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer" onClick={() => {
                           const imgElement = document.getElementById(`deliverySignature${delivery._id}-${index}`);
                           const iconElement = document.getElementById(`deliverySignature${delivery._id}-${index}icon`);
                           
-                          imgElement.style.display = "block"; 
+                          imgElement.style.display = "block";
                           imgElement.src = delivery?.deliverysignature;
                           iconElement.style.display = "none";
 
                           // Add animation class
                           imgElement.classList.add("fade-in");
                         }}>
-                          <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer relative">
-                          <CiImageOn className="w-full h-full " id={`deliverySignature${delivery._id}-${index}icon`} />
+                          <div  id={`deliverySignature${delivery._id}-${index}icon`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer relative">
+                          <CiImageOn className="w-full h-full " />
                           <TbHandFinger className="w-[30px] h-[30px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  scaleef"  />
                           </div>
-                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="Delivery Signature" id={`deliverySignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
+                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="delivery Signature" id={`deliverySignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
                   </div>
                 </div>
 

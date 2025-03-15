@@ -599,7 +599,7 @@ const MultiOrder = () => {
                 <th className="p-3">Delivery Man</th>
                 <th className="p-3">Created Date</th>
                 <th className="p-3">Pickup Date</th>
-                <th className="p-3">Invoice</th>
+                {/* <th className="p-3">Invoice</th> */}
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
                 <th className="p-3">Info</th>
@@ -649,7 +649,7 @@ const MultiOrder = () => {
                         </td>
                         <td className="p-3">{order?.createdDate ?? "-"}</td>
                         <td className="p-3">{order?.pickupDate ?? "-"}</td>
-                        <td className="p-3 fw-bold">
+                        {/* <td className="p-3 fw-bold">
                           {order.status === "DELIVERED" ? (
                             <button
                               className="btn btn-sm btn-primary enable-btn"
@@ -660,7 +660,7 @@ const MultiOrder = () => {
                           ) : (
                             order?.invoice ?? "-"
                           )}
-                        </td>
+                        </td> */}
                         <td className="p-3">
                           <button
                             className={`${getColorClass(order.status)} mx-2`}
@@ -669,14 +669,14 @@ const MultiOrder = () => {
                           </button>
                         </td>
                         <td className="city-data">
-                          <Tooltip text={"Edit"}>
-
+                          <Tooltip text={`${order?.status === "ASSIGNED" || order?.status === "ARRIVED" ? "Edit" : "only assigned or arrived orders status can be edited"}`}>
                             <button
-                              className="edit-btn ms-1"
+                              className={`edit-btn ms-1 ${order?.status === "ASSIGNED" || order?.status === "ARRIVED" ? "" : "cursor-not-allowed"}`}
                               onClick={() => {
                                 setShowDelete(false)
                                 handleEditClick(order)
                               }}
+                              disabled={!(order?.status === "ASSIGNED" || order?.status === "ARRIVED")}
                             >
                               <img src={edit} alt="Edit" className="mx-auto" />
                             </button>
@@ -812,9 +812,9 @@ const MultiOrder = () => {
                                             </td>
                                             <td className="p-3">{subOrder?.reason ? subOrder.reason.replace(/_/g, " ") : "-"}</td>
                                             <td className="city-data">
-                                              <Tooltip text={"Edit suboder"}>
+                                              <Tooltip text={`${subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" ? "Edit" : "only assigned or arrived orders status can be edited"}`}>
                                                 <button
-                                                  className="edit-btn ms-1"
+                                                  className={`edit-btn ms-1 ${subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" ? "" : "cursor-not-allowed"}`}
                                                   onClick={() => {
                                                     // console.log(subOrder),
                                                     // setIsSingle(subOrderId)
@@ -827,6 +827,7 @@ const MultiOrder = () => {
                                                     })
                                                   }
                                                   }
+                                                  disabled={!(subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED")}
                                                 >
                                                   <img
                                                     src={edit}

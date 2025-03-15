@@ -117,7 +117,7 @@ export const stripPayment = async (amount, planId , duration , merchantId ,expir
     }
     console.log(data);
     
-    const response = await API.post(`/mobile/subscription/create-payment-intent`, data);
+    const response = await API.post(`/mobile/auth/create-payment-intent`, data);
     console.log("data",data,"response", response);
 
     if (response.status === 200) {

@@ -48,9 +48,9 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     const fetchSubscriptionInfo = async (id) => {
       const response = await SubscriptionInfo(id);
-      console.log(response);
+      console.log(response,"response123"); 
 
-      if (response.message === "Token is invalid") {
+      if (response.message == "Token is invalid") {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("merchantId");
         localStorage.removeItem("userData");

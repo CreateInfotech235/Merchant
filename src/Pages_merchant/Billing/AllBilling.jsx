@@ -35,9 +35,7 @@ const Billing = () => {
   console.log(filteredOrders, "filteredOrders");
 
   const handleShowBilling = (order) => {
-    console.log(order, "order");
     setSelectedBillingData(order);
-    console.log("123");
 
     setShowBillingModal(true);
   };
@@ -127,170 +125,156 @@ const Billing = () => {
     }
     console.log(data, "data");
     const response = await BillingApprove(data);
-    // console.log(response, "response");
     if (response?.status) {
+      handleCloseBilling();
       setShowEditButton(false);
+      fetchData();
     }
   }
 
   const BillingModal = ({ show, onHide, billingData }) => {
+    console.log(billingData, "billingData");
+    // Group suborders by pickup address
+    const groupedSubOrders = billingData?.subOrderdata?.reduce((acc, subOrder) => {
+      const pickupKey = subOrder.pickupAddress || 'Unknown';
+      if (!acc[pickupKey]) {
+        acc[pickupKey] = [];
+      }
+      acc[pickupKey].push(subOrder);
+      return acc;
+    }, {});
+
     return (
       <Modal show={show} onHide={onHide} size="xl">
         <Modal.Header closeButton>
           <Modal.Title>Billing Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="billing-details p-4">
-            <div className="bill-header mb-4">
-              <h4 className="text-center mb-3">BILLING INVOICE</h4>
+          <div className="billing-details p-4" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+            <div className="bill-header mb-4" style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <h4 className="text-center mb-3" style={{ color: '#2c3e50', fontWeight: 'bold' }}>BILLING INVOICE</h4>
               <div className="d-flex justify-content-between">
                 <div>
                   <p>
-                    <strong>Order ID:</strong> {billingData?.showOrderId ? billingData?.showOrderId : "-"}
+                    <strong style={{ color: '#34495e' }}>Order ID:</strong> {billingData?.showOrderId ? billingData?.showOrderId : "-"}
                   </p>
                   <p>
-                    <strong>Date:</strong>{" "}
-                    {/* {billingData?.createdAt
-                      ? new Date(billingData?.createdAt) instanceof Date &&
-                        !isNaN(new Date(billingData?.createdAt))
-                          ? format(
-                              new Date(billingData?.createdAt),
-                              "dd-MM-yyyy"
-                            )
-                          : billingData?.createdAt
-                      : "-"} */}
+                    <strong style={{ color: '#34495e' }}>Date:</strong>{" "}
+                    {billingData?.createdAt
+                      ? billingData?.createdAt.split(',')[0]
+                      : "-"}
                   </p>
                 </div>
                 <div>
                   <p>
-                    <strong>Delivery Man:</strong>{" "}
+                    <strong style={{ color: '#34495e' }}>Delivery Man:</strong>{" "}
                     {`${billingData?.deliveryBoyName}`}
                   </p>
-                  {
-                    console.log(billingData, "billingData")
-                  }
                   <p>
-                    <strong>Email:</strong> {billingData?.deliveryBoy?.email}
+                    <strong style={{ color: '#34495e' }}>Email:</strong> {billingData?.deliveryBoy?.email}
                   </p>
                   <p>
-                    <strong>Phone:</strong>{" "}
+                    <strong style={{ color: '#34495e' }}>Phone:</strong>{" "}
                     {billingData?.deliveryBoy?.contactNumber || "-"}
+                  </p>
+                  <p>
+                    <strong style={{ color: '#34495e' }}>Delivery Man Type:</strong>{" "}
+                    {billingData?.deliveryMan?.createdByAdmin
+                      ? "Admin Delivery Man"
+                      : "Merchant Delivery Man"}
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="bill-details mb-4">
-              <h5 className="mb-3">Order Summary</h5>
-              {billingData?.subOrderdata?.map((subOrder, index) => (
-                <div key={index} className="border-bottom py-3">
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>
-                      <strong>Sub Order ID:</strong> {subOrder?.subOrderId}
-                    </span>
-                    <span>
-                      <strong>Status:</strong> {subOrder?.orderStatus}
-                    </span>
-                  </div>
-
-                  <div className="row mb-2">
-                    <div className="col-md-6">
-                      <p>
-                        <strong>Pickup:</strong> {subOrder?.pickupAddress}
-                      </p>
-                      <p>
-                        <strong>Delivery:</strong> {subOrder?.deliveryAddress}
-                      </p>
-                      <p>
-                        <strong>Distance:</strong>{" "}
-                        {subOrder?.distance !== undefined
-                          ? subOrder?.distance.toFixed(2)
-                          : "-"}
-                        miles
-                      </p>
-                    </div>
-                    <div className="col-md-6">
-                      {/* <p>
-                        <strong>Pickup Time:</strong>{" "}
-                        {format(new Date(subOrder?.pickupTime ?? 0), "HH:mm")}
-                      </p> */}
-                      <p>
-                        <strong>Delivery Time:</strong>{" "}
-                        {subOrder?.deliveryTime
-                          ? new Date(subOrder?.deliveryTime) instanceof Date &&
-                            !isNaN(new Date(subOrder?.deliveryTime))
-                            ? format(new Date(subOrder?.deliveryTime), "HH:mm")
-                            : subOrder?.deliveryTime
-                          : "-"}
-                      </p>
-                      <p>
-                        <strong>Total Time:</strong>{" "}
-                        {subOrder?.TakeTime
-                          ? `${Math.floor(subOrder.TakeTime / 3600)}h ${Math.floor((subOrder.TakeTime % 3600) / 60)}m`
-                          : "-"}
-
-                      </p>
-                      <p>
-                        <strong>Total Average Time:</strong>{" "}
-                        {subOrder?.averageTime
-                          ? `${Math.floor(
-                            parseInt(subOrder?.averageTime) / 60
-                          )}h ${parseInt(subOrder?.averageTime) % 60}m`
-                          : "-"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="d-flex justify-content-between mt-2">
-                    {
-                      console.log(subOrder, "subOrder")
-                    }
+              {Object.entries(groupedSubOrders || {}).map(([pickupAddress, subOrders], index) => (
+                <div key={index} className="border-bottom py-3" style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                  <div>
                     <div>
-                      <p>
-                        <strong>Payment Method:</strong>{" "}
-                        {billingData?.chargeMethod ?? "-"}
-                      </p>
-                      <p>
-                        <strong>Cash on Delivery:</strong>{" "}
-                        {subOrder?.isCashOnDelivery ? "Yes" : "No"}
-                      </p>
+                      <h5 className="mb-3 font-extrabold" style={{ color: '#2c3e50' }}>Pickup Details</h5>
                     </div>
-                    <div className="text-end">
-                      <p>
-                        <strong>Package Amount:</strong> £
-                        {subOrder?.amountOfPackage ?? "-"}
-                      </p>
-                      <div className="d-flex align-items-center justify-content-end">
-                        <strong>Delivery Charge:</strong>
-                        &nbsp;£
-                        {
-                          subOrder?.chargePer
-                        }
-
-                      </div>
+                    <div>
+                      <strong style={{ color: '#34495e' }}>Pickup Address:</strong> {pickupAddress}
+                    </div>
+                    <div>
+                      <strong style={{ color: '#34495e' }}>Charge Method:</strong> {billingData?.chargeMethod}
                     </div>
                   </div>
+
+                  <table className="table table-bordered mt-3" style={{ backgroundColor: 'white' }}>
+
+                    <thead style={{ backgroundColor: '#f8f9fa' }}>
+                      <tr>
+                        <th style={{ color: '#2c3e50', textAlign: 'center' }} colSpan={10}>Delivery Details</th>
+                      </tr>
+                      <tr>
+                        <th>ID</th>
+                        <th>Delivery Address</th>
+                        <th>Distance</th>
+                        <th>Delivery Time</th>
+                        <th>Average Time</th>
+                        <th>Total Time</th>
+                        <th>Delivery Charge</th>
+                        <th>COD</th>
+                        <th>Package Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {subOrders.map((subOrder, subIndex) => (
+                        <tr key={subIndex}>
+                          <td>{subOrder?.subOrderId}</td>
+                          <td>{subOrder?.deliveryAddress}</td>
+                          <td>{subOrder?.distance !== undefined ? `${subOrder?.distance.toFixed(2)} miles` : "-"}</td>
+                          <td>
+                            {subOrder?.deliveryTime
+                              ? new Date(subOrder?.deliveryTime) instanceof Date &&
+                                !isNaN(new Date(subOrder?.deliveryTime))
+                                ? format(new Date(subOrder?.deliveryTime), "HH:mm")
+                                : subOrder?.deliveryTime
+                              : "-"}
+                          </td>
+                          <td>
+                            {subOrder?.averageTime
+                              ? `${Math.floor(
+                                parseInt(subOrder?.averageTime) / 60
+                              )}h ${parseInt(subOrder?.averageTime) % 60}m`
+                              : "-"}
+                          </td>
+                          <td>
+                            {subOrder?.TakeTime
+                              ? `${Math.floor(subOrder.TakeTime / 3600)}h ${Math.floor((subOrder.TakeTime % 3600) / 60)}m`
+                              : "-"}
+                          </td>
+                          <td>£{subOrder?.chargePer ?? "-"}</td>
+                          <td>{subOrder?.isCashOnDelivery ? "Yes" : "No"}</td>
+                          <td>£{subOrder?.amountOfPackage ?? "-"}</td>
+                          <td>{subOrder?.orderStatus}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               ))}
             </div>
 
-            <div className="bill-footer">
-              <div className="d-flex justify-content-between border-top pt-3">
+            <div className="bill-footer" style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <div className="d-flex justify-content-between">
                 <div>
                   <p>
-                    <strong>Total Orders:</strong>{" "}
+                    <strong style={{ color: '#34495e' }}>Total Orders:</strong>{" "}
                     {billingData.subOrderdata?.length || 0}
                   </p>
-                  <p>
-                    <strong>Created By:</strong>{" "}
-                    {billingData?.deliveryMan?.createdByAdmin
-                      ? "Admin"
-                      : "Merchant"}
-                  </p>
+                  {billingData?.reason ?
+                    <p>
+                      <strong style={{ color: '#34495e' }}>Reason:</strong> {billingData?.reason ? billingData?.reason : "-"}
+                    </p>
+                    : null}
                 </div>
-                <div className="text-end">
+                <div className="text-start">
                   <p>
-                    <strong>Total Package Amount:</strong> £
+                    <strong style={{ color: '#34495e' }}>Total Package Amount:</strong> £
                     {billingData?.subOrderdata
                       ?.reduce(
                         (sum, order) => sum + (order.amountOfPackage || 0),
@@ -299,63 +283,75 @@ const Billing = () => {
                       .toFixed(2)}
                   </p>
                   <p>
-                    <strong>Total Delivery Charges:</strong> £
+                    <strong style={{ color: '#34495e' }}>Total Delivery Charges:</strong> £
                     {billingData?.subOrderdata
                       ?.reduce((sum, item) => sum + (item.chargePer || 0), 0)
                       .toFixed(2)}
                   </p>
-
+                  {billingData?.approvedAmount ?
+                    <p>
+                      <strong style={{ color: '#34495e' }}>Total Approved Amount:</strong> £
+                      {billingData?.approvedAmount}
+                    </p>
+                    : null}
                 </div>
-                {/* <p>
-                    <strong>Reason:</strong>
-                    <input 
-                      type="text" 
-                      id="reason"
-                      style={{ width: "100px", margin: "10px" }} 
-                    />
-                  </p> */}
               </div>
               {
                 showEditButton ? (
-                  <div className="d-flex justify-content-between">
+                  <div className="d-flex justify-content-between mt-4">
                     <p className="w-100 d-flex items-center" >
-                      <strong>Reason:</strong>
+                      <strong style={{ color: '#34495e' }}>Reason:</strong>
                       <textarea
                         id="reason"
                         defaultValue={billingData?.reason}
-                        style={{ width: "300px", margin: "10px" }}
+                        style={{
+                          width: "300px",
+                          margin: "10px",
+                          padding: "8px",
+                          borderRadius: "4px",
+                          border: "1px solid #ddd"
+                        }}
                         placeholder="Enter reason here..."
                         rows="4"
                       />
                     </p>
                     <p className="w-100 d-flex items-center justify-end" >
                       <div>
-                        <strong>Approved Amount:</strong>
+                        <strong style={{ color: '#34495e' }}>Approved Amount:</strong>
                         <input
                           type="number"
                           id="approvedAmount"
                           defaultValue={billingData?.totalCharge}
-                          style={{ width: "100px", margin: "10px" }}
+                          style={{
+                            width: "100px",
+                            margin: "10px",
+                            padding: "8px",
+                            borderRadius: "4px",
+                            border: "1px solid #ddd"
+                          }}
                         />
                       </div>
                     </p>
-
                   </div>
                 ) : null
               }
-
-
             </div>
 
             {showEditButton ? (
-              <div className="d-flex justify-content-between">
+              <div className="d-flex justify-content-between mt-4">
                 <div>
-                  <button className="btn btn-primary" onClick={handleCancel}>
+                  <button className="btn btn-secondary"
+                    style={{ padding: '8px 20px', borderRadius: '4px' }}
+                    onClick={handleCancel}>
                     Cancel
                   </button>
                 </div>
                 <div>
-                  <button className="btn btn-primary" onClick={() => handleApprove(billingData.orderId)}>Approve</button>
+                  <button className="btn btn-primary"
+                    style={{ padding: '8px 20px', borderRadius: '4px' }}
+                    onClick={() => handleApprove(billingData.orderId)}>
+                    Approve
+                  </button>
                 </div>
               </div>
             ) : null}
@@ -657,6 +653,7 @@ const Billing = () => {
                 <th className="p-3">Delivery Date</th>
                 <th className="p-3">Assign To</th>
                 <th className="p-3">Charge Method</th>
+                <th className="p-3">Approved Amount</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
                 <th className="p-3">Approve</th>
@@ -723,7 +720,9 @@ const Billing = () => {
                       <td className="p-3">
                         {order?.chargeMethod ?? "-"}
                       </td>
-
+                      <td className="p-3">
+                        {order?.approvedAmount ?? "0"}
+                      </td>
                       <td className="p-3">
                         <button
                           className={`${getColorClass(
@@ -751,17 +750,17 @@ const Billing = () => {
                               handleShowBilling(order);
                               setShowEditButton(true);
                             }}
-                            disabled={order?.isApproved}
+                            disabled={order?.orderStatus == "DELIVERED" ? order?.isApproved ? true : false : true}
                             style={{
                               marginRight: "10px",
-                              backgroundColor: order?.isApproved ? "green" : "orange",
+                              backgroundColor: order?.orderStatus == "DELIVERED" ? order?.isApproved ? "green" : "orange" : "gray",
                               color: "white",
                               padding: "5px 10px",
                               borderRadius: "5px",
-                              cursor: order?.isApproved ? "not-allowed" : "pointer",
+                              cursor: order?.orderStatus == "DELIVERED" ? order?.isApproved ? "not-allowed" : "pointer" : "not-allowed",
                             }}
                           >
-                            {order?.isApproved ? "Approved" : "Approve"}
+                            {order?.orderStatus == "DELIVERED" ? order?.isApproved ? "Approved" : "Approve" : "Pending"}
                           </button>
                         </Tooltip>
                       </td>
@@ -774,7 +773,7 @@ const Billing = () => {
                     </tr>
                     {openSemTable[order?.orderId] && (
                       <tr>
-                        <td colSpan="12">
+                        <td colSpan="13">
                           <div className="dropdown-table">
                             <table className="table table-bordered">
                               <thead>
@@ -793,7 +792,6 @@ const Billing = () => {
                                   <th className="p-3">Status</th>
                                   <th className="p-3">Charge Method</th>
                                   <th className="p-3">Is Approved</th>
-                                  <th className="p-3">Is Paid</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -864,11 +862,9 @@ const Billing = () => {
                                       {order?.chargeMethod ?? "-"}
                                     </td>
                                     <td className="p-3 ">
-                                      {subOrder?.isApproved ? "Yes" : "No"}
+                                      {order?.isApproved ? "Yes" : "No"}
                                     </td>
-                                    <td className="p-3 ">
-                                      {subOrder?.isPaid ? "Yes" : "No"}
-                                    </td>
+
                                   </tr>
                                 ))}
                               </tbody>
@@ -926,3 +922,6 @@ const Billing = () => {
 };
 
 export default Billing;
+
+
+

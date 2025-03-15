@@ -26,7 +26,7 @@ const ProtectedRoute = ({ children }) => {
       const response = await getCounts()
 
       console.log(response);
-      if(response.message === "Unauthorized user, Token is invalid"){
+      if(response.message == "Unauthorized user, Token is invalid"){
         localStorage.removeItem("accessTokenForAdmin")
         localStorage.removeItem("refreshTokenForAdmin")
         navigate("/admin-login");

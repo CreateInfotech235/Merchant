@@ -23,6 +23,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
   const navigate = useNavigate();
   const profileMenuRef = useRef(null);
   const profileIconRef = useRef(null);
+  console.log(notifications, "notifications");
 
   const handleThemeToggle = () => {
     toggleThemeMode();
@@ -144,16 +145,18 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
       const toastConfig = {
         autoClose: 2000 // Set toast duration to 1 second
       };
+      console.log(newNotification, "newNotification");
+      
 
       // Show toast based on notification title
       if (newNotification.title.toLowerCase().includes('picked up')) {
-        toast.warning(newNotification.message, toastConfig);
+        toast.warning(`${newNotification.message}, subOrderId: ${newNotification.subOrderId}  , customerName: ${newNotification.customerName}`, toastConfig);
       } else if (newNotification.title.toLowerCase().includes('cancelled')) {
-        toast.error(newNotification.message, toastConfig);
+        toast.error(`${newNotification.message}, subOrderId: ${newNotification.subOrderId}  , customerName: ${newNotification.customerName}`, toastConfig);
       } else if (newNotification.title.toLowerCase().includes('order delivered')) {
-        toast.success(newNotification.message, toastConfig);
+        toast.success(`${newNotification.message}, subOrderId: ${newNotification.subOrderId}  , customerName: ${newNotification.customerName}`, toastConfig);
       } else {
-        toast.info(newNotification.message, toastConfig);
+        toast.info(`${newNotification.message}, subOrderId: ${newNotification.subOrderId}  , customerName: ${newNotification.customerName}`, toastConfig);
       }
     });
 
@@ -251,6 +254,14 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
                         Suborder ID: {notification.subOrderId.sort((a, b) => a - b).join(', ')}
                       </p>
                     )}
+
+                    {notification?.customerName && (
+                      <p className="mb-1 text-secondary small">
+                        Customer Name: {notification.customerName}
+                      </p>
+                    )}
+
+
                     {notification.deliveryBoyname && (
                       <p className="mb-1 text-secondary small">
                         Delivery Boy: {notification.deliveryBoyname}
