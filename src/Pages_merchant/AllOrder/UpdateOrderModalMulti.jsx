@@ -413,6 +413,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
         merchant: merchant._id,
         deliveryDetails: formattedValues.deliveryDetails.map((delivery, index) => ({
           address: delivery.address,
+          status: delivery.status,
           cashOnDelivery: delivery.cashOnDelivery,
           description: delivery.description,
           email: delivery.email,
@@ -422,15 +423,18 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
           postCode: delivery.postCode,
           subOrderId: delivery.subOrderId,
           paymentCollectionRupees: delivery.paymentCollectionRupees,
-          distance: Order?.deliveryAddress.find((item) => item.subOrderId === delivery.subOrderId)?.distance,
-          duration: Order?.deliveryAddress.find((item) => item.subOrderId === delivery.subOrderId)?.duration,
+          distance: Order?.deliveryAddress.find((item) => item.subOrderId === delivery.subOrderId)?.distance || 0,
+          duration: Order?.deliveryAddress.find((item) => item.subOrderId === delivery.subOrderId)?.duration || "0 min",
           // parcelType: delivery?.parcelType || "",
+          pickupsignature: Order?.deliveryAddress.find((item) => item.subOrderId === delivery.subOrderId)?.pickupsignature || "",
+          deliverysignature: Order?.deliveryAddress.find((item) => item.subOrderId === delivery.subOrderId)?.deliverysignature || "",
+          reason: delivery.reason || "",
           parcelType2: delivery?.parcelType2 || [],
           location: {
             latitude: deliverylocations[index]?.latitude,
             longitude: deliverylocations[index]?.longitude
           },
-          description: delivery.description,
+          description: delivery.description || "",
           customerId: delivery.customerId,
         }))
       };
@@ -460,6 +464,21 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
     setIsUpdate(false);
   };
 
+
+  const statusColors = {
+    CREATED: "gray",
+    ASSIGNED: "blue",
+    ACCEPTED: "green",
+    CANCELLED: "red",
+    UNASSIGNED: "red",
+    DELIVERED: "teal",
+    PICKED_UP: "orange",
+    DEPARTED: "#F8AC1FFF",
+    ARRIVED: "purple",
+  };
+
+  const getColorClass = (status) =>
+    `${statusColors[status]?.toLowerCase() || "default"}`;
 
 
     // Custom MenuList component for react-select using react-window
@@ -770,14 +789,11 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                       <Field
                         as="select"
                         name={`deliveryManId`}
-                        className="w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        //  onChange={(e) => {
-                        //   setFieldValue(`deliveryManId`, e.target.value);
-                        // }}
+                        className={`w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${!(values?.status === "ASSIGNED" || values?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
                         style={{
                           backgroundColor: isUpdate ? "#e9ecef" : "white",
                         }}
-                        disabled={isUpdate}
+                        disabled={isUpdate || !(values?.status === "ASSIGNED" || values?.status === "ARRIVED")}
                       >
                         <option value="" className="text-gray-500">
                           {isLoading ? "Loading..." : "Select Delivery Man"}
@@ -848,16 +864,21 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
 
                     {/* Delivery Details */}
                     {values.deliveryDetails?.map((data, index) => (
-                      <div className={`row shadow rounded-md ${index !== 0 ? "mt-4" : "mt-2"}`} key={index} style={{ display: isSingle ? (isSingle !== index + 1 ? "none" : "") : "" }} id={`delivery-information-${index}`}>
-
+                      <div className={`row shadow rounded-md ${index !== 0 ? "mt-4" : "mt-2"}  ${ data?.trashed === true ? "cursor-not-allowed" : (data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "" : "cursor-not-allowed"}  ${data?.trashed === true ? "bg-[#dcdcdc]" : (data?.status !== "ASSIGNED" && data?.status !== "ARRIVED") ? "bg-[#dcdcdc]" : ""}   `} key={index} style={{ display: isSingle ? (isSingle !== index + 1 ? "none" : "") : "" }} id={`delivery-information-${index}`}>
                         <div className="col-12 col-lg-12 text-black font-bold text-2xl p-3 flex justify-between">
-                          <div>
+                          <div className="d-flex justify-between w-100">
+                            <div>
                             {`Delivery Information ${index + 1}`}
+                            </div>
+                           
+                            <div style={{fontSize: "1rem",marginRight: "10px"}} >
+                            Order Status : <span style={{color: getColorClass(data?.status)}}>{`${data?.status?.replace("_", " ")[0].toUpperCase() + data?.status?.replace("_", " ").slice(1).toLowerCase()}`}</span>
+                            </div>
                           </div>
                           <div>
                             {values.deliveryDetails.length > 1 && !isUpdate && (
                               <button
-                                className="btn btn-danger"
+                                className={`btn btn-danger ${ data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
                                 type="button"
                                 style={{
                                   display: isSingle ? "none" : "block",
@@ -868,6 +889,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                                   const updatedDetails = values.deliveryDetails.filter((_, i) => i !== index);
                                   setFieldValue('deliveryDetails', updatedDetails);
                                 }}
+                                disabled={ data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                               >
                                 Delete
                               </button>
@@ -875,6 +897,10 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
 
                           </div>
                         </div>
+                        {data?.trashed === true ? <div style={{fontSize: "1rem",marginRight: "10px",color: "red"}} >
+                             Order in Trashed
+                            </div> :null
+                            }
 
                         {/* Select Customer */}
                         <div className="input-error mb-1 col-12" style={{ border: "none" }}>
@@ -884,7 +910,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           <Select
                               name={`deliveryDetails.${index}.customerId`}
                               className="form-control mb-1 p-0"
-                              isDisabled={isUpdate}
+                              isDisabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                               styles={{
                                 control: (base) => ({ ...base, height: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white", }),
                               }}
@@ -902,7 +928,6 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                                 value: values.deliveryDetails[index]?.customerId,
                                 customer: customer.find(cust => cust._id === values.deliveryDetails[index]?.customerId)
                               } : null}
-
                               onChange={(selectedOption) => {
                                 if (selectedOption) {
                                   setFieldValue(`deliveryDetails.${index}.customerId`, selectedOption?.value.toString());
@@ -920,24 +945,6 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                                   setFieldValue(`deliveryDetails.${index}.name`, "");
                                 }
                               }}
-                              // onChange={(selectedOption) => {
-                              //   console.log("Selected Option:", selectedOption);
-                              //   if (selectedOption) {
-                              //     setFieldValue(`deliveryDetails.${index}.customerId`, selectedOption?.value.toString());
-                              //     setFieldValue(`deliveryDetails.${index}.address`, selectedOption?.address);
-                              //     setFieldValue(`deliveryDetails.${index}.mobileNumber`, selectedOption?.mobileNumber);
-                              //     setFieldValue(`deliveryDetails.${index}.email`, selectedOption?.email);
-                              //     setFieldValue(`deliveryDetails.${index}.postCode`, selectedOption?.postCode);
-                              //     setFieldValue(`deliveryDetails.${index}.name`, `${selectedOption?.firstName} ${selectedOption?.lastName}`);
-                              //   } else {
-                              //     setFieldValue(`deliveryDetails.${index}.customerId`, "");
-                              //     setFieldValue(`deliveryDetails.${index}.address`, "");
-                              //     setFieldValue(`deliveryDetails.${index}.mobileNumber`, "");
-                              //     setFieldValue(`deliveryDetails.${index}.email`, "");
-                              //     setFieldValue(`deliveryDetails.${index}.postCode`, "");
-                              //     setFieldValue(`deliveryDetails.${index}.name`, "");
-                              //   }
-                              // }}
                             />
                           <ErrorMessage
                             name={`deliveryDetails.${index}.customerId`}
@@ -954,9 +961,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           <Field
                             type="text"
                             name={`deliveryDetails.${index}.name`}
-                            className="form-control"
+                            className={`form-control ${data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
                             placeholder="Customer Name"
-                            disabled={isUpdate}
+                            disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                             // onChange={(e) => {
                             //   setFieldValue(`deliveryDetails.${index}.name`, e.target.value);
                             // }}
@@ -988,7 +995,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                               setFieldValue(`deliveryDetails.${index}.parcelsCount`, Number(value ? value : "0"));
                             }}
                             onWheel={(e) => e.currentTarget.blur()}
-                            className="form-control"
+                            className={`form-control ${data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
                             placeholder={`ParcelsCount`}
 
                             style={{
@@ -996,7 +1003,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                               border: "1px solid #E6E6E6",
                               borderRadius: "5px",
                             }}
-                            disabled={isUpdate}
+                            disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                           />
                           <ErrorMessage
                             name={`deliveryDetails.${index}.parcelsCount`}
@@ -1018,7 +1025,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                                 type="radio"
                                 name={`deliveryDetails.${index}.cashOnDelivery`}
                                 value="true"
-                                disabled={isUpdate}
+                                disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                                 className="form-check-input"
                                 style={{
                                   marginRight: "0.5em",
@@ -1035,7 +1042,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                                 type="radio"
                                 name={`deliveryDetails.${index}.cashOnDelivery`}
                                 value="false"
-                                disabled={isUpdate}
+                                disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                                 className="form-check-input"
                                 style={{
                                   marginRight: "0.5em",
@@ -1065,7 +1072,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
 
                               onWheel={(e) => e.currentTarget.blur()}
                               className="form-control mt-0"
-                              disabled={isUpdate}
+                              disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                               style={{ height: "3em", border: "1px solid #E6E6E6", scrollbarWidth: "none" }}
                               placeholder="Enter Payment Collection pounds"
 
@@ -1087,9 +1094,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           <Field
                             type="text"
                             name={`deliveryDetails.${index}.email`}
-                            className="form-control"
+                            className={`form-control ${data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
                             placeholder="Delivery Email"
-                            disabled={isUpdate}
+                            disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                             // onChange={(e) => {
                             //   setFieldValue(`deliveryDetails.${index}.email`, e.target.value);
                             // }}
@@ -1114,9 +1121,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           <Field
                             type="text"
                             name={`deliveryDetails.${index}.mobileNumber`}
-                            className="form-control"
+                            className={`form-control ${data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
                             placeholder="Delivery Contact Number"
-                            disabled={isUpdate}
+                            disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                             onChange={(e) => {
                               setFieldValue(`deliveryDetails.${index}.mobileNumber`, e.target.value.replace(/[^0-9-()]/g, ''));
                             }}
@@ -1143,7 +1150,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           </label>
                           <Select
                             name={`deliveryDetails.${index}.parcelType2`}
-                            className="form-control p-0"
+                            className={`form-control p-0 ${data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
                             styles={{
                               control: (base) => ({ ...base, minHeight: "3em", backgroundColor: isUpdate ? "#e9ecef" : "white", }),
                             }}
@@ -1160,7 +1167,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                               setFieldValue(`deliveryDetails.${index}.parcelType2`, selectedOptions.map(opt => opt.value));
                             }}
                             isMulti={true}
-                            isDisabled={isUpdate}
+                            isDisabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                           />
 
                           {/* <Select
@@ -1219,8 +1226,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           <Field
                             type="text"
                             name={`deliveryDetails.${index}.postCode`}
-                            className="form-control w-25% h-100%"
-                            disabled={isUpdate}
+                            className={`form-control w-25% h-100% ${data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
+                            disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                             onChange={(e) => {
                               setFieldValue(`deliveryDetails.${index}.postCode`, e.target.value);
                             }}
@@ -1243,8 +1250,8 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                             type="text"
                             as="textarea"
                             name={`deliveryDetails.${index}.address`}
-                            className="form-control w-25% h-100%"
-                            disabled={isUpdate}
+                            className={`form-control w-25% h-100% ${data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
+                            disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                             onChange={(e) => {
                               setFieldValue(`deliveryDetails.${index}.address`, e.target.value);
                             }}
@@ -1266,9 +1273,9 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                           <Field
                             as="textarea"
                             name={`deliveryDetails.${index}.description`}
-                            className="form-control"
+                            className={`form-control ${data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
                             placeholder="Delivery Instruction"
-                            disabled={isUpdate}
+                            disabled={isUpdate || data?.trashed === true || !(data?.status === "ASSIGNED" || data?.status === "ARRIVED")}
                             rows="2"
                             onChange={(e) => {
                               setFieldValue(`deliveryDetails.${index}.description`, e.target.value);
@@ -1294,14 +1301,14 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
 
                       <button className="btn btn-primary mt-3" type="button" style={{ display: isSingle ? "none" : "" }} disabled={isUpdate} onClick={() => {
                         setFieldValue('deliveryDetails', [...values.deliveryDetails, {
-                    //  finde big suboderid
                           subOrderId: Math.max(...values.deliveryDetails.map(item => item.subOrderId), 0) + 1,
                           index: values.deliveryDetails.length,
+                          status: `${Order?.status == "ARRIVED" ? "ARRIVED" : "ASSIGNED"}`,
                           address: "",
                           cashOnDelivery: "false",
-                          // description: "",
+                          description: "",
                           distance: 0,
-                          duration: "",
+                          duration: "0 min",
                           email: "",
                           mobileNumber: "",
                           location: {

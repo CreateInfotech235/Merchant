@@ -38,11 +38,14 @@ const TrashedMultiOrder = () => {
   const [showDelete, setshowDelete] = useState(false);
   const [isdatachenged, setIsdatachenged] = useState(false);
   const [trashed, settrashed] = useState(undefined);
+  const [timeRemaining, setTimeRemaining] = useState({});
+
   const fetchData = async () => {
     setLoading(true);
     try {
       const MerchantId = await localStorage.getItem('merchnatId');
       const response = await getMultiOrders(MerchantId);
+      console.log("response", response);
       if (response?.data) {
         const trashedData = response.data.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === true));
         setOrderData(trashedData);
@@ -82,23 +85,30 @@ const TrashedMultiOrder = () => {
     filterOrders(event.target.value);
   };
 
-  const filterOrders = (query, value) => {
-    let data = orderData;
-    const lowercasedQuery = query.toLowerCase().trim();
-    const filteredData = data.filter((order) => {
-      return (
-        String(order.orderId).toLowerCase().includes(lowercasedQuery) ||
-        (order.customerName ? order.customerName.toLowerCase() : "").includes(lowercasedQuery) ||
-        (order.pickupAddress?.address ? String(order.pickupAddress.address).toLowerCase() : "").includes(lowercasedQuery) ||
-        (order.deliveryAddress?.some(subOrder =>
-          String(`${subOrder.address} (${subOrder.postCode})`).trim().toLowerCase().includes(lowercasedQuery) ||
-          (subOrder.name ? subOrder.name.toLowerCase() : "").includes(lowercasedQuery) ||
-          (subOrder?.time?.end ? format(new Date(subOrder.time.end), "dd-MM-yyyy") : "-").includes(lowercasedQuery)
-        )) ||
-        (order.status ? order.status.toLowerCase() : "").includes(lowercasedQuery)
-      );
-    });
-    data = filteredData;
+  const filterOrders = (query, value = 1) => {
+    let data = [...orderData]; // Create a copy of orderData
+    const lowercasedQuery = query?.toLowerCase()?.trim() || "";
+
+    // Filter data based on search query
+    if (lowercasedQuery !== "") {
+      data = data.filter((order) => {
+        const searchableFields = [
+          order.orderId,
+          order.customerName,
+          order.pickupAddress?.address,
+          order.status,
+        ].map(field => String(field || "").toLowerCase());
+
+        // Check delivery addresses
+        const deliveryAddressMatch = order.deliveryAddress?.some(subOrder => {
+          const addressString = `${subOrder.address || ""} ${subOrder.postCode || ""}`.toLowerCase();
+          const nameString = (subOrder.name || "").toLowerCase();
+          return addressString.includes(lowercasedQuery) || nameString.includes(lowercasedQuery);
+        });
+
+        return searchableFields.some(field => field.includes(lowercasedQuery)) || deliveryAddressMatch;
+      });
+    }
 
     if (filterStatus !== "all") {
       data = data.filter((order) => order.status?.toLowerCase() === filterStatus.toLowerCase());
@@ -146,18 +156,13 @@ const TrashedMultiOrder = () => {
       }
     }
 
-    const sortedData = data.sort((a, b) => {
-      const aMatch = String(a.showOrderNumber).toLowerCase() === lowercasedQuery;
-      const bMatch = String(b.showOrderNumber).toLowerCase() === lowercasedQuery;
-      return bMatch - aMatch;
-    });
+    // Calculate pagination
+    const startIndex = (value - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
 
-    // Update total pages based on filtered data length
-    const newTotalPages = Math.max(1, Math.ceil(sortedData.length / itemsPerPage));
-    setTotalPages(newTotalPages);
-    var startIndex = (value - 1) * itemsPerPage;
-    var endIndex = startIndex + itemsPerPage;
-    setFilteredOrders(sortedData.slice(startIndex, endIndex));
+    // Update total pages and filtered orders
+    setTotalPages(Math.max(1, Math.ceil(data.length / itemsPerPage)));
+    setFilteredOrders(data.slice(startIndex, endIndex));
   };
 
   useEffect(() => {
@@ -242,7 +247,43 @@ const TrashedMultiOrder = () => {
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
 
-  console.log(totalPages);
+
+
+  const calculateTimeRemaining = (trashedtime, id) => {
+    if (!timeRemaining[id]) {
+      setInterval(() => {
+        const now = new Date();
+        const trashedTime = new Date(trashedtime);
+        const timeDifference = now - trashedTime;
+        const totalSeconds = Math.floor(timeDifference / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        // Only update timeRemaining if within the 1-minute limit
+        if ((1 - minutes) >= 0) {
+          setTimeRemaining(prev => {
+            const newTimeRemaining = { ...prev };
+            newTimeRemaining[id] = `${minutes}m ${seconds}s`;
+            return newTimeRemaining;
+          });
+        } else {
+          // Remove the entry if time limit is exceeded
+          setTimeRemaining(prev => {
+            const newTimeRemaining = { ...prev };
+            delete newTimeRemaining[id];
+            return newTimeRemaining;
+          });
+        }
+      }, 1000);
+    }
+  };
+
+
+  useEffect(() => {
+    filteredOrders.forEach(order => {
+      calculateTimeRemaining(order.trashedtime, order._id);
+    });
+  }, [filteredOrders]);
 
   return (
     <>
@@ -420,21 +461,26 @@ const TrashedMultiOrder = () => {
                         </button>
                       </td>
                       <td className="city-data">
-                        <Tooltip text="Undo Order">
-                          <button
-                            className="delete-btn me-1"
-                            onClick={() => {
-                              hadleDeleteOrder(order._id, null, "Order", true)
-                              setshowDelete(false)
-                            }}
-                          >
-                            <FaUndo
-                              alt="undo"
-
-                              className="mx-auto"
-                            />
-                          </button>
-                        </Tooltip>
+                        {
+                          timeRemaining[order._id] && (1 - parseInt(timeRemaining[order._id].split('m')[0])) >= 0 ? (
+                            <Tooltip text={`Time Left to undo order : ${1 - parseInt(timeRemaining[order._id].split('m')[0])}m ${60 - parseInt(timeRemaining[order._id].split(' ')[1])}s`}>
+                              <button
+                                className="delete-btn me-1"
+                                onClick={() => {
+                                  hadleDeleteOrder(order._id, null, "Order", true)
+                                  setshowDelete(false)
+                                  settrashed(false)
+                                }}
+                              >
+                                <FaUndo
+                                  alt="undo"
+                                  className="mx-auto"
+                                />
+                              </button>
+                            </Tooltip>
+                          ) : null
+                        }
+                        
 
                         <Tooltip text="Delete Order">
                           <button
@@ -545,21 +591,26 @@ const TrashedMultiOrder = () => {
                                           </button>
                                         </td>
                                         <td className="city-data">
-                                          < Tooltip text="Undo Sub Order">
-                                            <button className="delete-btn me-1"
-                                              onClick={() => {
-                                                hadleDeleteOrder(order._id, subOrder.subOrderId, "SubOrder", true);
-                                                setshowDelete(false)
-                                                settrashed(false)
-                                              }
-                                              }
-                                            >
-                                              <FaUndo
-                                                alt="undo"
-                                                className="mx-auto"
-                                              />
-                                            </button>
-                                          </Tooltip>
+                                          {
+                                            timeRemaining[order._id] && (1 - parseInt(timeRemaining[order._id].split('m')[0])) >= 0 ? (
+                                              <Tooltip text={`Time Left to undo order : ${1 - parseInt(timeRemaining[order._id].split('m')[0])}m ${60 - parseInt(timeRemaining[order._id].split(' ')[1])}s`}>
+                                                <button className="delete-btn me-1"
+                                                  onClick={() => {
+                                                    hadleDeleteOrder(order._id, subOrder.subOrderId, "SubOrder", true);
+                                                    setshowDelete(false)
+                                                    settrashed(false)
+                                                  }
+                                                  }
+                                                >
+                                                  <FaUndo
+                                                    alt="undo"
+                                                    className="mx-auto"
+                                                  />
+                                                </button>
+                                              </Tooltip>
+                                            ) : null
+                                          }
+                                          
                                           <Tooltip text="Delete Sub Order">
                                             <button
                                               className="delete-btn me-1"

@@ -4,7 +4,7 @@ import MerchantSidebar from "../Components_merchant/MerchantSidebar/MerchantSide
 import Header from "../Components_merchant/Header/Header";
 import Breadcrumb from "../Components_merchant/Breadcrumb/Breadcrumb";
 import { SubscriptionInfo } from "../Components_merchant/Api/Subscription";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Spinner } from "react-bootstrap";
 import SubscriptionPlanModel from "../Pages_merchant/SubscriptionPlan/SubscriptionPlanModel";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -54,8 +54,6 @@ const ProtectedRoute = ({ children }) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("merchantId");
         localStorage.removeItem("userData");
-        // setIsProfileMenuOpen(false);
-        // navigate("/");
         navigate("/");
         window.location.reload();
       }
@@ -63,21 +61,16 @@ const ProtectedRoute = ({ children }) => {
       
       if (response?.message?.includes("admin rejected your request")) {
         console.log(response.message);
-        
         navigate("/");
-        // window.location.reload();
       }
 
       if (response?.message?.includes("admin not approved your request")) {
-          console.log(response.message);
-          
+        console.log(response.message);
         navigate("/");
-        // window.location.reload();
       }
 
       if (response?.message?.includes("Your subcription is expired")) {
         if (!window.location.pathname.includes("/subscription-active")) {
-
           navigate("/subscription-active");
         }
       }
@@ -118,6 +111,7 @@ const ProtectedRoute = ({ children }) => {
   };
 
   return (
+    <>
     <div className={`app ${themeMode}`}>
       <div className="container-fluid p-0">
         <div className="main row d-xxl-flex flex-row justify-content-xxl-between d-xl-flex justify-content-xl-between">
@@ -148,11 +142,13 @@ const ProtectedRoute = ({ children }) => {
                 </Button>
               </Modal.Footer>
             </Modal>
+            
             {token ? children : null}
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 };
 

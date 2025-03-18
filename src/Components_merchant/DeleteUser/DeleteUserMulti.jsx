@@ -5,14 +5,14 @@ import { moveToTrashOrder, moveToTrashOrderMulti, moveToTrashSubOrderMulti } fro
 import { moveToTrashCustomer } from "../Api/Customer";
 import { moveToTrashDeliveryMan } from "../Api/DeliveryMan";
 
-const DeleteUserMulti = ({ onHide, onDelete, Id, text , subOrderId }) => {
+const DeleteUserMulti = ({ onHide, onDelete, Id, text , subOrderId , trashed=undefined }) => {
   const [isLoading, setIsLoading] = useState(false);
   console.log(Id , text , subOrderId);
   
   const handleRemoveOrder = async (onDelete, text, id,settrashed) => {
     setIsLoading(true);
     if (text === "Order") {
-      const response = await moveToTrashOrderMulti(id,settrashed);
+      const response = await moveToTrashOrderMulti(id,settrashed,trashed);
       if (response.status) {
         onHide();
         onDelete();

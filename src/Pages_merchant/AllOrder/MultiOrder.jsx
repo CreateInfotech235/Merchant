@@ -170,10 +170,10 @@ const MultiOrder = () => {
   useEffect(() => {
     // Connect to socket
     socket.connect();
-    
+
     // Listen for order updates
     socket.on("notificationoderdataupdate", handleNotificationdataupdata);
-    
+
     // Cleanup function
     return () => {
       socket.off("notificationoderdataupdate", handleNotificationdataupdata);
@@ -367,11 +367,8 @@ const MultiOrder = () => {
   };
 
   const statusColors = {
-    CREATED: "gray",
     ASSIGNED: "blue",
-    ACCEPTED: "green",
     CANCELLED: "red",
-    UNASSIGNED: "red",
     DELIVERED: "teal",
     PICKED_UP: "orange",
     DEPARTED: "yellow",
@@ -561,16 +558,12 @@ const MultiOrder = () => {
                 className="form-select rounded-md border-gray-300 shadow-sm h-9"
               >
                 <option value="all">All</option>
-                <option value="CREATED">Created</option>
-
                 <option value="ASSIGNED">Assigned</option>
-                <option value="ACCEPTED">Accepted</option>
-                <option value="CANCELLED">Cancelled</option>
-                <option value="UNASSIGNED">Unassigned</option>
-                <option value="DELIVERED">Delivered</option>
+                <option value="ARRIVED">Arrived</option>
                 <option value="PICKED_UP">Picked Up</option>
                 <option value="DEPARTED">Departed</option>
-                <option value="ARRIVED">Arrived</option>
+                <option value="DELIVERED">Delivered</option>
+                <option value="CANCELLED">Cancelled</option>
               </select>
             </div>
             <button
@@ -669,25 +662,43 @@ const MultiOrder = () => {
                           </button>
                         </td>
                         <td className="city-data">
-                          <Tooltip text={`${order?.status === "ASSIGNED" || order?.status === "ARRIVED" ? "Edit" : "only assigned or arrived orders status can be edited"}`}>
+                          <Tooltip text={`${order.status!=="CANCELLED" && order.deliveryAddress.every(subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" || subOrder?.status === "CANCELLED") ? "Edit" : "all sub orders must be assigned or arrived or cancelled to edit full order"}`}>
                             <button
-                              className={`edit-btn ms-1 ${order?.status === "ASSIGNED" || order?.status === "ARRIVED" ? "" : "cursor-not-allowed"}`}
+                              className={`edit-btn ms-1 ${order.status!=="CANCELLED" && order.deliveryAddress.every(subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" || subOrder?.status === "CANCELLED") ? "" : "cursor-not-allowed"}`}
                               onClick={() => {
                                 setShowDelete(false)
                                 handleEditClick(order)
                               }}
-                              disabled={!(order?.status === "ASSIGNED" || order?.status === "ARRIVED")}
+                              disabled={!(order.status!=="CANCELLED" && order.deliveryAddress.every(subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" || subOrder?.status === "CANCELLED"))}
                             >
                               <img src={edit} alt="Edit" className="mx-auto" />
                             </button>
                           </Tooltip>
-                          <Tooltip text={"Delete"}>
+                          <Tooltip
+                            text={
+                              order.deliveryAddress.every(
+                                subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED"
+                              )
+                                ? "Delete"
+                                : "all sub orders must be assigned or arrived to delete full order"
+                            }
+                          >
                             <button
-                              className="delete-btn me-1"
+                              className={`delete-btn me-1 ${order.deliveryAddress.every(
+                                subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED"
+                              )
+                                  ? ""
+                                  : "cursor-not-allowed"
+                                }`}
                               onClick={() => {
-                                setShowDelete(true)
-                                hadleDeleteOrder(order._id, null, "Order")
+                                setShowDelete(true);
+                                hadleDeleteOrder(order._id, null, "Order");
                               }}
+                              disabled={
+                                !order.deliveryAddress.every(
+                                  subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED"
+                                )
+                              }
                             >
                               <img
                                 src={deleteimg}
@@ -696,6 +707,7 @@ const MultiOrder = () => {
                               />
                             </button>
                           </Tooltip>
+
                           <Tooltip text={"Show data"}>
 
                             <button
@@ -736,7 +748,7 @@ const MultiOrder = () => {
                                     </th>
                                     <th className="p-3">Delivery Date</th>
                                     <th className="p-3">Parcel Type</th>
-                                    <th className="p-3">Invoice</th>
+                                    {/* <th className="p-3">Invoice</th> */}
                                     <th className="p-3">Status</th>
                                     <th className="p-3">Reason</th>
                                     <th className="p-3">Action</th>
@@ -800,7 +812,7 @@ const MultiOrder = () => {
                                                 ).join(", ")
                                                 : "-"}
                                             </td>
-                                            <td className="p-3">{subOrder?.invoice ?? "-"}</td>
+                                            {/* <td className="p-3">{subOrder?.invoice ?? "-"}</td> */}
                                             <td className="p-3">
                                               <button
                                                 className={`${getColorClass(
@@ -836,10 +848,10 @@ const MultiOrder = () => {
                                                   />
                                                 </button>
                                               </Tooltip>
-                                              <Tooltip text={"Delete suboder"}>
+                                              <Tooltip text={`${subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" ? "Delete" : "only assigned or arrived orders status can be Delete"}`}>
 
                                                 <button
-                                                  className="delete-btn me-1"
+                                                  className={`delete-btn me-1 ${subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" ? "" : "cursor-not-allowed"}`}
                                                   onClick={() =>
                                                     hadleDeleteOrder(
                                                       order._id,
@@ -847,6 +859,7 @@ const MultiOrder = () => {
                                                       "SubOrder"
                                                     )
                                                   }
+                                                  disabled={!(subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED")}
                                                 >
                                                   <img
                                                     src={deleteimg}
@@ -998,6 +1011,7 @@ const MultiOrder = () => {
           onHide={() => {
             setShowDelete(false)
           }}
+          trashed={true}
         />
       )}
       {showInfoModal && (

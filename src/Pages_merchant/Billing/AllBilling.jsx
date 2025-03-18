@@ -156,7 +156,7 @@ const Billing = () => {
               <div className="d-flex justify-content-between">
                 <div>
                   <p>
-                    <strong style={{ color: '#34495e' }}>Order ID:</strong> {billingData?.showOrderId ? billingData?.showOrderId : "-"}
+                    <strong style={{ color: '#34495e' }}>Order ID:</strong> {billingData?.orderId ? billingData?.orderId : "-"}
                   </p>
                   <p>
                     <strong style={{ color: '#34495e' }}>Date:</strong>{" "}
@@ -180,8 +180,8 @@ const Billing = () => {
                   <p>
                     <strong style={{ color: '#34495e' }}>Delivery Man Type:</strong>{" "}
                     {billingData?.deliveryMan?.createdByAdmin
-                      ? "Admin Delivery Man"
-                      : "Merchant Delivery Man"}
+                      ? "Admin"
+                      : "Merchant"}
                   </p>
                 </div>
               </div>
@@ -212,7 +212,7 @@ const Billing = () => {
                         <th>ID</th>
                         <th>Delivery Address</th>
                         <th>Distance</th>
-                        <th>Delivery Time</th>
+                        <th>Delivery Date</th>
                         <th>Average Time</th>
                         <th>Total Time</th>
                         <th>Delivery Charge</th>
@@ -228,12 +228,7 @@ const Billing = () => {
                           <td>{subOrder?.deliveryAddress}</td>
                           <td>{subOrder?.distance !== undefined ? `${subOrder?.distance.toFixed(2)} miles` : "-"}</td>
                           <td>
-                            {subOrder?.deliveryTime
-                              ? new Date(subOrder?.deliveryTime) instanceof Date &&
-                                !isNaN(new Date(subOrder?.deliveryTime))
-                                ? format(new Date(subOrder?.deliveryTime), "HH:mm")
-                                : subOrder?.deliveryTime
-                              : "-"}
+                            {subOrder?.deliveryTime ? subOrder?.deliveryTime: "-"}
                           </td>
                           <td>
                             {subOrder?.averageTime

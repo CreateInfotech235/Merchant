@@ -62,14 +62,6 @@ export const orderUpdateMulti = async (id, data,Order) => {
     const newData = {
       ...data,
     }
-    newData.deliveryDetails = newData.deliveryDetails.map((item)=>{
-      return {
-        ...item,
-        status: Order.status
-      }
-    })
-
-
 
   
     const response = await API.patch(
@@ -303,12 +295,12 @@ export const createOrderMulti = async (data) => {
 
 
 
-export const moveToTrashOrderMulti = async (OrderID,settrashed) => {
+export const moveToTrashOrderMulti = async (OrderID,settrashed,trashed=undefined)  => {
   try {
     const response = await API.patch(
       `/mobile/order/moveToTrashFormMerchantMulti/${OrderID}`,
       {
-        trashed: settrashed
+        trashed: trashed===undefined ? settrashed : trashed
       }
       // {
       //   params: {
