@@ -11,29 +11,23 @@ const ProtectedRoute = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("accessTokenForAdmin");
   const navigate = useNavigate();
-
   const fetchData = async () => {
     const response = await authenticateAdmin()
-
-    console.log(response);
     if (!response.status) {
       localStorage.removeItem("accessTokenForAdmin")
       localStorage.removeItem("refreshTokenForAdmin")
       setIsLoading(true);
-
+    } else {
+      setIsLoading(false);
     }
   }
 
   // Check authentication
-  console.log('token',token);
   useEffect(() => {
-    if (!token) {
-      
+    if (token) {
       fetchData();
-      setIsLoading(true);
-      // navigate("/owner-access");
     } else {
-      setIsLoading(false);
+      setIsLoading(true);
     }
   }, [token, navigate]);
 

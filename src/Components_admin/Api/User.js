@@ -4,11 +4,11 @@ import { toast } from "react-toastify";
 export const getAllUsers = async (existss,page, pageLimit) => {
   try {
     const response = await API.get(`/users/getAllUsersFromAdmin?existss=${existss}`);
-    console.log('res',response)
+    console.log('res',response.status)
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      // console.log('API error', response.message)
+      console.log('API error', response.message)
       return { status: false, message: response.message };
     }
   } catch (error) {

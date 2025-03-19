@@ -6,7 +6,6 @@ export const getCounts = async () => {
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
-      // console.log('API error', response.message)
       return { status: false, message: response.response.data.message };
     }
   } catch (error) {
@@ -19,7 +18,8 @@ export const getCounts = async () => {
 export const authenticateAdmin = async () => {
   try {
     const response = await API.post(`/authenticate`);
-    console.log('response',response)
+    console.log("response",response);
+    
     if (response.status === 200 && response.data.status) {
       return { status: true, data: response.data.data };
     } else {

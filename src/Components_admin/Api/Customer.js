@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 export const getAllCustomers = async (page, pageLimit) => {
   try {
     const response = await API.get(`/customer/auth/getCustomers`);
-    console.log("res", response);
+    console.log("dfres", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {

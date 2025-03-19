@@ -39,7 +39,9 @@ const Dashboard = () => {
   const fetchCount = async () => {
     setLoading(true);
     const res = await getCounts();
-    setCounts(res.data);
+    if (res?.status) {
+      setCounts(res?.data);
+    }
     setLoading(false);
   };
   useEffect(() => {
@@ -149,7 +151,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.acceptedOrders || 0}
+                    {counts?.acceptedOrders || 0}
                   </h5>
                   <p className="box-para">Accepted orders</p>
                 </div>
@@ -177,7 +179,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.arrivedOrders || 0}
+                    {counts?.arrivedOrders || 0}
                   </h5>
                   <p className="box-para">Arrived orders</p>
                 </div>
@@ -205,7 +207,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.assignedOrders || 0}
+                    {counts?.assignedOrders || 0}
                   </h5>
                   <p className="box-para">Assigned orders</p>
                 </div>
@@ -233,7 +235,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.cancelledOrders || 0}
+                    {counts?.cancelledOrders || 0}
                   </h5>
                   <p className="box-para">Cancelled orders</p>
                 </div>
@@ -261,7 +263,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.createdOrders || 0}
+                    {counts?.createdOrders || 0}
                   </h5>
                   <p className="box-para">Created orders</p>
                 </div>
@@ -289,7 +291,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.deliveredOrders || 0}
+                    {counts?.deliveredOrders || 0}
                   </h5>
                   <p className="box-para">Delivered orders</p>
                 </div>
@@ -317,7 +319,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.departedOrders || 0}
+                    {counts?.departedOrders || 0}
                   </h5>
                   <p className="box-para">Departed orders</p>
                 </div>
@@ -345,7 +347,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.pickedOrders || 0}
+                    {counts?.pickedOrders || 0}
                   </h5>
                   <p className="box-para">Picked orders</p>
                 </div>
@@ -373,7 +375,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.deliveryMan || 0}
+                    {counts?.deliveryMan || 0}
                   </h5>
                   <p className="box-para">DeliveryMan</p>
                 </div>
@@ -401,7 +403,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.subscribedMerchants || 0}
+                    {counts?.subscribedMerchants || 0}
                   </h5>
                   <p className="box-para">Subscribed Merchants</p>
                 </div>
@@ -429,7 +431,7 @@ const Dashboard = () => {
                 </p> */}
                   </div>
                   <h5 className="box-heading fw-bold">
-                    {counts.unsubscribedMerchants || 0}
+                    {counts?.unsubscribedMerchants || 0}
                   </h5>
                   <p className="box-para">Unsubscribed Merchants</p>
                 </div>

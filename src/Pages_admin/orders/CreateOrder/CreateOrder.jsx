@@ -45,26 +45,26 @@ const CreateOrder = () => {
       const customerRes = await getAllCustomers(true, 1, 10000);
       const deliveryMans = await getAllDeliveryMans(1, 10000, "");
       const mearchantRes = await getAllUsers(1, 10);
-      if (mearchantRes.status) setMerchnat(mearchantRes.data);
+      if (mearchantRes?.status) setMerchnat(mearchantRes?.data);
       const deliveryManRes = await getAllDeliveryMan(1, 10000, "");
-      if (deliveryManRes.data || deliveryMans.data) {
+      if (deliveryManRes?.data || deliveryMans?.data) {
         // Filter active delivery men from first source
         const activeDeliveryMen =
-          deliveryManRes.data.data.data?.filter(
+          deliveryManRes?.data?.data?.data?.filter(
             (man) => man.status !== "DISABLE"
           ) || [];
         const formattedAdminDeliveryMen =
-          deliveryMans.data?.map((man) => ({
-            ...man,
-            firstName: man.firstName || man.name?.split(" ")[0] || undefined,
+          deliveryMans?.data?.map((man) => ({
+            ...man, 
+            firstName: man?.firstName || man?.name?.split(" ")[0] || undefined,
             lastName:
-              man.lastName ||
-              man.name?.split(" ").slice(1).join(" ") ||
+              man?.lastName ||
+              man?.name?.split(" ").slice(1).join(" ") ||
               undefined,
-            _id: man._id,
-            email: man.email,
-            contactNumber: man.contactNumber,
-            status: man.status || "ENABLE",
+            _id: man?._id,
+            email: man?.email,
+            contactNumber: man?.contactNumber,
+            status: man?.status || "ENABLE",
           })) || [];
         // console.log("formattedAdminDeliveryMen", formattedAdminDeliveryMen);
 

@@ -177,7 +177,6 @@ const AddUser = () => {
         console.log("updatedData", updatedData);
         // return;
         const res = await addCustomerExal(updatedData);
-        // console.log("res", res);
         if (res.status) {
           console.log("res.data", res.data);
           if (!res.data?.failed || res.data.failed.length === 0) {

@@ -9,7 +9,6 @@ export const getAllCustomers = async () => {
     const response = await API.get(`/customer/auth/getCustomers`, {
       params: tampdata,
     });
-    // console.log("res", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {

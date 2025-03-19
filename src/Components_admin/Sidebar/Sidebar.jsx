@@ -251,7 +251,7 @@ const Sidebar = () => {
             )}
           </li>
 
-          {/* <li className="my-2">
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 8 ? "active" : ""}`}
               onClick={() => toggleSubmenu(8)}
@@ -279,9 +279,9 @@ const Sidebar = () => {
                 </ul>
               </div>
             )}
-          </li> */}
+          </li>
 
-          {/* <li className="my-2">
+          <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 9 ? "active" : ""}`}
               onClick={() => toggleSubmenu(9)}
@@ -306,7 +306,7 @@ const Sidebar = () => {
                 </ul>
               </div>
             )}
-          </li> */}
+          </li>
 
           <li className="my-2">
             <Link to="/invoice-setting" className="link">
