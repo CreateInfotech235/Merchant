@@ -132,7 +132,7 @@ const RecentOrder = () => {
                 <th className="p-3">Delivery Man</th>
                 <th className="p-3">Created Date</th>
                 <th className="p-3">Pickup Date</th>
-                <th className="p-3">Invoice</th>
+                {/* <th className="p-3">Invoice</th> */}
                 <th className="p-3">Status</th>
                 <th className="p-3">Info</th>
               </tr>
@@ -177,7 +177,7 @@ const RecentOrder = () => {
                         <td className="p-3">{order?.deliveryMan ?? "-"}</td>
                         <td className="p-3">{order?.createdDate ?? "-"}</td>
                         <td className="p-3">{order?.pickupDate ?? "-"}</td>
-                        <td className="p-3">
+                        {/* <td className="p-3">
                           {order.status === "DELIVERED" ? (
                             <button
                               className="btn btn-sm btn-primary enable-btn"
@@ -188,7 +188,7 @@ const RecentOrder = () => {
                           ) : (
                             order?.invoice ?? "-"
                           )}
-                        </td>
+                        </td> */}
                         <td className="p-3">
                           <button className={getColorClass(order.status)}>
                             {order.status}
@@ -213,7 +213,7 @@ const RecentOrder = () => {
                                     <th className="p-3">Delivery Address (PostCode)</th>
                                     <th className="p-3">Delivery Date</th>
                                     <th className="p-3">Parcel Type</th>
-                                    <th className="p-3">Invoice</th>
+                                    {/* <th className="p-3">Invoice</th> */}
                                     <th className="p-3">Status</th>
                                   </tr>
                                 </thead>
@@ -240,7 +240,7 @@ const RecentOrder = () => {
                                       <td className="p-3">
                                         {parcelTypeDetail.find(type => type.parcelTypeId === subOrder?.parcelType)?.label ?? "-"}
                                       </td>
-                                      <td className="p-3">{subOrder?.invoice ?? "-"}</td>
+                                      {/* <td className="p-3">{subOrder?.invoice ?? "-"}</td> */}
                                       <td className="p-3">
                                         <button className={`${getColorClass(subOrder.status)} mx-2`}>
                                           {subOrder.status}

@@ -74,9 +74,9 @@ const Customers = () => {
     }
   };
 
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
+  // useEffect(() => {
+  //   fetchCustomers();
+  // }, []);
 
   const filteredCustomers = customers.filter((customer) => {
     const query = searchQuery.toLowerCase();
@@ -153,38 +153,9 @@ const Customers = () => {
             </button>
           </div>
         </div>
-        <div>
-          <Link to="/add-customer-admin">
-            <button
-              className="btn text-white flex items-center"
-              style={{ background: "#D65246" }}
-            >
-              <img src={add} className="pe-2" alt="Add" />
-              Add Customer
-            </button>
-          </Link>
-        </div>
+        
       </div>
-      <div className="d-flex align-items-center gap-3 mb-3">
-        <div className="d-flex align-items-center">
-          <button
-            className="btn text-white px-4"
-            style={{ background: "#253A71" }}
-            onClick={() => fetchCustomersByStatus(true)}
-          >
-            Admin Customer
-          </button>
-        </div>
-        <div className="d-flex align-items-center">
-          <button
-            className="btn text-white px-4"
-            style={{ background: "#253A71" }}
-            onClick={() => fetchCustomersByStatus(false)}
-          >
-            Merchant Customer
-          </button>
-        </div>
-      </div>
+
 
       <div className="table-responsive">
         <table
@@ -220,7 +191,11 @@ const Customers = () => {
               <tr>
                 <td colSpan="11" className="text-center p-3">
                   <div className="d-flex justify-content-center">
-                    <div className="mx-auto">No Data Found</div>
+                    <div className="mx-auto">
+                      {/* No Data Found */}
+                    <div>fetchCustomers not set yet</div>
+
+                    </div>
                   </div>
                 </td>
               </tr>

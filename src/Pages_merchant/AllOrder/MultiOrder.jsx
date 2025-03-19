@@ -140,6 +140,16 @@ const MultiOrder = () => {
         });
       });
 
+      const isoderisselactable = data.orderData.deliveryDetails.every(subOrder => 
+        (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+        (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+      )
+      console.log("isoderisselactable", isoderisselactable);
+      if (!isoderisselactable) {
+        if (selectMultiOrder[data.orderData._id]) {
+          setSelectMultiOrder(prev => ({ ...prev, [data.orderData._id]: false }));
+        }
+      }
       // Also update filteredOrders to reflect changes immediately
       setFilteredOrders(prevFiltered => {
         return prevFiltered.map(order => {
@@ -625,14 +635,58 @@ const MultiOrder = () => {
                         const selection = window.getSelection();
                         if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
                           if (getSelectedMultiOrderIds().length > 0) {
-                            handleSelectMultiOrder(order._id)
+                            if(order.deliveryAddress.every(subOrder => 
+                              (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                              (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                            )){
+                              handleSelectMultiOrder(order._id)
+                            }
                           } else {
                             toggleSemTable(order._id)
                           }
                         }
                       }}>
                         <td className="city-data">
-                          <input type="checkbox" value={selectMultiOrder[order._id]} checked={selectMultiOrder[order._id]} onChange={() => handleSelectMultiOrder(order._id)} />
+                        <Tooltip transform="translateX(0%)" text={`${!order.deliveryAddress.every(subOrder => 
+                              (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                              (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                            ) ? "Only assigned or arrived orders can be selected for multi order cancel" : "Select order"}`}>
+                          <input type="checkbox" 
+                            value={selectMultiOrder[order._id]} 
+                            checked={selectMultiOrder[order._id]} 
+                            // disabled={!order.deliveryAddress.every(subOrder => 
+                            //   (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                            //   (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                            // )}
+                            className={`${!order.deliveryAddress.every(subOrder => 
+                              (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                              (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                            ) ? "cursor-not-allowed bg-gray-200 " : ""}`}
+                            onChange={(e) => {
+                              const isSelectable = order.deliveryAddress.every(subOrder => 
+                                (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                                (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                              );
+                              if (isSelectable) {
+                                handleSelectMultiOrder(order._id);
+                              } else {
+                                e.target.checked = false;
+                                // toast.error("Only assigned or arrived orders can be selected");
+                              }
+                            }} 
+                            onClick={(e) => {
+                              if(!order.deliveryAddress.every(subOrder => 
+                                (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                                (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                              )){
+                                e.target.classList.add("vibrate");
+                                setTimeout(() => {
+                                  e.target.classList.remove("vibrate");
+                                }, 300);
+                              }
+                            }}
+                          />
+                          </Tooltip>
                         </td>
                         <td className="p-3 text-primary">
                           {order?.orderId ?? "-"}
@@ -662,14 +716,14 @@ const MultiOrder = () => {
                           </button>
                         </td>
                         <td className="city-data">
-                          <Tooltip text={`${order.status!=="CANCELLED" && order.deliveryAddress.every(subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" || subOrder?.status === "CANCELLED") ? "Edit" : "all sub orders must be assigned or arrived or cancelled to edit full order"}`}>
+                          <Tooltip text={`${order.status!=="CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)) ? "Edit" : "sum of sub orders must be assigned or arrived to edit full order"}`}>
                             <button
-                              className={`edit-btn ms-1 ${order.status!=="CANCELLED" && order.deliveryAddress.every(subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" || subOrder?.status === "CANCELLED") ? "" : "cursor-not-allowed"}`}
+                              className={`edit-btn ms-1 ${order.status!=="CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)) ? "" : "cursor-not-allowed"}`}
                               onClick={() => {
                                 setShowDelete(false)
                                 handleEditClick(order)
                               }}
-                              disabled={!(order.status!=="CANCELLED" && order.deliveryAddress.every(subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED" || subOrder?.status === "CANCELLED"))}
+                              disabled={!(order.status!=="CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)))}
                             >
                               <img src={edit} alt="Edit" className="mx-auto" />
                             </button>

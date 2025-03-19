@@ -149,8 +149,10 @@ const DeliveryMan = () => {
   return (
     <>
       <div className="w-100">
+      
+      <div className="d-flex justify-content-between py-3 align-items-center" >
+
         <div className="d-flex justify-content-between py-3">
-          <button className="delete">Delete</button>
           <Link to="/add-delivery-man-admin">
             <button
               type="button"
@@ -171,12 +173,13 @@ const DeliveryMan = () => {
               placeholder="Search Delivery boy"
               value={searchTerm}
               onChange={handleSearchChange}
-            />
+              />
             <button className="search-img rounded-end-4 border-0">
               <img src={searchIcon} className="search" alt="search icon" />
             </button>
           </div>
         </div>
+              </div>
 
         <div className="table-responsive">
           <table

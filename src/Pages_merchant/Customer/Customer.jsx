@@ -43,6 +43,7 @@ const Customers = () => {
 
 
   const [showDelete, setShowDelete] = useState(false);
+console.log(filteredCustomers,"filteredCustomers");
 
 
   useEffect(() => {
@@ -62,11 +63,11 @@ const Customers = () => {
     try {
       const response = await getAllCustomers();
       if (response.status && response.data.length > 0) {
-        setAllCustomers(response.data);
-        const initialData = response.data.slice(0, itemsPerPage);
+        setAllCustomers(response.data.filter(customer => !customer.trashed));
+        const initialData = response.data.filter(customer => !customer.trashed).slice(0, itemsPerPage);
         setCustomers(initialData);
         setFilteredCustomers(initialData);
-        setTotalPages(Math.ceil(response.data.length / itemsPerPage));
+        setTotalPages(Math.ceil(response.data.filter(customer => !customer.trashed).length / itemsPerPage));
       } else {
         setAllCustomers([]);
         setCustomers([]);
@@ -107,6 +108,7 @@ const Customers = () => {
 
   function filterCustomers(customersToFilter = customers) {
     const query = searchQuery.toLowerCase();
+    console.log("query", query);
     const data = allCustomers.filter((customer) => {
       return (
         !customer.trashed &&
@@ -200,8 +202,13 @@ const Customers = () => {
               placeholder="Search customers"
               value={searchQuery}
               onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
+                if (e.target.value.trim().length > 0) {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                } else {
+                  setSearchQuery("");
+                  setCurrentPage(1);
+                }
               }}
             />
             <button className="search-img rounded-end-4 border-0 flex justify-center items-center" onClick={() => fetchCustomers()}>

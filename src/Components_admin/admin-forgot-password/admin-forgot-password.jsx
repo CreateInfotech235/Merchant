@@ -64,7 +64,7 @@ const AdminForgotPassword = () => {
                 const response = await changePassword(values.email, values.password);
                 console.log(response);
                 if (response.status === "SUCCESS") {
-                    navigate("/admin-login"); // Redirect to login page after successful change
+                    navigate("/owner-access"); // Redirect to login page after successful change
                 } else {
                     setErrors({ general: response.message });
                 }
@@ -260,7 +260,7 @@ const AdminForgotPassword = () => {
 
                     {/* Links */}
                     <div className="mt-4 text-center">
-                        <Link to="/admin-login" className="text-sm text-blue-500 hover:underline">
+                        <Link to="/owner-access" className="text-sm text-blue-500 hover:underline">
                             Back to Login
                         </Link>
                     </div>

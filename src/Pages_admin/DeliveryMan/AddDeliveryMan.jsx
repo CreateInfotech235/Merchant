@@ -11,6 +11,8 @@ const AddDeliveryBoy = () => {
   const navigate = useNavigate();
   const merchnatId = localStorage.getItem("merchnatId");
   const [showPassword, setShowPassword] = useState(false); // State for password visibility toggle
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [chargeMethod, setChargeMethod] = useState("");
 
   const initialValues = {
     firstName: "",
@@ -22,6 +24,16 @@ const AddDeliveryBoy = () => {
     merchantId: merchnatId,
     postCode: "",
     address: "",
+    chargeMethod: "",
+    charge: "",
+    location: {
+      latitude: "",
+      longitude: "",
+    },
+    defaultLocation: {
+      latitude: "",
+      longitude: "",
+    },
   };
 
   const validationSchema = Yup.object({
@@ -41,13 +53,75 @@ const AddDeliveryBoy = () => {
     // countryCode: Yup.string().required("Country code is required"),
     address: Yup.string().required("Address is required"),
     postCode: Yup.string().required("postCode is required"),
+    chargeMethod: Yup.string().required("Charge Method is required"),
+    charge: Yup.string().required("Charge is required"),
   });
 
-  const onSubmit = async (values) => {
-    // console.log(values);
-    const res = await addDeliveryBoy(values);
-    if (res.status) {
-      navigate("/delivery-man-admin");
+  const onSubmit = async (values, { setFieldValue, resetForm }) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      let locationData = values.location;
+      let defaultLocationData = values.defaultLocation;
+
+      if (!values.location.latitude && !values.location.longitude) {
+        if (values.address) {
+          const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
+          console.log(values.address, "Delivery add");
+
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+              values.address
+            )}&key=${apiKey}`
+          );
+          const data = await response.json();
+
+          if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry.location;
+
+            locationData = {
+              latitude: lat,
+              longitude: lng,
+            };
+            defaultLocationData = {
+              latitude: lat,
+              longitude: lng,
+            };
+
+            setFieldValue("location.latitude", lat);
+            setFieldValue("location.longitude", lng);
+          } else {
+            alert("Address not found. Please try again.");
+            setIsSubmitting(false);
+            return;
+          }
+        } else {
+          alert("Please enter an address.");
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      const payload = {
+        ...values,
+        location: locationData,
+        defaultLocation: {
+          latitude: Number(defaultLocationData.latitude),
+          longitude: Number(defaultLocationData.longitude),
+        },
+      };
+
+      const res = await addDeliveryBoy(payload);
+      if (res.status) {
+        resetForm();
+        navigate("/delivery-man-admin");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred while submitting the form. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -74,7 +148,7 @@ const AddDeliveryBoy = () => {
                       name="firstName"
                       className="form-control w-25% h-100%"
                       placeholder="First Name"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="firstName"
@@ -91,7 +165,7 @@ const AddDeliveryBoy = () => {
                       name="lastName"
                       className="form-control w-25% h-100%"
                       placeholder="Last Name"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="lastName"
@@ -109,7 +183,7 @@ const AddDeliveryBoy = () => {
                       name="email"
                       className="form-control w-25% h-100%"
                       placeholder="Email"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="email"
@@ -128,7 +202,10 @@ const AddDeliveryBoy = () => {
                           name="password"
                           className="form-control w-25% h-100%"
                           placeholder="Password"
-                          style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                          style={{
+                            height: "4.5em",
+                            border: "1px solid #E6E6E6",
+                          }}
                         />
                         <span
                           className="password-toggle-icon"
@@ -154,18 +231,16 @@ const AddDeliveryBoy = () => {
                 </div>
 
                 <div className="row input-box">
-                  
-
                   <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
                     <label className="w-100" style={{ color: "#999696" }}>
                       Contact No
                     </label>
                     <Field
-                      type="number"
+                      type="text"
                       name="contactNumber"
                       className="form-control w-25% h-100%"
                       placeholder="Contact No"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="contactNumber"
@@ -182,7 +257,7 @@ const AddDeliveryBoy = () => {
                       name="postCode"
                       className="form-control w-25% h-100%"
                       placeholder="Post Code"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="postCode"
@@ -203,7 +278,7 @@ const AddDeliveryBoy = () => {
                       name="address"
                       className="form-control w-25% h-100%"
                       placeholder="Address"
-                      style={{ height: "4.5em",border: "1px solid #E6E6E6" }}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
                     />
                     <ErrorMessage
                       name="address"
@@ -212,31 +287,59 @@ const AddDeliveryBoy = () => {
                     />
                   </div>
 
-                  {/* <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
+                  <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
                     <label className="w-100" style={{ color: "#999696" }}>
-                      Country Code
+                      Charge Method
                     </label>
                     <Field
                       as="select"
-                      name="countryCode"
-                      className="form-select w-25% h-100%"
-                      value={formik.values.countryCode}
-                      onChange={formik.handleChange}
-                      style={{ height: "4.5em" }}
+                      name="chargeMethod"
+                      className="form-control w-25% h-100%"
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+                      onChange={(e) => {
+                        setChargeMethod(e.target.value);
+                        formik.setFieldValue("chargeMethod", e.target.value);
+                      }}
+                      value={chargeMethod}
                     >
-                      <option value="" label="Select country code" />
-                      {options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
+                      <option value="" disabled>
+                        Select Charge Method
+                      </option>
+                      <option value="DISTANCE">Per mile</option>
+                      <option value="TIME">Per hour</option>
                     </Field>
                     <ErrorMessage
-                      name="countryCode"
+
+
+
+                      name="chargeMethod"
                       component="div"
                       className="error text-danger ps-2"
                     />
-                  </div> */}
+                  </div>
+                  {chargeMethod && (
+                  <div className="input-error col-xxl-5 col-xl-4 col-lg-5 col-md-6 col-sm-5 col-12">
+                    <label className="w-100" style={{ color: "#999696" }}>
+                      Charge {chargeMethod==="DISTANCE"?"Per mile":"Per hour"}
+                    </label>
+                    <Field
+                      type="text"
+                      name="charge"
+                      className="form-control w-25% h-100%"
+                      placeholder={`Charge ${chargeMethod?chargeMethod==="DISTANCE"?"Per mile":"Per hour":""}`}
+                      style={{ height: "4.5em", border: "1px solid #E6E6E6" }}
+
+                      onChange={(e) => {
+                        formik.setFieldValue("charge", e.target.value);
+                      }}
+                    />
+                    <ErrorMessage
+                      name="charge"
+                      component="div"
+                      className="error text-danger ps-2"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <br />
@@ -250,8 +353,9 @@ const AddDeliveryBoy = () => {
                         background: "#d65246",
                         color: "white",
                       }}
+                      disabled={isSubmitting}
                     >
-                      Save
+                      {isSubmitting ? "Saving..." : "Save"}
                     </button>
                   </div>
                   <div>

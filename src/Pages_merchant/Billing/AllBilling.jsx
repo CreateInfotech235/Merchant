@@ -418,7 +418,7 @@ const Billing = () => {
       data = data.filter((order) =>
         searcharr.every(
           (word) =>
-            order.showOrderId?.toString().includes(word) ||
+            order.orderId?.toString().includes(word) ||
             order.deliveryMan?.firstName?.toLowerCase().includes(word) ||
             order.deliveryMan?.lastName?.toLowerCase().includes(word) ||
             order.deliveryMan?.email?.toLowerCase().includes(word) ||
@@ -488,7 +488,7 @@ const Billing = () => {
   };
 
   useEffect(() => {
-    filterOrders(searchQuery);
+    filterOrders(searchQuery.trim());
   }, [
     searchQuery,
     startDate,
@@ -538,13 +538,13 @@ const Billing = () => {
   return (
     <div>
       <div className={`navbar ${themeMode === "dark" ? "dark-mode" : ""}`}>
-        <div className="navbar-options d-flex my-2 col-12 items-center">
+        <div className="navbar-options d-flex my-2 col-12 items-center justify-end">
           <input
             type="search"
             className="search-btn border-1 border-slate-500 rounded-start-4 p-3"
             placeholder="Search Order"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value.trim())}
           />
           <button className="search-img rounded-end-4 border-0 flex justify-center items-center">
             <img

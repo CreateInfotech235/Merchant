@@ -143,10 +143,11 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
       setUnreadCount(prev => prev + 1);
 
       const toastConfig = {
-        autoClose: 2000 // Set toast duration to 1 second
+        autoClose: 2000, // Set toast duration to 1 second
+        position: "bottom-right"
       };
       console.log(newNotification, "newNotification");
-      
+
 
       // Show toast based on notification title
       if (newNotification.title.toLowerCase().includes('picked up')) {

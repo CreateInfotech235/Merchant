@@ -503,15 +503,8 @@ function App() {
             </Formate>
           }
         />
-      
-        <Route
-          path="*"
-          element={
-            <Formate>
-              <PageNotFound />
-            </Formate>
-          }
-        />
+
+
         <Route
           path="/faqs"
           element={
@@ -520,7 +513,7 @@ function App() {
             </Formate>
           }
         />
-{/* 
+        {/* 
         <Route
           path="/pricing"
           element={
@@ -529,7 +522,7 @@ function App() {
             </Formate>
           }
         /> */}
-        <Route path="/login" element={<LoginWeb Login={islogin} setLogin={setIslogin}/>} />
+        <Route path="/login" element={<LoginWeb Login={islogin} setLogin={setIslogin} />} />
         <Route path="/register" element={<SignupWeb />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* <Route
@@ -565,7 +558,7 @@ function App() {
           }
         />
         <Route
-        // terms-and-conditions
+          // terms-and-conditions
           path="/terms-and-conditions/:isshow"
           element={
             <Formate Login={islogin} useData={userData}>
@@ -575,16 +568,16 @@ function App() {
         />
 
         {/* adminRoutes */}
-
+        {/* owner access  */}
         <Route
-          path="/admin-login"
+          path="/owner-access"
           element={
             <UnprotectedRouteAdmin>
               <LoginAdmin />
             </UnprotectedRouteAdmin>
           }
         />
-             <Route
+        <Route
           path="/admin-forgot-password"
           element={
             <UnprotectedRouteAdmin>
@@ -706,10 +699,10 @@ function App() {
               <ViewSupportTickets />
             </ProtectedRouteAdmin>
           }
-        />  
+        />
         <Route
           path="/all-order-admin"
-            element={
+          element={
             <ProtectedRouteAdmin>
               <AllOrderAdmin />
             </ProtectedRouteAdmin>
@@ -1100,22 +1093,22 @@ function App() {
             </ProtectedRouteAdmin>
           }
         />
-        <Route
+        {/* <Route
           path="/regular-pickup-request"
           element={
             <ProtectedRouteAdmin>
               <RegularPickupRequest />
             </ProtectedRouteAdmin>
           }
-        />
-        <Route
+        /> */}
+        {/* <Route
           path="/express-pickup-request"
           element={
             <ProtectedRouteAdmin>
               <ExpressPickupRequest />
             </ProtectedRouteAdmin>
           }
-        />
+        /> */}
         <Route
           path="/support-ticket"
           element={
@@ -1204,14 +1197,14 @@ function App() {
             </ProtectedRouteAdmin>
           }
         />
-        <Route
+        {/* <Route
           path="/deposite-delivery-man"
           element={
             <ProtectedRouteAdmin>
               <DepositeDeliveryMan />
             </ProtectedRouteAdmin>
           }
-        />
+        /> */}
         <Route
           path="/auto-mail"
           element={
@@ -1242,6 +1235,13 @@ function App() {
             <ProtectedRouteAdmin>
               <AddCustomerAdmin />
             </ProtectedRouteAdmin>
+          }
+        />
+
+        <Route
+          path="*"
+          element={
+            <PageNotFound />
           }
         />
 

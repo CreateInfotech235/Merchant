@@ -394,7 +394,7 @@ const TrashedMultiOrder = () => {
                 <th className="p-3">Delivery Man</th>
                 <th className="p-3">Created Date</th>
                 <th className="p-3">Pickup Date</th>
-                <th className="p-3">Invoice</th>
+                {/* <th className="p-3">Invoice</th> */}
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
                 <th className="p-3">Info</th>
@@ -441,7 +441,7 @@ const TrashedMultiOrder = () => {
                       </td>
                       <td className="p-3">{order?.createdDate ?? "-"}</td>
                       <td className="p-3">{order?.pickupDate ?? "-"}</td>
-                      <td className="p-3 fw-bold">
+                      {/* <td className="p-3 fw-bold">
                         {order.status === "DELIVERED" ? (
                           <button
                             className="btn btn-sm btn-primary enable-btn"
@@ -452,7 +452,7 @@ const TrashedMultiOrder = () => {
                         ) : (
                           order?.invoice ?? "-"
                         )}
-                      </td>
+                      </td> */}
                       <td className="p-3">
                         <button
                           className={`${getColorClass(order.status)} mx-2`}
@@ -460,9 +460,12 @@ const TrashedMultiOrder = () => {
                           {order.status}
                         </button>
                       </td>
-                      <td className="city-data">
+                      <td className="city-data p-0">
                         {
                           timeRemaining[order._id] && (1 - parseInt(timeRemaining[order._id].split('m')[0])) >= 0 ? (
+                            <>
+                         
+                              {`Time Left to undo order : ${1 - parseInt(timeRemaining[order._id].split('m')[0])}m ${60 - parseInt(timeRemaining[order._id].split(' ')[1])}s`}
                             <Tooltip text={`Time Left to undo order : ${1 - parseInt(timeRemaining[order._id].split('m')[0])}m ${60 - parseInt(timeRemaining[order._id].split(' ')[1])}s`}>
                               <button
                                 className="delete-btn me-1"
@@ -475,9 +478,10 @@ const TrashedMultiOrder = () => {
                                 <FaUndo
                                   alt="undo"
                                   className="mx-auto"
-                                />
+                                  />
                               </button>
                             </Tooltip>
+                                  </>
                           ) : null
                         }
                         
@@ -523,7 +527,7 @@ const TrashedMultiOrder = () => {
                                     Delivery Address (PostCode)
                                   </th>
                                   <th className="p-3">Delivery Date</th>
-                                  <th className="p-3">Invoice</th>
+                                  {/* <th className="p-3">Invoice</th> */}
                                   <th className="p-3">Status</th>
                                   <th className="p-3">Action</th>
                                   <th className="p-3">Order Tracking</th>
@@ -580,7 +584,7 @@ const TrashedMultiOrder = () => {
 
                                         <td className="p-3">{subOrder?.orderTimestamp ? new Date(subOrder.orderTimestamp).toLocaleDateString('en-GB') : "-"}</td>
 
-                                        <td className="p-3">-</td>
+                                        {/* <td className="p-3">-</td> */}
                                         <td className="p-3">
                                           <button
                                             className={`${getColorClass(

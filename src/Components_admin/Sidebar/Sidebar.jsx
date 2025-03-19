@@ -188,7 +188,7 @@ const Sidebar = () => {
               </Button>
             </Link>
           </li>
-          <li className="my-2">
+          {/* <li className="my-2">
             <Link to="/country" className="link">
               <Button
                 className={`w-100 ${isActive("/country") ? "active" : ""}`}
@@ -200,10 +200,10 @@ const Sidebar = () => {
                 Country
               </Button>
             </Link>
-          </li>
+          </li> */}
 
          
-
+{/* 
           <li className="my-2">
             <Link to="/city" className="link">
               <Button
@@ -216,7 +216,7 @@ const Sidebar = () => {
                 City
               </Button>
             </Link>
-          </li>
+          </li> */}
 
           <li className="my-2">
             <Button
@@ -251,7 +251,7 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li className="my-2">
+          {/* <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 8 ? "active" : ""}`}
               onClick={() => toggleSubmenu(8)}
@@ -279,9 +279,9 @@ const Sidebar = () => {
                 </ul>
               </div>
             )}
-          </li>
+          </li> */}
 
-          <li className="my-2">
+          {/* <li className="my-2">
             <Button
               className={`w-100 ${activeTab === 9 ? "active" : ""}`}
               onClick={() => toggleSubmenu(9)}
@@ -306,7 +306,7 @@ const Sidebar = () => {
                 </ul>
               </div>
             )}
-          </li>
+          </li> */}
 
           <li className="my-2">
             <Link to="/invoice-setting" className="link">
@@ -406,32 +406,6 @@ const Sidebar = () => {
             )}
           </li>
 
-          <li className="my-2">
-            <Button
-              className={`w-100 ${activeTab === 13 ? "active" : ""}`}
-              onClick={() => toggleSubmenu(13)}
-            >
-              <span className="icon">
-                <img src={pickup_request} alt="pickup request" />
-              </span>
-              Pickup Request
-              <span className={`arrow ${activeTab === 13 ? "rotate" : ""}`}>
-                <FaAngleRight />
-              </span>
-            </Button>
-            {activeTab === 13 && (
-              <div className="submenuWrapper">
-                <ul className="submenu">
-                  <li className={isActive("/regular-pickup-request") ? "active" : ""}>
-                    <Link to="/regular-pickup-request">Regular Pickup Request</Link>
-                  </li>
-                  <li className={isActive("/express-pickup-request") ? "active" : ""}>
-                    <Link to="/express-pickup-request">Express Pickup Request</Link>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </li>
 
           <li className="my-2">
             <Link to="/support-ticket" className="link">

@@ -26,11 +26,7 @@ const Users = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showStatusUpdateModal, setShowStatusUpdateModal] = useState(false);
   const [statusUpdateUser, setStatusUpdateUser] = useState(null);
-  const [isApprovedStatus] = useState({
-    APPROVED: 'APPROVED',
-    REJECTED: 'REJECTED',
-    PENDING: 'PENDING'
-  });
+
   const [loading, setLoading] = useState(false);
   const [filterUsers, setFilterUsers] = useState([])
   // Fetch users from API
@@ -76,37 +72,6 @@ const Users = () => {
     setCurrentPage(1); // Reset pagination to the first page when search changes
   };
 
-  const handleAdminMerchant = async () => {
-    // console.log("Admin Order");
-    setLoading(true);
-    try {
-      const response = await getAllUsers(true, currentPage, usersPerPage);
-      if (response.status) {
-        setUsers(response.data);
-        // setFilteredOrders(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleMerchantUser = async () => {
-    // console.log("Merchant Order");
-    setLoading(true);
-    try {
-      const response = await getAllUsers(false, currentPage, usersPerPage);
-      if (response.status) {
-        setUsers(response.data);
-        // setFilteredOrders(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
   const handleEditClick = (deliveryMan) => {
     setSelectedUser(deliveryMan);
     setShowEditModal(true);
@@ -191,20 +156,6 @@ const Users = () => {
             </button>
           </Link>
         </div>
-      </div>
-      <div className="d-flex gap-3 py-3">
-        <button
-          className="btn btn-primary"
-          onClick={() => handleAdminMerchant()}
-        >
-          Admin Merchant
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => handleMerchantUser()}
-        >
-          Merchant
-        </button>
       </div>
 
       <div className="table-responsive">

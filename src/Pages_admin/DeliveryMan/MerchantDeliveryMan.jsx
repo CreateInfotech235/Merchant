@@ -149,14 +149,15 @@ const MerchantDeliveryMan = () => {
   return (
     <>
       <div className="w-100">
+      <div className="d-flex justify-content-between py-3 items-center">
+
         <div className="d-flex justify-content-between py-3">
-          <button className="delete">Delete</button>
           <Link to="/add-delivery-man-admin">
             <button
               type="button"
               className="btn text-light flex items-center"
               style={{ background: "#D65246" }}
-            >
+              >
               <img src={add} alt="Add" className="me-2" />
               Add Delivery Man
             </button>
@@ -177,6 +178,7 @@ const MerchantDeliveryMan = () => {
             </button>
           </div>
         </div>
+              </div>
 
         <div className="table-responsive">
           <table
