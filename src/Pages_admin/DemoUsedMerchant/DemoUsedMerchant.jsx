@@ -110,6 +110,16 @@ const DemoUsedMerchant = () => {
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
 
+
+  const toggleStatus = (id, status, reason) => {
+    console.log(id, status, reason);
+  };
+
+  const handleShowInfo = (deliveryman) => {
+    setSelectedDeliveryman(deliveryman);
+    setShowViewModal(true);
+  };
+
   return (
     <>
       <div className="w-100 min-h-[calc(100vh-187px)]">

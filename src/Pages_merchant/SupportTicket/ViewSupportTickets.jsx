@@ -43,7 +43,7 @@ function ViewSupportTickets() {
       }
     };
     fetchData();
-    
+
     // Listen for new messages from the server
     socket.on("newMessage", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
@@ -72,9 +72,9 @@ function ViewSupportTickets() {
           )
           .then(() => {
             setInputValue(""); // Clear input field
-            
+
             // Join the ticket room after sending message
-            
+
             // Emit the message to socket
             socket.emit("send_message", {
               ticketId,
@@ -168,17 +168,15 @@ function ViewSupportTickets() {
         {messages.map((msg) => (
           <div
             key={msg.id} // Assuming each message has a unique `id`
-            className={`flex ${
-              msg.sender === "merchant" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex ${msg.sender === "merchant" ? "justify-end" : "justify-start"
+              }`}
             onContextMenu={(e) => handleContextMenu(e, msg._id, msg.sender)} // Pass sender to the handler
           >
             <div
-              className={`${
-                msg.sender === "admin"
+              className={`${msg.sender === "admin"
                   ? "bg-blue-500 text-white" // Admin messages
                   : "bg-gray-300 text-gray-800" // Merchant messages
-              } rounded-lg p-2 max-w-xs`}
+                } rounded-lg p-2 max-w-xs`}
             >
               {msg.text}
             </div>

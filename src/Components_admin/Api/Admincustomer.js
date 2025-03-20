@@ -1,13 +1,16 @@
 import API from "./Api";
 import { toast } from "react-toastify";
-export const getAllCustomers = async (createdBy = null) => {
+export const getAllCustomers = async (merchantId) => {
   try {
-    console.log("dfdf");
-    console.log(createdBy);
+    console.log(merchantId);
     
     
-    const response = await API.get(`/customer/getAllCustomer?existss=${createdBy}`);
-    // console.log("🚀 ~ getAllCustomers ~ response:", response);
+    const response = await API.get(`/customer/getAllCustomer`, {
+      params: {
+        merchantId: merchantId
+      }
+    });
+    console.log(response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {

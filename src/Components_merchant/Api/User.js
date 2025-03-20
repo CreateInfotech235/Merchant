@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 export const getAllUsers = async (page, pageLimit) => {
   try {
     const response = await API.get(`/users/getAllUsers`);
+    console.log("response",response);
     // console.log('res',response)
     if (response.status === 200) {
       return { status: true, data: response.data.data };

@@ -8,13 +8,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is already authenticated
-  useEffect(() => {
-    const accessToken = localStorage.getItem("accessTokenForAdmin");
-    if (accessToken) {
-      navigate("/dashboard"); // Redirect to dashboard if logged in
-    }
-  }, [navigate]);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -111,11 +105,10 @@ function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className={` bg-purple-500 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg w-full py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
-                  loading
+                className={` bg-purple-500 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg w-full py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white ${loading
                     ? "bg-blue-400 cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                }`}
+                  }`}
               >
                 {loading ? (
                   <span className="flex items-center">

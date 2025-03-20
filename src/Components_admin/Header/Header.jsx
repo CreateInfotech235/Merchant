@@ -131,7 +131,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
           },
         }
       );
-        console.log(response);
+      console.log(response);
 
       // Handle successful logout
       if (response.status === 200 && response.data.status === "SUCCESS") {
@@ -226,9 +226,8 @@ const Header = ({ toggleThemeMode, themeMode }) => {
               {notifications.map((notification) => (
                 <div
                   key={notification._id}
-                  className={`notification-item p-3 hover-bg-light border-bottom d-flex align-items-start ${
-                    !notification.isRead ? "bg-light" : ""
-                  }`}
+                  className={`notification-item p-3 hover-bg-light border-bottom d-flex align-items-start ${!notification.isRead ? "bg-light" : ""
+                    }`}
                   style={{
                     transition: "background-color 0.3s",
                     cursor: "pointer",

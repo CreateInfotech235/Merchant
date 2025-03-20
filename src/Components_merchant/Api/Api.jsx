@@ -40,7 +40,7 @@ socket.on("welcome", (data) => {
 socket.on("disconnect", () => {
   console.log("Socket disconnected");
 });
- 
+
 // socket.on("notification", (data) => {
 //   toast.info(data.message);
 //   console.log("New notification received:", data);
@@ -53,7 +53,7 @@ socket.on("error", (error) => {
 
 API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken")
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

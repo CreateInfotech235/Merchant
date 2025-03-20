@@ -6,37 +6,46 @@ import show from "../../assets_admin/show.png";
 import edit from "../../assets_admin/edit.png";
 import deleteimg from "../../assets_admin/deleteimg.png";
 import ViewUser from "../../Components_admin/ViewUser/ViewUser";
-import Pagination from "../../Components_admin/Pagination/Pagination";
 import { deleteUser, getAllUsers } from "../../Components_admin/Api/User"; // Fetch function
 import UserInfoModal from "./UserInfoPopup";
 import Loader from "../../Components_admin/Loader/Loader";
 import EditUser from "../EditUser/EditUser";
 import DeleteModal from "../../Components_admin/DeleteModal";
 import StatusUpdateModal from "./StatusUpdateModal.jsx"; // Import the new modal
+import { Pagination, Stack } from "@mui/material";
 
 const Users = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
   const [users, setUsers] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  // const [totalPages, setTotalPages] = useState(1);
+  // const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showStatusUpdateModal, setShowStatusUpdateModal] = useState(false);
   const [statusUpdateUser, setStatusUpdateUser] = useState(null);
+  // const [itemsPerPage, setItemsPerPage] = useState(10);
+  // const [loading, setLoading] = useState(false);
+  // const [filterUsers, setFilterUsers] = useState([]);
 
+
+  const [allUsers, setAllUsers] = useState([]); // Store all users
+  const [filterUsers, setFilterUsers] = useState([]); // Filtered users for display
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [filterUsers, setFilterUsers] = useState([])
-  // Fetch users from API
+
+  // ✅ Fetch all users from API once
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await getAllUsers(null, currentPage, usersPerPage);
+      const response = await getAllUsers();
       if (response.status) {
-        setUsers(response.data); // Set user data from API
-        setTotalPages(Math.ceil(response.total / usersPerPage)); // Ensure you handle total pages
+        setAllUsers(response.data.map((item, index) => ({ ...item, id: index + 1 })));
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -44,32 +53,36 @@ const Users = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchUsers();
-  }, [currentPage]);
+  }, []);
 
-  // Filter users based on search query
+  // ✅ Filter and slice users based on search and pagination
   useEffect(() => {
-    const filteredUsers = users.filter((user) => {
-      const query = searchQuery.toLowerCase();
-      return (
-        user.firstName?.toLowerCase().includes(query) ||
-        user.lastName?.toLowerCase().includes(query) ||
-        user.email.toLowerCase().includes(query)
-      );
-    });
-    setFilterUsers(filteredUsers);
-  }, [searchQuery, users]);
+    // Filter based on search query
+    const filtered = allUsers.filter((user) =>
+      [user.firstName, user.lastName, user.email, user?.id]
+        .some((field) => field.toString().toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    // Slice for current page and items per page
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setFilterUsers(filtered.slice(startIndex, endIndex));
+
+    // Update total pages based on filtered results
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+  }, [allUsers, searchQuery, currentPage, itemsPerPage]);
 
   const handleShowInfo = (user) => {
     setSelectedUser(user);
     setIsInfoModalOpen(true);
   };
 
+  // ✅ Handle search input
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
-    setCurrentPage(1); // Reset pagination to the first page when search changes
+    setCurrentPage(1); // Reset to first page when search changes
   };
 
   const handleEditClick = (deliveryMan) => {
@@ -81,15 +94,17 @@ const Users = () => {
     setSelectedUser(customer);
     setShowDeleteModal(true);
   };
+  // ✅ Confirm delete
   const confirmDelete = async () => {
     if (selectedUser) {
       const response = await deleteUser(selectedUser._id);
       if (response.status) {
-        fetchUsers();
-        closeDeleteModal();
+        setAllUsers(allUsers.filter((user) => user._id !== selectedUser._id));
+        setShowDeleteModal(false);
       }
     }
   };
+
   const closeDeleteModal = () => setShowDeleteModal(false);
   const closeEditModal = () => {
     setShowEditModal(false);
@@ -98,8 +113,8 @@ const Users = () => {
 
   const toggleStatus = (merchantId, currentStatus, reason) => {
     if (!merchantId) return;
-    setStatusUpdateUser({ 
-      userid: merchantId, 
+    setStatusUpdateUser({
+      userid: merchantId,
       currentStatus: currentStatus || 'PENDING',
       reason: reason || ''
     });
@@ -112,13 +127,13 @@ const Users = () => {
         status: status,
         reason: reason
       });
-      
+
       if (response.status) {
         // Update local state only after successful API call
         setUsers(prevUsers => prevUsers.map(user =>
           user._id === userId ? { ...user, isApproved: status, reason: reason } : user
         ));
-        
+
         setFilterUsers(prevUsers => prevUsers.map(user =>
           user._id === userId ? { ...user, isApproved: status, reason: reason } : user
         ));
@@ -128,9 +143,18 @@ const Users = () => {
     }
   };
 
+  // ✅ Handle pagination change
+  const handlePageChange = (_, value) => {
+    setCurrentPage(value);
+  };
+  // ✅ Handle items per page change
+  const handleItemsPerPageChange = (event) => {
+    setItemsPerPage(Number(event.target.value));
+    setCurrentPage(1);
+  };
   return (
     <div className="">
-      <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
+      <div className="d-flex justify-content-end align-items-center nav-bar pb-3">
         <div className="navbar">
           <div className="navbar-options d-flex">
             <input
@@ -144,17 +168,6 @@ const Users = () => {
               <img src={searchIcon} className="search" alt="search icon" />
             </button>
           </div>
-        </div>
-        <div>
-          <Link to="/add-user">
-            <button
-              className="btn text-white flex items-center"
-              style={{ background: "#D65246" }}
-            >
-              <img src={add} className="pe-2" alt="Add" />
-              Add User
-            </button>
-          </Link>
         </div>
       </div>
 
@@ -174,7 +187,6 @@ const Users = () => {
               <th className="p-3">City</th>
               <th className="p-3">Register Date</th>
               <th className="p-3">Status</th>
-              <th className="p-3">Created By Admin</th>
               <th className="p-3">Actions</th>
             </tr>
           </thead>
@@ -200,7 +212,7 @@ const Users = () => {
             ) : (
               filterUsers.map((user, index) => (
                 <tr key={index}>
-                  <td className="p-3 text-primary">{index + 1 || "-"}</td>
+                  <td className="p-3 text-primary">{user.id || "-"}</td>
                   <td className="p-3">{user?.firstName || "-"}</td>
                   <td className="p-3">{user?.lastName || "-"}</td>
                   <td className="p-3">{user?.contactNumber || "-"}</td>
@@ -209,18 +221,17 @@ const Users = () => {
                   <td className="p-3">{user?.address?.city || "N/A"}</td>
                   <td className="p-3">{user.registerDate || "-"}</td>
                   <td className="p-3">
-                    <button className={`btn ${user?.isApproved === "APPROVED" ? "bg-success" : user?.isApproved === "REJECTED" ? "bg-danger" : user?.isApproved === "PENDING" ? "bg-warning" : "bg-secondary"}`} style={{ padding: "5px", fontSize: "12px", border: "none", textAlign: "center", color: "white" }} onClick={() => toggleStatus(user._id, user.isApproved,user?.reason)}>
+                    <button className={`btn ${user?.isApproved === "APPROVED" ? "bg-success" : user?.isApproved === "REJECTED" ? "bg-danger" : user?.isApproved === "PENDING" ? "bg-warning" : "bg-secondary"}`} style={{ padding: "5px", fontSize: "12px", border: "none", textAlign: "center", color: "white" }} onClick={() => toggleStatus(user._id, user.isApproved, user?.reason)}>
                       {user?.isApproved === "APPROVED" ? "Approved" : user?.isApproved === "REJECTED" ? "Rejected" : user?.isApproved === "PENDING" ? "Pending" : "Unknown"}
                     </button>
-                   
                   </td>
-                  <td className={"p-3"}>
+                  {/* <td className={"p-3"}>
                     <button
                       className={`enable-btn mx-2 ${user?.createdByAdmin ? "bg-success" : "bg-secondary"}`}
                     >
                       {user?.createdByAdmin ? "Yes" : "No"}
                     </button>
-                  </td>
+                  </td> */}
                   <td className="table-head2">
                     <button
                       className="show-btn m-2"
@@ -248,11 +259,30 @@ const Users = () => {
         </table>
       </div>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handleClick={(e) => setCurrentPage(Number(e.target.id))}
-      />
+      <div className="d-flex justify-content-end align-items-center mt-3 mb-3">
+        <div className="d-flex align-items-center">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+            />
+          </Stack>
+          <select
+            className="form-select ms-3 w-20"
+            value={itemsPerPage}
+            onChange={(e) => { setCurrentPage(1); setItemsPerPage(Number(e.target.value)) }}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={75}>75</option>
+            <option value={100}>100</option>
+          </select>
+        </div>
+      </div>
 
       {isInfoModalOpen && (
         <UserInfoModal
@@ -270,25 +300,7 @@ const Users = () => {
           text="User"
         />
       )}
-      {showStatusUpdateModal && statusUpdateUser && (
-     
-                <StatusUpdateModal
-                  userid={statusUpdateUser.userid}
-                  initialReason={statusUpdateUser.reason}
-                  currentStatus={statusUpdateUser.currentStatus}
-                  onStatusUpdate={(reason, newStatus) => {
-                    updateUserStatus(statusUpdateUser.userid, newStatus, reason);
-                    setShowStatusUpdateModal(false);
-                    setStatusUpdateUser(null);
-                    fetchUsers();
-                  }}
-                  onClose={() => {
-                    setShowStatusUpdateModal(false);
-                    setStatusUpdateUser(null);
-                  }}
-                />
-             
-      )}
+
     </div>
   );
 };
