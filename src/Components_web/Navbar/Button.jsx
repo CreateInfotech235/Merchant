@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = ({ text = "Dashboard" }) => {
+const Button = ({ text = "Dashboard", path = "/" }) => {
   return (
     <StyledWrapper>
-      <a href="/" className="btn-shine">{text}</a>
+      <a href={path} className="btn-shine">{text}</a>
     </StyledWrapper>
   );
 }

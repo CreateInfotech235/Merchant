@@ -1,10 +1,10 @@
 import { toast } from "react-toastify";
 import API from "./Api";
 
-export const getAllDeliveryMan = async (page, pageLimit, search) => {
+export const getAllDeliveryMan = async () => {
   try {
     const response = await API.get(
-      `deliveryMan?pageCount=${page}&pageLimit=${pageLimit}&isVerified=true&createdByAdmin=true`
+      `deliveryMan?&isVerified=true&createdByAdmin=true`
     );
     // console.log("response", response.data.data.data);
     if (response.status === 200) {
@@ -33,11 +33,12 @@ export const getAllDeliveryMans = async (page, pageLimit, search) => {
     return { status: false, message: error.message };
   }
 };
-export const getAllDeliveryManOfMerchant = async (page, pageLimit, search) => {
+export const getAllDeliveryManOfMerchant = async () => {
   try {
     const response = await API.get(
-      `deliveryMan?pageCount=${page}&pageLimit=${pageLimit}&isVerified=true&createdByMerchant=true`
+      `deliveryMan?&isVerified=true&createdByMerchant=true`
     );
+    console.log(response);
     // console.log("response", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };

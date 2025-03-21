@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Modal, ModalBody, ModalHeader } from "react-bootstrap";
 import { loadGoogleMapsApi } from "./loadGoogleMapsApi";
 import { getDeliveryManLocations } from "../../Components_admin/Api/DeliveryMan";
+import locationimg from "../../assets_admin/delivery-bike.png";
 
 const MapModal = ({ location, onHide }) => {
   console.log(location);
@@ -27,18 +28,18 @@ const MapModal = ({ location, onHide }) => {
       if (response.status && response.data) {
         const coordinates =
           response.data.status === "ENABLE" &&
-          response.data.location?.coordinates?.length === 2
+            response.data.location?.coordinates?.length === 2
             ? [
-                response.data.location.coordinates[0],
-                response.data.location.coordinates[1],
-              ]
+              response.data.location.coordinates[0],
+              response.data.location.coordinates[1],
+            ]
             : response.data.status !== "ENABLE" &&
               response.data.defaultLocation?.coordinates?.length === 2
-            ? [
+              ? [
                 response.data.defaultLocation.coordinates[0],
                 response.data.defaultLocation.coordinates[1],
               ]
-            : null;
+              : null;
 
         if (coordinates) {
           setDeliveryManLocations(coordinates);
@@ -54,14 +55,17 @@ const MapModal = ({ location, onHide }) => {
   const updateMarkerPosition = ([lng, lat]) => {
     // Update marker position without reloading the map
     console.log([lng, lat]);
-    
+
     if (mapRef.current) {
       if (!markerRef.current) {
         markerRef.current = new window.google.maps.Marker({
           position: { lat, lng },
           map: mapRef.current,
           title: "Delivery Location",
-          icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+          icon: {
+            url: locationimg,
+            scaledSize: new window.google.maps.Size(40, 40),
+          },
         });
       } else {
         markerRef.current.setPosition({ lat, lng });

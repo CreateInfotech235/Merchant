@@ -51,7 +51,7 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
           // Reverse Geocoding to get the address from coordinates
           try {
             const mapApi = await getMapApi();
-            const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
+            const apiKey = mapApi.data.find(item => item.status == true).mapKey || "";
 
             const response = await fetch(
               `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`

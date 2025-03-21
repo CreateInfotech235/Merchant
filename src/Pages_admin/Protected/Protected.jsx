@@ -6,6 +6,7 @@ import Breadcrumb from "../../Components_admin/Breadcrumb/Breadcrumb";
 import Header from "../../Components_admin/Header/Header";
 import { authenticateAdmin } from "../../Components_admin/Api/Dashboard";
 import PageNotFound from "../../Pages_web/PageNotFound/PageNotFound";
+import Loader from "../../Components_admin/Loader/Loader";
 const ProtectedRoute = ({ children }) => {
   const [themeMode, setThemeMode] = useState("light");
   const [isLoading, setIsLoading] = useState(true);
@@ -50,9 +51,9 @@ const ProtectedRoute = ({ children }) => {
     setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
 
-
+const istoken = localStorage.getItem("accessTokenForAdmin");
   if (isLoading) {
-    return <PageNotFound />
+    return !istoken ? <PageNotFound /> : <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}><Loader /></div>
   }
   return (
     <div className="container-fluid p-0">

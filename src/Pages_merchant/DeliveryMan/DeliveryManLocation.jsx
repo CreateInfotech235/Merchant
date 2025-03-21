@@ -120,7 +120,6 @@ function DeliveryManLocation() {
     markers.forEach(marker => marker.setMap(null));
     setMarkers([]);
     console.log("deliveryMen", deliveryMen);
-   
     console.log("isLoaded", isLoaded);
     console.log("deliveryMen.length", deliveryMen.length);
     console.log("mapRef.current", mapRef.current);

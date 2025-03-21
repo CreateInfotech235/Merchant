@@ -287,7 +287,7 @@ function Navbar({ Login, userData, getdataofnav, getSocialMediadata }) {
               {Login ? (
                 <div className="navbar-option p-2 position-relative flex items-center">
                   <Link to={menuData?.button?.path} className=" flex items-center">
-                    <Button text={menuData?.button?.name} />
+                    <Button text={menuData?.button?.name} path={menuData?.button?.path} />
                     {/* <MdDashboardCustomize className="text-white text-2xl md:text-3xl" />
                   <span className="text-white ml-1 text-sm hidden md:inline flex-none group-hover:flex">Dashboard</span> */}
                   </Link>

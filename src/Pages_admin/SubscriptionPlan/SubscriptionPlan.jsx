@@ -125,12 +125,6 @@ function SubscriptionPlan() {
                       ))}
                     </div>
                   </div>
-
-                  <div className="d-flex justify-content-center">
-                    <button className="btn btn-primary m-4">
-                      purchase now
-                    </button>
-                  </div>
                 </div>
               ))}
             </div>

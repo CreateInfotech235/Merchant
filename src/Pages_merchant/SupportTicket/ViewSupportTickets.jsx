@@ -174,8 +174,8 @@ function ViewSupportTickets() {
           >
             <div
               className={`${msg.sender === "admin"
-                  ? "bg-blue-500 text-white" // Admin messages
-                  : "bg-gray-300 text-gray-800" // Merchant messages
+                ? "bg-blue-500 text-white" // Admin messages
+                : "bg-gray-300 text-gray-800" // Merchant messages
                 } rounded-lg p-2 max-w-xs`}
             >
               {msg.text}

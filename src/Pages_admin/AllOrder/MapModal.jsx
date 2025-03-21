@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, ModalBody, ModalHeader } from "react-bootstrap";
 import { loadGoogleMapsApi } from "./loadGoogleMapsApi";
-
+import { getMapApi } from "../../Components_admin/Api/MapApi";
 const MapModal = ({
   location,
   deliveryLocation,
@@ -10,7 +10,8 @@ const MapModal = ({
   pickupLocation,
 }) => {
   const mapContainerStyle = { width: "100%", height: "400px" };
-  const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo"; // Replace with your actual API key
+  const mapApi =  getMapApi();
+  const apiKey = mapApi.data[0]?.status ? mapApi.data[0].mapKey : "";
   const mapRef = useRef(null);
   const [center, setCenter] = useState({ lat: 40.7128, lng: -74.006 });
   const [distance, setDistance] = useState(null);

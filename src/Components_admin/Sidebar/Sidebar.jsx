@@ -54,13 +54,10 @@ const Sidebar = () => {
       Listofpath: ["/dashboard"]
     },
     {
-      isDropdown: true,
+      path: "/subscription-required",
       label: "Subscription",
       icon: subcription,
-      items: [
-        // { path: "/subscribed-merchant", label: "Subscribed Merchant" },
-        { path: "/subscription-required", label: "Subscription Plan" },
-      ],
+      isDropdown: false,
       isActive: false,
       num: 1,
       Listofpath: ["/subscription-required"]

@@ -43,6 +43,9 @@ const Customers = () => {
   const [costumerId, setCostumerId] = useState(null);
   const [merchantId, setMerchantId] = useState(null);
   const [merchantdata, setMerchantdata] = useState([]);
+  const [merchantloading, setMerchantloading] = useState(true);
+  const [fulldata, setFulldata] = useState([]);
+  const [isTrashed, setIsTrashed] = useState(false);
   console.log(merchantdata, "merchantdata");
 
   useEffect(() => {
@@ -57,24 +60,34 @@ const Customers = () => {
     setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
 
+  const handleToggleTrashed = (isTrashed) => {
+    const nonTrashedCustomers = fulldata.filter(customer => isTrashed ? customer.trashed : !customer.trashed);
+    setAllCustomers(nonTrashedCustomers);
+    console.log(nonTrashedCustomers, "nonTrashedCustomers");
+
+    // Calculate initial paginated data
+    const startIndex = 0;
+    const endIndex = itemsPerPage;
+    const initialData = nonTrashedCustomers.slice(startIndex, endIndex);
+    console.log(initialData, "initialData");
+
+    setCustomers(initialData);
+    setFilteredCustomers(initialData);
+
+    setTotalPages(Math.ceil(nonTrashedCustomers.length / itemsPerPage) || 1);
+    setCurrentPage(1);
+
+  }
+
+
   const fetchCustomers = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await getAllCustomers(merchantId);
       if (response.status && response.data) {
-        const nonTrashedCustomers = response.data.filter(customer => !customer.trashed);
-        setAllCustomers(nonTrashedCustomers);
-
-        // Calculate initial paginated data
-        const startIndex = 0;
-        const endIndex = itemsPerPage;
-        const initialData = nonTrashedCustomers.slice(startIndex, endIndex);
-
-        setCustomers(initialData);
-        setFilteredCustomers(initialData);
-        setTotalPages(Math.ceil(nonTrashedCustomers.length / itemsPerPage) || 1);
-        setCurrentPage(1);
+        setFulldata(response.data);
+        handleToggleTrashed(isTrashed);
       } else {
         setAllCustomers([]);
         setCustomers([]);
@@ -106,7 +119,7 @@ const Customers = () => {
   useEffect(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedCustomers = allCustomers.filter(c => !c.trashed).slice(startIndex, endIndex);
+    const paginatedCustomers = allCustomers.slice(startIndex, endIndex);
     setCustomers(paginatedCustomers);
 
     // Apply search filter to paginated data
@@ -134,8 +147,7 @@ const Customers = () => {
 
     const data = allCustomers.filter((customer) => {
       return (
-        !customer.trashed &&
-        (customer.customerId?.toLowerCase().includes(query) ||
+        (
           customer.firstName?.toLowerCase().includes(query) ||
           customer.lastName?.toLowerCase().includes(query) ||
           customer.email?.toLowerCase().includes(query) ||
@@ -199,6 +211,7 @@ const Customers = () => {
   };
 
   const handleClick = (event, page) => {
+    console.log("handleClick", page);
     setCurrentPage(page);
   };
 
@@ -210,9 +223,11 @@ const Customers = () => {
         console.log("response", response);
         if (response.status) {
           setMerchantdata(response.data);
+          setMerchantloading(false);
         }
       } catch (error) {
         console.error("Error fetching merchant data:", error);
+        setMerchantloading(false);
       }
     };
     fetchMerchantData();
@@ -222,12 +237,12 @@ const Customers = () => {
       <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
         <div className="flex justify-center items-center">
           <div>
-            <label htmlFor="merchantSelect" className="form-label">Select Merchant</label>
+            <label htmlFor="merchantSelect" className="p-0">Select Merchant:</label>
             <Select
               className={`basic-single w-[500px]`}
               classNamePrefix="select"
               id="merchantSelect"
-              isLoading={false}
+              isLoading={merchantloading}
               isSearchable={true}
               defaultValue={merchantdata.length > 0 ? { value: merchantdata[0]._id, label: merchantdata[0].firstName + " " + merchantdata[0].lastName } : null}
               name="color"
@@ -238,15 +253,33 @@ const Customers = () => {
               onChange={(e) => {
                 setMerchantId(e.value);
               }}
+              isDisabled={loading}
               placeholder="Select merchant ..."
             />
           </div>
           <div>
-            <input type="button" className="btn btn-primary text-white px-4 py-2 rounded-md ml-4" disabled={!merchantId} onClick={(e) => {
+
+            <input type="button" className="btn mt-4 btn-primary text-white px-4 py-2 rounded-md ml-4" disabled={!merchantId || loading} onClick={(e) => {
               fetchCustomers();
             }} value="Get data" />
           </div>
         </div>
+        <div className="flex justify-center items-center">
+          <select 
+            className="form-select mt-4" 
+            value={isTrashed ? "deleted" : "active"} 
+            onChange={(e) => {
+              const value = e.target.value;
+              setIsTrashed(value === "deleted");
+              handleToggleTrashed(value === "deleted");
+            }}
+            disabled={loading}
+          >
+            <option value="active">customers</option>
+            <option value="deleted">deleted customers</option>
+          </select>
+        </div>
+
         <div className="navbar">
           <div className="navbar-options d-flex items-center">
             <input
@@ -284,8 +317,9 @@ const Customers = () => {
                 <th className="p-3">First Name</th>
                 <th className="p-3">Last Name</th>
                 <th className="p-3">Address</th>
-                <th className="p-3">Postcode</th>
+                {/* <th className="p-3">Postcode</th> */}
                 <th className="p-3">Email</th>
+
                 {/* <th className="p-3">Actions</th> */}
               </tr>
             </thead>
@@ -326,7 +360,7 @@ const Customers = () => {
                 <th className="p-3">First Name</th>
                 <th className="p-3">Last Name</th>
                 <th className="p-3">Address</th>
-                <th className="p-3">Postcode</th>
+                {/* <th className="p-3">Postcode</th> */}
                 <th className="p-3">Email</th>
                 {/* <th className="p-3">Actions</th> */}
               </tr>
@@ -354,28 +388,28 @@ const Customers = () => {
                   <th className="p-3">First Name</th>
                   <th className="p-3">Last Name</th>
                   <th className="p-3">Address</th>
-                  <th className="p-3">Postcode</th>
+                  <th className="p-3">Mobile Number</th>
+                  {/* <th className="p-3">Postcode</th> */}
                   <th className="p-3">Email</th>
                   {/* <th className="p-3">Actions</th> */}
                 </tr>
               </thead>
               <tbody>
-                {filteredCustomers.map((customer, index) =>
-                  customer.trashed === false ? (
-                    <tr key={index} className="hover:bg-gray-100 border-1 border-gray-200" onClick={(e) => {
-                      const selection = window.getSelection();
-                      if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
-                        handleShowInfo(customer)
-                      }
-                    }}>
-                      <td className="p-3">{customer.showCustomerNumber}</td>
-                      <td className="p-3">{customer.NHS_Number}</td>
-                      <td className="p-3">{customer.firstName}</td>
-                      <td className="p-3">{customer.lastName}</td>
-                      <td className="p-3">{customer.address}</td>
-                      <td className="p-3">{customer.postCode}</td>
-                      <td className="p-3">{customer.email}</td>
-                      {/* <td className="table-head2">
+                {filteredCustomers.map((customer, index) => (
+                  <tr key={index} className="hover:bg-gray-100 border-1 border-gray-200" onClick={(e) => {
+                    const selection = window.getSelection();
+                    if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
+                      handleShowInfo(customer)
+                    }
+                  }}>
+                    <td className="p-3">{customer.showCustomerNumber}</td>
+                    <td className="p-3">{customer.NHS_Number}</td>
+                    <td className="p-3">{customer.firstName}</td>
+                    <td className="p-3">{customer.lastName}</td>
+                    <td className="p-3">{`${customer.address} ${customer.city} ${customer.country.trim().replace(customer.postCode, "")}`.replace("-", "").trim() + "(" + customer.postCode + ")"}</td>
+                    <td className="p-3">{customer.mobileNumber}</td>
+                    <td className="p-3">{customer.email || "-"}</td>
+                    {/* <td className="table-head2">
                         <div className="d-flex align-items-center justify-content-center">
                           <Tooltip text="Edit Customer">
 
@@ -413,8 +447,8 @@ const Customers = () => {
                           </Tooltip>
                         </div>
                       </td> */}
-                    </tr>
-                  ) : null
+                  </tr>
+                )
                 )}
               </tbody>
             </table>
