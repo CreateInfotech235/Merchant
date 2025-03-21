@@ -33,10 +33,10 @@ export const getAllDeliveryMans = async (page, pageLimit, search) => {
     return { status: false, message: error.message };
   }
 };
-export const getAllDeliveryManOfMerchant = async () => {
+export const getAllDeliveryManOfMerchant = async (merchantId=null) => {
   try {
     const response = await API.get(
-      `deliveryMan?&isVerified=true&createdByMerchant=true`
+      `deliveryMan?&isVerified=true&createdByMerchant=true&merchantId=${merchantId}`
     );
     console.log(response);
     // console.log("response", response);
@@ -87,13 +87,13 @@ export const getDeliveryManDocument = async (page, pageLimit) => {
   }
 };
 
-export const getDeliveryManLocation = async (page, pageLimit) => {
+export const getDeliveryManLocation = async ( merchantId) => {
   try {
     const response = await API.get(
-      `/deliveryman/locations?pageCount=${page}&pageLimit=${pageLimit}`
+      `/deliveryman/locations?merchantId=${merchantId}`
     );
     // console.log(response);
-
+    console.log("response", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {

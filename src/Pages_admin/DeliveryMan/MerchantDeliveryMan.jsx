@@ -16,6 +16,8 @@ import "./DeliveryMan.css";
 import Loader from "../../Components_admin/Loader/Loader";
 import EditDeliveryManModal from "../EditDeliveryManModal/EditDeliveryManModal";
 import MapModal from "./MapModal";
+import Select from 'react-select';
+import { getAllUsers } from "../../Components_admin/Api/User";
 
 
 
@@ -35,11 +37,19 @@ const MerchantDeliveryMan = () => {
   const closeDeleteModal = () => setShowDeleteModal(false);
   const [totalDataCount, setTotalDataCount] = useState(0);
   const [filteredDeliverymen, setFilteredDeliverymen] = useState([]);
+  const [merchantId, setMerchantId] = useState(null);
+  const [merchantloading, setMerchantloading] = useState(false);
+  const [merchantdata, setMerchantdata] = useState([]);
+
+
+
+
 
   const fetchDeliveryMen = async () => {
     setLoading(true);
     try {
-      const res = await getAllDeliveryManOfMerchant();
+      const res = await getAllDeliveryManOfMerchant(merchantId);
+      console.log(res, "res");
 
       if (res.status) {
         setDeliverymen(res.data.data);
@@ -53,9 +63,25 @@ const MerchantDeliveryMan = () => {
     }
   };
 
+
   useEffect(() => {
-    fetchDeliveryMen();
+    const fetchMerchantData = async () => {
+      console.log("fetchMerchantData");
+      try {
+        const response = await getAllUsers();
+        console.log("response", response);
+        if (response.status) {
+          setMerchantdata(response.data);
+          setMerchantloading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching merchant data:", error);
+        setMerchantloading(false);
+      }
+    };
+    fetchMerchantData();
   }, []);
+
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -171,21 +197,31 @@ const MerchantDeliveryMan = () => {
   return (
     <>
       <div className="w-100">
-        <div className="d-flex justify-content-end py-3 items-center">
-
-          {/* <div className="d-flex justify-content-between py-3">
-            <Link to="/add-delivery-man-admin">
-              <button
-                type="button"
-                className="btn text-light flex items-center"
-                style={{ background: "#D65246" }}
-              >
-                <img src={add} alt="Add" className="me-2" />
-                Add Delivery Man
-              </button>
-            </Link>
-          </div> */}
-
+        <div className="d-flex justify-between items-center py-3 ">
+          <div>
+            <label htmlFor="merchantSelect" className="p-0">Select Merchant:</label>
+            <Select
+              className={`basic-single w-[500px]`}
+              classNamePrefix="select"
+              id="merchantSelect"
+              isLoading={loading}
+              isSearchable={true}
+              defaultValue={merchantdata.length > 0 ? { value: merchantdata[0]._id, label: merchantdata[0].firstName + " " + merchantdata[0].lastName } : null}
+              name="color"
+              options={merchantdata.map((item) => ({
+                value: item._id,
+                label: item.firstName + " " + item.lastName + " (" + item?.email + ")"
+              }))}
+              onChange={(e) => {
+                setMerchantId(e.value);
+              }}
+              isDisabled={loading}
+              placeholder="Select merchant ..."
+            />
+          </div>
+          <div>
+            <button className="btn btn-primary" disabled={merchantId === null || merchantId === "" || loading} onClick={fetchDeliveryMen}>Get data of selected merchant </button>
+          </div>
           <div className="navbar">
             <div className="navbar-options d-flex">
               <input
@@ -238,14 +274,17 @@ const MerchantDeliveryMan = () => {
                 <tr>
                   <td colSpan="11" className="text-center p-3">
                     <div className="d-flex justify-content-center">
-                      <div className="mx-auto">No Data Found</div>
+                     {
+                      merchantId === null || merchantId === "" || loading ? <div className="mx-auto">Please select merchant</div> : <div className="mx-auto">No Data Found</div>
+                     }
+
                     </div>
                   </td>
                 </tr>
               ) : (
                 filteredDeliverymen.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((deliveryman) => (
                   <tr key={deliveryman._id}>
-                  
+
                     <td className="p-3 text-primary">
                       {deliveryman?.showDeliveryManNumber ?? "-"}
                     </td>
