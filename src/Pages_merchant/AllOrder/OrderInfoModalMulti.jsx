@@ -104,9 +104,9 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                 {Order?.deliveryManMobileNumber ?? "-"}
               </span>
             </div>
-          
-          
-           
+
+
+
           </div>
 
           <div className="mb-4">
@@ -158,7 +158,7 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
             </h6>
             {Order?.deliveryAddresses?.map((delivery, index) => (
               <div key={delivery._id} className="mb-4 p-3 border rounded" style={{ display: isSingle ? (isSingle !== delivery.subOrderId ? "none" : "") : "" }} >
-               
+
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <RiFileList3Line className="me-2" />
@@ -178,7 +178,7 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                     {delivery.name}
                   </span>
                 </div>
-                
+
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <FaMapMarkerAlt className="me-2" />
@@ -239,10 +239,14 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <GiDuration className="me-2" />
-                    Duration:
+                   Average Duration:
                   </label>
                   <span className="col-6 text-end text-sm py-2">
-                    {delivery?.duration ? delivery.duration : 0}
+                    {delivery?.duration
+                      ? `${Math.floor(
+                        parseInt(delivery?.duration) / 60
+                      )}h ${parseInt(delivery?.duration) % 60}m`
+                      : "-"}
                   </span>
                 </div>
                 <div className="row mb-2">
@@ -274,7 +278,7 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                         <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer" onClick={() => {
                           const imgElement = document.getElementById(`pickupSignature${delivery._id}-${index}`);
                           const iconElement = document.getElementById(`pickupSignature${delivery._id}-${index}icon`);
-                          
+
                           imgElement.style.display = "block";
                           imgElement.src = delivery?.pickupsignature;
                           iconElement.style.display = "none";
@@ -282,9 +286,9 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                           // Add animation class
                           imgElement.classList.add("fade-in");
                         }}>
-                          <div  id={`pickupSignature${delivery._id}-${index}icon`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer relative">
-                          <CiImageOn className="w-full h-full " />
-                          <TbHandFinger className="w-[30px] h-[30px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  scaleef"  />
+                          <div id={`pickupSignature${delivery._id}-${index}icon`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer relative">
+                            <CiImageOn className="w-full h-full " />
+                            <TbHandFinger className="w-[30px] h-[30px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  scaleef" />
                           </div>
                           <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="pickup Signature" id={`pickupSignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
                         </div>
@@ -292,32 +296,32 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                     </div>
                   )}
                   <div>
-                  {delivery?.deliverysignature && (
-                    <div>
+                    {delivery?.deliverysignature && (
                       <div>
-                        <h6>Proof of delivery</h6>
-                      </div>
-                      <div>
-                        <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer" onClick={() => {
-                          const imgElement = document.getElementById(`deliverySignature${delivery._id}-${index}`);
-                          const iconElement = document.getElementById(`deliverySignature${delivery._id}-${index}icon`);
-                          
-                          imgElement.style.display = "block";
-                          imgElement.src = delivery?.deliverysignature;
-                          iconElement.style.display = "none";
+                        <div>
+                          <h6>Proof of delivery</h6>
+                        </div>
+                        <div>
+                          <div className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer" onClick={() => {
+                            const imgElement = document.getElementById(`deliverySignature${delivery._id}-${index}`);
+                            const iconElement = document.getElementById(`deliverySignature${delivery._id}-${index}icon`);
 
-                          // Add animation class
-                          imgElement.classList.add("fade-in");
-                        }}>
-                          <div  id={`deliverySignature${delivery._id}-${index}icon`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer relative">
-                          <CiImageOn className="w-full h-full " />
-                          <TbHandFinger className="w-[30px] h-[30px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  scaleef"  />
+                            imgElement.style.display = "block";
+                            imgElement.src = delivery?.deliverysignature;
+                            iconElement.style.display = "none";
+
+                            // Add animation class
+                            imgElement.classList.add("fade-in");
+                          }}>
+                            <div id={`deliverySignature${delivery._id}-${index}icon`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow cursor-pointer relative">
+                              <CiImageOn className="w-full h-full " />
+                              <TbHandFinger className="w-[30px] h-[30px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  scaleef" />
+                            </div>
+                            <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="delivery Signature" id={`deliverySignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
                           </div>
-                          <img style={{ display: "none" }} src={"../../assets_mercchant/img-icon.webp"} alt="delivery Signature" id={`deliverySignature${delivery._id}-${index}`} className="w-[100px] h-[100px] mb-3 rounded-xl shadow" />
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                   </div>
                 </div>
 

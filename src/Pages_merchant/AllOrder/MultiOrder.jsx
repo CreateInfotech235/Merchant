@@ -442,45 +442,6 @@ const MultiOrder = () => {
   };
 
 
-  const downloadInvoice = async (order) => {
-    try {
-      navigate("/invoice-format", {
-        state: {
-          orderData: {
-            orderId: order.orderId,
-            showOrderNumber: order.showOrderNumber,
-            createdAt: order.dateTime,
-            parcelType: order.parcelType,
-            weight: order.weight,
-            parcelsCount: order.parcelsCount,
-            pickupDetails: {
-              name: order.pickupAddress?.name,
-              address: order.pickupAddress?.address,
-              mobileNumber: order.pickupAddress?.mobileNumber,
-              email: order.pickupAddress?.email,
-              postCode: order.pickupAddress?.postCode,
-            },
-            deliveryDetails: {
-              name: order.deliveryAddress?.name,
-              address: order.deliveryAddress?.address,
-              mobileNumber: order.deliveryAddress?.mobileNumber,
-              email: order.deliveryAddress?.email,
-              postCode: order.deliveryAddress?.postCode,
-            },
-            charges: order.charges,
-            totalCharge: order.totalCharge,
-            cashCollection: order.cashCollection,
-            distance: order.distance,
-            duration: order.duration,
-            status: order.status,
-          },
-        },
-      });
-    } catch (error) {
-      console.error("Error navigating to invoice:", error);
-    }
-  };
-
   useEffect(() => {
     if (!loading) {
       setTimeout(() => {

@@ -4,9 +4,8 @@ import HeaderLogo from "../../assets_web/logo-new.png";
 import LoginImg from "../../assets_web/post job.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import profileIcon from "../../assets_mercchant/profile.png";
-import { MdDashboardCustomize } from "react-icons/md";
 import Button from "./Button";
-import { CiClock2, CiMail } from "react-icons/ci";
+import { CiMail } from "react-icons/ci";
 import {
   FaInstagramSquare,
   FaFacebookSquare,
@@ -14,7 +13,6 @@ import {
   FaYoutubeSquare,
 } from "react-icons/fa";
 import { BsTelephone } from "react-icons/bs";
-import { FaSquareXTwitter } from "react-icons/fa6";
 import { getWebSocialMedia } from "../../Pages_admin/webApi/webApi";
 function Navbar({ Login, userData, getdataofnav, getSocialMediadata }) {
   const location = useLocation();
