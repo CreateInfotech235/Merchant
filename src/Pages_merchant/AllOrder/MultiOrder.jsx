@@ -130,6 +130,8 @@ const MultiOrder = () => {
               ...order,
               status: data.orderData.status,
               deliveryMan: data.orderData.deliveryMan,
+              deliveryManEmail: data.orderData.deliveryManEmail,
+              deliveryManMobileNumber: data.orderData.deliveryManMobileNumber,
               deliveryManId: data.orderData.deliveryManId,
               deliveryAddress: data.orderData.deliveryDetails || order.deliveryAddress,
               pickupAddress: data.orderData.pickupDetails || order.pickupAddress,
@@ -158,6 +160,8 @@ const MultiOrder = () => {
               ...order,
               status: data.orderData.status,
               deliveryMan: data.orderData.deliveryMan,
+              deliveryManEmail: data.orderData.deliveryManEmail,
+              deliveryManMobileNumber: data.orderData.deliveryManMobileNumber,
               deliveryManId: data.orderData.deliveryManId,
               deliveryAddress: data.orderData.deliveryDetails || order.deliveryAddress,
               pickupAddress: data.orderData.pickupDetails || order.pickupAddress,
@@ -173,6 +177,8 @@ const MultiOrder = () => {
         ...selectedOrder,
         deliveryAddresses: selectedOrder.deliveryAddress,
         pickupuserSignature: selectedOrder.pickupAddress?.userSignature,
+        deliveryManEmail: data.orderData.deliveryManEmail,
+        deliveryManMobileNumber: data.orderData.deliveryManMobileNumber,
       });
     }
   };
@@ -340,6 +346,8 @@ const MultiOrder = () => {
       ...Order,
       deliveryAddresses: Order.deliveryAddress,
       pickupuserSignature: Order.pickupAddress?.userSignature,
+      deliveryManEmail: Order.deliveryManEmail,
+      deliveryManMobileNumber: Order.deliveryManMobileNumber,
     });
   };
   console.log(selectedOrder, "selectedOrder");

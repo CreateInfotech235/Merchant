@@ -19,7 +19,7 @@ import delivery from "../../assets_admin/delivery.svg";
 import deposite from "../../assets_admin/deposite.svg";
 import customer from "../../assets_admin/customer.png";
 import Location from "../../assets_admin/location (1).png";
-
+import billing from "../../assets_admin/billing.png";
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState(null);
   const [isSidebarVisible, setSidebarVisible] = useState(false);
@@ -62,6 +62,7 @@ const Sidebar = () => {
       num: 1,
       Listofpath: ["/subscription-required"]
     },
+
     {
       isDropdown: true,
       label: "Merchant",
@@ -74,7 +75,7 @@ const Sidebar = () => {
         // { path: "/subscription-required", label: "Subscription Plan" },
       ],
       isActive: false,
-      num: 16,
+      num: 3,
       Listofpath: ["/merchant", "/unsubscribed-merchant", "/demo-used-merchant" ,"/subscription-required"]
     },
 
@@ -88,17 +89,22 @@ const Sidebar = () => {
         { path: "/delivery-man-destination", label: "Delivery Man Locations" },
       ],
       isActive: false,
-      num: 3,
+      num: 4,
       Listofpath: ["/delivery-man-admin", "/delivery-man-merchant", "/delivery-man-destination"]
     },
     {
       path: "/all-customer-admin", label: "Customer", icon: customer, isDropdown: false, isActive: false,
-      num: 4,
+      num: 5,
       Listofpath: ["/all-customer-admin"]
     },
     {
+      path: "/billing-admin", label: "Billing", icon: billing, isDropdown: false, isActive: false,
+      num: 2,
+      Listofpath: ["/billing-admin"]
+    },
+    {
       path: "/map-setting", label: "Map Setting", icon: Location, isDropdown: false, isActive: false,
-      num: 5,
+      num: 6,
       Listofpath: ["/map-setting"]
     },
     {
@@ -112,7 +118,7 @@ const Sidebar = () => {
         { path: "/payment-gateway", label: "Payment Gateway" },
       ],
       isActive: false,
-      num: 6,
+      num: 7,
       Listofpath: ["/vehicle", "/extra-charge", "/parcel-type", "/payment-gateway"]
     },
     {
@@ -125,7 +131,7 @@ const Sidebar = () => {
         { path: "/rejected-admin", label: "Rejected" },
       ],
       isActive: false,
-      num: 7,
+      num: 8,
       Listofpath: ["/pending-admin", "/approved-admin", "/rejected-admin"]
     },
     {
@@ -137,12 +143,12 @@ const Sidebar = () => {
         { path: "/deposite-merchant", label: "Merchant" },
       ],
       isActive: false,
-      num: 8,
+      num: 9,
       Listofpath: ["/deposite-delivery-man", "/deposite-merchant"]
     },
     {
       path: "/invoice-setting", label: "Invoice Setting", icon: invoice1, isDropdown: false, isActive: false,
-      num: 9,
+      num: 10,
       Listofpath: ["/invoice-setting"]
     },
     {
@@ -155,7 +161,7 @@ const Sidebar = () => {
         { path: "/currency-setting", label: "Currency Setting" },
       ],
       isActive: false,
-      num: 10,
+      num: 11,
       Listofpath: ["/notification-setting", "/order-setting", "/currency-setting"]
     },
     {
@@ -176,29 +182,30 @@ const Sidebar = () => {
         { path: "/walk-through", label: "Walk Through" },
       ],
       isActive: false,
-      num: 11,
+      num: 12,
       Listofpath: ["/common-component", "/home-page", "/why-delivery", "/client-review", "/download-app", "/delivery-patner", "/contact-info", "/about-us", "/privacy-policy", "/terms-condition", "/walk-through"]
     },
     {
       path: "/support-ticket", label: "Support Ticket", icon: support_ticket, isDropdown: false, isActive: false,
-      num: 12,
+      num: 13,
       Listofpath: ["/support-ticket"]
     },
     {
       path: "/auto-mail", label: "Auto Mail", icon: mail, isDropdown: false, isActive: false,
-      num: 13,
+      num: 14,
       Listofpath: ["/auto-mail"]
     },
     {
       path: "/offer", label: "Offer", icon: offer1, isDropdown: false, isActive: false,
-      num: 14,
+      num: 15,
       Listofpath: ["/offer"]
     },
     {
       path: "/notification", label: "Notification", icon: notification_bell, isDropdown: false, isActive: false,
-      num: 15,
+      num: 16,
       Listofpath: ["/notification"]
     },
+  
   ];
 
   console.log(activeTab, "activeTab");

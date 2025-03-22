@@ -389,7 +389,6 @@ const TrashedMultiOrder = () => {
           >
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
-                <th className="p-3"></th>
                 <th className="p-3">Order ID</th>
                 <th className="p-3">Delivery Man</th>
                 <th className="p-3">Created Date</th>
@@ -430,9 +429,7 @@ const TrashedMultiOrder = () => {
                         }
                       }}
                     >
-                      <td className="city-data">
-                        <input type="checkbox" />
-                      </td>
+                     
                       <td className="p-3 text-primary">
                         {order?.orderId ?? "-"}
                       </td>
@@ -517,7 +514,6 @@ const TrashedMultiOrder = () => {
                             <table className="table table-bordered">
                               <thead>
                                 <tr>
-                                  <th className="p-3"></th>
                                   <th className="p-3">Sub Order ID</th>
                                   <th className="p-3">Customer Name</th>
                                   <th className="p-3">
@@ -564,9 +560,7 @@ const TrashedMultiOrder = () => {
                                   order.deliveryAddress.map((subOrder, index) => (
                                     subOrder.trashed === true ? (
                                       <tr key={index} className="country-row">
-                                        <td className="city-data">
-                                          <input type="checkbox" />
-                                        </td>
+                                      
                                         <td className="p-3 text-primary">
                                           {subOrder?.subOrderId ?? "-"}
                                         </td>

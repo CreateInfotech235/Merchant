@@ -179,7 +179,6 @@ const DeliveryMan = () => {
           >
             <thead className="text-light" style={{ background: "#253A71" }}>
               <tr>
-                <th className="p-3 text-light"></th>
                 <th className="p-3 text-light">Delivery Man Number</th>
                 <th className="p-3 text-light">First Name</th>
                 <th className="p-3 text-light">Last Name</th>
@@ -221,9 +220,7 @@ const DeliveryMan = () => {
                       handleViewClick(deliveryman)
                     }
                   }}>
-                    <td className="user-table1">
-                      <input type="checkbox" />
-                    </td>
+                    
                     <td className="p-3">
                       {deliveryman?.showDeliveryManNumber ?? "-"}
                     </td>

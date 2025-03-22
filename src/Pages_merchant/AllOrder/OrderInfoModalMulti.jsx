@@ -83,7 +83,16 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                 Name:
               </label>
               <span className="col-6 text-end text-sm py-2">
-                {Order?.pickupAddress?.name ?? "-"}
+                {Order?.deliveryMan ?? "-"}
+              </span>
+            </div>
+            <div className="row mb-2">
+              <label className="col-6 d-flex align-items-center text-sm">
+                <FaEnvelope className="me-2" />
+                Email:
+              </label>
+              <span className="col-6 text-end text-sm py-2">
+                {Order?.deliveryManEmail ?? "-"}
               </span>
             </div>
             <div className="row mb-2">
@@ -92,7 +101,25 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                 Mobile:
               </label>
               <span className="col-6 text-end text-sm py-2">
-                {Order?.pickupAddress?.mobileNumber ?? "-"}
+                {Order?.deliveryManMobileNumber ?? "-"}
+              </span>
+            </div>
+          
+          
+           
+          </div>
+
+          <div className="mb-4">
+            <h6 className="text-primary text-base font-medium mb-3">
+              Pickup Details
+            </h6>
+            <div className="row mb-2">
+              <label className="col-6 d-flex align-items-center text-sm">
+                <FaUser className="me-2" />
+                Name of merchant:
+              </label>
+              <span className="col-6 text-end text-sm py-2">
+                {Order?.pickupAddress?.name ?? "-"}
               </span>
             </div>
             <div className="row mb-2">
@@ -104,12 +131,15 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                 {Order?.pickupAddress?.email ?? "-"}
               </span>
             </div>
-          </div>
-
-          <div className="mb-4">
-            <h6 className="text-primary text-base font-medium mb-3">
-              Pickup Details
-            </h6>
+            <div className="row mb-2">
+              <label className="col-6 d-flex align-items-center text-sm">
+                <ImPhone className="me-2" />
+                Mobile:
+              </label>
+              <span className="col-6 text-end text-sm py-2">
+                {Order?.pickupAddress?.mobileNumber ?? "-"}
+              </span>
+            </div>
             <div className="row mb-2">
               <label className="col-6 d-flex align-items-center text-sm">
                 <FaMapMarkerAlt className="me-2" />
@@ -148,6 +178,7 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                     {delivery.name}
                   </span>
                 </div>
+                
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
                     <FaMapMarkerAlt className="me-2" />

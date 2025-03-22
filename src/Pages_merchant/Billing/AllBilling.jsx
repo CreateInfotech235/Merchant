@@ -11,6 +11,7 @@ import show from "../../assets_mercchant/show.png";
 import Modal from "react-bootstrap/Modal";
 import { socket } from "../../Components_merchant/Api/Api";
 import Tooltip from "../Tooltip/Tooltip";
+import { toast } from "react-toastify";
 
 const Billing = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -29,7 +30,6 @@ const Billing = () => {
   const [openSemTable, setOpenSemTable] = useState({});
   const [showBillingModal, setShowBillingModal] = useState(false);
   const [selectedBillingData, setSelectedBillingData] = useState(null);
-  const [billingData, setBillingData] = useState(null);
   const [showEditButton, setShowEditButton] = useState(false);
   const [subodercharge, setSubodercharge] = useState(null);
   console.log(filteredOrders, "filteredOrders");
@@ -51,14 +51,7 @@ const Billing = () => {
     setSubodercharge(null);
   };
 
-  const handleChargeChange = (e, subOrderId) => {
-    const newCharge = parseFloat(e.target.value);
-    setSubodercharge((prev) =>
-      prev.map((item) =>
-        item.subOrderId == subOrderId ? { ...item, charge: newCharge } : item
-      )
-    );
-  };
+
   console.log(orderData, "orderData");
 
   const handleNotificationdataupdata = (data) => {
@@ -116,8 +109,26 @@ const Billing = () => {
     };
   }, []);
   const handleApprove = async (orderId) => {
+    const totalCharge = selectedBillingData?.totalCharge;
     const approvedAmount = document.getElementById("approvedAmount").value;
-    const reason = document.getElementById("reason").value;
+    const reason = document.getElementById("reason").value.trim();
+
+    if (Number(totalCharge) > Number(approvedAmount)) {
+      if (reason == "") {
+        // alert("Please enter a reason to approve last amount.");
+        toast.error("Please enter a reason to approve last amount.", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        document.getElementById("reason").focus();
+        return;
+      }
+    }
     const data = {
       orderId,
       approvedAmount,
@@ -228,7 +239,7 @@ const Billing = () => {
                           <td>{subOrder?.deliveryAddress}</td>
                           <td>{subOrder?.distance !== undefined ? `${subOrder?.distance.toFixed(2)} miles` : "-"}</td>
                           <td>
-                            {subOrder?.deliveryTime ? subOrder?.deliveryTime: "-"}
+                            {subOrder?.deliveryTime ? subOrder?.deliveryTime : "-"}
                           </td>
                           <td>
                             {subOrder?.averageTime
@@ -306,6 +317,7 @@ const Billing = () => {
                           borderRadius: "4px",
                           border: "1px solid #ddd"
                         }}
+
                         placeholder="Enter reason here..."
                         rows="4"
                       />

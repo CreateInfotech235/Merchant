@@ -176,19 +176,7 @@ const RecentOrder = () => {
                         </td>
                         <td className="p-3">{order?.deliveryMan ?? "-"}</td>
                         <td className="p-3">{order?.createdDate ?? "-"}</td>
-                        <td className="p-3">{order?.pickupDate ?? "-"}</td>
-                        {/* <td className="p-3">
-                          {order.status === "DELIVERED" ? (
-                            <button
-                              className="btn btn-sm btn-primary enable-btn"
-                              onClick={() => downloadInvoice(order)}
-                            >
-                              Download
-                            </button>
-                          ) : (
-                            order?.invoice ?? "-"
-                          )}
-                        </td> */}
+                        <td className="p-3">{order?.pickupDate ?? "-"}</td>      
                         <td className="p-3">
                           <button className={getColorClass(order.status)}>
                             {order.status}

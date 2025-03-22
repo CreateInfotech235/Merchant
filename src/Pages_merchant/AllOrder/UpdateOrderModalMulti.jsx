@@ -789,12 +789,17 @@ const UpdateOrderModalMulti = ({ onHide, Order, isSingle, setIsUpdate2}) => {
                       <Field
                         as="select"
                         name={`deliveryManId`}
-                        className={`w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${!(values?.status === "ASSIGNED" || values?.status === "ARRIVED") ? "cursor-not-allowed" : ""}`}
+                        className={`w-full h-[3em] border border-[#E6E6E6] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${!(Order?.deliveryAddress?.every(
+                          subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED"
+                        )) ? "cursor-not-allowed" : ""}`}
                         style={{
                           backgroundColor: isUpdate ? "#e9ecef" : "white",
                         }}
-                        disabled={isUpdate || !(values?.status === "ASSIGNED" || values?.status === "ARRIVED")}
+                        disabled={isUpdate || !(Order?.deliveryAddress?.every(
+                          subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED"
+                        ))}
                       >
+                        {console.log(Order, "Order?.deliveryDetails")}
                         <option value="" className="text-gray-500">
                           {isLoading ? "Loading..." : "Select Delivery Man"}
                         </option>

@@ -7,6 +7,7 @@ import Header from "../../Components_admin/Header/Header";
 import { authenticateAdmin } from "../../Components_admin/Api/Dashboard";
 import PageNotFound from "../../Pages_web/PageNotFound/PageNotFound";
 import Loader from "../../Components_admin/Loader/Loader";
+import { LoadScript } from "@react-google-maps/api";
 const ProtectedRoute = ({ children }) => {
   const [themeMode, setThemeMode] = useState("light");
   const [isLoading, setIsLoading] = useState(true);
@@ -22,6 +23,7 @@ const ProtectedRoute = ({ children }) => {
       setIsLoading(false);
     }
   }
+  const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
 
   // Check authentication
   useEffect(() => {
@@ -70,7 +72,10 @@ const istoken = localStorage.getItem("accessTokenForAdmin");
             <Header toggleThemeMode={toggleThemeMode} themeMode={themeMode} />
 
           </div>
+          <LoadScript googleMapsApiKey={apiKey}>
+
           {token ? children : null}
+          </LoadScript>
         </div>
       </div>
     </div>

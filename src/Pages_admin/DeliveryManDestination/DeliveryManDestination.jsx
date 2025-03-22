@@ -1,10 +1,11 @@
-
 import React, { useEffect, useRef, useState } from "react";
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript } from "@react-google-maps/api";
+
 import locationimg from "../../assets_admin/delivery-bike.png";
 import { getDeliveryManLocation } from "../../Components_admin/Api/DeliveryMan";
 import { getAllUsers } from "../../Components_admin/Api/User";
 import Select from 'react-select';
+import { toast } from "react-toastify";
 
 function DeliveryManDestination() {
   const mapContainerStyle = {
@@ -20,30 +21,49 @@ function DeliveryManDestination() {
   const [merchantId, setMerchantId] = useState(null);
   const [merchantdata, setMerchantdata] = useState([]);
   const [merchantloading, setMerchantloading] = useState(false);
-
+  const [mapmarkloading, setMapmarkloading] = useState(false);
   const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
   const mapRef = useRef(null);
+  const [markers, setMarkers] = useState([]);
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: apiKey,
+  });
+
+  const clearMarkers = () => {
+    markers.forEach(marker => {
+      marker.setMap(null);
+    });
+    setMarkers([]);
+  };
 
   const fetchDeliveryMen = async () => {
+    clearMarkers();
     setDeliveryMen([]);
-console.log("merchantId", merchantId);
-
+    setMapmarkloading(true);
+    console.log("merchantId", merchantId);
     const response = await getDeliveryManLocation(merchantId);
 
     console.log("response", response.data);
     if (response.status) {
-      if (response.data.length > 0) {
+      if (response?.data?.length > 0) {
         setDeliveryMen(response.data);
       } else {
+        toast.error("delivery men location not found",
+          {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            theme: "light",
+          }
+        );
         setDeliveryMen([]);
       }
     }
+    setMapmarkloading(false);
   };
-
-  // useEffect(() => {
-  //   fetchDeliveryMen();
-  // }, []);
-
 
   useEffect(() => {
     const fetchMerchantData = async () => {
@@ -63,14 +83,16 @@ console.log("merchantId", merchantId);
     fetchMerchantData();
   }, []);
 
-
   useEffect(() => {
     const addMarkersAndAdjustBounds = () => {
       const map = mapRef.current;
 
+      clearMarkers();
+
       if (!map || !window.google || deliveryMen.length === 0) return;
 
       const bounds = new window.google.maps.LatLngBounds();
+      const newMarkers = [];
 
       deliveryMen.forEach((deliveryMan) => {
         let position = null;
@@ -103,11 +125,10 @@ console.log("merchantId", merchantId);
             map,
             title: `${deliveryMan?.firstName} ${deliveryMan?.lastName}`,
             icon: {
-              url: locationimg, // URL of the image
-              scaledSize: new window.google.maps.Size(40, 40), // Adjust width and height
+              url: locationimg,
+              scaledSize: new window.google.maps.Size(40, 40),
             },
           });
-
 
           const infoWindow = new window.google.maps.InfoWindow({
             content: `
@@ -118,23 +139,29 @@ console.log("merchantId", merchantId);
               </div>`,
           });
 
-
           marker.addListener("click", () => {
             infoWindow.open(map, marker);
           });
+          newMarkers.push(marker);
           bounds.extend(position);
         }
       });
 
-      // Adjust map to fit all markers
-      map.fitBounds(bounds);
+      setMarkers(newMarkers);
+
+      if (newMarkers.length > 0) {
+        map.fitBounds(bounds);
+      } else {
+        map.setCenter(center);
+        map.setZoom(5);
+      }
     };
 
-    // if (deliveryMen.length > 0) {
-      addMarkersAndAdjustBounds();
-    // }
+    addMarkersAndAdjustBounds();
   }, [deliveryMen]);
 
+  if (loadError) return <div>Error loading Google Maps</div>;
+  if (!isLoaded) return <div>Loading maps...</div>;
 
   return (
     <>
@@ -164,17 +191,16 @@ console.log("merchantId", merchantId);
           <button className="btn btn-primary" disabled={merchantId === null || merchantId === "" || merchantloading} onClick={fetchDeliveryMen}>Get data of selected merchant </button>
         </div>
       </div>
+
       <div>
-        <LoadScript googleMapsApiKey={apiKey}>
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            center={center}
-            zoom={5}
-            onLoad={(map) => (mapRef.current = map)}
-          >
-            {/* Markers will be added via useEffect */}
-          </GoogleMap>
-        </LoadScript>
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          center={center}
+          zoom={5}
+          onLoad={(map) => (mapRef.current = map)}
+        >
+          {/* Markers will be added via useEffect */}
+        </GoogleMap>
       </div>
     </>
   );

@@ -158,6 +158,7 @@ import CommonComponent from "./Pages_admin/common-component/common-component";
 import { Tr } from "react-flags-select";
 import DeliveryPersonTracking from "./Pages_merchant/AllOrder/tr";
 import Billing from "./Pages_merchant/Billing/AllBilling";
+import BillingofAdmin from "./Pages_admin/billing/AllBilling";
 import Services from "./Pages_web/Services/Services";
 import CancelledOrders from "./Pages_merchant/AllOrder/CancelledOrders";
 
@@ -713,6 +714,15 @@ function App() {
           element={
             <ProtectedRouteAdmin>
               <DeliveryManAdmin />
+            </ProtectedRouteAdmin>
+          }
+        />
+
+        <Route
+          path="/billing-admin"
+          element={
+            <ProtectedRouteAdmin>
+              <BillingofAdmin />
             </ProtectedRouteAdmin>
           }
         />
