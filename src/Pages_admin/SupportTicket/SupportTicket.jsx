@@ -9,6 +9,7 @@ import DeleteUser from "../../Components_admin/DeleteUser/DeleteUser";
 import { Pagination, Stack } from "@mui/material";
 import { BsChatLeftDots } from "react-icons/bs";
 
+
 const SupportTicket = () => {
   const [showDeleteModel, setShowDeleteModel] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,6 +26,7 @@ const SupportTicket = () => {
   useEffect(() => {
     const fetchSupportTicket = async () => {
       const response = await getSupportTicket();
+      console.log("response",response);
       if (response.status) {
         setSupportTicket(response.data.data.map((ticket, index) => ({
           ...ticket,

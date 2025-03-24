@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
+import { getSupportTicket } from "./SupportTicket"
 
 const API = axios.create({
   baseURL: "https://create-courier-8.onrender.com/",
@@ -14,9 +15,6 @@ export const socket = io("https://create-courier-8.onrender.com/", {
   auth: {
     token: localStorage.getItem("accessToken")
   },
-  query: {
-    userId: localStorage.getItem("merchnatId")
-  },
   reconnection: true,
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
@@ -25,11 +23,22 @@ export const socket = io("https://create-courier-8.onrender.com/", {
 });
 
 // Socket event listeners
-socket.on("connect", () => {
+socket.on("connect", async () => {
   console.log("Socket connected successfully");
+
   const userId = localStorage.getItem("merchnatId");
   if (userId) {
     socket.emit("userdata", { userId });
+    // Fetch and log the list of support tickets
+    const response = await getSupportTicket();
+    console.log("responsesdsf", response);
+    if (response.data.message == "Support ticket get successfully") {
+      if (response.data.data != null && response.data.data.length > 0) {
+        response.data.data.forEach(element => {
+          socket.emit("SupportTicketconnect", { conectid: element._id });
+        });
+      }
+    }
   }
 });
 

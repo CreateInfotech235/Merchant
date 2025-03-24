@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import show from "../../assets_admin/show.png";
 import Loader from "../../Components_admin/Loader/Loader";
 import { BsChatLeftDots } from "react-icons/bs";
-import { socket } from "../../Components_merchant/Api/Api";
 
 
 
@@ -43,6 +42,8 @@ const SupportTicket = () => {
     setLoading(true);
     try {
       const response = await getSupportTicket();
+      console.log(response,"re");
+      
       setlistofproblem(response?.data?.data || []);
     } catch (error) {
       console.error("Failed to fetch support tickets:", error);

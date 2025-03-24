@@ -126,7 +126,7 @@ useEffect(() => {
                 footer?.data?.webFooter?.ContactUs?.map((link, index) => (
                   <li key={index} className="flex items-center gap-2">
                     {contactLink.find(item => item.type === link?.type)?.icon}
-                    <Link to={contactLink.find(item => item.type === link?.type)?.startpoint + link?.link.replace(/ /g, "")} className="hover:text-gray-600" style={{ wordBreak: "break-all" }} target="_blank">
+                    <Link to={contactLink.find(item => item.type === link?.type)?.startpoint + link?.link.replace(/ /g, "")} className="hover:text-gray-600" style={{ wordBreak: link?.type === "EMAIL" ? "break-all" : "" }} target="_blank">
                       {link?.data}
                     </Link>
                   </li>
