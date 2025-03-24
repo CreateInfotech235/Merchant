@@ -4,12 +4,12 @@ import { io } from "socket.io-client";
 import { getSupportTicket } from "./SupportTicket"
 
 const API = axios.create({
-  baseURL: "http://localhost:8001/",
+  baseURL: "https://create-courier-8.onrender.com/",
   headers: { "Content-Type": "application/json" },
 });
 
 // Initialize socket connection
-export const socket = io("http://localhost:8001/", {
+export const socket = io("https://create-courier-8.onrender.com/", {
   transports: ["websocket"],
   autoConnect: true, // Changed to false to prevent auto-connection
   auth: {

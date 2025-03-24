@@ -26,7 +26,7 @@ function ViewSupportTickets() {
     const fetchMessages = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8001/mobile/auth/support-tickets/${ticketId}/messages`
+          `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`
         );
         setMessages(response.data);
 
@@ -107,7 +107,7 @@ function ViewSupportTickets() {
     if (inputValue.trim()) {
       axios
         .post(
-          `http://localhost:8001/mobile/auth/support-tickets/${ticketId}/messages`,
+          `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`,
           { text: inputValue, sender: "merchant" }
         )
         .then(() => {
