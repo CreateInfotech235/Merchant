@@ -813,7 +813,7 @@ const Billing = () => {
                                       }
                                     </td>
                                     <td className="p-3 ">
-                                      {subOrder?.deliveryTime}
+                                      {subOrder?.deliveryTime ?? "-"}
                                     </td>
 
                                     <td className="p-3 ">

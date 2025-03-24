@@ -447,8 +447,10 @@ const MultiOrder = () => {
       setTimeout(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const status = urlParams.get('status');
-        setFilterStatus(status.toUpperCase());
-        filterOrders(searchQuery);
+        if (status) {
+          setFilterStatus(status.toUpperCase());
+          filterOrders(searchQuery);
+        } 
       }, 10);
     }
   }, [loading]);

@@ -18,7 +18,8 @@ import { RiFileList3Line } from "react-icons/ri";
 import instructions from '../../assets_mercchant/instructions.png'
 import { CiImageOn } from "react-icons/ci";
 import { TbHandFinger } from "react-icons/tb";
-
+import { IoTimeOutline } from "react-icons/io5";
+import  datatime  from "../../assets_mercchant/calendar.png";
 
 // instructions.png
 
@@ -238,8 +239,8 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                 </div>
                 <div className="row mb-2">
                   <label className="col-6 d-flex align-items-center text-sm">
-                    <GiDuration className="me-2" />
-                   Average Duration:
+                    <IoTimeOutline className="me-2" />
+                    Average Duration:
                   </label>
                   <span className="col-6 text-end text-sm py-2">
                     {delivery?.duration
@@ -249,25 +250,61 @@ const OrderInfoModalMulti = ({ Order, onHide, isSingle, parcelTypeDetail }) => {
                       : "-"}
                   </span>
                 </div>
-                <div className="row mb-2">
-                  <label className="col-6 d-flex align-items-center text-sm">
-                    <FaCashRegister className="me-2" />
-                    Payment Collection:
-                  </label>
-                  <span className="col-6 text-end text-sm py-2">
-                    £{delivery.paymentCollectionRupees}
-                  </span>
-                </div>
+                {(delivery?.time?.end && delivery?.time?.start) &&
+                  <div className="row mb-2">
+                    <label className="col-6 d-flex align-items-center text-sm">
+                      <IoTimeOutline className="me-2" />
+                      Time Taken:
+                    </label>
+                    <span className="col-6 text-end text-sm py-2">
+                      {delivery?.time?.end && delivery?.time?.start
+                        ? (() => {
+                          const totalSeconds = (new Date(delivery?.time?.end) - new Date(delivery?.time?.start)) / 1000;
+                          const hours = Math.floor(totalSeconds / 3600);
+                          const minutes = Math.floor((totalSeconds % 3600) / 60);
+                          const seconds = Math.floor(totalSeconds % 60);
+                          return `${hours}h ${minutes}m ${seconds}s`;
+                        })()
+                        : "-"}
+                    </span>
+                  </div>
+                }
 
-                <div className="row mb-2">
-                  <label className="col-6 d-flex align-items-center text-sm">
-                    <img src={instructions} alt="" style={{ width: "19px", marginRight: "5px" }} />
+                {
+                  delivery?.time?.start &&
+                  <div className="row mb-2">
+                    <label className="col-6 d-flex align-items-center text-sm">
+                      <img src={datatime} alt="" style={{ width: "19px", marginRight: "5px" }} />
+                      Pickup Time:
+                    </label>
+                    <span className="col-6 text-end text-sm py-2">
+                      {delivery?.time?.start ? new Date(delivery?.time?.start).toLocaleString() : "-"}
+                    </span>
+                  </div>
+                }
+                {
+                  delivery?.time?.end && <div className="row mb-2">
+                    <label className="col-6 d-flex align-items-center text-sm">
+                      <img src={datatime} alt="" style={{ width: "19px", marginRight: "5px" }} />
+                      Delivery Time:
+                    </label>
+                    <span className="col-6 text-end text-sm py-2">
+                      {delivery?.time?.end ? new Date(delivery?.time?.end).toLocaleString() : "-"}
+                    </span>
+                  </div>
+                }
+
+                {delivery?.description?.trim() &&
+                  <div className="row mb-2">
+                    <label className="col-6 d-flex align-items-center text-sm">
+                      <img src={instructions} alt="" style={{ width: "19px", marginRight: "5px" }} />
                     Instructions:
                   </label>
-                  <span className="col-6 text-end text-sm py-2">
-                    {delivery?.description ?? "-"}
-                  </span>
-                </div>
+                    <span className="col-6 text-end text-sm py-2">
+                      {delivery?.description?.trim() ?? "-"}
+                    </span>
+                  </div>
+                }
                 <div className="flex justify-between">
                   {delivery?.pickupsignature && (
                     <div>
