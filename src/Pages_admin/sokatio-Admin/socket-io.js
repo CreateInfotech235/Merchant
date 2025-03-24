@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-export const socket = io("https://create-courier-8.onrender.com/admin", {
+export const socket = io("http://localhost:8001/admin", {
   transports: ["websocket"],
   autoConnect: false,
   auth: {

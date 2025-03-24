@@ -66,7 +66,7 @@ const Vehicle = () => {
   const VehicleImage = (url) => {
     return (
       <img
-        src={`https://create-courier-8.onrender.com/public/${url}`}
+        src={`http://localhost:8001/public/${url}`}
         onError={(e) => {
           e.target.src = vehicle1;
         }}

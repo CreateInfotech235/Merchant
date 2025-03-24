@@ -154,7 +154,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
         toast.warning(`${newNotification.message}, subOrderId: ${newNotification.subOrderId}  , customerName: ${newNotification.customerName}`, toastConfig);
       } else if (newNotification.title.toLowerCase().includes('cancelled')) {
         toast.error(`${newNotification.message}, subOrderId: ${newNotification.subOrderId}  , customerName: ${newNotification.customerName}`, toastConfig);
-      } else if (newNotification.title.toLowerCase().includes('order delivered')) {
+      } else if (newNotification.title.toLowerCase().includes('order delivered')||newNotification.title.toLowerCase().includes('order completed')) {
         toast.success(`${newNotification.message}, subOrderId: ${newNotification.subOrderId}  , customerName: ${newNotification.customerName}`, toastConfig);
       } else {
         toast.info(`${newNotification.message}, subOrderId: ${newNotification.subOrderId}  , customerName: ${newNotification.customerName}`, toastConfig);
@@ -178,6 +178,7 @@ const Header = ({ themeMode, toggleThemeMode, selected, setSelected }) => {
       { title: 'picked up', color: 'text-[#ffaf1a]' },
       { title: 'cancelled', color: 'text-[#ff0000]' },
       { title: 'order Delivered', color: 'text-[#217d13]' },
+      { title: 'order Completed', color: 'text-[#217d13]' },
     ];
     if (isRead) {
       return 'text-[#505050FF]';

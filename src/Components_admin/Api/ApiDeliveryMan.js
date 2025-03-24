@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://create-courier-8.onrender.com/deliveryBoy",
+  baseURL: "http://localhost:8001/deliveryBoy",
   headers: { "Content-Type": "application/json" },
 });
 

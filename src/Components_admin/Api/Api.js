@@ -2,7 +2,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { getSupportTicket } from "./SupportTicket";
 // Initialize socket connection
-export const socket = io("https://create-courier-8.onrender.com/", {
+export const socket = io("http://localhost:8001/", {
   transports: ["websocket"],
   autoConnect: true, // Changed to false to prevent auto-connection
   auth: {
@@ -15,7 +15,7 @@ export const socket = io("https://create-courier-8.onrender.com/", {
   timeout: 20000,
 });
 const API = axios.create({
-  baseURL: "https://create-courier-8.onrender.com/admin",
+  baseURL: "http://localhost:8001/admin",
   headers: { "Content-Type": "application/json" },
 });
 

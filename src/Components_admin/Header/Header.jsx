@@ -119,7 +119,7 @@ const Header = ({ toggleThemeMode, themeMode }) => {
 
       // Make the PATCH request to log out
       const response = await axios.patch(
-        "https://create-courier-8.onrender.com/admin/auth/logout",
+        "http://localhost:8001/admin/auth/logout",
         {
           refreshToken: refreshToken,
           personType: "ADMIN",
