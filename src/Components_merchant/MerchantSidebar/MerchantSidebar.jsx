@@ -15,7 +15,7 @@ import { BsBoxSeam } from "react-icons/bs";
 import { LuBoxes } from "react-icons/lu";
 import "./MerchantSidebar.css";
 
-const MerchantSidebar = () => {
+const MerchantSidebar = ({showcount}) => {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [currentpage, setCurrentpage] = useState(0);
   const [ismobile, setIsmobile] = useState(false);
@@ -364,13 +364,17 @@ const MerchantSidebar = () => {
           <li className="my-2">
             <Link to="/Show-list-of-support-ticket" className="link" >
               <Button
-                className={`w-100 ${currentpage === 7 ? "active" : ""}`}
+                className={`w-100 relative ${currentpage === 7 ? "active" : ""}`}
                 onClick={() => { setCurrentpage(7); setSidebarVisible(false) }}
               >
                 <span className=" pe-4">
                   <img src={support} style={{ width: "25px" }} alt="offers" />
                 </span>
                 Support Ticket
+                {showcount > 0 && (
+                  <span className="absolute top-0 right-0 w-[20px] h-[20px] rounded-full bg-red-500 text-white flex items-center justify-center text-xs">{showcount}</span>
+                )}
+
               </Button>
             </Link>
           </li>

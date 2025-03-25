@@ -36,7 +36,6 @@ export const sendMessageAdminToUser = (ticketId, message) => {
 };
 
 socket.on("connect", () => {
-  console.log("Socket connected successfully");
   const userId = localStorage.getItem("merchnatId");
   if (userId) {
     socket.emit("userdata", { userId });

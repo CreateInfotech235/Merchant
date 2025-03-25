@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -15,7 +15,7 @@ import { BsChatLeftDots } from "react-icons/bs";
 
 
 
-const SupportTicket = () => {
+const SupportTicket = ({ unreadMessages }) => {
   const [userData, setUserData] = useState({ name: "", userid: "" });
   const [showpopup, setshowpopup] = useState(false);
   const [admins, setAdmins] = useState([]);
@@ -26,6 +26,7 @@ const SupportTicket = () => {
   const [selectedTicketId, setSelectedTicketId] = useState(null);
 
   const merchnatId = localStorage.getItem("merchnatId");
+
   // console.log(merchnatId);
   const getadmindatafromapi = async () => {
     setLoading(true);
@@ -42,8 +43,8 @@ const SupportTicket = () => {
     setLoading(true);
     try {
       const response = await getSupportTicket();
-      console.log(response,"re");
-      
+      console.log(response, "re");
+
       setlistofproblem(response?.data?.data || []);
     } catch (error) {
       console.error("Failed to fetch support tickets:", error);
@@ -52,6 +53,8 @@ const SupportTicket = () => {
   };
 
   useEffect(() => {
+    console.log("page load",unreadMessages);
+
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
       const parsedUserData = JSON.parse(storedUserData);
@@ -70,13 +73,14 @@ const SupportTicket = () => {
         await getSupportTicketapi();
       } catch (error) {
         console.error("Failed to fetch admin data:", error);
-      }finally{
+      } finally {
         setLoading(false);
       }
     };
 
     fetchData();
   }, []);
+
 
 
   const validationSchema = Yup.object({
@@ -147,6 +151,20 @@ const SupportTicket = () => {
     });
     setshowpopup(true);
   };
+
+  // Wrap the Link component with useMemo
+  const ChatLink = React.memo(({ ticket, unreadMessages }) => (
+    <Link to="/view-tickets-merchant" className="w-full h-full flex justify-center items-center" state={{ ticketId: ticket._id, Subject: ticket.subject }}>
+      <div className="relative">
+        <BsChatLeftDots alt="Show" className="mx-auto text-2xl text-blue-500" />
+        {unreadMessages[ticket._id] > 0 && (
+          <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+            {unreadMessages[ticket._id]}
+          </div>
+        )}
+      </div>
+    </Link>
+  ));
 
   return (
     <div className="w-full p-[20px] bg-white text-black rounded flex items-stretch flex-col">
@@ -335,18 +353,8 @@ const SupportTicket = () => {
                       Update
                     </button>
                   </td>
-                  <td className="px-4 py-2 flex justify-center items-center border">
-                    <Link
-                      to="/view-tickets-merchant"
-                      state={{ ticketId: ticket._id }}
-                    >
-                      <button
-                        onClick={() => setSelectedTicketId(ticket._id)}
-                        className="show-btn"
-                      >
-                        <BsChatLeftDots alt="Show" className="mx-auto text-2xl text-blue-500"/>
-                      </button>
-                    </Link>
+                  <td className="px-4 py-2  border">
+                    <ChatLink ticket={ticket} unreadMessages={unreadMessages} />
                   </td>
                 </tr>
               ))
