@@ -251,7 +251,7 @@ function ViewSupportTickets() {
     }}>
       {/* Header */}
       <div className="bg-blue-600 text-white p-2 text-center font-semibold flex justify-between items-center">
-        <Link to="/Show-list-of-support-ticket" className="flex items-center">
+        <Link to="/support-ticket" className="flex items-center">
           <FaArrowLeft className="mr-2" />
           Back
         </Link>
