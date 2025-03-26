@@ -15,7 +15,7 @@ import { BsChatLeftDots } from "react-icons/bs";
 
 
 
-const SupportTicket = ({ unreadMessages }) => {
+const SupportTicket = ({ unreadMessages={} }) => {
   const [userData, setUserData] = useState({ name: "", userid: "" });
   const [showpopup, setshowpopup] = useState(false);
   const [admins, setAdmins] = useState([]);

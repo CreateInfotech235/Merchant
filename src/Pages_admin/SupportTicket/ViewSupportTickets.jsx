@@ -34,6 +34,8 @@ function ViewSupportTickets() {
     return <div>No ticket selected. Please go back and select a ticket.</div>;
   }
 
+
+
   const setAllMessagesRead = async () => {
     try {
       const response = await axios.patch(
@@ -124,7 +126,6 @@ function ViewSupportTickets() {
       socket.off("SupportTicketssendMessage");
       socket.off("messageRead");
       socket.off("messageDelete");
-      socket.disconnect();
     };
   }, [ticketId, hasScrolledToRead]);
 

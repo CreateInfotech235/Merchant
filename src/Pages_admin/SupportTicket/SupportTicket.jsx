@@ -10,7 +10,7 @@ import { Pagination, Stack } from "@mui/material";
 import { BsChatLeftDots } from "react-icons/bs";
 
 
-const SupportTicket = () => {
+const SupportTicket = ({ unreadMessages = {} }) => {
   const [showDeleteModel, setShowDeleteModel] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +26,7 @@ const SupportTicket = () => {
   useEffect(() => {
     const fetchSupportTicket = async () => {
       const response = await getSupportTicket();
-      console.log("response",response);
+      console.log("response", response);
       if (response.status) {
         setSupportTicket(response.data.data.map((ticket, index) => ({
           ...ticket,
@@ -138,9 +138,14 @@ const SupportTicket = () => {
                       <Link to="/view-tickets" state={{ ticketId: ticket._id }}>
                         <button
                           onClick={() => setSelectedTicketId(ticket._id)}
-                          className="show-btn"
+                          className="show-btn relative"
                         >
                           <BsChatLeftDots alt="Show" className="mx-auto text-2xl text-blue-500" />
+                          {unreadMessages[ticket._id] > 0 && (
+                            <span className="absolute top-[-7px] right-[-7px] w-[17px] h-[17px] rounded-full bg-red-500 text-white flex items-center justify-center text-xs">
+                              {unreadMessages[ticket._id]}
+                            </span>
+                          )}
                         </button>
                       </Link>
                     </div>

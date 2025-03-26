@@ -9,7 +9,6 @@ import SubscriptionPlanModel from "../Pages_merchant/SubscriptionPlan/Subscripti
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { socket } from "../Components_merchant/Api/Api";
-import { getSupportTicket } from "../Components_merchant/Api/SupportTicket";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -22,7 +21,6 @@ const ProtectedRoute = ({ children }) => {
   const merchantId = localStorage.getItem("merchnatId");
   const userData = JSON.parse(localStorage.getItem("userData"));
   const [showcount, setShowcount] = useState(0);
-  const [ticketIdData, setTicketIdData] = useState(null);
   const navigate = useNavigate();
 
 
@@ -48,11 +46,30 @@ const ProtectedRoute = ({ children }) => {
     }
   }, [themeMode]);
 
+
+
+
+  useEffect(() => {
+    // socket connection aollradey
+    socket.connect();
+    socket.on("Messagedataupdate", (data) => {
+      console.log("Messagedataupdate", data);
+      if (data.unreadMessages.for === "admin") {
+        setUnreadMessages(data.unreadMessages.unreadMessages);
+        setShowcount(data.unreadMessages.totalUnreadMessages);
+      }
+      // fetchMessages();
+    });
+
+    return () => {
+      socket.off("Messagedataupdate");
+    };
+  }, []);
+
   // Fetch subscription info
   useEffect(() => {
     const fetchSubscriptionInfo = async (id) => {
       const response = await SubscriptionInfo(id);
-      console.log(response, "response123");
 
       if (response.message == "Token is invalid") {
         localStorage.removeItem("accessToken");
@@ -61,7 +78,6 @@ const ProtectedRoute = ({ children }) => {
         navigate("/");
         window.location.reload();
       }
-      console.log("response.message123", response.message);
 
       if (response?.message?.includes("admin rejected your request")) {
         console.log(response.message);
@@ -114,110 +130,25 @@ const ProtectedRoute = ({ children }) => {
     setShowModel(false);
   };
 
-  function getunreadmessages(data) {
-    const unreadCounts = {};
-    const unreadCount = data.messages.filter(
-      msg => msg.sender.toLowerCase() === "admin" && !msg.isRead
-    )?.length || 0;
-    if (unreadCount > 0) {
-      unreadCounts[data._id] = unreadCount;
-    }
-    return unreadCounts;
-  }
-
-
   const fetchMessages = async () => {
     try {
-      const response = await getSupportTicket();
-      console.log("Support ticket response:", response);
-      if (response.data.message.includes("Support ticket get successfully")) {
-        // Calculate unread messages per ticket
-        const unreadCounts = {};
-        response.data.data.forEach(ticket => {
-          const unreadCount = getunreadmessages(ticket);
-          unreadCounts[ticket._id] = unreadCount[ticket._id];
-        });
-        setUnreadMessages(unreadCounts);
+      const merchantId = localStorage.getItem("merchnatId");
+      const response = await axios.get(`https://create-courier-8.onrender.com/mobile/auth/unreadMessages/${merchantId}`);
 
-        // Calculate total unread messages
-        const totalUnread = Object.values(unreadCounts).reduce((total, count) => {
-          return count !== undefined ? total + count : total;
-        }, 0);
-        setShowcount(totalUnread);
+      if (response.data) {
+        if (response.data.for === "admin") {
+          setUnreadMessages(response.data.unreadMessages || {});
+          setShowcount(response.data.totalUnreadMessages || 0);
+        }
       }
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("Error fetching unread messages:", error);
     }
   };
 
-
-
   useEffect(() => {
-
-
     fetchMessages();
-
-    // Socket connection with debug logs
-    console.log("Attempting socket connection...");
-    socket.connect();
-
-    socket.on("connect", () => {
-      console.log("Socket connected successfully");
-    });
-
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
-
-    // Listen for new messages
-    socket.on("SupportTicketssendMessage", (message) => {
-      if (message.sender.toLowerCase() === "admin") {
-        setUnreadMessages(prev => {
-          const newCounts = {
-            ...prev,
-            [message.ticketId]: (prev[message.ticketId] || 0) + 1
-          };
-          return newCounts;
-        });
-      }
-    });
-
-    // Update the messageRead socket handler
-    socket.on("messageRead", ({ ticketId, update }) => {
-      console.log("received messageRead event");
-      setUnreadMessages(prevUnreadMessages => {
-        const newUnreadMessages = { ...prevUnreadMessages };
-        // Count unread admin messages for this ticket
-        const unreadCount = update.messages.filter(
-          msg => msg.sender.toLowerCase() === "admin" && !msg.isRead
-        ).length;
-
-        // Update count for this ticket
-        if (unreadCount > 0) {
-          newUnreadMessages[ticketId] = unreadCount;
-        } else {
-          delete newUnreadMessages[ticketId]; // Remove ticket if no unread messages
-        }
-
-        return newUnreadMessages;
-      });
-    });
-
-    return () => {
-      console.log("Cleaning up socket connection...");
-      socket.off("SupportTicketssendMessage");
-      socket.off("messageRead");
-      socket.disconnect();
-    };
   }, []);
-
-  // Separate useEffect for updating showcount when unreadMessages changes
-  useEffect(() => {
-    const totalUnread = Object.values(unreadMessages).reduce((total, count) => {
-      return count !== undefined ? total + count : total;
-    }, 0);
-    setShowcount(totalUnread);
-  }, [unreadMessages]);
 
   console.log(unreadMessages, "unreadMessages");
 
@@ -258,7 +189,7 @@ const ProtectedRoute = ({ children }) => {
 
               {token ? cloneElement(children, {
                 unreadMessages,
-                socket
+                fetchMessages
               }) : null}
             </div>
           </div>

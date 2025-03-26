@@ -20,7 +20,7 @@ import deposite from "../../assets_admin/deposite.svg";
 import customer from "../../assets_admin/customer.png";
 import Location from "../../assets_admin/location (1).png";
 import billing from "../../assets_admin/billing.png";
-const Sidebar = () => {
+const Sidebar = ({ showcount }) => {
   const [activeTab, setActiveTab] = useState(null);
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const location = useLocation(); // Hook to get current location (URL)
@@ -76,7 +76,7 @@ const Sidebar = () => {
       ],
       isActive: false,
       num: 3,
-      Listofpath: ["/merchant", "/unsubscribed-merchant", "/demo-used-merchant" ,"/subscription-required"]
+      Listofpath: ["/merchant", "/unsubscribed-merchant", "/demo-used-merchant", "/subscription-required"]
     },
 
     {
@@ -205,7 +205,7 @@ const Sidebar = () => {
       num: 16,
       Listofpath: ["/notification"]
     },
-  
+
   ];
 
   console.log(activeTab, "activeTab");
@@ -240,7 +240,7 @@ const Sidebar = () => {
                   </span>
                   {item.label}
                   <span className={`arrow `}>
-                    <FaAngleRight style={{ color: "#fff"  ,transform: `rotate(${activeTab === item.num ? "90deg" : "0deg"})`,transition: "transform 0.2s ease-in-out"}} />
+                    <FaAngleRight style={{ color: "#fff", transform: `rotate(${activeTab === item.num ? "90deg" : "0deg"})`, transition: "transform 0.2s ease-in-out" }} />
                   </span>
                 </Button>
                 {activeTab === item.num && (
@@ -257,15 +257,18 @@ const Sidebar = () => {
               </li>
             ) : (
               <li className="my-2" key={index}>
-                <Link to={item.path} className="link">
+                <Link to={item.path} className="link ">
                   <Button
-                    className={`w-100 ${activeTab === item.num ? "active" : ""}`}
+                    className={`w-100 relative ${activeTab === item.num ? "active" : ""}`}
                     onClick={() => setActiveTab(item.num)}
                   >
                     <span className="icon">
                       <img src={item.icon} alt={item.label} />
                     </span>
                     {item.label}
+                    {item.path == "/support-ticket" && showcount > 0 && (
+                      <span className="absolute top-0 right-0 w-[20px] h-[20px] rounded-full bg-red-500 text-white flex items-center justify-center text-xs">{showcount}</span>
+                    )}
                   </Button>
                 </Link>
               </li>
