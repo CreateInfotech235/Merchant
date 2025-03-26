@@ -148,7 +148,7 @@ const Users = () => {
             </button>
           </div>
         </div>
-        <div>
+        {/* <div>
           <Link to="/add-user">
             <button
               className="btn text-white flex items-center"
@@ -158,7 +158,7 @@ const Users = () => {
               Add User
             </button>
           </Link>
-        </div>
+        </div> */}
       </div>
 
       <div className="table-responsive">

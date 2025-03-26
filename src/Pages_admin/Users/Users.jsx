@@ -300,6 +300,23 @@ const Users = () => {
           text="User"
         />
       )}
+      {showStatusUpdateModal && statusUpdateUser && (
+        <StatusUpdateModal
+          userid={statusUpdateUser.userid}
+          initialReason={statusUpdateUser.reason}
+          currentStatus={statusUpdateUser.currentStatus}
+          onStatusUpdate={(reason, newStatus) => {
+            updateUserStatus(statusUpdateUser.userid, newStatus, reason);
+            setShowStatusUpdateModal(false);
+            setStatusUpdateUser(null);
+            fetchUsers();
+          }}
+          onClose={() => {
+            setShowStatusUpdateModal(false);
+            setStatusUpdateUser(null);
+          }}
+        />
+      )}
 
     </div>
   );

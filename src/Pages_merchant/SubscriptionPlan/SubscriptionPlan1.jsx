@@ -31,7 +31,7 @@ const SubscriptionPlan1 = ({ plans }) => {
         </div>
 
         <div className="row row-cols-1 row-cols-md-3 g-4">
-          {plans.filter(plan => plan.type !== "1 Month Free Trial").map((plan, i) => (
+          {plans.filter(plan => plan.type !== "1 Month Free Trial" && plan.isDesable === false).map((plan, i) => (
             <div key={i} className="col">
               <div className={`card border ${plan.type ? 'border-primary' : 'border-light'} h-100`}>
                 <div className="card-header bg-transparent border-bottom-0 pt-4">
@@ -47,28 +47,6 @@ const SubscriptionPlan1 = ({ plans }) => {
                   </div>
                   
                   <div className="fs-5">
-                    {/* {Object.entries(featureLabels).map(([key, label]) => (
-                      <div key={key} className="d-flex align-items-center mb-3">
-                        {typeof plan.features[key] === 'boolean' ? (
-                          plan.features[key] ? (
-                            <>
-                              <i className="bi bi-check2 text-success me-3 fs-4"></i>
-                              <span>{label}</span>
-                            </>
-                          ) : (
-                            <>
-                              <i className="bi bi-dash text-muted me-3 fs-4"></i>
-                              <span className="text-muted">{label}</span>
-                            </>
-                          )
-                        ) : (
-                          <>
-                            <i className="bi bi-check2 text-success me-3 fs-4"></i>
-                            <span>{label}: {plan.features[key]}</span>
-                          </>
-                        )}
-                      </div>
-                    ))} */}
                     {plan.features.map((feature, index) => (
                       <div key={index} className="d-flex align-items-center mb-3">
                         <span>{feature}</span>

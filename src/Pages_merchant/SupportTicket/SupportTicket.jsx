@@ -15,7 +15,7 @@ import { BsChatLeftDots } from "react-icons/bs";
 
 
 
-const SupportTicket = ({ unreadMessages={} }) => {
+const SupportTicket = ({ unreadMessages = {} }) => {
   const [userData, setUserData] = useState({ name: "", userid: "" });
   const [showpopup, setshowpopup] = useState(false);
   const [admins, setAdmins] = useState([]);
@@ -53,7 +53,7 @@ const SupportTicket = ({ unreadMessages={} }) => {
   };
 
   useEffect(() => {
-    console.log("page load",unreadMessages);
+    console.log("page load", unreadMessages);
 
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
@@ -291,8 +291,10 @@ const SupportTicket = ({ unreadMessages={} }) => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="9" className="text-center p-3">
-                  <Loader />
+                <td colSpan="9" className="text-center p-3 h-40">
+                  <div className="flex items-center justify-center h-full">
+                    <Loader />
+                  </div>
                 </td>
               </tr>
             ) : listofproblem.length === 0 ? (

@@ -20,6 +20,8 @@ import deposite from "../../assets_admin/deposite.svg";
 import customer from "../../assets_admin/customer.png";
 import Location from "../../assets_admin/location (1).png";
 import billing from "../../assets_admin/billing.png";
+// import { FaBox } from "react-icons/fa";
+import { CiBoxes } from "react-icons/ci";
 const Sidebar = ({ showcount }) => {
   const [activeTab, setActiveTab] = useState(null);
   const [isSidebarVisible, setSidebarVisible] = useState(false);
@@ -50,6 +52,7 @@ const Sidebar = ({ showcount }) => {
       icon: dashboard,
       isDropdown: false,
       isActive: false,
+      isicon: false,
       num: 0,
       Listofpath: ["/dashboard"]
     },
@@ -59,6 +62,7 @@ const Sidebar = ({ showcount }) => {
       icon: subcription,
       isDropdown: false,
       isActive: false,
+      isicon: false,
       num: 1,
       Listofpath: ["/subscription-required"]
     },
@@ -75,6 +79,7 @@ const Sidebar = ({ showcount }) => {
         // { path: "/subscription-required", label: "Subscription Plan" },
       ],
       isActive: false,
+      isicon: false,
       num: 3,
       Listofpath: ["/merchant", "/unsubscribed-merchant", "/demo-used-merchant", "/subscription-required"]
     },
@@ -89,26 +94,31 @@ const Sidebar = ({ showcount }) => {
         { path: "/delivery-man-destination", label: "Delivery Man Locations" },
       ],
       isActive: false,
+      isicon: false,
       num: 4,
       Listofpath: ["/delivery-man-admin", "/delivery-man-merchant", "/delivery-man-destination"]
     },
     {
-      path: "/order-admin", label: "Order", icon: notification_bell, isDropdown: false, isActive: false,
+      path: "/order-admin", label: "Order", icon: <CiBoxes className="text-white text-[20px]" />, isDropdown: false, isActive: false,
+      isicon: true,
       num: 5,
       Listofpath: ["/order-admin"]
     },
     {
       path: "/all-customer-admin", label: "Customer", icon: customer, isDropdown: false, isActive: false,
+      isicon: false,
       num: 6,
       Listofpath: ["/all-customer-admin"]
     },
     {
       path: "/billing-admin", label: "Billing", icon: billing, isDropdown: false, isActive: false,
+      isicon: false,
       num: 7,
       Listofpath: ["/billing-admin"]
     },
     {
       path: "/map-setting", label: "Map Setting", icon: Location, isDropdown: false, isActive: false,
+      isicon: false,
       num: 8,
       Listofpath: ["/map-setting"]
     },
@@ -123,6 +133,7 @@ const Sidebar = ({ showcount }) => {
         { path: "/payment-gateway", label: "Payment Gateway" },
       ],
       isActive: false,
+      isicon: false,
       num: 9,
       Listofpath: ["/vehicle", "/extra-charge", "/parcel-type", "/payment-gateway"]
     },
@@ -136,6 +147,7 @@ const Sidebar = ({ showcount }) => {
         { path: "/rejected-admin", label: "Rejected" },
       ],
       isActive: false,
+      isicon: false,
       num: 10,
       Listofpath: ["/pending-admin", "/approved-admin", "/rejected-admin"]
     },
@@ -148,11 +160,13 @@ const Sidebar = ({ showcount }) => {
         { path: "/deposite-merchant", label: "Merchant" },
       ],
       isActive: false,
+      isicon: false,
       num: 11,
       Listofpath: ["/deposite-delivery-man", "/deposite-merchant"]
     },
     {
       path: "/invoice-setting", label: "Invoice Setting", icon: invoice1, isDropdown: false, isActive: false,
+      isicon: false,
       num: 12,
       Listofpath: ["/invoice-setting"]
     },
@@ -166,6 +180,7 @@ const Sidebar = ({ showcount }) => {
         { path: "/currency-setting", label: "Currency Setting" },
       ],
       isActive: false,
+      isicon: false,
       num: 13,
       Listofpath: ["/notification-setting", "/order-setting", "/currency-setting"]
     },
@@ -187,26 +202,31 @@ const Sidebar = ({ showcount }) => {
         { path: "/walk-through", label: "Walk Through" },
       ],
       isActive: false,
+      isicon: false,
       num: 14,
       Listofpath: ["/common-component", "/home-page", "/why-delivery", "/client-review", "/download-app", "/delivery-patner", "/contact-info", "/about-us", "/privacy-policy", "/terms-condition", "/walk-through"]
     },
     {
       path: "/support-ticket", label: "Support Ticket", icon: support_ticket, isDropdown: false, isActive: false,
+      isicon: false,
       num: 15,
       Listofpath: ["/support-ticket"]
     },
     {
       path: "/auto-mail", label: "Auto Mail", icon: mail, isDropdown: false, isActive: false,
+      isicon: false,
       num: 16,
       Listofpath: ["/auto-mail"]
     },
     {
       path: "/offer", label: "Offer", icon: offer1, isDropdown: false, isActive: false,
+      isicon: false,
       num: 17,
       Listofpath: ["/offer"]
     },
     {
       path: "/notification", label: "Notification", icon: notification_bell, isDropdown: false, isActive: false,
+      isicon: false,
       num: 18,
       Listofpath: ["/notification"]
     },
@@ -241,9 +261,15 @@ const Sidebar = ({ showcount }) => {
                   className={`w-100 ${activeTab === item.num ? "active" : ""}`}
                   onClick={() => toggleSubmenu(item.num)}
                 >
-                  <span className="icon">
-                    <img src={item.icon} alt={item.label} />
-                  </span>
+                  {item.isicon ? (
+                    <span className="icon">
+                      {item.icon}
+                    </span>
+                  ) : (
+                    <span className="icon">
+                      <img src={item.icon} alt={item.label} />
+                    </span>
+                  )}
                   {item.label}
                   <span className={`arrow `}>
                     <FaAngleRight style={{ color: "#fff", transform: `rotate(${activeTab === item.num ? "90deg" : "0deg"})`, transition: "transform 0.2s ease-in-out" }} />
@@ -268,9 +294,15 @@ const Sidebar = ({ showcount }) => {
                     className={`w-100 relative ${activeTab === item.num ? "active" : ""}`}
                     onClick={() => setActiveTab(item.num)}
                   >
-                    <span className="icon">
-                      <img src={item.icon} alt={item.label} />
-                    </span>
+                    {item.isicon ? (
+                      <span className="icon">
+                        {item.icon}
+                      </span>
+                    ) : (
+                      <span className="icon">
+                        <img src={item.icon} alt={item.label} />
+                      </span>
+                    )}
                     {item.label}
                     {item.path == "/support-ticket" && showcount > 0 && (
                       <span className="absolute top-0 right-0 w-[20px] h-[20px] rounded-full bg-red-500 text-white flex items-center justify-center text-xs">{showcount}</span>

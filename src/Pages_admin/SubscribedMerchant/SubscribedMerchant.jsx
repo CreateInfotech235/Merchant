@@ -128,7 +128,7 @@ const SubscribedMerchnat = () => {
             </button>
           </div>
         </div>
-        <div>
+        {/* <div>
           <Link to="/add-user">
             <button
               className="btn text-white d-flex align-items-center"
@@ -138,7 +138,7 @@ const SubscribedMerchnat = () => {
               Add User
             </button>
           </Link>
-        </div>
+        </div> */}
       </div>
 
       <div className="table-responsive">

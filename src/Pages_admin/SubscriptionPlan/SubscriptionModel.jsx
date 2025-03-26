@@ -1,13 +1,14 @@
 import { ErrorMessage, Field, Form, Formik, FieldArray } from "formik";
 import React, { useState } from "react";
-import { Modal, ModalBody, ModalHeader } from "react-bootstrap";
 import * as Yup from "yup";
 import { manageSubscription } from "../../Components_admin/Api/Subscription";
+import { AiOutlinePlus, AiOutlineClose, AiOutlineDelete } from "react-icons/ai";
+import { BiLoaderAlt } from "react-icons/bi";
+import ToggleSwitch from "./ToggleSwitch";
 
-const SubscriptionModel = ({ onHide, types, subscription }) => {
-  console.log(subscription);
-
-
+const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDesable, setIsDesable] = useState(subscription ? subscription.isDesable : false);
   const convertSecondsToDays = (seconds) => {
     return Math.floor(seconds / (24 * 60 * 60));
   };
@@ -20,6 +21,7 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
     discount: subscription ? subscription.discount : "",
     features: subscription ? subscription.features : [""],
     days: subscription ? days : "",
+    isDesable: subscription ? subscription.isDesable : false,
   };
 
   const validationSchema = Yup.object({
@@ -38,109 +40,132 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
       .typeError("Days must be a number")
       .min(1, "Days must be at least 1")
       .required("Days are required"),
+    isDesable: Yup.boolean().required("Status is required"),
   });
 
   const onSubmit = async (values) => {
-    // console.log("Form Data:", values);
-    console.log(values, 'values');
-    const response = await manageSubscription(values);
-
-    if (response) {
-      onHide();  // Close the modal after successful submission
+    try {
+      setIsLoading(true);
+      const response = await manageSubscription({ ...values, isDesable: isDesable });
+      if (response) {
+        onHide();
+        onUpdate();
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Modal show={true} onHide={() => {
-      onHide();
-      formik.resetForm(); // Reset form on modal close
-    }}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg w-full max-w-2xl mx-4">
+        {/* Modal Header */}
+        <div className="flex justify-between items-center p-4 border-b">
+          <h5 className="text-xl font-bold">
+            {types === "Add" ? "Add New" : "Update"} Subscription Plan
+          </h5>
+          <button
+            onClick={onHide}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <AiOutlineClose size={24} />
+          </button>
+        </div>
 
-      <ModalHeader closeButton>
-        <h5>Subscription Details</h5>
-      </ModalHeader>
-      <ModalBody>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {(formik) => (
-            <Form>
-              <div className="row input-box">
-                <div className="input-error col-12">
-                  <label style={{ color: "#999696" }}>Subscription Type</label>
-                  <Field
-                    type="text"
-                    name="type"
-                    className="form-control"
-                    placeholder="Subscription Type"
-                  />
-                  <ErrorMessage
-                    name="type"
-                    component="div"
-                    className="text-danger"
-                  />
-                </div>
-
-                <div className="input-error col-6">
-                  <label style={{ color: "#999696" }}>Amount</label>
-                  <Field
-                    type="text"
-                    name="amount"
-                    className="form-control"
-                    inputMode="numeric"
-                    placeholder="Amount"
-                    pattern="^\d+(\.\d{1,2})?$"
-                  />
-                  <ErrorMessage
-                    name="amount"
-                    component="div"
-                    className="text-danger"
-                  />
-                </div>
-
-                <div className="input-error col-6">
-                  <label style={{ color: "#999696" }}>Discount (%)</label>
-                  <Field
-                    type="text"
-                    name="discount"
-                    className="form-control"
-                    placeholder="Discount"
-                  />
-                  <ErrorMessage
-                    name="discount"
-                    component="div"
-                    className="text-danger"
-                  />
-                </div>
-
-                <div className="input-error col-12">
-                  <label style={{ color: "#999696" }}>
-                    Days
-                  </label>
-                  <Field
-                    type="text"
-                    name="days"
-                    className="form-control"
-                    placeholder="days"
-                  />
-                  <ErrorMessage
-                    name="days"
-                    component="div"
-                    className="text-danger"
-                  />
-                </div>
-
-                <div className="input-error col-12">
-                  <div className="row my-2">
-                    <label className="col-6" style={{ color: "#999696" }}>
-                      Features
+        {/* Modal Body */}
+        <div className="p-6">
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
+          >
+            {(formik) => (
+              <Form className="space-y-4">
+                <div className="space-y-4">
+                  {/* Subscription Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                      Subscription Type
                     </label>
-                    <div className="col-6 text-end">
+                    <Field
+                      type="text"
+                      name="type"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter subscription type"
+                    />
+                    <ErrorMessage
+                      name="type"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+
+                  {/* Amount and Discount Row */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-600 mb-1">
+                        Amount
+                      </label>
+                      <Field
+                        type="text"
+                        name="amount"
+                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter amount"
+                      />
+                      <ErrorMessage
+                        name="amount"
+                        component="div"
+                        className="text-red-500 text-sm mt-1"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-600 mb-1">
+                        Discount (%)
+                      </label>
+                      <Field
+                        type="text"
+                        name="discount"
+                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter discount"
+                      />
+                      <ErrorMessage
+                        name="discount"
+                        component="div"
+                        className="text-red-500 text-sm mt-1"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Days */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                      Days
+                    </label>
+                    <Field
+                      type="text"
+                      name="days"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter number of days"
+                    />
+                    <ErrorMessage
+                      name="days"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+
+                  {/* Features */}
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-medium text-gray-600">
+                        Features
+                      </label>
                       <button
                         type="button"
-                        className="btn btn-primary"
+                        className="flex items-center px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100"
                         onClick={() =>
                           formik.setFieldValue("features", [
                             ...formik.values.features,
@@ -148,67 +173,82 @@ const SubscriptionModel = ({ onHide, types, subscription }) => {
                           ])
                         }
                       >
-                        Add Feature
+                        <AiOutlinePlus className="mr-1" /> Add Feature
                       </button>
                     </div>
-                  </div>
-                  <FieldArray
-                    name="features"
-                    render={(arrayHelpers) => (
-                      <>
-                        {formik.values.features.map((feature, index) => (
-                          <div key={index} className="input-group mb-2">
-                            <Field
-                              name={`features.${index}`}
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter feature"
-                            />
-                            <button
-                              type="button"
-                              className="btn btn-danger ms-2"
-                              onClick={() => arrayHelpers.remove(index)}
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-medium text-gray-600">
+                        Status
+                      </label>
+                      <ToggleSwitch
+                        checked={isDesable}
+                        setChecked={setIsDesable}
+                        className="ml-2"
+                      />
+                    </div>
+                    <FieldArray
+                      name="features"
+                      render={(arrayHelpers) => (
+                        <div className="space-y-2 max-h-60 overflow-y-auto">
+                          {formik.values.features.map((feature, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center space-x-2"
                             >
-                              Remove
-                            </button>
-                            <ErrorMessage
-                              name={`features.${index}`}
-                              component="div"
-                              className="text-danger ps-2"
-                            />
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  />
+                              <Field
+                                name={`features.${index}`}
+                                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter feature description"
+                              />
+                              <button
+                                type="button"
+                                className="p-2 text-red-500 hover:text-red-700 rounded-lg hover:bg-red-50"
+                                onClick={() => arrayHelpers.remove(index)}
+                              >
+                                <AiOutlineDelete size={20} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="d-flex justify-content-end">
-                <button
-                  type="submit"
-                  className="btn btn-primary m-3"
-                  style={{ width: "150px" }}
-                >
-                  {types === "Add" ? "Add" : "Update"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary m-3"
-                  onClick={() => {
-                    onHide();
-                    formik.resetForm();  // Reset form on cancel
-                  }}
-                  style={{ width: "150px" }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </ModalBody>
-    </Modal>
+                {/* Action Buttons */}
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button
+                    type="button"
+                    className="px-6 py-2 border rounded-lg hover:bg-gray-50"
+                    onClick={() => {
+                      onHide();
+                      formik.resetForm();
+                    }}
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <BiLoaderAlt className="animate-spin mr-2" />
+                        {types === "Add" ? "Adding..." : "Updating..."}
+                      </>
+                    ) : (
+                      types === "Add" ? "Add Plan" : "Update Plan"
+                    )}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </div>
   );
 };
 
