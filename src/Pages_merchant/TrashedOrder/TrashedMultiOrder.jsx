@@ -523,6 +523,7 @@ const TrashedMultiOrder = () => {
                                     Delivery Address (PostCode)
                                   </th>
                                   <th className="p-3">Delivery Date</th>
+                                  
                                   {/* <th className="p-3">Invoice</th> */}
                                   <th className="p-3">Status</th>
                                   <th className="p-3">Action</th>

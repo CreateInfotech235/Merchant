@@ -181,3 +181,36 @@ export const updateStatus = async (id,data) => {
     return { status: false, message: error.message };
   }
 }
+
+
+
+export const getMultiOrders = async (userId, getallcancelledorders) => {
+  try {
+    const response = await API.get(
+      `/orders/getAllOrdersFromMerchantMulti/${userId}`,
+      {
+        params: {
+          user: userId,
+          getallcancelledorders: getallcancelledorders,
+        },
+      }
+    );
+    console.log('response',response)
+
+    if (response.status === 200) {
+      //   toast.success(response.data.message);
+      return { status: true, data: response.data.data };
+    } else {
+      //   console.log("API error", response.response.data.message);
+      //   toast.error(response.response.data.message || response.message);
+      return {
+        status: false,
+        message: response.response.data.message || response.message,
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    toast.error(error.message);
+    return { status: false, message: error.message };
+  }
+};

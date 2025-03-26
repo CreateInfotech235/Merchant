@@ -1,11 +1,12 @@
 import API from "./Api";
 import { toast } from "react-toastify";
 
-export const getAllParcelTypes = async (page, pageLimit) => {
+export const getAllParcelTypes = async () => {
   try {
     const response = await API.get(
-      `/parcelType?pageCount=${page}&pageLimit=${pageLimit}`
+      `/parcelType/all`
     );
+    console.log("sdfsdfsdf", response);
     if (response.status === 200) {
       return { status: true, data: response.data.data };
     } else {
@@ -80,3 +81,4 @@ export const deleteParcelType = async (id) => {
     return { status: false, message: error.message };
   }
 };
+

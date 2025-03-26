@@ -719,6 +719,16 @@ function App() {
         />
 
         <Route
+          path="/order-admin"
+          element={
+            <ProtectedRouteAdmin>
+              <OrderAdmin />
+            </ProtectedRouteAdmin>
+          }
+        />
+
+
+        <Route
           path="/billing-admin"
           element={
             <ProtectedRouteAdmin>
