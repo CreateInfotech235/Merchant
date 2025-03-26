@@ -272,12 +272,11 @@ const SupportTicket = ({ unreadMessages={} }) => {
           </form>
         </div>
       )}
-
-      <div className="mt-8">
+      <div className="mt-8 overflow-x-auto">
         <h2 className="text-lg font-semibold mb-4">List of Support Tickets</h2>
-        <table className="min-w-full table-auto border-collapse">
+        <table className="min-w-full bg-white border border-gray-300">
           <thead>
-            <tr>
+            <tr className="w-full bg-gray-200">
               <th className="px-4 py-2 border">No</th>
               <th className="px-4 py-2 border">Date</th>
               <th className="px-4 py-2 border">Subject</th>
@@ -292,25 +291,19 @@ const SupportTicket = ({ unreadMessages={} }) => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="11" className="text-center p-3">
-                  <div className="d-flex justify-content-center">
-                    <div className="mx-auto">
-                      <Loader />
-                    </div>
-                  </div>
+                <td colSpan="9" className="text-center p-3">
+                  <Loader />
                 </td>
               </tr>
             ) : listofproblem.length === 0 ? (
               <tr>
-                <td colSpan="11" className="text-center p-3">
-                  <div className="d-flex justify-content-center">
-                    <div className="mx-auto">No Data Found</div>
-                  </div>
+                <td colSpan="9" className="text-center p-3">
+                  No Data Found
                 </td>
               </tr>
             ) : (
               listofproblem.map((ticket, index) => (
-                <tr key={ticket._id}>
+                <tr key={ticket._id} className="hover:bg-gray-100">
                   <td className="px-4 py-2 border">{index + 1}</td>
                   <td className="px-4 py-2 border">
                     {formatDate(ticket.createdAt)}
@@ -323,16 +316,9 @@ const SupportTicket = ({ unreadMessages={} }) => {
                   <td className="px-4 py-2 border">
                     <div className="flex justify-center items-center">
                       <div
-                        style={{
-                          width: "10px",
-                          height: "10px",
-                          borderRadius: "50%",
-                          backgroundColor: ticket.problemSolved
-                            ? "green"
-                            : "red",
-                        }}
+                        className={`w-2.5 h-2.5 rounded-full ${ticket.problemSolved ? "bg-green-500" : "bg-red-500"}`}
                       ></div>
-                      <div className="ml-[10px]">
+                      <div className="ml-2">
                         {ticket.problemSolved ? "Solved" : "Unresolved"}
                       </div>
                     </div>
@@ -353,7 +339,7 @@ const SupportTicket = ({ unreadMessages={} }) => {
                       Update
                     </button>
                   </td>
-                  <td className="px-4 py-2  border">
+                  <td className="px-4 py-2 border">
                     <ChatLink ticket={ticket} unreadMessages={unreadMessages} />
                   </td>
                 </tr>

@@ -9,7 +9,7 @@ const API = axios.create({
 });
 
 // Initialize socket connection
-export const socket = io("http://localhost:8001/", {
+export const socket = io("https://create-courier-8.onrender.com/", {
   transports: ["websocket"],
   autoConnect: true, // Changed to false to prevent auto-connection
   auth: {

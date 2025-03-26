@@ -135,7 +135,7 @@ const SupportTicket = ({ unreadMessages = {} }) => {
                   </td>
                   <td className="p-3">
                     <div className="d-flex align-items-center justify-content-lg-center">
-                      <Link to="/view-tickets" state={{ ticketId: ticket._id }}>
+                      <Link to="/view-tickets" state={{ ticketId: ticket._id, Subject: ticket.subject, merchantName: `${ticket?.userid?.firstName ?? "-"} ${ticket?.userid?.lastName ?? "-"}` }}>
                         <button
                           onClick={() => setSelectedTicketId(ticket._id)}
                           className="show-btn relative"

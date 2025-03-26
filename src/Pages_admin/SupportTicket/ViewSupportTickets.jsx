@@ -12,6 +12,7 @@ function ViewSupportTickets() {
   const { state } = location;
   const ticketId = state?.ticketId;
   const Subject = state?.Subject;
+  const merchantName = state?.merchantName || "";
 
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -256,7 +257,7 @@ function ViewSupportTickets() {
           <FaArrowLeft className="mr-2" />
           Back
         </Link>
-        <h2 className="text-lg">Chat with Admin</h2>
+        <h2 className="text-lg capitalize">merchant name : {merchantName}</h2>
         {Subject && (
           <div >
             Subject: {Subject}
