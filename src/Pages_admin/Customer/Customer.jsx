@@ -46,6 +46,7 @@ const Customers = () => {
   const [merchantloading, setMerchantloading] = useState(true);
   const [fulldata, setFulldata] = useState([]);
   const [isTrashed, setIsTrashed] = useState(false);
+  const [showMerchantModal, setShowMerchantModal] = useState(true);
   console.log(merchantdata, "merchantdata");
 
   useEffect(() => {
@@ -60,34 +61,15 @@ const Customers = () => {
     setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
 
-  const handleToggleTrashed = (isTrashed) => {
-    const nonTrashedCustomers = fulldata.filter(customer => isTrashed ? customer.trashed : !customer.trashed);
-    setAllCustomers(nonTrashedCustomers);
-    console.log(nonTrashedCustomers, "nonTrashedCustomers");
 
-    // Calculate initial paginated data
-    const startIndex = 0;
-    const endIndex = itemsPerPage;
-    const initialData = nonTrashedCustomers.slice(startIndex, endIndex);
-    console.log(initialData, "initialData");
-
-    setCustomers(initialData);
-    setFilteredCustomers(initialData);
-
-    setTotalPages(Math.ceil(nonTrashedCustomers.length / itemsPerPage) || 1);
-    setCurrentPage(1);
-
-  }
-
-
-  const fetchCustomers = async () => {
+  const fetchCustomers = async (id) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getAllCustomers(merchantId);
-      if (response.status && response.data) {
+      const response = await getAllCustomers(id ? id : merchantId);
+      if (response.status && response.data && response.data.length > 0) {
         setFulldata(response.data);
-        handleToggleTrashed(isTrashed);
+        handleToggleTrashed(response.data);
       } else {
         setAllCustomers([]);
         setCustomers([]);
@@ -106,6 +88,24 @@ const Customers = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleToggleTrashed = (data = fulldata) => {
+    if (!data || data.length === 0) {
+      return;
+    }
+
+    const nonTrashedCustomers = data.filter(customer => isTrashed ? customer.trashed : !customer.trashed);
+    setAllCustomers(nonTrashedCustomers);
+
+    const startIndex = 0;
+    const endIndex = itemsPerPage;
+    const initialData = nonTrashedCustomers.slice(startIndex, endIndex);
+
+    setCustomers(initialData);
+    setFilteredCustomers(initialData);
+    setTotalPages(Math.ceil(nonTrashedCustomers.length / itemsPerPage) || 1);
+    setCurrentPage(1);
   };
 
   useEffect(() => {
@@ -232,8 +232,69 @@ const Customers = () => {
     };
     fetchMerchantData();
   }, []);
+
+  useEffect(() => {
+    console.log("isTrashed", isTrashed);
+    if (fulldata.length > 0) {
+      handleToggleTrashed();
+    }
+  }, [isTrashed]);
+
   return (
     <>
+      {showMerchantModal && (
+        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowMerchantModal(false);
+            }
+          }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Select Merchant</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowMerchantModal(false)}
+                  ></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Please select a merchant to continue:</label>
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    isLoading={merchantloading}
+                    isSearchable={true}
+                    name="merchant"
+                    options={merchantdata.map((item) => ({
+                      value: item._id,
+                      label: item.firstName + " " + item.lastName + " (" + item?.email + ")"
+                    }))}
+                    onChange={(e) => {
+                      setMerchantId(e.value);
+                      setShowMerchantModal(false);
+                      fetchCustomers(e.value);
+                    }}
+                    placeholder="Select merchant ..."
+                  />
+                </div>
+              </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setShowMerchantModal(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="d-flex justify-content-between align-items-center nav-bar pb-3">
         <div className="flex justify-center items-center">
           <div>
@@ -244,7 +305,7 @@ const Customers = () => {
               id="merchantSelect"
               isLoading={merchantloading}
               isSearchable={true}
-              defaultValue={merchantdata.length > 0 ? { value: merchantdata[0]._id, label: merchantdata[0].firstName + " " + merchantdata[0].lastName } : null}
+              value={merchantId ? { value: merchantId, label: merchantdata.find(item => item._id === merchantId).firstName + " " + merchantdata.find(item => item._id === merchantId).lastName } : null}
               name="color"
               options={merchantdata.map((item) => ({
                 value: item._id,
@@ -265,13 +326,12 @@ const Customers = () => {
           </div>
         </div>
         <div className="flex justify-center items-center">
-          <select 
-            className="form-select mt-4" 
-            value={isTrashed ? "deleted" : "active"} 
+          <select
+            className="form-select mt-4"
+            value={isTrashed ? "deleted" : "active"}
             onChange={(e) => {
               const value = e.target.value;
               setIsTrashed(value === "deleted");
-              handleToggleTrashed(value === "deleted");
             }}
             disabled={loading}
           >

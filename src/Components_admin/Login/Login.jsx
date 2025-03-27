@@ -48,11 +48,11 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(50deg,_#B6C9E7,_#ffe5e1,_#939ccb,_#e6eff8)] ">
-      <div className="flex items-center justify-between w-[1100px] h-[600px] rounded-lg overflow-hidden ">
-        <div className="w-[50%] mx-auto p-12 flex flex-col justify-center bg-gradient-to-br backdrop-blur-[82px] rounded-lg from-[#ffffff9e] from-50% to-[#e3e4ff] to-100%">
+    <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(50deg,_#B6C9E7,_#ffe5e1,_#939ccb,_#e6eff8)]">
+      <div className="flex items-center justify-between w-full max-w-[1100px] h-auto min-h-[500px] mx-4 md:h-[600px] rounded-lg overflow-hidden">
+        <div className="w-full md:w-[70%] lg:w-[50%] mx-auto p-4 sm:p-8 md:p-12 flex flex-col justify-center bg-gradient-to-br backdrop-blur-[82px] rounded-lg from-[#ffffff9e] from-50% to-[#e3e4ff] to-100%">
           <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-4 md:mt-6 text-center text-2xl md:text-3xl font-extrabold text-gray-900">
               Admin Login
             </h2>
             {error && (
@@ -61,7 +61,7 @@ function Login() {
               </div>
             )}
           </div>
-          <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+          <form className="mt-6 md:mt-8 space-y-4 md:space-y-6" onSubmit={handleLogin}>
             <div className="rounded-md -space-y-px">
               <div className="mb-4">
                 <label

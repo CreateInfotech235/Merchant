@@ -25,6 +25,7 @@ function DeliveryManDestination() {
   const apiKey = "AIzaSyDB4WPFybdVL_23rMMOAcqIEsPaSsb-jzo";
   const mapRef = useRef(null);
   const [markers, setMarkers] = useState([]);
+  const [showModal, setShowModal] = useState(true);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey,
@@ -165,6 +166,64 @@ function DeliveryManDestination() {
 
   return (
     <>
+      {showModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => {
+            // Close only if clicking the overlay (outside the modal)
+            if (e.target === e.currentTarget) {
+              setShowModal(false);
+            }
+          }}
+        >
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Select Merchant</h2>
+              <button
+                className="text-gray-500 hover:text-gray-700 text-2xl font-bold cursor-pointer px-2"
+                onClick={() => setShowModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <Select
+              className="basic-single w-full"
+              classNamePrefix="select"
+              isLoading={merchantloading}
+              isSearchable={true}
+              defaultValue={merchantdata.length > 0 ? { value: merchantdata[0]._id, label: merchantdata[0].firstName + " " + merchantdata[0].lastName } : null}
+              options={merchantdata.map((item) => ({
+                value: item._id,
+                label: item.firstName + " " + item.lastName + " (" + item?.email + ")"
+              }))}
+              onChange={(e) => {
+                setMerchantId(e.value);
+              }}
+              isDisabled={merchantloading}
+              placeholder="Select merchant ..."
+            />
+            <div className="mt-4 flex justify-end">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  if (merchantId) {
+                    setShowModal(false);
+                    fetchDeliveryMen(); // Fetch data when closing with selection
+                  } else {
+                    toast.error("Please select a merchant first!", {
+                      position: "top-center",
+                      autoClose: 3000,
+                    });
+                  }
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="d-flex justify-between items-center py-3">
         <div>
           <label htmlFor="merchantSelect" className="p-0">Select Merchant:</label>

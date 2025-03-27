@@ -235,7 +235,7 @@ const Signup = ({ Login, setLogin }) => {
         {/* Container */}
         <div className="flex flex-col md:flex-row items-center justify-between max-w-5xl w-full rounded-lg overflow-hidden">
           {/* Left Section */}
-          <div className="w-full  md:block md:w-1/2 flex items-center justify-center p-4 md:p-8">
+          <div className="w-full hidden  md:flex md:w-1/2  items-center justify-center p-4 md:p-8">
             {/* Illustration */}
             <div className="relative">
               {/* Mockup Illustration */}

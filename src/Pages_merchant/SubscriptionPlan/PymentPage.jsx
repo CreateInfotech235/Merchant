@@ -30,6 +30,7 @@ const CheckoutForm = ({ plans }) => {
   const [duration, setDuration] = useState("1");
   const [expiryDate, setExpiryDate] = useState("");
 
+
   const stripe = useStripe();
   const elements = useElements();
   const location = useLocation();
@@ -82,7 +83,7 @@ const CheckoutForm = ({ plans }) => {
     try {
       // Call API to get client secret
       const merchantId = await JSON.parse(localStorage.getItem("userData"));
-      const { data } = await stripPayment(amount, planId, duration,merchantId._id, expiryDate);
+      const { data } = await stripPayment(amount, planId, duration, merchantId._id, expiryDate);
       const clientSecret = data.clientSecret;
 
       if (!clientSecret) {
@@ -95,7 +96,7 @@ const CheckoutForm = ({ plans }) => {
         clientSecret,
         {
           payment_method: {
-            card: card, 
+            card: card,
             billing_details: {
               name: `${merchantId.firstName} ${merchantId.lastName}`, // Replace with dynamic customer name if available
               email: merchantId.email,
@@ -436,11 +437,20 @@ CheckoutForm.propTypes = {
   ).isRequired,
 };
 
-const PaymentPage = ({ plans }) => (
-  <Elements stripe={stripePromise}>
-    <CheckoutForm plans={plans} />
-  </Elements>
-);
+const PaymentPage = () => {
+  const location = useLocation();
+  const plan = location.state?.plan;
+
+  if (!plan) {
+    return <div>No plan selected. Please go back and select a plan.</div>;
+  }
+
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm plans={[plan]} />
+    </Elements>
+  );
+};
 
 PaymentPage.propTypes = {
   plans: PropTypes.arrayOf(

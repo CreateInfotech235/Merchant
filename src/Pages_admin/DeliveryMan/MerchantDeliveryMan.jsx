@@ -18,6 +18,7 @@ import EditDeliveryManModal from "../EditDeliveryManModal/EditDeliveryManModal";
 import MapModal from "./MapModal";
 import Select from 'react-select';
 import { getAllUsers } from "../../Components_admin/Api/User";
+import { toast } from "react-toastify";
 
 
 
@@ -40,15 +41,16 @@ const MerchantDeliveryMan = () => {
   const [merchantId, setMerchantId] = useState(null);
   const [merchantloading, setMerchantloading] = useState(false);
   const [merchantdata, setMerchantdata] = useState([]);
+  const [showSelectMerchantModal, setShowSelectMerchantModal] = useState(true);
 
 
 
 
 
-  const fetchDeliveryMen = async () => {
+  const fetchDeliveryMen = async (id) => {
     setLoading(true);
     try {
-      const res = await getAllDeliveryManOfMerchant(merchantId);
+      const res = await getAllDeliveryManOfMerchant(id ? id : merchantId);
       console.log(res, "res");
 
       if (res.status) {
@@ -153,6 +155,12 @@ const MerchantDeliveryMan = () => {
     handleSearch();
   }, [deliverymen]);
 
+  useEffect(() => {
+    if (!merchantId) {
+      setShowSelectMerchantModal(true);
+    }
+  }, []);
+
 
   const closeInfoModal = () => {
     setShowInfoModal(false);
@@ -194,8 +202,77 @@ const MerchantDeliveryMan = () => {
 
   const getColorClass = (status) =>
     `enable-btn ${statusColors[status]?.toLowerCase() || "default"}`;
+
+  const handleMerchantSelect = (selectedOption) => {
+    setMerchantId(selectedOption.value);
+    setShowSelectMerchantModal(false);
+    fetchDeliveryMen();
+  };
+
   return (
     <>
+      {showSelectMerchantModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowSelectMerchantModal(false);
+            }
+          }}
+        >
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Select Merchant</h2>
+              <button
+                className="text-gray-500 hover:text-gray-700 text-2xl font-bold cursor-pointer px-2"
+                onClick={() => setShowSelectMerchantModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <Select
+              className="basic-single w-full"
+              classNamePrefix="select"
+              isLoading={loading}
+              isSearchable={true}
+              defaultValue={merchantdata.length > 0 ? {
+                value: merchantdata[0]._id,
+                label: merchantdata[0].firstName + " " + merchantdata[0].lastName
+              } : null}
+              options={merchantdata.map((item) => ({
+                value: item._id,
+                label: item.firstName + " " + item.lastName + " (" + item?.email + ")"
+              }))}
+              onChange={(e) => {
+                setMerchantId(e.value);
+                setShowSelectMerchantModal(false);
+                fetchDeliveryMen(e.value);
+              }}
+              isDisabled={loading}
+              placeholder="Select merchant ..."
+            />
+            {/* <div className="mt-4 flex justify-end">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  if (merchantId) {
+                    setShowSelectMerchantModal(false);
+                    fetchDeliveryMen();
+                  } else {
+                    toast.error("Please select a merchant first!", {
+                      position: "top-center",
+                      autoClose: 3000,
+                    });
+                  }
+                }}
+              >
+                Continue
+              </button>
+            </div> */}
+          </div>
+        </div>
+      )}
+
       <div className="w-100">
         <div className="d-flex justify-between items-center py-3 ">
           <div>
@@ -206,7 +283,8 @@ const MerchantDeliveryMan = () => {
               id="merchantSelect"
               isLoading={loading}
               isSearchable={true}
-              defaultValue={merchantdata.length > 0 ? { value: merchantdata[0]._id, label: merchantdata[0].firstName + " " + merchantdata[0].lastName } : null}
+
+              value={merchantId ? { value: merchantId, label: merchantdata.find(item => item._id === merchantId).firstName + " " + merchantdata.find(item => item._id === merchantId).lastName } : null}
               name="color"
               options={merchantdata.map((item) => ({
                 value: item._id,
@@ -274,9 +352,9 @@ const MerchantDeliveryMan = () => {
                 <tr>
                   <td colSpan="11" className="text-center p-3">
                     <div className="d-flex justify-content-center">
-                     {
-                      merchantId === null || merchantId === "" || loading ? <div className="mx-auto">Please select merchant</div> : <div className="mx-auto">No Data Found</div>
-                     }
+                      {
+                        merchantId === null || merchantId === "" || loading ? <div className="mx-auto">Please select merchant</div> : <div className="mx-auto">No Data Found</div>
+                      }
 
                     </div>
                   </td>

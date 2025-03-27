@@ -72,7 +72,7 @@ const Login = ({ Login, setLogin }) => {
         {/* Container */}
         <div className="flex items-center justify-between max:w-[1100px] max:h-[600px] rounded-lg overflow-hidden" style={{width:window.innerWidth>768?"1100px":"100%"}}>
           {/* Left Section */}
-          <div className="w-full  md:block  md:w-1/2 flex flex-col items-center justify-center  p-8">
+          <div className="w-full hidden  md:block  md:w-1/2  flex-col p-8">
             {/* Illustration */}
             <div className="relative">
               {/* Mockup Illustration */}

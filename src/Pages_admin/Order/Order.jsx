@@ -62,7 +62,7 @@ const OrderAdmin = () => {
   const [merchantdata, setMerchantdata] = useState([]);
   const [merchantloading, setMerchantloading] = useState(true);
   const [merchantId, setMerchantId] = useState(null);
-  const [istrashed,settrashed]=useState(false)
+  const [istrashed, settrashed] = useState(false)
 
 
   console.log("selectMultiOrder", selectMultiOrder);
@@ -71,6 +71,7 @@ const OrderAdmin = () => {
   const [showDelete, setShowDelete] = useState(false);
   console.log("isUpdate", isUpdate);
   const [showTrashConfirmModal, setShowTrashConfirmModal] = useState(false);
+  const [showMerchantModal, setShowMerchantModal] = useState(true);
 
   useEffect(() => {
     const fetchParcelType = async () => {
@@ -81,7 +82,7 @@ const OrderAdmin = () => {
       }
     }
     fetchParcelType();
-  },[])
+  }, [])
 
 
   const fetchData = async (merchantId) => {
@@ -92,9 +93,9 @@ const OrderAdmin = () => {
     setFilteredOrders([]);
     setTotalPages(1);
     try {
-    
+
       const response = await getMultiOrders(
-        merchantId      );
+        merchantId);
       console.log("response", response);
 
       if (response?.data) {
@@ -131,7 +132,7 @@ const OrderAdmin = () => {
     };
     const timer = setTimeout(fetchDataWithDelay, 1000); // Delay of 1 second
     return () => clearTimeout(timer); // Cleanup the timer on unmount
-  }, [ isUpdate]);
+  }, [isUpdate]);
 
   const closeEditModal = () => {
     setShowEditModal(false);
@@ -496,6 +497,65 @@ const OrderAdmin = () => {
   }, []);
   return (
     <div >
+      {/* Add Merchant Selection Modal */}
+      {showMerchantModal && (
+        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowMerchantModal(false);
+            }
+          }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Select Merchant</h5>
+                {merchantId && (
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowMerchantModal(false)}
+                  ></button>
+                )}
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Please select a merchant to continue:</label>
+                  <Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    isLoading={merchantloading}
+                    isSearchable={true}
+                    name="merchant"
+                    options={merchantdata.map((item) => ({
+                      value: item._id,
+                      label: item.firstName + " " + item.lastName + " (" + item?.email + ")"
+                    }))}
+                    onChange={(e) => {
+                      setMerchantId(e.value);
+                      setShowMerchantModal(false);
+                      fetchData(e.value);
+                    }}
+                    placeholder="Select merchant ..."
+                  />
+                </div>
+              </div>
+              {merchantId && (
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setShowMerchantModal(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="d-flex justify-content-between align-items-center pb-3 nav-bar">
         <div>
           <label htmlFor="merchantSelect" className="p-0">Select Merchant:</label>
@@ -505,7 +565,14 @@ const OrderAdmin = () => {
             id="merchantSelect"
             isLoading={merchantloading}
             isSearchable={true}
-            defaultValue={merchantdata.length > 0 ? { value: merchantdata[0]._id, label: merchantdata[0].firstName + " " + merchantdata[0].lastName } : null}
+            value={merchantdata.find(item => item._id === merchantId)?.firstName
+              ? {
+                value: merchantId,
+                label: merchantdata.find(item => item._id === merchantId)?.firstName +
+                  " " + merchantdata.find(item => item._id === merchantId)?.lastName +
+                  " (" + merchantdata.find(item => item._id === merchantId)?.email + ")"
+              }
+              : null}
             name="color"
             options={merchantdata.map((item) => ({
               value: item._id,
@@ -522,9 +589,9 @@ const OrderAdmin = () => {
           {/* dropdown for trashed */}
           <label htmlFor="trashed" className="p-0">Trashed</label>
           <select className="form-select rounded-md border-gray-300 shadow-sm h-9" onChange={(e) => {
-            if(e.target.value === "true"){
+            if (e.target.value === "true") {
               settrashed(true);
-            }else{
+            } else {
               settrashed(false);
             }
           }}>

@@ -337,12 +337,13 @@ const BillingofAdmin = () => {
 
     if (filterCreatedBy !== "all") {
       data = data.filter((order) => {
-        if (filterCreatedBy === "Admin") {
+        if (filterCreatedBy == "Admin") {
           return order.deliveryBoy?.createdByAdmin;
         } else {
           return order.deliveryBoy?.createdByMerchant;
         }
       });
+      console.log(data, "data");
     }
 
     if (startDate || endDate) {
@@ -680,7 +681,7 @@ const BillingofAdmin = () => {
                           : "-"}
                       </td>
                       <td className="p-3">
-                        {order?.deliveryMan?.createdByAdmin
+                        {order?.deliveryBoy?.createdByAdmin
                           ? "Admin "
                           : "Merchant DeliveryMan"}
                       </td>

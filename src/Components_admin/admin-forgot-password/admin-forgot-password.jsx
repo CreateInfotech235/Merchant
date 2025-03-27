@@ -107,15 +107,15 @@ const AdminForgotPassword = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(50deg,_#B6C9E7,_#ffe5e1,_#939ccb,_#e6eff8)]">
+        <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(50deg,_#B6C9E7,_#ffe5e1,_#939ccb,_#e6eff8)] p-4">
             {/* Container */}
-            <div className="flex items-center justify-between w-[1100px] h-[600px] rounded-lg overflow-hidden">
-                <div className="w-50% mx-auto p-12 flex flex-col justify-center bg-gradient-to-br backdrop-blur-[82px] rounded-lg from-[#ffffff9e] from-50% to-[#e3e4ff] to-100%">
-                    <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Admin Forgot Password</h1>
+            <div className="flex items-center justify-between w-full max-w-[1100px] h-auto min-h-[500px] md:h-[600px] rounded-lg overflow-hidden">
+                <div className="w-full md:w-[70%] lg:w-[50%] mx-auto p-4 sm:p-8 md:p-12 flex flex-col justify-center bg-gradient-to-br backdrop-blur-[82px] rounded-lg from-[#ffffff9e] from-50% to-[#e3e4ff] to-100%">
+                    <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-4 text-center">Admin Forgot Password</h1>
 
                     {/* Form */}
                     <Formik
-                        enableReinitialize={true} // This will ensure form reinitializes on state changes
+                        enableReinitialize={true}
                         initialValues={initialValues}
                         validationSchema={validationSchema}
                         onSubmit={onSubmit}
@@ -136,7 +136,7 @@ const AdminForgotPassword = () => {
                                                 value={initialValues.email}
                                                 onChange={(e) => setInitialValues({ ...initialValues, email: e.target.value })}
                                                 placeholder="Enter Your Email"
-                                                className="w-full pl-10 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
+                                                className="w-full pl-4 md:pl-10 py-2 md:py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 text-sm md:text-base"
                                             />
                                             {errors.email && touched.email && (
                                                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -147,8 +147,8 @@ const AdminForgotPassword = () => {
 
                                 {/* OTP Input */}
                                 {!isOtpVerified && (
-                                    <div className="mt-0 flex">
-                                        <div className="w-[60%]">
+                                    <div className="mt-0 flex flex-col sm:flex-row gap-3 sm:gap-0">
+                                        <div className="w-full sm:w-[60%]">
                                             <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
                                                 OTP
                                             </label>
@@ -161,21 +161,19 @@ const AdminForgotPassword = () => {
                                                     onChange={(e) => setInitialValues({ ...initialValues, otp: e.target.value })}
                                                     disabled={isOtpSent}
                                                     placeholder="Enter OTP"
-                                                    className="w-full pl-10 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
+                                                    className="w-full pl-4 md:pl-10 py-2 md:py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 text-sm md:text-base"
                                                 />
                                                 {errors.otp && touched.otp && <p className="text-red-500 text-sm mt-1">{errors.otp}</p>}
                                             </div>
                                         </div>
-                                        <div className="mt-10 w-[40%] pl-3">
-                                            <div className="relative mt-0 w-full">
-                                                <button
-                                                    type="button"
-                                                    className="w-full p-3 border border-gray-300 bg-purple-500 text-white rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 hover:bg-purple-600"
-                                                    onClick={handleSendOtp}
-                                                >
-                                                    {isOtpSent ? isOtpSending ? "Sending OTP..." : "Send OTP" : isOtpSending ? "Resending OTP..." : "Resend OTP"}
-                                                </button>
-                                            </div>
+                                        <div className="w-full sm:w-[40%] sm:pl-3 sm:mt-6">
+                                            <button
+                                                type="button"
+                                                className="w-full h-full p-2 md:p-3 border border-gray-300 bg-purple-500 text-white rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 hover:bg-purple-600 text-sm md:text-base"
+                                                onClick={handleSendOtp}
+                                            >
+                                                {isOtpSent ? isOtpSending ? "Sending OTP..." : "Send OTP" : isOtpSending ? "Resending OTP..." : "Resend OTP"}
+                                            </button>
                                         </div>
                                     </div>
                                 )}
@@ -194,7 +192,7 @@ const AdminForgotPassword = () => {
                                                 value={initialValues.password}
                                                 onChange={(e) => setInitialValues({ ...initialValues, password: e.target.value })}
                                                 placeholder="Enter Your New Password"
-                                                className="w-full py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
+                                                className="w-full py-2 md:py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 text-sm md:text-base"
                                             />
                                             <button
                                                 type="button"
@@ -224,7 +222,7 @@ const AdminForgotPassword = () => {
                                                 value={initialValues.confirmPassword}
                                                 onChange={(e) => setInitialValues({ ...initialValues, confirmPassword: e.target.value })}
                                                 placeholder="Confirm Your Password"
-                                                className="w-full py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500"
+                                                className="w-full py-2 md:py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 text-sm md:text-base"
                                             />
                                             <button
                                                 type="button"
@@ -244,7 +242,7 @@ const AdminForgotPassword = () => {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full py-3 px-4 text-white bg-purple-500 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg"
+                                    className="w-full py-2 md:py-3 px-4 text-white bg-purple-500 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg text-sm md:text-base"
                                 >
                                     {isOtpVerified
                                         ? isSubmitting
@@ -260,7 +258,7 @@ const AdminForgotPassword = () => {
 
                     {/* Links */}
                     <div className="mt-4 text-center">
-                        <Link to="/owner-access" className="text-sm text-blue-500 hover:underline">
+                        <Link to="/owner-access" className="text-xs md:text-sm text-blue-500 hover:underline">
                             Back to Login
                         </Link>
                     </div>
