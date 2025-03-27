@@ -8,6 +8,7 @@ function Subscriptionactiveplan({ plans }) {
   const [subcriptionData, setSubcriptionData] = useState([]);
   const [show, setShow] = useState(true);
   const [showAllSubscriptions, setShowAllSubscriptions] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activePlan, setActivePlan] = useState(null);
@@ -22,14 +23,18 @@ function Subscriptionactiveplan({ plans }) {
   };
 
   const fetchSubscriptionInfo = async (id) => {
-    const response = await SubscriptionData(id);
-    if (response.show) {
-      setSubcriptionData(response.data);
-      const active = findActivePlan(response.data);
-      setActivePlan(active);
-      console.log("Active Plan:", active);
-    } else {
-      setShow(false);
+    try {
+      setLoading(true);
+      const response = await SubscriptionData(id);
+      if (response.show) {
+        setSubcriptionData(response.data);
+        const active = findActivePlan(response.data);
+        setActivePlan(active);
+      } else {
+        setShow(false);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -206,10 +211,11 @@ function Subscriptionactiveplan({ plans }) {
     return false;
   };
   let fastindex = null
-
+  let fastindexnotactive = null
   return (
     <>
       <div className="container py-5 min-min-h-[calc(100vh-187px)]">
+
         <div className="text-end mb-4">
           <button
             className="btn btn-primary"
@@ -221,7 +227,13 @@ function Subscriptionactiveplan({ plans }) {
 
         {/* Modal for subscription history */}
         {isModalOpen && (
-          <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={(e) => {
+              if (isModalOpen && e.target === e.currentTarget) {
+                setIsModalOpen(false)
+              }
+            }}
+          >
             <div className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
               <div className="modal-content">
                 <div className="modal-header">
@@ -229,14 +241,27 @@ function Subscriptionactiveplan({ plans }) {
                   <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
                 </div>
                 <div className="modal-body">
-                  {subcriptionData && subcriptionData.length > 0 ? (
+                  {
+                    loading && (
+                      <div className="text-center flex justify-center">
+                        <Loader />
+                      </div>
+                    )
+                  }
+
+                  {subcriptionData && subcriptionData.length > 0 && !loading ? (
                     sortSubscriptions(subcriptionData).map((el, i) => {
                       const isActive = calculateRemainingDays(el.expiry) > 0 &&
                         (!el.startDate || new Date(el.startDate) < new Date());
 
-                      const isExpired = calculateRemainingDays(el.expiry) > 0 ? el?.startDate ? new Date(el?.startDate) < new Date() ? false : false : false : true                     
+                      const isExpired = calculateRemainingDays(el.expiry) > 0 ? el?.startDate ? new Date(el?.startDate) < new Date() ? false : false : false : true
                       if (isExpired && fastindex == null) {
                         fastindex = i
+                      }
+                      const isnotactive = calculateRemainingDays(el.expiry) > 0 ?
+                        el.startDate ? new Date(el.startDate) > new Date() ? true : false : false : false;
+                      if (isnotactive && fastindexnotactive == null) {
+                        fastindexnotactive = i
                       }
                       return (
                         <div key={i} className="mb-4">
@@ -253,10 +278,7 @@ function Subscriptionactiveplan({ plans }) {
                               </div>
                             </>
                           )}
-                          {!isActive && i === sortSubscriptions(subcriptionData).findIndex(sub =>
-                            calculateRemainingDays(sub.expiry) <= 0 ||
-                            (sub.startDate && new Date(sub.startDate) > new Date())
-                          ) && (
+                          {!isActive && i === fastindexnotactive && (
                               <div className="alert alert-secondary mb-3">
                                 <h6 className="mb-0">Previous Subscriptions</h6>
                               </div>
@@ -266,8 +288,8 @@ function Subscriptionactiveplan({ plans }) {
                       );
                     })
                   ) : (
-                    <div className="text-center">
-                      <Loader />
+                    <div className="text-center flex justify-center">
+                      <h5>No subscription history Not Available</h5>
                     </div>
                   )}
                 </div>
@@ -276,7 +298,9 @@ function Subscriptionactiveplan({ plans }) {
           </div>
         )}
 
-        <SubscriptionPlan1 plans={plans} subcriptionData={activePlan} />
+
+        <SubscriptionPlan1 plans={plans} subcriptionData={activePlan} loading={loading} />
+
       </div>
     </>
   );

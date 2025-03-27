@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 // import GetSubscription from "./getSubscription";
 import Subscriptionactiveplan from "./Subscriptionactiveplan";
 import PaymentPage from "./PymentPage";
-import { getAllSubscription } from "../../Components_merchant/Api/Subscription";
+import { getAllSubscription, SubscriptionData } from "../../Components_merchant/Api/Subscription";
 import { useEffect, useState } from "react";
 
 function SubscriptionActive() {
@@ -10,6 +10,13 @@ function SubscriptionActive() {
   const [subscriptionData, setSubscriptionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // active plan
+  const [activePlan, setActivePlan] = useState(null);
+  const [show, setShow] = useState(true);
+  const [subcriptionData, setSubcriptionData] = useState(null);
+  
+
+
 
   useEffect(() => {
     const fetchSubscriptions = async () => {
@@ -30,6 +37,46 @@ function SubscriptionActive() {
 
     fetchSubscriptions();
   }, []);
+  console.log("subscriptionData", subscriptionData);
+  
+  const calculateRemainingDays = (expiryDate) => {
+    const currentDate = new Date();
+    const expirationDate = new Date(expiryDate);
+    const timeDifference = expirationDate - currentDate;
+    const remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24));
+    return remainingDays;
+  };
+  const findActivePlan = (subscriptions) => {
+    const currentDate = new Date();
+    return subscriptions.find(sub => {
+      const isNotExpired = calculateRemainingDays(sub.expiry) > 0;
+      const hasStarted = !sub.startDate || new Date(sub.startDate) < currentDate;
+      return isNotExpired && hasStarted;
+    });
+  };
+
+  const fetchSubscriptionInfo = async (id) => {
+    try {
+      setLoading(true);
+      const response = await SubscriptionData(id);
+      if (response.show) {
+        setSubcriptionData(response.data);
+        const active = findActivePlan(response.data);
+        console.log("active", active);
+        setActivePlan(active);
+      } else {
+        setShow(false);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const MerchantId = localStorage.getItem("merchnatId");
+    fetchSubscriptionInfo(MerchantId);
+  }, []);
+
 
   return (
     <>
@@ -40,7 +87,7 @@ function SubscriptionActive() {
         />
         <Route
           path="/payment"
-          element={<PaymentPage plans={subscriptionData} />}
+          element={<PaymentPage plans={subscriptionData} activePlan={activePlan} />}
         />
       </Routes>
     </>

@@ -24,6 +24,20 @@ function SubscriptionPlan() {
     getallSubscriptions();
   }, []);
 
+  // Add new useEffect to handle body scroll
+  useEffect(() => {
+    if (showModel) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showModel]);
+
   // console.log(subcriptionData);
 
   const handleShowModal = (data) => {
@@ -101,6 +115,7 @@ function SubscriptionPlan() {
                     flexDirection: "column",
                     justifyContent: "space-between",
                   }}
+                  onDoubleClick={() => handleShowModal(el)}
                 >
                   <div>
                     <div className="d-flex justify-content-end pb-3">
@@ -112,9 +127,25 @@ function SubscriptionPlan() {
                       </button>
                     </div>
                     <h5 className="fw-bold text-center text-xl mb-3">{el.type}</h5>
-                    <h1 className="fw-bold text-center text-4xl mb-2">${el.amount}</h1>
+                    <h1 className="fw-bold text-center text-4xl mb-2">
+                      {el.discount > 0 ? (
+                        <>
+                          <span className="line-through text-gray-500 text-2xl">${el.amount}</span>
+                          <span className="ml-2">
+                            ${(el.amount - (el.amount * el.discount) / 100).toFixed(2)}
+                          </span>
+                          <span className="text-green-600 text-lg ml-2">(-{el.discount}%)</span>
+                        </>
+                      ) : (
+                        `$${el.amount}`
+                      )}
+                    </h1>
                     <p className="fw-bold text-center text-gray-700 mb-4">
-                      Per {convertSecondsToMonths(el.seconds)} Months
+                      {el.seconds < (30 * 24 * 60 * 60) ? (
+                        `Per ${Math.floor(el.seconds / (24 * 60 * 60))} Days`
+                      ) : (
+                        `Per ${convertSecondsToMonths(el.seconds)} Months`
+                      )}
                     </p>
 
                     <p className="fw-bold text-center text-gray-700 mb-0">

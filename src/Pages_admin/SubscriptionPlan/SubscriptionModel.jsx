@@ -9,6 +9,8 @@ import ToggleSwitch from "./ToggleSwitch";
 const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDesable, setIsDesable] = useState(subscription ? subscription.isDesable : false);
+  const [discount, setDiscount] = useState(subscription ? subscription.discount : 0);
+  const [amount, setAmount] = useState(subscription ? subscription.amount : 0);
   const convertSecondsToDays = (seconds) => {
     return Math.floor(seconds / (24 * 60 * 60));
   };
@@ -22,6 +24,7 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
     features: subscription ? subscription.features : [""],
     days: subscription ? days : "",
     isDesable: subscription ? subscription.isDesable : false,
+    poulartext: subscription ? subscription.poulartext : "",
   };
 
   const validationSchema = Yup.object({
@@ -41,12 +44,21 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
       .min(1, "Days must be at least 1")
       .required("Days are required"),
     isDesable: Yup.boolean().required("Status is required"),
+    poulartext: Yup.string().required("Poular text is required"),
   });
 
   const onSubmit = async (values) => {
     try {
       setIsLoading(true);
-      const response = await manageSubscription({ ...values, isDesable: isDesable });
+      const payload = {
+        ...values,
+        amount: values.amount === "" ? 0 : values.amount,
+        discount: values.discount === "" ? 0 : values.discount,
+        isDesable: isDesable,
+        poulartext: values.poulartext
+      };
+      console.log(payload);
+      const response = await manageSubscription(payload);
       if (response) {
         onHide();
         onUpdate();
@@ -59,10 +71,10 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-2xl mx-4">
+    <div className="fixed rounded-lg  inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg w-full max-w-2xl my-4">
         {/* Modal Header */}
-        <div className="flex justify-between items-center p-4 border-b">
+        <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white">
           <h5 className="text-xl font-bold">
             {types === "Add" ? "Add New" : "Update"} Subscription Plan
           </h5>
@@ -75,7 +87,7 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
         </div>
 
         {/* Modal Body */}
-        <div className="p-6">
+        <div className="p-6 max-h-[80vh] overflow-y-auto">
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -101,6 +113,22 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
                       className="text-red-500 text-sm mt-1"
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                      Popular Text
+                    </label>
+                    <Field
+                      type="text"
+                      name="poulartext"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter poular text"
+                    />
+                    <ErrorMessage
+                      name="poulartext"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
 
                   {/* Amount and Discount Row */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -109,7 +137,7 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
                         Amount
                       </label>
                       <Field
-                        type="text"
+                        type="number"
                         name="amount"
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter amount"
@@ -126,10 +154,13 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
                         Discount (%)
                       </label>
                       <Field
-                        type="text"
+                        type="number"
                         name="discount"
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter discount"
+                        min={0}
+                        max={100}
+
                       />
                       <ErrorMessage
                         name="discount"
@@ -139,13 +170,30 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
                     </div>
                   </div>
 
+                  {/* Final Amount After Discount */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                      Amount After Discount
+                    </label>
+                    <div className="w-full px-4 py-2 border rounded-lg bg-gray-50">
+                      {formik.values.amount
+                        ? formik.values.discount
+                          ? (
+                            formik.values.amount -
+                            (formik.values.amount * (formik.values.discount || 0)) / 100
+                          ).toFixed(2)
+                          : formik.values.amount
+                        : "0.00"}
+                    </div>
+                  </div>
+
                   {/* Days */}
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">
                       Days
                     </label>
                     <Field
-                      type="text"
+                      type="number"
                       name="days"
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter number of days"
@@ -159,6 +207,17 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
 
                   {/* Features */}
                   <div>
+
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-medium text-gray-600">
+                        Status
+                      </label>
+                      <ToggleSwitch
+                        checked={isDesable}
+                        setChecked={setIsDesable}
+                        className="ml-2"
+                      />
+                    </div>
                     <div className="flex justify-between items-center mb-2">
                       <label className="block text-sm font-medium text-gray-600">
                         Features
@@ -176,20 +235,10 @@ const SubscriptionModel = ({ onHide, types, subscription, onUpdate }) => {
                         <AiOutlinePlus className="mr-1" /> Add Feature
                       </button>
                     </div>
-                    <div className="flex justify-between items-center mb-2">
-                      <label className="block text-sm font-medium text-gray-600">
-                        Status
-                      </label>
-                      <ToggleSwitch
-                        checked={isDesable}
-                        setChecked={setIsDesable}
-                        className="ml-2"
-                      />
-                    </div>
                     <FieldArray
                       name="features"
                       render={(arrayHelpers) => (
-                        <div className="space-y-2 max-h-60 overflow-y-auto">
+                        <div className="space-y-2 max-h-60 overflow-y-auto border border-[#ff0000a1] rounded-lg p-2">
                           {formik.values.features.map((feature, index) => (
                             <div
                               key={index}

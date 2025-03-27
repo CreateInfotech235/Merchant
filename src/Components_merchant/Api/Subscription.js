@@ -138,6 +138,40 @@ export const stripPayment = async (amount, planId , duration , merchantId ,expir
 };
 
 
+
+export const stripPaymentUpgradePlan = async (amount, planId , duration , merchantId ,expiryDate, oldPlanId) => {
+  try {
+    const data = {
+      amount : amount,
+      planId : planId , 
+      duration : duration,
+      expiryDate :expiryDate,
+      merchantId : merchantId,
+      oldPlanId : oldPlanId
+    }
+    console.log(data);
+    
+    const response = await API.post(`/mobile/auth/upgrade-plan`, data);
+    console.log("data",data,"response", response);
+
+    if (response.status === 200) {
+      return { status: true, data: response.data };
+    } else {
+      // console.log("API error", response.response.data.message);
+      toast.error(response.response.data.message || response.message);
+      return {
+        status: false,
+        message: response.response.data.message || response.message,
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    toast.error(error.message);
+    return { status: false, message: error.message };
+  }
+};
+
+
 export const switchSubscriptionPlan = async (planId, merchantId) => {
   try {
     const response = await API.post('/mobile/subscription/switch-subscription-plan', {

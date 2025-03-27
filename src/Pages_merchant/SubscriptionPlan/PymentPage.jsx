@@ -21,7 +21,7 @@ const stripePromise = loadStripe(
   "pk_test_51QWXp5FWojz9eouiboeh9IFFnK9AFnwQwgZ1kxG7i3rIGhvb69u0ZxqL4u9fBoufp2d77c2Dmk839MWuQhK8Wzgl00z7R9RF8c"
 );
 
-const CheckoutForm = ({ plans }) => {
+const CheckoutForm = ({ plans, activePlan }) => {
   const navigate = useNavigate();
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState(null);
@@ -29,7 +29,6 @@ const CheckoutForm = ({ plans }) => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [duration, setDuration] = useState("1");
   const [expiryDate, setExpiryDate] = useState("");
-
 
   const stripe = useStripe();
   const elements = useElements();
@@ -48,15 +47,27 @@ const CheckoutForm = ({ plans }) => {
   const calculateTotalAmount = () => {
     if (!selectedPlan) return 0;
     const months = parseInt(duration, 10);
-    return selectedPlan.amount * months;
+    const baseAmount = selectedPlan.amount;
+    // Apply discount if available
+    if (selectedPlan.discount > 0) {
+      const discountedAmount = baseAmount - (baseAmount * selectedPlan.discount) / 100;
+      return discountedAmount * months;
+    }
+    return baseAmount * months;
   };
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const planFromUrl = searchParams.get("plan");
-    setPlanId(planFromUrl);
+    // const location = useLocation();
+    const planid = location.state?.planid;
+    if (!planid) {
+      navigate("/subscription-active");
+    }
 
-    const plan = plans.find((p) => p._id === planFromUrl) || plans[0];
+    // const searchParams = new URLSearchParams(location.search);
+    // const planFromUrl = searchParams.get("plan");
+    setPlanId(planid);
+
+    const plan = plans.find((p) => p._id === planid) || navigate("/subscription-active");
     setSelectedPlan(plan);
   }, [location, plans]);
 
@@ -202,13 +213,19 @@ const CheckoutForm = ({ plans }) => {
                       </h4>
                       {selectedPlan.type && (
                         <span className="badge bg-warning ms-2 d-none d-md-inline">
-                          Most Popular
+                          {selectedPlan.poulartext}
                         </span>
                       )}
                     </div>
-                    <h3 className="display-6 fw-bold">
-                      £{selectedPlan.amount}
-                    </h3>
+                    <div className="d-flex align-items-center justify-center gap-2">
+                      <span className="text-danger line-through">
+                        £{selectedPlan.amount}
+                      </span>
+                      <h3 className="display-6 fw-bold text-success">
+                        £{(selectedPlan.amount - (selectedPlan.amount * selectedPlan.discount) / 100).toFixed(2)}
+                      </h3>
+                      <span className="text-success ms-1">(-{selectedPlan.discount}%)</span>
+                    </div>
                     <p className="text-muted">
                       {convertSecondsToMonths(selectedPlan.seconds)} Months
                     </p>
@@ -245,7 +262,17 @@ const CheckoutForm = ({ plans }) => {
                   <div className="pricing-details mt-3 p-3 bg-light rounded">
                     <div className="d-flex justify-content-between mb-2">
                       <span>Base Price:</span>
-                      <span>£{selectedPlan.amount}/month</span>
+                      {selectedPlan.discount > 0 ? (
+                        <span>
+                          <span className="text-danger line-through me-2">£{selectedPlan.amount}</span>
+                          <span className="text-success">
+                            £{(selectedPlan.amount - (selectedPlan.amount * selectedPlan.discount) / 100).toFixed(2)}
+                          </span>
+                          <span className="text-success ms-1">(-{selectedPlan.discount}%)</span>
+                        </span>
+                      ) : (
+                        <span>£{selectedPlan.amount}/month</span>
+                      )}
                     </div>
                     <div className="d-flex justify-content-between mb-2">
                       <span>Duration:</span>
@@ -437,20 +464,11 @@ CheckoutForm.propTypes = {
   ).isRequired,
 };
 
-const PaymentPage = () => {
-  const location = useLocation();
-  const plan = location.state?.plan;
-
-  if (!plan) {
-    return <div>No plan selected. Please go back and select a plan.</div>;
-  }
-
-  return (
-    <Elements stripe={stripePromise}>
-      <CheckoutForm plans={[plan]} />
-    </Elements>
-  );
-};
+const PaymentPage = ({ plans, activePlan }) => (
+  <Elements stripe={stripePromise}>
+    <CheckoutForm plans={plans} activePlan={activePlan} />
+  </Elements>
+);
 
 PaymentPage.propTypes = {
   plans: PropTypes.arrayOf(
