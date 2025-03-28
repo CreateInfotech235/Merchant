@@ -161,6 +161,13 @@ function DeliveryManDestination() {
     addMarkersAndAdjustBounds();
   }, [deliveryMen]);
 
+  useEffect(() => {
+    fetchDeliveryMen();
+    if (merchantId) {
+      setShowModal(false);
+    }
+  }, [merchantId]);
+
   if (loadError) return <div>Error loading Google Maps</div>;
   if (!isLoaded) return <div>Loading maps...</div>;
 
@@ -202,24 +209,7 @@ function DeliveryManDestination() {
               isDisabled={merchantloading}
               placeholder="Select merchant ..."
             />
-            <div className="mt-4 flex justify-end">
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  if (merchantId) {
-                    setShowModal(false);
-                    fetchDeliveryMen(); // Fetch data when closing with selection
-                  } else {
-                    toast.error("Please select a merchant first!", {
-                      position: "top-center",
-                      autoClose: 3000,
-                    });
-                  }
-                }}
-              >
-                Continue
-              </button>
-            </div>
+          
           </div>
         </div>
       )}
@@ -233,7 +223,7 @@ function DeliveryManDestination() {
             id="merchantSelect"
             isLoading={merchantloading}
             isSearchable={true}
-            defaultValue={merchantdata.length > 0 ? { value: merchantdata[0]._id, label: merchantdata[0].firstName + " " + merchantdata[0].lastName } : null}
+            value={merchantId ? { value: merchantId, label: merchantdata.find(item => item._id === merchantId).firstName + " " + merchantdata.find(item => item._id === merchantId).lastName } : null}
             name="color"
             options={merchantdata.map((item) => ({
               value: item._id,
@@ -245,9 +235,6 @@ function DeliveryManDestination() {
             isDisabled={merchantloading}
             placeholder="Select merchant ..."
           />
-        </div>
-        <div>
-          <button className="btn btn-primary" disabled={merchantId === null || merchantId === "" || merchantloading} onClick={fetchDeliveryMen}>Get data of selected merchant </button>
         </div>
       </div>
 

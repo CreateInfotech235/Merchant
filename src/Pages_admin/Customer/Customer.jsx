@@ -240,6 +240,12 @@ const Customers = () => {
     }
   }, [isTrashed]);
 
+  useEffect(() => {
+    if (merchantId) {
+      fetchCustomers(merchantId);
+    }
+  }, [merchantId]);
+
   return (
     <>
       {showMerchantModal && (
@@ -318,12 +324,7 @@ const Customers = () => {
               placeholder="Select merchant ..."
             />
           </div>
-          <div>
 
-            <input type="button" className="btn mt-4 btn-primary text-white px-4 py-2 rounded-md ml-4" disabled={!merchantId || loading} onClick={(e) => {
-              fetchCustomers();
-            }} value="Get data" />
-          </div>
         </div>
         <div className="flex justify-center items-center">
           <select

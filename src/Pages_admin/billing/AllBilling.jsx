@@ -441,6 +441,11 @@ const BillingofAdmin = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [merchantId, deliveryManId]);
+
   return (
     <div>
       <div className={`navbar d-flex justify-content-between items-center mb-2${themeMode === "dark" ? "dark-mode" : ""}`} style={{ padding: '10px', backgroundColor: '#FFFFFFFF', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
@@ -511,11 +516,6 @@ const BillingofAdmin = () => {
               }),
             }}
           />
-        </div>
-        <div className="mt-4">
-          <button className="btn btn-primary" onClick={() => {
-            fetchData();
-          }} style={{ backgroundColor: '#007bff', borderColor: '#007bff' }}>Get Data</button>
         </div>
         {/* <div className="d-flex justify-end w-100 "> */}
         <div className="navbar-options d-flex my-2 items-center ">

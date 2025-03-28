@@ -161,6 +161,9 @@ const MerchantDeliveryMan = () => {
     }
   }, []);
 
+  useEffect(() => {
+    fetchDeliveryMen();
+  }, [merchantId]);
 
   const closeInfoModal = () => {
     setShowInfoModal(false);
@@ -296,9 +299,6 @@ const MerchantDeliveryMan = () => {
               isDisabled={loading}
               placeholder="Select merchant ..."
             />
-          </div>
-          <div>
-            <button className="btn btn-primary" disabled={merchantId === null || merchantId === "" || loading} onClick={fetchDeliveryMen}>Get data of selected merchant </button>
           </div>
           <div className="navbar">
             <div className="navbar-options d-flex">

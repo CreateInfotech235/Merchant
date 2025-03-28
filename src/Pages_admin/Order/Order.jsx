@@ -495,6 +495,14 @@ const OrderAdmin = () => {
     };
     fetchMerchantData();
   }, []);
+
+
+  useEffect(() => {
+    if (merchantId) {
+      fetchData(merchantId);
+    }
+  }, [merchantId]);
+
   return (
     <div >
       {/* Add Merchant Selection Modal */}
@@ -599,12 +607,7 @@ const OrderAdmin = () => {
             <option value="true">Trashed</option>
           </select>
         </div>
-        <div>
 
-          <input type="button" className="btn mt-4 btn-primary text-white px-4 py-2 rounded-md ml-4" disabled={!merchantId || loading} onClick={(e) => {
-            fetchData(merchantId);
-          }} value="Get data" />
-        </div>
         <div className={`navbar ${themeMode === "dark" ? "dark-mode" : ""}`}>
           <div className="navbar-options d-flex my-2 col-12 items-center">
             <input
