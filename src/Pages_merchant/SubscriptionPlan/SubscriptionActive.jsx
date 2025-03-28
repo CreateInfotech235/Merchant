@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, data } from "react-router-dom";
 // import GetSubscription from "./getSubscription";
 import Subscriptionactiveplan from "./Subscriptionactiveplan";
 import PaymentPage from "./PymentPage";
@@ -14,7 +14,8 @@ function SubscriptionActive() {
   const [activePlan, setActivePlan] = useState(null);
   const [show, setShow] = useState(true);
   const [subcriptionData, setSubcriptionData] = useState(null);
-  
+  const [pandingPlan, setPandingPlan] = useState(null);
+
 
 
 
@@ -38,7 +39,7 @@ function SubscriptionActive() {
     fetchSubscriptions();
   }, []);
   console.log("subscriptionData", subscriptionData);
-  
+
   const calculateRemainingDays = (expiryDate) => {
     const currentDate = new Date();
     const expirationDate = new Date(expiryDate);
@@ -54,6 +55,13 @@ function SubscriptionActive() {
       return isNotExpired && hasStarted;
     });
   };
+  const isPandingPlan = (subscriptions) => {
+    const currentDate = new Date();
+    return subscriptions.some(sub => {
+      const startDate = new Date(sub.startDate);
+      return currentDate < startDate;
+    });
+  };
 
   const fetchSubscriptionInfo = async (id) => {
     try {
@@ -62,8 +70,9 @@ function SubscriptionActive() {
       if (response.show) {
         setSubcriptionData(response.data);
         const active = findActivePlan(response.data);
-        console.log("active", active);
+        const panding = isPandingPlan(response.data);        
         setActivePlan(active);
+        setPandingPlan(panding);
       } else {
         setShow(false);
       }
@@ -83,11 +92,11 @@ function SubscriptionActive() {
       <Routes>
         <Route
           path="/"
-          element={<Subscriptionactiveplan plans={subscriptionData} />}
+          element={<Subscriptionactiveplan plans={subscriptionData} pandingPlan={pandingPlan} />}
         />
         <Route
           path="/payment"
-          element={<PaymentPage plans={subscriptionData} activePlan={activePlan} />}
+          element={<PaymentPage plans={subscriptionData} activePlan={activePlan} expiry={activePlan?.expiry} />}
         />
       </Routes>
     </>

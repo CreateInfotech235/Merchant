@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import SubscriptionPlan1 from "./SubscriptionPlan1";
 import Loader from "../../Components_admin/Loader/Loader";
 
-function Subscriptionactiveplan({ plans }) {
+function Subscriptionactiveplan({ plans, pandingPlan }) {
   const [subcriptionData, setSubcriptionData] = useState([]);
   const [show, setShow] = useState(true);
   const [showAllSubscriptions, setShowAllSubscriptions] = useState(false);
@@ -16,7 +16,8 @@ function Subscriptionactiveplan({ plans }) {
   const findActivePlan = (subscriptions) => {
     const currentDate = new Date();
     return subscriptions.find(sub => {
-      const isNotExpired = calculateRemainingDays(sub.expiry) > 0;
+      const expiryDate = new Date(sub.expiry);
+      const isNotExpired = expiryDate > currentDate;
       const hasStarted = !sub.startDate || new Date(sub.startDate) < currentDate;
       return isNotExpired && hasStarted;
     });
@@ -67,20 +68,35 @@ function Subscriptionactiveplan({ plans }) {
   };
 
   const Cardmodel = ({ data }) => {
+    console.log(data, "data");
+
     return (
       <div className="card shadow-lg border-0 ">
         <div className="card-body p-4">
           <div className="row align-items-center">
             <div className="col-md-4 text-center border-end">
               <h4 className="text-primary mb-3">
+                {data.isthisplanupgrade && (
+                  <span className="badge bg-[#007bff] text-white ms-2 p-2">Upgraded plan</span>
+                )}
+                <br />
                 {data.subcriptionId.type}
+                <br />
+                {data.isplanupgrade && (
+                  <span className="badge bg-danger text-white ms-2 p-2">Upgrat in other plan</span>
+                )}
               </h4>
               <h2 className="display-4 fw-bold mb-0">
                 £{data.subcriptionId.amount}
               </h2>
               <p className="text-muted">
-                per agent per {secondsToDays(data.subcriptionId.seconds)} days
+                {secondsToDays(data.subcriptionId.seconds)} days
               </p>
+              {data.byingAmount && (
+                <p className="text-muted">
+                  <span className="fw-bold">Paid Amount:</span> £{data.byingAmount.toFixed(2)}
+                </p>
+              )}
             </div>
 
             <div className="col-md-4 py-3">
@@ -139,7 +155,16 @@ function Subscriptionactiveplan({ plans }) {
                           : `${calculateRemainingDays(data.expiry)} days`}
                       </p>
                     </div>) :
-                  "Expired"}
+                  (<div>
+                    <small className="text-muted">Expired</small>
+                    <p className="mb-0 fw-bold text-danger">
+                      {Math.floor((new Date() - new Date(data.expiry)) / (1000 * 60)) < 60
+                        ? `${Math.floor((new Date() - new Date(data.expiry)) / (1000 * 60))} minutes ago`
+                        : Math.floor((new Date() - new Date(data.expiry)) / (1000 * 60 * 60)) < 24
+                          ? `${Math.floor((new Date() - new Date(data.expiry)) / (1000 * 60 * 60))} hours ago`
+                          : `${Math.floor((new Date() - new Date(data.expiry)) / (1000 * 60 * 60 * 24))} days ago`}
+                    </p>
+                  </div>)}
               </div>
 
               <div className="text-center mt-3">
@@ -148,7 +173,13 @@ function Subscriptionactiveplan({ plans }) {
                     ${calculateRemainingDays(data.expiry) > 0 ? data?.startDate ? new Date(data?.startDate) < new Date() ? "btn-success" : "btn-warning" : "btn-success" : "btn-danger"}  
                   `}
                 >
-                  {calculateRemainingDays(data.expiry) > 0 ? data?.startDate ? new Date(data?.startDate) < new Date() ? "Active" : "Not Active Yet" : "Active" : "Expired"}
+                  {calculateRemainingDays(data.expiry) > 0 ?
+                    data?.startDate ?
+                      new Date(data?.startDate) < new Date() ?
+                        data.isplanupgrade ? "Expired (Upgraded)" : "Active"
+                        : "Not Active Yet"
+                      : "Active"
+                    : "Expired"}
                 </button>
               </div>
             </div>
@@ -279,11 +310,11 @@ function Subscriptionactiveplan({ plans }) {
                             </>
                           )}
                           {!isActive && i === fastindexnotactive && (
-                              <div className="alert alert-secondary mb-3">
-                                <h6 className="mb-0">Previous Subscriptions</h6>
-                              </div>
-                            )}
-                          <Cardmodel data={el} />
+                            <div className="alert alert-secondary mb-3">
+                              <h6 className="mb-0">Previous Subscriptions</h6>
+                            </div>
+                          )}
+                          <Cardmodel data={el}  />
                         </div>
                       );
                     })
@@ -299,7 +330,7 @@ function Subscriptionactiveplan({ plans }) {
         )}
 
 
-        <SubscriptionPlan1 plans={plans} subcriptionData={activePlan} loading={loading} />
+        <SubscriptionPlan1 plans={plans} subcriptionData={activePlan} loading={loading} pandingPlan={pandingPlan} />
 
       </div>
     </>

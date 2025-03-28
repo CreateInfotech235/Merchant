@@ -6,7 +6,7 @@ import { BsCheckCircleFill } from 'react-icons/bs';
 import "./SubscriptionPlan1.css";
 import Loader from "../../Components_admin/Loader/Loader";
 
-const SubscriptionPlan1 = ({ plans, subcriptionData, loading }) => {
+const SubscriptionPlan1 = ({ plans, subcriptionData, loading, pandingPlan }) => {
   const [activePlan, setActivePlan] = useState(null);
   console.log(subcriptionData);
 
@@ -36,6 +36,43 @@ const SubscriptionPlan1 = ({ plans, subcriptionData, loading }) => {
     // If the result is less than 1, round it to 1
     return months < 1 ? 1 : Math.round(months);
   };
+
+  const calculateRemainingDays = (expiryDate) => {
+    const currentDate = new Date();
+    const expiry = new Date(expiryDate);
+    const diffTime = expiry.getTime() - currentDate.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
+  const [remainingTime, setRemainingTime] = useState('');
+
+  useEffect(() => {
+    const calculateTime = (expiryDate) => {
+      const currentDate = new Date();
+      const expiry = new Date(expiryDate);
+      const diffTime = expiry.getTime() - currentDate.getTime();
+
+      const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      if (days >= 1) {
+        return `${days}d`;
+      }
+
+      const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diffTime % (1000 * 60)) / 1000);
+
+      return `${hours}h ${minutes}m ${seconds}s`;
+    };
+
+    if (subcriptionData?.expiry) {
+      const interval = setInterval(() => {
+        setRemainingTime(calculateTime(subcriptionData.expiry));
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [subcriptionData]);
+
 
   return (
     <section className="  bg-gradient-to-br ">
@@ -113,32 +150,56 @@ const SubscriptionPlan1 = ({ plans, subcriptionData, loading }) => {
                           </div>
                         ))}
                       </div>
-
                       <div className="mt-6">
                         <Link
-                          to={plan.isDesable || (activePlan && plan.amount <= activePlan.subcriptionId.amount) ||
-                            (subcriptionData?.subcriptionId && plan.amount <= subcriptionData?.subcriptionId?.amount)
-                            ? '#'
-                            : `/subscription-active/Payment`}
-                          state={{ planid: plan._id }}
-
+                          to={!(plan.isDesable ||
+                            (activePlan && plan.amount <= activePlan.subcriptionId.amount && !(plan._id.toString() === subcriptionData?.subcriptionId?._id.toString() && subcriptionData?.expiry && (new Date(subcriptionData.expiry) - new Date()) < 5 * 24 * 60 * 60 * 1000)) ||
+                            (subcriptionData?.subcriptionId && plan.amount <= subcriptionData?.subcriptionId?.amount && !(plan._id.toString() === subcriptionData?.subcriptionId?._id.toString() && subcriptionData?.expiry && (new Date(subcriptionData.expiry) - new Date()) < 5 * 24 * 60 * 60 * 1000)) 
+                           ) && !pandingPlan ? `/subscription-active/Payment` : "#"}
+                          state={{ 
+                            planid: plan._id, 
+                            isrecharge: plan._id.toString() === subcriptionData?.subcriptionId?._id.toString() && 
+                              subcriptionData?.expiry && 
+                              (new Date(subcriptionData.expiry) - new Date()) < 5 * 24 * 60 * 60 * 1000
+                          }}
                           className={`w-full py-2 px-4 rounded-full font-semibold text-white text-center block transition-all duration-300 
-                        ${plan._id.toString() === subcriptionData?.subcriptionId?._id.toString()
-                              ? 'bg-gradient-to-r from-blue-400 to-blue-600 cursor-not-allowed opacity-70'
+                            ${pandingPlan ? 'hidden' : plan._id.toString() === subcriptionData?.subcriptionId?._id.toString()
+                              ? subcriptionData?.expiry && (new Date(subcriptionData.expiry) - new Date()) < 5 * 24 * 60 * 60 * 1000
+                                ? 'bg-gradient-to-r from-orange-400 to-orange-600 hover:shadow-lg hover:-translate-y-1'
+                                : 'bg-gradient-to-r from-blue-400 to-blue-600 cursor-not-allowed opacity-70'
                               : (subcriptionData?.subcriptionId && plan.amount <= subcriptionData?.subcriptionId?.amount)
                                 ? 'bg-gradient-to-r from-gray-400 to-gray-600 cursor-not-allowed opacity-70'
                                 : 'bg-gradient-to-r from-orange-400 to-orange-600 hover:shadow-lg hover:-translate-y-1'
                             }`}
                           onClick={(e) => {
-                            if (plan.isDesable ||
-                              plan._id.toString() === subcriptionData?.subcriptionId?._id.toString() ||
-                              (subcriptionData?.subcriptionId && plan.amount <= subcriptionData?.subcriptionId?.amount)) {
+
+                            if(pandingPlan){
                               e.preventDefault();
+                            }
+                            const isDisabled = plan.isDesable ||
+                              (plan._id.toString() === subcriptionData?.subcriptionId?._id.toString() &&
+                                !(subcriptionData?.expiry &&
+                                  (new Date(subcriptionData.expiry) - new Date()) < 5 * 24 * 60 * 60 * 1000)) ||
+                              (subcriptionData?.subcriptionId &&
+                                plan.amount <= subcriptionData?.subcriptionId?.amount);
+
+                            if (isDisabled) {
+                              const timeLeft = new Date(subcriptionData.expiry) - new Date();
+                              const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                              if (daysLeft >= 5) {
+                                e.preventDefault();
+                              }
                             }
                           }}
                         >
                           {plan._id.toString() === subcriptionData?.subcriptionId?._id.toString()
-                            ? 'Active Plan'
+                            ? subcriptionData?.expiry
+                              ? (() => {
+                                const timeLeft = new Date(subcriptionData.expiry) - new Date();
+                                const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                                return daysLeft < 5 ? `Recharge Plan (${remainingTime} left)` : 'Active Plan';
+                              })()
+                              : 'Active Plan'
                             : (subcriptionData?.subcriptionId && plan.amount <= subcriptionData?.subcriptionId?.amount)
                               ? 'Not Available to (Upgrade Plan)'
                               : subcriptionData?.subcriptionId
@@ -154,7 +215,7 @@ const SubscriptionPlan1 = ({ plans, subcriptionData, loading }) => {
           )
         }
       </div>
-    </section>
+    </section >
   );
 };
 

@@ -106,14 +106,15 @@ export const getAllSubscription = async (page, pageLimit) => {
   }
 };
 
-export const stripPayment = async (amount, planId , duration , merchantId ,expiryDate) => {
+export const stripPayment = async (amount, planId , duration , merchantId ,expiryDate ,oldPlanId) => {
   try {
     const data = {
       amount : amount,
       planId : planId , 
       duration : duration,
       expiryDate :expiryDate,
-      merchantId : merchantId
+      merchantId : merchantId,
+      oldPlanId : oldPlanId
     }
     console.log(data);
     

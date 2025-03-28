@@ -122,7 +122,6 @@ const ProtectedRoute = ({ children }) => {
   };
 
   const handlePopupClose = () => {
-    navigate("/subscription-active");
     setExpiredPopup(false);
   };
 
