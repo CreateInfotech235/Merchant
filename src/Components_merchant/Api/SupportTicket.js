@@ -57,11 +57,11 @@ export const postSupportTicket = async (data) => {
   }
 };
 
-export const getSupportTicket = async () => {
+export const getSupportTicket = async (isSendMessage) => {
   try {
     const merchnatId = localStorage.getItem("merchnatId");
     const response = await API.get(
-      `/mobile/auth/getSupportTicket/${merchnatId}`
+      `/mobile/auth/getSupportTicket/${merchnatId}?isSendMessage=${isSendMessage}`
     );
     // console.log("Response:", response);
     if (response.status === 200) {

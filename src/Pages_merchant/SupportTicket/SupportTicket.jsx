@@ -42,7 +42,7 @@ const SupportTicket = ({ unreadMessages = {} }) => {
   const getSupportTicketapi = async () => {
     setLoading(true);
     try {
-      const response = await getSupportTicket();
+      const response = await getSupportTicket(true);
       console.log(response, "re");
 
       setlistofproblem(response?.data?.data || []);
@@ -313,7 +313,7 @@ const SupportTicket = ({ unreadMessages = {} }) => {
                   <td className="px-4 py-2 border">{ticket.subject}</td>
                   <td className="px-4 py-2 border">{ticket.problem}</td>
                   <td className="px-4 py-2 border">
-                    {ticket.adminId ? ticket.adminId.name : "No admin assigned"}
+                    {ticket.adminId ? ticket.adminId : "No admin assigned"}
                   </td>
                   <td className="px-4 py-2 border">
                     <div className="flex justify-center items-center">
