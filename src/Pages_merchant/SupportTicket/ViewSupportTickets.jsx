@@ -359,7 +359,7 @@ function ViewSupportTickets() {
                               setPreviewImage(msg?.file?.data);
                               setShowImagePreview(true);
                             }}
-                            loading="lazy"
+                            // loading="lazy"
                           />
                           <div
                             className="absolute top-2 right-2 bg-black bg-opacity-50 p-2 rounded-full cursor-pointer hover:bg-opacity-70 transition-all"
