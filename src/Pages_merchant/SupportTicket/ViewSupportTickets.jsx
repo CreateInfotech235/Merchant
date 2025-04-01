@@ -12,6 +12,7 @@ function ViewSupportTickets() {
   const { state } = location;
   const ticketId = state?.ticketId;
   const Subject = state?.Subject;
+  const merchantName = state?.merchantName || "";
 
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -36,6 +37,8 @@ function ViewSupportTickets() {
   const [deletingMessageId, setDeletingMessageId] = useState(null);
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [isLoadingfile, setIsLoadingfile] = useState({});
+
 
   if (!ticketId) {
     return <div>No ticket selected. Please go back and select a ticket.</div>;
@@ -46,13 +49,20 @@ function ViewSupportTickets() {
       const response = await axios.patch(
         `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`,
       );
-      if (response.data) {
-        setMessages(prevMessages =>
-          prevMessages.map(msg => ({
-            ...msg,
-            isRead: msg.sender.toLowerCase() === "admin" ? true : msg.isRead
-          }))
-        );
+      console.log(response.data, 'red');
+      if (response.data.message === 'Messages read successfully' || response.data.message === 'Message read successfully') {
+        console.log(messages, 'messages');
+        const nowdata = messages.map(msg => ({
+          ...msg,
+          isRead: msg.sender.toLowerCase() === "admin" ? true : msg.isRead
+        }))
+        console.log(nowdata, 'nowdata');
+
+        if (nowdata.length > 0) {
+          setMessages(
+            nowdata
+          );
+        }
       }
     } catch (error) {
       console.error("Error setting messages as read:", error);
@@ -62,13 +72,11 @@ function ViewSupportTickets() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        console.log(ticketId, 'ticketId');
-
         const response = await axios.get(
           `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages`
         );
+        console.log(response.data, 'response.data123');
         setMessages(response.data);
-        console.log(response.data, 'response.datzsdfza');
 
         if (!hasScrolledToRead) {
           const adminMessages = response.data.filter((msg) => msg.sender.toLowerCase() === "admin");
@@ -107,7 +115,9 @@ function ViewSupportTickets() {
         if (message.sender.toLowerCase() === "admin") {
           setNowmessage((prev) => prev + 1);
           if (isNearBottom) {
-            scrollToBottom();
+            setTimeout(() => {
+              scrollToBottom();
+            }, 100);
           }
         }
       }
@@ -115,14 +125,14 @@ function ViewSupportTickets() {
 
     socket.on("messageRead", (message) => {
       if (message.ticketId == ticketId) {
-        setMessages(message.update.messages);
+        setMessages(message.update);
       }
     });
 
     socket.on("messageDelete", (message) => {
       console.log(message, 'messawqedawdge');
       if (message.ticketId == ticketId) {
-        setMessages(message.update.messages);
+        setMessages(message.update);
       }
     });
 
@@ -131,7 +141,7 @@ function ViewSupportTickets() {
       socket.off("messageRead");
       socket.off("messageDelete");
     };
-  }, [ticketId, hasScrolledToRead]);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -168,6 +178,7 @@ function ViewSupportTickets() {
   }
 
   const editMessageown = async (msg) => {
+    console.log(msg, 'Edit');
     if (msg.sender !== 'merchant') return;
 
     try {
@@ -176,8 +187,10 @@ function ViewSupportTickets() {
         `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages/${msg._id}`,
         { nowmessage: inputValue }
       );
+      console.log(response, 'Edit');
 
       if (response.status === 200) {
+        console.log(response.data, 'Edit');
         setMessages(messages.map(message =>
           message._id === msg._id
             ? { ...message, text: inputValue }
@@ -195,12 +208,12 @@ function ViewSupportTickets() {
     }
   };
 
-  const getFileIcon = (fileType) => {
+  const getFileIcon = (fileType, sender) => {
     if (fileType?.startsWith('image/')) return <FaFileImage className="text-4xl text-blue-500" />;
     if (fileType === 'application/pdf') return <FaFilePdf className="text-4xl text-red-500" />;
     if (fileType === 'application/msword' || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
       return <FaFileWord className="text-4xl text-blue-600" />;
-    return <FaFileAlt className="text-4xl text-gray-500" />;
+    return <FaFileAlt className={`text-4xl  ${sender !== "admin" ? "text-gray-500" : "text-[#ffffff]"}`} />;
   };
 
   const handleFileSelect = (event) => {
@@ -258,10 +271,14 @@ function ViewSupportTickets() {
             messageData
           );
 
+          // Reset all states after successful send
           setInputValue("");
           setSelectedFile(null);
           setFilePreview(null);
           setUploadProgress(0);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ''; // Reset the file input
+          }
           scrollToBottom();
         }
       } catch (error) {
@@ -285,11 +302,12 @@ function ViewSupportTickets() {
     try {
       setDeletingMessageId(msg._id);
       setIsDeleting(true);
+      console.log(msg._id, 'msg._id');
 
       const response = await axios.delete(
         `https://create-courier-8.onrender.com/mobile/auth/support-tickets/${ticketId}/messages/${msg._id}`
       );
-
+      console.log(response.data, 'delete');
       setMessages(prevMessages => prevMessages.filter(message => message._id !== msg._id));
       setShowdropdown(null);
 
@@ -324,7 +342,7 @@ function ViewSupportTickets() {
         className="flex-1 overflow-auto p-2 space-y-2"
         style={{ height: "calc(100vh - 300px)" }}
       >
-        {messages.map((msg) => (
+        {messages?.map((msg) => (
           <div
             key={msg._id}
             className={`flex w-[97%] ${msg.sender === "merchant" ? "justify-end" : "justify-start"}`}
@@ -350,31 +368,49 @@ function ViewSupportTickets() {
                     <div className="relative group">
                       {msg?.file?.data ? (
                         <>
-                          <img
-                            src={msg?.file?.data}
-                            alt={msg?.file?.name}
-                            className="max-w-[200px] rounded cursor-pointer hover:opacity-90 transition-opacity"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPreviewImage(msg?.file?.data);
-                              setShowImagePreview(true);
-                            }}
-                            // loading="lazy"
-                          />
-                          <div
-                            className="absolute top-2 right-2 bg-black bg-opacity-50 p-2 rounded-full cursor-pointer hover:bg-opacity-70 transition-all"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const link = document.createElement('a');
-                              link.href = msg?.file?.data;
-                              link.download = msg?.file?.name;
-                              document.body.appendChild(link);
-                              link.click();
-                              document.body.removeChild(link);
-                            }}
-                          >
-                            <FaDownload className="text-white text-sm" />
+                          <div className="relative flex justify-center items-center">
+                            {isLoadingfile[msg._id] ? null :
+                              (<div className="w-[200px] h-[150px] flex items-center justify-center bg-gray-100 rounded">
+                                <FaFileImage className="text-gray-400 text-4xl animate-pulse" />
+                              </div>)
+                            }
+                            <img
+                              src={msg?.file?.data}
+                              alt={msg?.file?.name}
+                              className={`max-w-[200px] rounded cursor-pointer hover:opacity-90 transition-opacity ${!isLoadingfile[msg._id] ? 'hidden' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPreviewImage(msg?.file?.data);
+                                setShowImagePreview(true);
+                              }}
+                              onLoad={() => {
+                                setIsLoadingfile(prev => ({ ...prev, [msg._id]: true }));
+                              }}
+                            />
+                            {msg?.file?.data && isLoadingfile[msg._id] && (
+                              <div
+                                className="absolute z-10 bg-black bg-opacity-50 p-2 rounded-full cursor-pointer hover:bg-opacity-70 transition-all"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  fetch(msg?.file?.data)
+                                    .then(response => response.blob())
+                                    .then(blob => {
+                                      const url = window.URL.createObjectURL(blob);
+                                      const link = document.createElement('a');
+                                      link.href = url;
+                                      link.download = msg?.file?.name;
+                                      document.body.appendChild(link);
+                                      link.click();
+                                      window.URL.revokeObjectURL(url);
+                                      document.body.removeChild(link);
+                                    });
+                                }}
+                              >
+                                <FaDownload className="text-white text-sm" />
+                              </div>
+                            )}
                           </div>
+
                         </>
                       ) : (
                         <div className="max-w-[200px] h-[150px] flex items-center justify-center bg-gray-100 rounded">
@@ -386,16 +422,30 @@ function ViewSupportTickets() {
                     <div className="flex flex-col items-center gap-2">
                       {msg?.file?.data ? (
                         <>
-                          {getFileIcon(msg?.file?.type)}
-                          <a
-                            href={msg?.file?.data}
-                            download={msg?.file?.name}
-                            className="text-blue-500 hover:underline flex items-center gap-1 bg-blue-50 px-3 py-1 rounded-full"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <FaDownload className="text-sm" />
-                            Download File
-                          </a>
+                          {isLoadingfile[msg._id] ? (
+                            <div className="w-[100px] h-[100px] flex items-center justify-center bg-gray-100 rounded">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                            </div>
+                          ) : (
+                            <>
+                              {getFileIcon(msg?.file?.type, msg?.sender)}
+                              <a
+                                href={msg?.file?.data}
+                                download={msg?.file?.name}
+                                className="text-blue-500 hover:underline flex items-center gap-1 bg-blue-50 px-3 py-1 rounded-full"
+                                onClick={(e) => e.stopPropagation()}
+                                onLoad={() => {
+                                  setIsLoadingfile(prev => ({ ...prev, [msg._id]: true }));
+                                }}
+                                onError={() => {
+                                  setIsLoadingfile(prev => ({ ...prev, [msg._id]: true }));
+                                }}
+                              >
+                                <FaDownload className="text-sm" />
+                                Download File
+                              </a>
+                            </>
+                          )}
                         </>
                       ) : (
                         <div className="w-[100px] h-[100px] flex items-center justify-center bg-gray-100 rounded">

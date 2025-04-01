@@ -122,26 +122,35 @@ export const getOrders = async (userId, pageCount, pageLimit) => {
     return { status: false, message: error.message };
   }
 };
-
-export const getMultiOrders = async (userId, getallcancelledorders) => {
+export const getMultiOrders = async ({userId, getallcancelledorders, page = 1, startDate, endDate, filterStatus, limit, searchQuery}) => {
   try {
+    const queryParams = {
+      ...userId && { user: userId },
+      ...getallcancelledorders && { getallcancelledorders: getallcancelledorders },
+      ...page && { page: page },
+      ...limit && { limit: Number(limit) },
+      ...searchQuery && { searchQuery: searchQuery.trim()},
+      ...startDate && { startDate: startDate },
+      ...endDate && { endDate: endDate },
+      ...filterStatus && { filterStatus: filterStatus },
+      // ...limit && { limit: limit }
+    }
+    console.log("queryParams", queryParams);
     const response = await API.get(
       `/mobile/order/getAllOrdersFromMerchantMulti/${userId}`,
       {
-        params: {
-          user: userId,
-          getallcancelledorders: getallcancelledorders,
-        },
+        params: queryParams
       }
     );
-    console.log("response", response);
+    console.log("responseSADsD", response);
 
     if (response.status === 200) {
-      //   toast.success(response.data.message);
-      return { status: true, data: response.data.data };
+      return { 
+        status: true, 
+        data: response?.data?.data?.data, 
+        total: response?.data?.data?.total 
+      };
     } else {
-      //   console.log("API error", response.response.data.message);
-      //   toast.error(response.response.data.message || response.message);
       return {
         status: false,
         message: response.response.data.message || response.message,

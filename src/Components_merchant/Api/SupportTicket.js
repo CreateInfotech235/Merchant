@@ -87,7 +87,7 @@ export const getSupportTicket = async (isSendMessage) => {
 
 export const DeleteSupportTicket = async (ticketId) => {
   try {
-    // console.log(ticketId);
+    console.log(ticketId);
     // Ensure 'merchnatId' is available in localStorage
     const merchnatId = localStorage.getItem("merchnatId");
     if (!merchnatId) {

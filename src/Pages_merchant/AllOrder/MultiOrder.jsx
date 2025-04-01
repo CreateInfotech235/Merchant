@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./AllOrder.css";
 import add from "../../assets_mercchant/add.png";
@@ -26,11 +26,11 @@ import { moveToTrashMultiOrderarray } from "../../Components_merchant/Api/Order"
 import { toast } from "react-toastify";
 import { socket } from "../../Components_merchant/Api/Api";
 const MultiOrder = () => {
-  const [showModel, setShowModel] = useState(false);
   const [orderId, setOrderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showEditModal, setShowEditModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [themeMode, setThemeMode] = useState("light");
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -53,17 +53,22 @@ const MultiOrder = () => {
 
   const [startDate, setStartDate] = useState(undefined);
   const [endDate, setEndDate] = useState(undefined);
-  const [filterStatus, setFilterStatus] = useState("all");
+  const urlParams = new URLSearchParams(window.location.search);
+  const [filterStatus, setFilterStatus] = useState(urlParams.get('status').toUpperCase() || "ALL");
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectMultiOrder, setSelectMultiOrder] = useState({});
   console.log("selectMultiOrder", selectMultiOrder);
 
 
   const [showDelete, setShowDelete] = useState(false);
-  console.log("isUpdate", isUpdate);
   const [showTrashConfirmModal, setShowTrashConfirmModal] = useState(false);
 
-  const fetchData = async () => {
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const fetchData = async (searchQuery, startDate, endDate, page = 1) => {
+    if (isSearching && searchQuery !== searchInput) return;
+
     setLoading(true);
     try {
       const parcelTypeRes = await getMerchantParcelType();
@@ -71,48 +76,63 @@ const MultiOrder = () => {
         setParcleTypeDetail(parcelTypeRes.data);
       }
       const MerchantId = await localStorage.getItem("merchnatId");
-      const response = await getMultiOrders(
-        MerchantId,
-      );
-      console.log("response", response);
+
+
+      const response = await getMultiOrders({
+        userId: MerchantId,
+        page: page,
+        startDate: startDate,
+        endDate: endDate,
+        filterStatus: filterStatus,
+        limit: itemsPerPage,
+        searchQuery: searchQuery,
+        startDate: startDate,
+        endDate: endDate
+      });
 
       if (response?.data) {
-        // Filter out trashed orders first
-        const nonTrashedOrders = response.data.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === false));   // const trashedData = response.data.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === true));
-        console.log("nonTrashedOrders", nonTrashedOrders);
-        setOrderData(nonTrashedOrders);
+        const nonTrashedOrders = response.data.filter(data =>
+          data.deliveryAddress.some(subOrder => subOrder.trashed === false)
+        );
 
-        // Calculate initial filtered orders based on itemsPerPage
-        const initialOrders = nonTrashedOrders.slice(0, itemsPerPage);
-        setFilteredOrders(initialOrders);
-
-        // Calculate total pages based on non-trashed orders
-        setTotalPages(Math.ceil(nonTrashedOrders.length / itemsPerPage));
+        if (searchQuery === searchInput) { // Only update if search query matches current input
+          setOrderData(nonTrashedOrders);
+          setFilteredOrders(nonTrashedOrders);
+          setTotalPages(Math.ceil(response.total / itemsPerPage));
+        }
       } else {
-        setOrderData([]);
-        setFilteredOrders([]);
+        if (searchQuery === searchInput) {
+          setOrderData([]);
+          setFilteredOrders([]);
+        }
       }
     } catch (err) {
       console.error("Error fetching orders:", err);
+      if (searchQuery === searchInput) {
+        setOrderData([]);
+        setFilteredOrders([]);
+      }
     } finally {
-      setLoading(false);
+      if (searchQuery === searchInput) {
+        setLoading(false);
+      }
     }
   };
+  useEffect(() => {
+    fetchData(searchQuery, startDate, endDate, currentPage);
+  }, [filterStatus]);
 
   useEffect(() => {
     filterOrders(searchQuery);
-  }, [currentPage, itemsPerPage]);
+  }, [currentPage, itemsPerPage, searchQuery]);
 
   useEffect(() => {
-
     const fetchDataWithDelay = async () => {
-      console.log("showModel123", showModel);
-      console.log("isUpdate123", isUpdate);
-      await fetchData();
+      await fetchData(searchQuery, startDate, endDate, currentPage);
     };
-    const timer = setTimeout(fetchDataWithDelay, 1000); // Delay of 1 second
-    return () => clearTimeout(timer); // Cleanup the timer on unmount
-  }, [showModel, isUpdate]);
+    const timer = setTimeout(fetchDataWithDelay, 1000);
+    return () => clearTimeout(timer);
+  }, [isUpdate]);
 
   const closeEditModal = () => {
     setShowEditModal(false);
@@ -142,8 +162,8 @@ const MultiOrder = () => {
         });
       });
 
-      const isoderisselactable = data.orderData.deliveryDetails.every(subOrder => 
-        (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+      const isoderisselactable = data.orderData.deliveryDetails.every(subOrder =>
+        (subOrder?.status === "ASSIGNED" && !subOrder.trashed) ||
         (subOrder?.status === "ARRIVED" && !subOrder.trashed)
       )
       console.log("isoderisselactable", isoderisselactable);
@@ -197,11 +217,9 @@ const MultiOrder = () => {
     };
   }, []);
 
-  const closeModel = () => setShowModel(false);
 
   const filterOrders = (query) => {
     // Start with non-trashed orders only
-    console.log("orderData", orderData);
     var data = orderData.filter(data => data.deliveryAddress.some(subOrder => subOrder.trashed === false));
 
     const filteredData = data.filter((order) => {
@@ -225,51 +243,51 @@ const MultiOrder = () => {
 
     data = filteredData;
 
-    if (filterStatus !== "all") {
-      data = data.filter((order) => order.status?.toLowerCase() === filterStatus.toLowerCase());
-    }
+    // if (filterStatus !== "all") {
+    //   data = data.filter((order) => order.status?.toLowerCase() === filterStatus.toLowerCase());
+    // }
 
-    if (startDate || endDate) {
-      if (startDate && endDate) {
-        const startFilterDate = new Date(startDate);
-        const endFilterDate = new Date(endDate);
-        endFilterDate.setHours(23, 59, 59);
+    // if (startDate || endDate) {
+    //   if (startDate && endDate) {
+    //     const startFilterDate = new Date(startDate);
+    //     const endFilterDate = new Date(endDate);
+    //     endFilterDate.setHours(23, 59, 59);
 
-        data = data.filter((order) => {
-          const [datePart, timePart] = order.createdDate.split(" , ");
-          const [day, month, year] = datePart.split("-");
-          const [hours, minutes] = timePart.split(":");
-          const orderDate = new Date(year, month - 1, day, hours, minutes);
-          return orderDate >= startFilterDate && orderDate <= endFilterDate;
-        });
-      } else {
-        if (startDate) {
-          const filterDate = new Date(startDate);
-          filterDate.setHours(0, 0, 0);
+    //     data = data.filter((order) => {
+    //       const [datePart, timePart] = order.createdDate.split(" , ");
+    //       const [day, month, year] = datePart.split("-");
+    //       const [hours, minutes] = timePart.split(":");
+    //       const orderDate = new Date(year, month - 1, day, hours, minutes);
+    //       return orderDate >= startFilterDate && orderDate <= endFilterDate;
+    //     });
+    //   } else {
+    //     if (startDate) {
+    //       const filterDate = new Date(startDate);
+    //       filterDate.setHours(0, 0, 0);
 
-          data = data.filter((order) => {
-            const [datePart, timePart] = order.createdDate.split(" , ");
-            const [day, month, year] = datePart.split("-");
-            const [hours, minutes] = timePart.split(":");
-            const orderDate = new Date(year, month - 1, day, hours, minutes);
-            return orderDate >= filterDate;
-          });
-        }
+    //       data = data.filter((order) => {
+    //         const [datePart, timePart] = order.createdDate.split(" , ");
+    //         const [day, month, year] = datePart.split("-");
+    //         const [hours, minutes] = timePart.split(":");
+    //         const orderDate = new Date(year, month - 1, day, hours, minutes);
+    //         return orderDate >= filterDate;
+    //       });
+    //     }
 
-        if (endDate) {
-          const filterDate = new Date(endDate);
-          filterDate.setHours(23, 59, 59);
+    //     if (endDate) {
+    //       const filterDate = new Date(endDate);
+    //       filterDate.setHours(23, 59, 59);
 
-          data = data.filter((order) => {
-            const [datePart, timePart] = order.createdDate.split(" , ");
-            const [day, month, year] = datePart.split("-");
-            const [hours, minutes] = timePart.split(":");
-            const orderDate = new Date(year, month - 1, day, hours, minutes);
-            return orderDate <= filterDate;
-          });
-        }
-      }
-    }
+    //       data = data.filter((order) => {
+    //         const [datePart, timePart] = order.createdDate.split(" , ");
+    //         const [day, month, year] = datePart.split("-");
+    //         const [hours, minutes] = timePart.split(":");
+    //         const orderDate = new Date(year, month - 1, day, hours, minutes);
+    //         return orderDate <= filterDate;
+    //       });
+    //     }
+    //   }
+    // }
 
     // Sort data by exact match on showOrderNumber
     const sortedData = data.sort((a, b) => {
@@ -279,22 +297,30 @@ const MultiOrder = () => {
     });
 
     // Update pagination based on filtered results
-    setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
+    // setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    setFilteredOrders(sortedData.slice(startIndex, endIndex));
+    setFilteredOrders(sortedData);
   };
 
   useEffect(() => {
     filterOrders(searchQuery);
     setCurrentPage(1);
-  }, [searchQuery, startDate, endDate, filterStatus]);
+  }, [searchQuery]);
 
-  const handlePageChange = (event, value) => {
+  const handlePageChange = async (event, value) => {
     setCurrentPage(value);
-    filterOrders(searchQuery);
+    await fetchData(searchQuery, startDate, endDate, value);
   };
 
+
+  useEffect(() => {
+    const fetchDataWithDelay = async () => {
+      setCurrentPage(1);
+      await fetchData(searchQuery, startDate, endDate, 1);
+    };
+    fetchDataWithDelay()
+  }, [startDate, endDate]);
   const hadleTrackOrder = async (
     id,
     deliveryLocation,
@@ -367,10 +393,6 @@ const MultiOrder = () => {
     setSubOrderId(subOrderId);
   };
 
-  const handleCloseModal = () => {
-    setShowModel(false);
-    setOrderId(null);
-  };
 
   const handleEditClick = (order) => {
     setSelectedOrder(order);
@@ -442,18 +464,31 @@ const MultiOrder = () => {
   };
 
 
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+  };
+
+
+  const handleSearch = async () => {
+    if (isSearching) return;
+    setIsSearching(true);
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
+    await fetchData(searchInput, startDate, endDate, 1);
+    setIsSearching(false);
+  };
+
+  
   useEffect(() => {
-    if (!loading) {
-      setTimeout(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const status = urlParams.get('status');
-        if (status) {
-          setFilterStatus(status.toUpperCase());
-          filterOrders(searchQuery);
-        } 
-      }, 10);
-    }
-  }, [loading]);
+    const handler = setTimeout(() => {
+      handleSearch();
+    }, 500); // 500ms debounce time
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchInput]);
   return (
     <div >
       <div className="d-flex justify-content-between align-items-center pb-3 nav-bar">
@@ -479,10 +514,18 @@ const MultiOrder = () => {
               type="search"
               className="search-btn border-1 border-slate-500 rounded-start-4 p-3"
               placeholder="Search Order"
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
             />
-            <button className="search-img rounded-end-4 border-0 flex justify-center items-center">
+            <button
+              className="search-img rounded-end-4 border-0 flex justify-center items-center"
+              onClick={handleSearch}
+            >
               <img
                 src={searchIcon}
                 className="search w-[35px]"
@@ -606,10 +649,10 @@ const MultiOrder = () => {
                         const selection = window.getSelection();
                         if (!selection.toString() && !e.target.closest('button') && !e.target.closest('input')) {
                           if (getSelectedMultiOrderIds().length > 0) {
-                            if(order.deliveryAddress.every(subOrder => 
-                              (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                            if (order.deliveryAddress.every(subOrder =>
+                              (subOrder?.status === "ASSIGNED" && !subOrder.trashed) ||
                               (subOrder?.status === "ARRIVED" && !subOrder.trashed)
-                            )){
+                            )) {
                               handleSelectMultiOrder(order._id)
                             }
                           } else {
@@ -618,45 +661,45 @@ const MultiOrder = () => {
                         }
                       }}>
                         <td className="city-data">
-                        <Tooltip transform="translateX(0%)" text={`${!order.deliveryAddress.every(subOrder => 
-                              (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
-                              (subOrder?.status === "ARRIVED" && !subOrder.trashed)
-                            ) ? "Only assigned or arrived orders can be selected for multi order cancel" : "Select order"}`}>
-                          <input type="checkbox" 
-                            value={selectMultiOrder[order._id]} 
-                            checked={selectMultiOrder[order._id]} 
-                            // disabled={!order.deliveryAddress.every(subOrder => 
-                            //   (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
-                            //   (subOrder?.status === "ARRIVED" && !subOrder.trashed)
-                            // )}
-                            className={`${!order.deliveryAddress.every(subOrder => 
-                              (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
-                              (subOrder?.status === "ARRIVED" && !subOrder.trashed)
-                            ) ? "cursor-not-allowed bg-gray-200 " : ""}`}
-                            onChange={(e) => {
-                              const isSelectable = order.deliveryAddress.every(subOrder => 
-                                (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                          <Tooltip transform="translateX(0%)" text={`${!order.deliveryAddress.every(subOrder =>
+                            (subOrder?.status === "ASSIGNED" && !subOrder.trashed) ||
+                            (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                          ) ? "Only assigned or arrived orders can be selected for multi order cancel" : "Select order"}`}>
+                            <input type="checkbox"
+                              value={selectMultiOrder[order._id]}
+                              checked={selectMultiOrder[order._id]}
+                              // disabled={!order.deliveryAddress.every(subOrder => 
+                              //   (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
+                              //   (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                              // )}
+                              className={`${!order.deliveryAddress.every(subOrder =>
+                                (subOrder?.status === "ASSIGNED" && !subOrder.trashed) ||
                                 (subOrder?.status === "ARRIVED" && !subOrder.trashed)
-                              );
-                              if (isSelectable) {
-                                handleSelectMultiOrder(order._id);
-                              } else {
-                                e.target.checked = false;
-                                // toast.error("Only assigned or arrived orders can be selected");
-                              }
-                            }} 
-                            onClick={(e) => {
-                              if(!order.deliveryAddress.every(subOrder => 
-                                (subOrder?.status === "ASSIGNED" && !subOrder.trashed) || 
-                                (subOrder?.status === "ARRIVED" && !subOrder.trashed)
-                              )){
-                                e.target.classList.add("vibrate");
-                                setTimeout(() => {
-                                  e.target.classList.remove("vibrate");
-                                }, 300);
-                              }
-                            }}
-                          />
+                              ) ? "cursor-not-allowed bg-gray-200 " : ""}`}
+                              onChange={(e) => {
+                                const isSelectable = order.deliveryAddress.every(subOrder =>
+                                  (subOrder?.status === "ASSIGNED" && !subOrder.trashed) ||
+                                  (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                                );
+                                if (isSelectable) {
+                                  handleSelectMultiOrder(order._id);
+                                } else {
+                                  e.target.checked = false;
+                                  // toast.error("Only assigned or arrived orders can be selected");
+                                }
+                              }}
+                              onClick={(e) => {
+                                if (!order.deliveryAddress.every(subOrder =>
+                                  (subOrder?.status === "ASSIGNED" && !subOrder.trashed) ||
+                                  (subOrder?.status === "ARRIVED" && !subOrder.trashed)
+                                )) {
+                                  e.target.classList.add("vibrate");
+                                  setTimeout(() => {
+                                    e.target.classList.remove("vibrate");
+                                  }, 300);
+                                }
+                              }}
+                            />
                           </Tooltip>
                         </td>
                         <td className="p-3 text-primary">
@@ -687,14 +730,14 @@ const MultiOrder = () => {
                           </button>
                         </td>
                         <td className="city-data">
-                          <Tooltip text={`${order.status!=="CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)) ? "Edit" : "sum of sub orders must be assigned or arrived to edit full order"}`}>
+                          <Tooltip text={`${order.status !== "CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)) ? "Edit" : "sum of sub orders must be assigned or arrived to edit full order"}`}>
                             <button
-                              className={`edit-btn ms-1 ${order.status!=="CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)) ? "" : "cursor-not-allowed"}`}
+                              className={`edit-btn ms-1 ${order.status !== "CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)) ? "" : "cursor-not-allowed"}`}
                               onClick={() => {
                                 setShowDelete(false)
                                 handleEditClick(order)
                               }}
-                              disabled={!(order.status!=="CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)))}
+                              disabled={!(order.status !== "CANCELLED" && order.deliveryAddress.some(subOrder => (subOrder?.status === "ASSIGNED" && subOrder.trashed === false) || (subOrder?.status === "ARRIVED" && subOrder.trashed === false)))}
                             >
                               <img src={edit} alt="Edit" className="mx-auto" />
                             </button>
@@ -712,8 +755,8 @@ const MultiOrder = () => {
                               className={`delete-btn me-1 ${order.deliveryAddress.every(
                                 subOrder => subOrder?.status === "ASSIGNED" || subOrder?.status === "ARRIVED"
                               )
-                                  ? ""
-                                  : "cursor-not-allowed"
+                                ? ""
+                                : "cursor-not-allowed"
                                 }`}
                               onClick={() => {
                                 setShowDelete(true);
